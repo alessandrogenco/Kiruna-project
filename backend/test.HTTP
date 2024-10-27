@@ -17,3 +17,7 @@ Content-Type: application/json
     "username": "noman",
     "password": "1234"
 }
+
+###
+POST http://localhost:3001/api/logout
+Content-Type: application/json
