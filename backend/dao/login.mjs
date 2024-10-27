@@ -48,7 +48,7 @@ class LoginDao {
     }
 
 
-    getUserByCredentials(username, password) {
+    Login(username, password) {
         return new Promise((resolve, reject) => {
             const query = 'SELECT * FROM Users WHERE username = ?';
             db.get(query, [username], (err, row) => {

@@ -79,7 +79,7 @@ app.post('/api/login', async (req, res) => {
     }
 
     try {
-        const user = await loginDao.getUserByCredentials(username, password);
+        const user = await loginDao.Login(username, password);
         
         if (!user) {
             return res.status(401).json({ message: 'Invalid username or password.' }); 
