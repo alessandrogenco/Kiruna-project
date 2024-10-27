@@ -5,7 +5,9 @@
   "main": "index.mjs",
   "type": "module",
   "scripts": {
-    "test": "run test"
+    "test": "node ourtest.mjs",
+    "test_unit": "set NODE_ENV=test && jest --coverage --testPathPattern=test_unit",
+    "test_integration": "set NODE_ENV=test && jest --coverage --testPathPattern=test_integration"
   },
   "author": "",
   "license": "ISC",
