@@ -1,28 +1,27 @@
-import cors from'cors';
+import cors from 'cors';
 import express from 'express';
 import session from 'express-session';
 import passport from 'passport';
-import LocalStrategy from 'passport-local';
-import LoginDao from './dao/login.mjs'
+import LoginDao from './dao/login.mjs';
 
 const app = express();
 const PORT = 3001;
 
 app.use(express.json());
 
+// CORS middleware
 const corsOptions = {
-    origin: ["http://localhost:3000", "http://localhost:3002", "http://localhost:3003", "http://localhost:3004", "http://localhost:3005"],
+    origin: ["http://localhost:5173"], // Aggiornato per includere la porta corretta
     optionsSuccessStatus: 200,
     credentials: true
-  };
-  app.use(cors(corsOptions));
+};
+app.use(cors(corsOptions)); // Deve essere prima delle route
 
-  app.use(session({
+app.use(session({
     secret: 'yourSecretKey',
     resave: false,
     saveUninitialized: false,
     cookie: { secure: false } 
-
 }));
 
 // Initialize Passport
@@ -36,7 +35,7 @@ passport.serializeUser((user, done) => {
 
 // Deserialize user
 passport.deserializeUser((username, done) => {
-    loginDao.getUserByUsername(username) // You need to implement this method
+    loginDao.getUserByUsername(username) // Implementare questo metodo nel LoginDao
         .then(user => {
             done(null, user);
         })
@@ -45,12 +44,10 @@ passport.deserializeUser((username, done) => {
         });
 });
 
+const loginDao = new LoginDao(); // Assicurati che questa riga sia presente
 
-
-const loginDao = new LoginDao(); // Ensure this line is present
-
-  //Register
-  app.post('/api/register', async (req, res) => {
+// Register
+app.post('/api/register', async (req, res) => {
     const { username, name, surname, password } = req.body;
 
     // Check for required fields
@@ -60,17 +57,14 @@ const loginDao = new LoginDao(); // Ensure this line is present
 
     try {
         const result = await loginDao.registerUser(username, password, name, surname);
-        res.status(201).json( result);
+        res.status(201).json(result);
     } catch (error) {
-        //console.error('Registration error:', error.message);
         if (error.message === 'Username already exists. Please choose another one.') {
-
-
             return res.status(409).json({ error: error.message });
         }
         res.status(500).json({ error: 'Internal server error' });
     }
-  });
+});
 
 // Login
 app.post('/api/login', async (req, res) => {
@@ -87,12 +81,12 @@ app.post('/api/login', async (req, res) => {
             return res.status(401).json({ message: 'Invalid username or password.' }); 
         }
 
-                req.session.user = {
-                  id: user.id,
-                  username: user.username,
-                  name: user.name,
-                  surname: user.surname
-              };
+        req.session.user = {
+            id: user.id,
+            username: user.username,
+            name: user.name,
+            surname: user.surname
+        };
         
         res.status(200).json({ message: 'Login successful', user });
     } catch (error) {
@@ -103,28 +97,25 @@ app.post('/api/login', async (req, res) => {
 
 // Logout 
 app.post('/api/logout', (req, res) => {
-  if (req.session.user) {
-      const username = req.session.user.username;
-      
-      req.session.destroy((err) => {
-          if (err) {
-              console.error('Error logging out:', err.message);
-              return res.status(500).json({ error: 'Failed to log out' });
-          }
-          console.log(`User ${username} has logged out`);
-          res.status(200).json({ message: `${username} has logged out successfully` });
-      });
-  } else {
-      res.status(400).json({ error: 'No user is currently logged in' });
-  }
+    if (req.session.user) {
+        const username = req.session.user.username;
+        
+        req.session.destroy((err) => {
+            if (err) {
+                console.error('Error logging out:', err.message);
+                return res.status(500).json({ error: 'Failed to log out' });
+            }
+            console.log(`User ${username} has logged out`);
+            res.status(200).json({ message: `${username} has logged out successfully` });
+        });
+    } else {
+        res.status(400).json({ error: 'No user is currently logged in' });
+    }
 });
-
-  
-
 
 /* ACTIVATING THE SERVER */
 let server = app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
-  });
+});
 
-export { app, server }
+export { app, server };
