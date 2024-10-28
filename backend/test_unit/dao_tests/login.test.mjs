@@ -85,4 +85,14 @@ describe("Login user", () => {
             surname: user1.surname
         });
     });
+
+    test("User not found", async () => {
+        const spyGet = jest.spyOn(db, 'get')
+            .mockImplementation((sql, params, callback) => {
+                return callback(null, null);
+            });
+
+        const result = await login.Login(user1.username, user1.password);
+        expect(result).toBe(false);
+    });
 });

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1730153958090" clover="3.2.0">
-  <project timestamp="1730153958090" name="All files">
-    <metrics statements="45" coveredstatements="35" conditionals="22" coveredconditionals="14" methods="10" coveredmethods="10" elements="77" coveredelements="59" complexity="0" loc="45" ncloc="45" packages="2" files="3" classes="3"/>
+<coverage generated="1730155098239" clover="3.2.0">
+  <project timestamp="1730155098239" name="All files">
+    <metrics statements="45" coveredstatements="37" conditionals="22" coveredconditionals="15" methods="10" coveredmethods="10" elements="77" coveredelements="62" complexity="0" loc="45" ncloc="45" packages="2" files="3" classes="3"/>
     <package name="dao">
-      <metrics statements="41" coveredstatements="31" conditionals="16" coveredconditionals="11" methods="9" coveredmethods="9"/>
+      <metrics statements="41" coveredstatements="33" conditionals="16" coveredconditionals="12" methods="9" coveredmethods="9"/>
       <file name="login.mjs" path="C:\Users\giuli\Desktop\Giulio\Magistrale\2° Anno\Software Engineering II\Kiruna-project\backend\dao\login.mjs">
-        <metrics statements="41" coveredstatements="31" conditionals="16" coveredconditionals="11" methods="9" coveredmethods="9"/>
+        <metrics statements="41" coveredstatements="33" conditionals="16" coveredconditionals="12" methods="9" coveredmethods="9"/>
         <line num="9" count="4" type="stmt"/>
         <line num="10" count="4" type="stmt"/>
         <line num="12" count="4" type="stmt"/>
@@ -27,15 +27,15 @@
         <line num="34" count="1" type="stmt"/>
         <line num="35" count="1" type="stmt"/>
         <line num="38" count="1" type="stmt"/>
-        <line num="52" count="1" type="stmt"/>
-        <line num="53" count="1" type="stmt"/>
-        <line num="54" count="1" type="stmt"/>
-        <line num="55" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="52" count="2" type="stmt"/>
+        <line num="53" count="2" type="stmt"/>
+        <line num="54" count="2" type="stmt"/>
+        <line num="55" count="2" type="cond" truecount="1" falsecount="1"/>
         <line num="56" count="0" type="stmt"/>
         <line num="57" count="0" type="stmt"/>
-        <line num="60" count="1" type="cond" truecount="1" falsecount="1"/>
-        <line num="61" count="0" type="stmt"/>
-        <line num="62" count="0" type="stmt"/>
+        <line num="60" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="61" count="1" type="stmt"/>
+        <line num="62" count="1" type="stmt"/>
         <line num="65" count="1" type="stmt"/>
         <line num="67" count="1" type="stmt"/>
         <line num="68" count="1" type="cond" truecount="1" falsecount="1"/>
