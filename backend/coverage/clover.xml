@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1730151912997" clover="3.2.0">
-  <project timestamp="1730151912997" name="All files">
-    <metrics statements="45" coveredstatements="19" conditionals="22" coveredconditionals="8" methods="10" coveredmethods="6" elements="77" coveredelements="33" complexity="0" loc="45" ncloc="45" packages="2" files="3" classes="3"/>
+<coverage generated="1730152109930" clover="3.2.0">
+  <project timestamp="1730152109930" name="All files">
+    <metrics statements="45" coveredstatements="23" conditionals="22" coveredconditionals="10" methods="10" coveredmethods="6" elements="77" coveredelements="39" complexity="0" loc="45" ncloc="45" packages="2" files="3" classes="3"/>
     <package name="dao">
-      <metrics statements="41" coveredstatements="15" conditionals="16" coveredconditionals="5" methods="9" coveredmethods="5"/>
+      <metrics statements="41" coveredstatements="19" conditionals="16" coveredconditionals="7" methods="9" coveredmethods="5"/>
       <file name="login.mjs" path="C:\Users\giuli\Desktop\Giulio\Magistrale\2° Anno\Software Engineering II\Kiruna-project\backend\dao\login.mjs">
-        <metrics statements="41" coveredstatements="15" conditionals="16" coveredconditionals="5" methods="9" coveredmethods="5"/>
-        <line num="9" count="2" type="stmt"/>
-        <line num="10" count="2" type="stmt"/>
-        <line num="12" count="2" type="stmt"/>
-        <line num="13" count="2" type="cond" truecount="1" falsecount="1"/>
-        <line num="14" count="0" type="stmt"/>
-        <line num="15" count="0" type="stmt"/>
-        <line num="17" count="2" type="cond" truecount="2" falsecount="0"/>
+        <metrics statements="41" coveredstatements="19" conditionals="16" coveredconditionals="7" methods="9" coveredmethods="5"/>
+        <line num="9" count="4" type="stmt"/>
+        <line num="10" count="4" type="stmt"/>
+        <line num="12" count="4" type="stmt"/>
+        <line num="13" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="17" count="3" type="cond" truecount="2" falsecount="0"/>
         <line num="18" count="1" type="stmt"/>
         <line num="19" count="1" type="stmt"/>
-        <line num="22" count="1" type="stmt"/>
-        <line num="24" count="1" type="stmt"/>
-        <line num="25" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="22" count="2" type="stmt"/>
+        <line num="24" count="2" type="stmt"/>
+        <line num="25" count="2" type="cond" truecount="1" falsecount="1"/>
         <line num="26" count="0" type="stmt"/>
         <line num="27" count="0" type="stmt"/>
-        <line num="29" count="1" type="stmt"/>
-        <line num="31" count="1" type="stmt"/>
-        <line num="32" count="1" type="stmt"/>
-        <line num="33" count="1" type="cond" truecount="1" falsecount="1"/>
-        <line num="34" count="0" type="stmt"/>
-        <line num="35" count="0" type="stmt"/>
+        <line num="29" count="2" type="stmt"/>
+        <line num="31" count="2" type="stmt"/>
+        <line num="32" count="2" type="stmt"/>
+        <line num="33" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="34" count="1" type="stmt"/>
+        <line num="35" count="1" type="stmt"/>
         <line num="38" count="1" type="stmt"/>
         <line num="52" count="0" type="stmt"/>
         <line num="53" count="0" type="stmt"/>

@@ -38,4 +38,27 @@ describe("Register a new user", () => {
 
         await expect(login.registerUser('existingUser', 'password', 'name', 'surname')).rejects.toThrow(Error);
     });
+
+    test("Should reject if there is a database error while checking user", async () => {
+        const spyGet = jest.spyOn(db, 'get')
+            .mockImplementation((sql, params, callback) => {
+                return callback(Error);
+            });
+
+        await expect(login.registerUser('newUser', 'password', 'name', 'surname')).rejects.toThrow(Error);
+    });
+
+    test("Should reject if there is a database error while inserting user", async () => {
+        
+        const spyGet = jest.spyOn(db, 'get')
+            .mockImplementation((sql, params, callback) => {
+                return callback(null, null);
+            });
+        const spyRun = jest.spyOn(db, 'run')
+            .mockImplementation((sql, params, callback) => {
+                return callback(Error);
+            });
+
+        await expect(login.registerUser('newUser', 'password', 'name', 'surname')).rejects.toThrow(Error);
+    });
 });
