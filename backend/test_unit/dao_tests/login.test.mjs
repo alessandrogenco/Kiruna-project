@@ -1,5 +1,6 @@
 import { describe, test, expect, jest, afterEach } from "@jest/globals";
 import db from "../../db/db.mjs"
+import crypto from 'crypto';
 
 // import the dao
 import LoginDao from "../../dao/login.mjs"
@@ -60,5 +61,28 @@ describe("Register a new user", () => {
             });
 
         await expect(login.registerUser('newUser', 'password', 'name', 'surname')).rejects.toThrow(Error);
+    });
+});
+
+describe("Login user", () => {
+    test("User logged in successfully", async () => {
+        const spyGet = jest.spyOn(db, 'get')
+            .mockImplementation((sql, params, callback) => {
+                return callback(null, {
+                    id: 1,
+                    username: user1.username,
+                    name: user1.name,
+                    surname: user1.surname,
+                    salt: 'randomSalt',
+                    password: crypto.scryptSync(user1.password, 'randomSalt', 64).toString('hex')});
+            });
+
+        const result = await login.Login(user1.username, user1.password);
+        expect(result).toEqual({
+            id: 1,
+            username: user1.username,
+            name: user1.name,
+            surname: user1.surname
+        });
     });
 });
