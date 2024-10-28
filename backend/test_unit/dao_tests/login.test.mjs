@@ -29,4 +29,13 @@ describe("Register a new user", () => {
             salt: expect.any(String)
         });
     });
+
+    test("Should reject if username already exists", async () => {
+        const spyGet = jest.spyOn(db, 'get')
+            .mockImplementation((sql, params, callback) => {
+                return callback(null, {username: "existingUser"});
+            });
+
+        await expect(login.registerUser('existingUser', 'password', 'name', 'surname')).rejects.toThrow(Error);
+    });
 });
