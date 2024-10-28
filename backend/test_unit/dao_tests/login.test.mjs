@@ -95,4 +95,20 @@ describe("Login user", () => {
         const result = await login.Login(user1.username, user1.password);
         expect(result).toBe(false);
     });
+
+    test("Password doesn't match", async () => {
+        const spyGet = jest.spyOn(db, 'get')
+            .mockImplementation((sql, params, callback) => {
+                return callback(null, {
+                    id: 1,
+                    username: user1.username,
+                    name: user1.name,
+                    surname: user1.surname,
+                    salt: 'randomSalt',
+                    password: crypto.scryptSync(user1.password, 'randomSalt', 64).toString('hex')});
+            });
+
+        const result = await login.Login(user1.username, "wrongPassword");
+        expect(result).toBe(false);
+    });
 });
