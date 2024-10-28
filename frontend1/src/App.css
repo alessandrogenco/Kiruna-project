@@ -1,0 +1,53 @@
+/* App.css */
+
+/* Stile per lo sfondo della Homepage */
+.homepage {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../public/Kiruna_homepage.jpg');
+  background-size: cover; /* Copri l'intera area */
+  background-position: center; /* Centra l'immagine */
+  height: 100vh; /* Altezza della viewport */
+  display: flex;
+  flex-direction: row; /* Cambia la direzione a riga per affiancare gli elementi */
+  justify-content: space-between; /* Spazia gli elementi su tutta la larghezza */
+  align-items: center; /* Allinea verticalmente al centro */
+  color: white; /* Colore del testo */
+  padding: 0 40px; /* Padding orizzontale maggiore */
+}
+
+/* Stile per il testo di presentazione */
+.welcome-text {
+  flex: 1; /* Occupa lo spazio disponibile */
+  padding-left: 20px; /* Margine sinistro per allontanare il testo dal bordo */
+  max-width: 600px; /* Limita la larghezza massima del testo */
+}
+
+/* Titolo specifico */
+.welcome-text h1 {
+  font-size: 7rem; /* Ingrandisci la dimensione del font */
+  margin-bottom: 20px; /* Margine sotto il titolo per distanziare il testo successivo */
+}
+
+/* Contenitore per i pulsanti */
+.button-container {
+  display: flex;
+  flex-direction: column; /* Disporre i pulsanti in colonna */
+  align-items: flex-start; /* Allineare i pulsanti a sinistra */
+  padding-right: 20px; /* Margine destro per allontanare i pulsanti dal bordo */
+  margin-left: 40px; /* Aggiungi margine a sinistra per posizionare i pulsanti più a sinistra */
+}
+
+/* Pulsanti verdi */
+.custom-green {
+  background-color: #28a745; /* Verde Bootstrap */
+  color: white; /* Colore del testo */
+  border: none; /* Rimuove il bordo */
+  margin-bottom: 10px; /* Spazio tra i pulsanti */
+  padding: 12px 24px; /* Aggiungi padding per ingrandire i pulsanti */
+  font-size: 1.2rem; /* Aumenta leggermente la dimensione del font */
+  border-radius: 5px; /* Rendi i bordi dei pulsanti arrotondati */
+}
+
+.custom-green:hover {
+  background-color: #218838; /* Verde scuro al passaggio del mouse */
+  color: white; /* Mantiene il colore del testo */
+}
