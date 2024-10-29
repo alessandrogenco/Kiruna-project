@@ -111,4 +111,14 @@ describe("Login user", () => {
         const result = await login.Login(user1.username, "wrongPassword");
         expect(result).toBe(false);
     });
+
+    test("Database error", async () => {
+        const spyGet = jest.spyOn(db, 'get')
+            .mockImplementation((sql, params, callback) => {
+                return callback(Error);
+            });
+
+        await expect(login.Login('newUser', 'password')).rejects.toThrow(Error);
+    });
+
 });
