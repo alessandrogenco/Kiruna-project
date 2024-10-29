@@ -98,6 +98,18 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+// Check currently logged in user
+app.get('/api/check-login', (req, res) => {
+    if (req.session.user) {
+        res.status(200).json({
+            message: 'User is logged in',
+            user: req.session.user
+        });
+    } else {
+        res.status(401).json({ message: 'User is not logged in' });
+    }
+});
+
 // Logout 
 app.post('/api/logout', (req, res) => {
     if (req.session.user) {
