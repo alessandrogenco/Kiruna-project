@@ -3,6 +3,7 @@ import express from 'express';
 import session from 'express-session';
 import passport from 'passport';
 import LoginDao from './dao/login.mjs';
+import DocumentDao from './dao/document.mjs';
 
 const app = express();
 const PORT = 3001;
@@ -45,6 +46,8 @@ passport.deserializeUser((username, done) => {
 });
 
 const loginDao = new LoginDao(); // Assicurati che questa riga sia presente
+const documentDao = new DocumentDao(); 
+
 
 // Register
 app.post('/api/register', async (req, res) => {
@@ -110,6 +113,30 @@ app.post('/api/logout', (req, res) => {
         });
     } else {
         res.status(400).json({ error: 'No user is currently logged in' });
+    }
+});
+
+// Add the description
+app.put('/api/addDescription', async (req, res) => {
+    const { id, title, description } = req.body;
+
+    try {
+        const result = await documentDao.addDocumentDescription(id, title, description);
+
+        res.status(200).json({
+            message: 'Document description updated successfully',
+            document: {
+                id: result.id,
+                title: result.title,
+                description: result.description
+            }
+        });
+    } catch (error) {
+        if (error.message.includes('Document not found')) {
+            res.status(404).json({ message: 'Document not found. Please ensure the title is correct.' });
+        } else {
+            res.status(400).json({ message: error.message });
+        }
     }
 });
 
