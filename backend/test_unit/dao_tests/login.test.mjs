@@ -121,4 +121,21 @@ describe("Login user", () => {
         await expect(login.Login('newUser', 'password')).rejects.toThrow(Error);
     });
 
+    test("Error during password hashing", async () => {
+        const spyGet = jest.spyOn(db, 'get')
+            .mockImplementation((sql, params, callback) => {
+                return callback(null, {
+                    id: 1,
+                    username: user1.username,
+                    name: user1.name,
+                    surname: user1.surname,
+                    salt: 'randomSalt',
+                    password: crypto.scryptSync(user1.password, 'randomSalt', 64).toString('hex')});
+            });
+        const spy = jest.spyOn(crypto, 'scrypt').mockImplementation((password, salt, keylen, callback) => {
+            callback(Error);
+        });
+
+        await expect(login.Login(user1.username, user1.password)).rejects.toThrow(Error);
+    });
 });
