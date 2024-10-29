@@ -19,6 +19,10 @@ Content-Type: application/json
 }
 
 ###
+GET http://localhost:3001/api/check-login
+Accept: application/json
+
+###
 POST http://localhost:3001/api/logout
 Content-Type: application/json
 
