@@ -12,7 +12,7 @@ app.use(express.json());
 
 // CORS middleware
 const corsOptions = {
-    origin: ["http://localhost:5173"], // Aggiornato per includere la porta corretta
+    origin: ["http://localhost:3000"], // Aggiornato per includere la porta corretta
     optionsSuccessStatus: 200,
     credentials: true
 };

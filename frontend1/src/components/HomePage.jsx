@@ -23,9 +23,6 @@ function HomePage({ username }) {
         <button className="btn custom-green mb-3" onClick={() => navigate('/login')}>
           Login
         </button>
-        <button className="btn custom-green mb-3" onClick={() => navigate('/register')}>
-          Register
-        </button>
         <button className="btn custom-green" onClick={() => navigate('/explore')}>
           Start to Explore
         </button>
