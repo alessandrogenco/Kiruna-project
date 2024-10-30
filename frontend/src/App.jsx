@@ -47,16 +47,16 @@ function App() {
         {/* Home Page */}
         <Route
           path="/"
-          element={<HomePage username={user?.username} />}
+          element={<HomePage login={handleLogin}/>}
         />
         
-        {/* Login Page */}
+        {/* Login Page 
         <Route
           path="/login"
           element={
             loggedIn ? <Navigate to="/" /> : <LoginForm login={handleLogin} />
           }
-        />
+        />*/}
 
         {/* Page to Explore */}
         <Route

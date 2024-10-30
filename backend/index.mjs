@@ -12,7 +12,7 @@ app.use(express.json());
 
 // CORS middleware
 const corsOptions = {
-    origin: ["http://localhost:5173"], // Aggiornato per includere la porta corretta
+    origin: ["http://localhost:3000"], // Aggiornato per includere la porta corretta
     optionsSuccessStatus: 200,
     credentials: true
 };
@@ -128,11 +128,30 @@ app.post('/api/logout', (req, res) => {
     }
 });
 
+// Get all documents
+app.get('/api/documents', async (req, res) => {
+    try {
+        const documents = await documentDao.getAllDocuments();
+        res.status(200).json(documents);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 // Add the description
 app.put('/api/addDescription', async (req, res) => {
     const { id, title, description } = req.body;
 
     try {
+        if (!description || description.trim() === "") {
+            throw new Error('Description cannot be empty.');
+        }
+
+        const document = await documentDao.getDocumentById(id);
+        if (!document || document.title !== title) {
+            throw new Error('Document not found.');
+        }
+
         const result = await documentDao.addDocumentDescription(id, title, description);
 
         res.status(200).json({
@@ -145,7 +164,7 @@ app.put('/api/addDescription', async (req, res) => {
         });
     } catch (error) {
         if (error.message.includes('Document not found')) {
-            res.status(404).json({ message: 'Document not found. Please ensure the title is correct.' });
+            res.status(404).json({ message: error.message });
         } else {
             res.status(400).json({ message: error.message });
         }
