@@ -7,6 +7,7 @@ import LoginForm from './components/Auth';
 import HomePage from './components/HomePage'; // Importa il componente HomePage
 import ExplorePage from './components/ExplorePage'; // Importa il componente ExplorePage
 import LoggedInPage from './components/LoggedInPage';
+import Documents from './components/Documents';
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -59,7 +60,11 @@ function App() {
           element={<ExplorePage />}
         />
 
-
+           {/* Documents Page */}
+           <Route
+          path="/documents"
+          element={<Documents />}
+        />
 
       </Routes>
     </>

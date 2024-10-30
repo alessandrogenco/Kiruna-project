@@ -28,7 +28,7 @@ const AppNavbar = ({ isLoggedIn, role, onLoginToggle }) => {
               />
             </Form>
             {/* Link Documents and Role Display */}
-            <Nav.Link as={Link} to="/documents" className="text-light">Add documents</Nav.Link>
+            <Nav.Link as={Link} to="/documents" className="text-light">Add description documents</Nav.Link>
             <Nav.Link as={Link} to="/documents" className="text-light">Link documents</Nav.Link>
             {/*<Nav.Link className="text-light">Role | {isLoggedIn ? role : 'Not logged in'}</Nav.Link>+*/}
           </Nav>

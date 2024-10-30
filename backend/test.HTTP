@@ -47,3 +47,7 @@ Content-Type: application/json
     "title": "Construction of Block 1 begins (69)",
     "description": ""
 }
+
+########### get all documents
+GET http://localhost:3001/api/documents
+Accept: application/json

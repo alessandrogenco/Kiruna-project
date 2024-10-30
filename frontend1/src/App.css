@@ -51,3 +51,10 @@
   background-color: #218838; /* Verde scuro al passaggio del mouse */
   color: white; /* Mantiene il colore del testo */
 }
+
+body {
+  background-color: #a9a9a9; /* Light gray background */
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
