@@ -143,7 +143,16 @@ app.put('/api/addDescription', async (req, res) => {
     const { id, title, description } = req.body;
 
     try {
-        const result = await documentDao.addDocumentDescription(id, title, description);
+        const document = await documentDao.getDocumentById(id);
+        if (!document) {
+            throw new Error('Document not found');
+        }
+
+        const updatedDescription = document.description
+            ? `${document.description}\n${description}`
+            : description;
+
+        const result = await documentDao.addDocumentDescription(id, title, updatedDescription);
 
         res.status(200).json({
             message: 'Document description updated successfully',
