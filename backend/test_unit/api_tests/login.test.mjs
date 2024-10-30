@@ -74,4 +74,14 @@ describe("POST Register a new user", () => {
         );
     });
 
+    test("Should reject if a field is missing", async () => {
+        const app = (await import("../../index")).app;
+        const response = await request(app).post(baseURL + "register").send({
+            username: user1.username,
+            surname: user1.surname,
+            password: user1.password
+        });
+
+        expect(response.status).toBe(400);
+    });
 });
