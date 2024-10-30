@@ -106,3 +106,36 @@ describe("POST Register a new user", () => {
         );
     });
 });
+
+describe("POST Login user", () => {
+    test("User logged in successfully", async () => {
+        const spyDao = jest.spyOn(LoginDao.prototype, "Login").mockResolvedValueOnce({
+            id: 1,
+            username: user1.username,
+            name: user1.name,
+            surname: user1.surname
+        });
+
+        const app = (await import("../../index")).app;
+        const response = await request(app).post(baseURL + "login").send({
+            username: user1.username,
+            password: user1.password
+        });
+
+        expect(response.status).toBe(200);
+        expect(spyDao).toHaveBeenCalledTimes(1);
+        expect(spyDao).toHaveBeenCalledWith(
+            user1.username,
+            user1.password
+        );
+        expect(response.body).toEqual({
+            message: 'Login successful',
+            user: {
+                id: 1,
+                username: user1.username,
+                name: user1.name,
+                surname: user1.surname
+            }
+        });  
+    });
+});
