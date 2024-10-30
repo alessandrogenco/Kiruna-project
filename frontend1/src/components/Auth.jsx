@@ -17,7 +17,7 @@ function LoginForm(props) {
         const credentials = { username, password };
 
         props.login(credentials)
-            .then(() => navigate("/explore"))
+            .then(() => navigate("/loggedInPage"))
             .catch((err) => {
                 if (err.message === "Unauthorized")
                     setErrorMessage("Invalid username and/or password");
