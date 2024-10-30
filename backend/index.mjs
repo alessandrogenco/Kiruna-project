@@ -143,16 +143,16 @@ app.put('/api/addDescription', async (req, res) => {
     const { id, title, description } = req.body;
 
     try {
-        const document = await documentDao.getDocumentById(id);
-        if (!document) {
-            throw new Error('Document not found');
+        if (!description || description.trim() === "") {
+            throw new Error('Description cannot be empty.');
         }
 
-        const updatedDescription = document.description
-            ? `${document.description}\n${description}`
-            : description;
+        const document = await documentDao.getDocumentById(id);
+        if (!document || document.title !== title) {
+            throw new Error('Document not found.');
+        }
 
-        const result = await documentDao.addDocumentDescription(id, title, updatedDescription);
+        const result = await documentDao.addDocumentDescription(id, title, description);
 
         res.status(200).json({
             message: 'Document description updated successfully',
@@ -164,7 +164,7 @@ app.put('/api/addDescription', async (req, res) => {
         });
     } catch (error) {
         if (error.message.includes('Document not found')) {
-            res.status(404).json({ message: 'Document not found. Please ensure the title is correct.' });
+            res.status(404).json({ message: error.message });
         } else {
             res.status(400).json({ message: error.message });
         }
