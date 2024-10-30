@@ -53,4 +53,25 @@ describe("POST Register a new user", () => {
         
     });
 
+    test("Should reject if username already exists", async () => {
+        const spyDao = jest.spyOn(LoginDao.prototype, "registerUser").mockRejectedValueOnce(new Error('Username already exists. Please choose another one.'));
+
+        const app = (await import("../../index")).app;
+        const response = await request(app).post(baseURL + "register").send({
+            username: user1.username,
+            name: user1.name,
+            surname: user1.surname,
+            password: user1.password
+        });
+
+        expect(response.status).toBe(409);
+        expect(spyDao).toHaveBeenCalledTimes(1);
+        expect(spyDao).toHaveBeenCalledWith(
+            user1.username,
+            user1.password,
+            user1.name,
+            user1.surname
+        );
+    });
+
 });
