@@ -138,4 +138,13 @@ describe("POST Login user", () => {
             }
         });  
     });
+
+    test("Should reject if a field is missing", async () => {
+        const app = (await import("../../index")).app;
+        const response = await request(app).post(baseURL + "login").send({
+            username: user1.username
+        });
+
+        expect(response.status).toBe(400);
+    });
 });
