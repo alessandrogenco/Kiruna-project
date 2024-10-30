@@ -84,4 +84,25 @@ describe("POST Register a new user", () => {
 
         expect(response.status).toBe(400);
     });
+
+    test("Should reject if an internal server error occurs", async () => {
+        const spyDao = jest.spyOn(LoginDao.prototype, "registerUser").mockRejectedValueOnce(new Error());
+
+        const app = (await import("../../index")).app;
+        const response = await request(app).post(baseURL + "register").send({
+            username: user1.username,
+            name: user1.name,
+            surname: user1.surname,
+            password: user1.password
+        });
+
+        expect(response.status).toBe(500);
+        expect(spyDao).toHaveBeenCalledTimes(1);
+        expect(spyDao).toHaveBeenCalledWith(
+            user1.username,
+            user1.password,
+            user1.name,
+            user1.surname
+        );
+    });
 });
