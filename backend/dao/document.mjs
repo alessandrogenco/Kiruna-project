@@ -4,6 +4,23 @@ import db from '../db/db.mjs';
 
 class DocumentDao{
     
+
+    //get all documents
+    getAllDocuments() {
+        return new Promise((resolve, reject) => {
+            const getAllDocuments = 'SELECT * FROM Documents';
+
+            db.all(getAllDocuments, [], (err, documents) => {
+                if (err) {
+                    console.error('Database error while getting all documents:', err.message);
+                    return reject(new Error('Database error: ' + err.message));
+                }
+
+                resolve(documents);
+            });
+        });
+    }
+
     addDocumentDescription(id, title, description) {
         return new Promise((resolve, reject) => {
 

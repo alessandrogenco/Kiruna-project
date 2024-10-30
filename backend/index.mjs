@@ -128,6 +128,16 @@ app.post('/api/logout', (req, res) => {
     }
 });
 
+// Get all documents
+app.get('/api/documents', async (req, res) => {
+    try {
+        const documents = await documentDao.getAllDocuments();
+        res.status(200).json(documents);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 // Add the description
 app.put('/api/addDescription', async (req, res) => {
     const { id, title, description } = req.body;
