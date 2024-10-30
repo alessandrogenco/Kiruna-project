@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import './Documents.css';
 
 function Documents() {
   const [documents, setDocuments] = useState([]);
@@ -58,8 +59,7 @@ function Documents() {
   };
 
   return (
-    <div>
-      <h2>Documents</h2>
+    <div className="documents-container">
       <ul>
         {documents.map((document) => (
           <li key={document.id}>
