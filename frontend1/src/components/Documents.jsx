@@ -72,7 +72,7 @@ function Documents() {
                 value={descriptions[document.id] || ''}
                 onChange={(e) => handleDescriptionChange(document.id, e.target.value)}
               />
-              <button onClick={() => handleAddDescription(document.id, document.title)}>Add Description</button>
+              <button  onClick={() => handleAddDescription(document.id, document.title)}>Add Description</button>
             </div>
           </li>
         ))}

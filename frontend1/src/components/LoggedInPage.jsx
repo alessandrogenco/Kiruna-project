@@ -1,8 +1,9 @@
-// LoggedInPage.jsx
 import React from 'react';
 import Navbar from './Navbar'; // Adjust the path based on your folder structure
 
 function LoggedInPage({ isLoggedIn, role, onLoginToggle }) {
+ 
+
   return (
     <div className="vh-100 d-flex flex-column">
       {/* Navbar at the top */}
@@ -13,7 +14,7 @@ function LoggedInPage({ isLoggedIn, role, onLoginToggle }) {
         <h1>Explore Page</h1>
         <p>Content will be added here.</p>
       </div>
-    </div>
+      </div>
   );
 }
 

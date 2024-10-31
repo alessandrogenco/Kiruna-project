@@ -1,8 +1,16 @@
-import React from 'react';
-import { Navbar, Nav, Button, Container, Form, FormControl } from 'react-bootstrap';
+import React, { useState }  from 'react';
+import { Navbar, Nav, Button, Container } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
+import MessageModal from './MessageModal'; 
+
 const AppNavbar = ({ isLoggedIn, role, onLoginToggle }) => {
+  
   const navigate = useNavigate(); // Allows navigation between pages
+  const [showModal, setShowModal] = useState(false);
+  
+  const handleShowModal = () => setShowModal(true);
+  const handleCloseModal = () => setShowModal(false);
+  
   // Function to handle login/logout button clicks
   const handleLoginClick = () => {
     if (isLoggedIn) {
@@ -12,6 +20,7 @@ const AppNavbar = ({ isLoggedIn, role, onLoginToggle }) => {
     }
   };
   return (
+    <div className="vh-100 d-flex flex-column">
     <Navbar bg="dark" variant="dark" expand="md" className="mb-3">
       <Container>
         <Navbar.Brand as={Link} to="/">Kiruna</Navbar.Brand>
@@ -19,16 +28,8 @@ const AppNavbar = ({ isLoggedIn, role, onLoginToggle }) => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            {/* Description Input Field */}
-            <Form className="d-flex flex-grow-1">
-              <FormControl
-                type="text"
-                placeholder="Add description"
-                className="me-2"
-              />
-            </Form>
             {/* Link Documents and Role Display */}
-            <Nav.Link as={Link} to="/documents" className="text-light">Add description documents</Nav.Link>
+            <Nav.Link className="text-light" onClick={handleShowModal}>Add description documents</Nav.Link>
             <Nav.Link as={Link} to="/documents" className="text-light">Link documents</Nav.Link>
             {/*<Nav.Link className="text-light">Role | {isLoggedIn ? role : 'Not logged in'}</Nav.Link>+*/}
           </Nav>
@@ -39,6 +40,14 @@ const AppNavbar = ({ isLoggedIn, role, onLoginToggle }) => {
         </Navbar.Collapse>
       </Container>
     </Navbar>
+  {/* Message Modal */}
+  <MessageModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        message="This is a message in the modal."
+      />
+    </div>
+    
   );
 };
 export default AppNavbar;
