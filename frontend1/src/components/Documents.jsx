@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import './Documents.css';
+import { Modal, Button } from 'react-bootstrap';
+import './Documents.css'; // Import the CSS file
 
-function Documents() {
+function Documents({ show, handleClose }) {
   const [documents, setDocuments] = useState([]);
   const [descriptions, setDescriptions] = useState({});
+  const [selectedDocument, setSelectedDocument] = useState(null); // State for selected document
+  const [showFormModal, setShowFormModal] = useState(false); // State to control the form modal
 
   useEffect(() => {
     const fetchDocuments = async () => {
@@ -30,8 +33,8 @@ function Documents() {
   };
 
   const handleAddDescription = async (id, title) => {
-    const description = descriptions[id];
-    if (!description) return;
+    const newDescription = descriptions[id];
+    if (!newDescription) return;
 
     try {
       const response = await fetch('http://localhost:3001/api/addDescription', {
@@ -39,7 +42,7 @@ function Documents() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ id, title, description }),
+        body: JSON.stringify({ id, title, description: newDescription }),
       });
 
       if (!response.ok) {
@@ -53,30 +56,62 @@ function Documents() {
           doc.id === id ? { ...doc, description: updatedDocument.document.description } : doc
         )
       );
+      setDescriptions({ ...descriptions, [id]: '' }); // Clear the input field after submission
+      setShowFormModal(false); // Close the form modal
     } catch (error) {
       console.error('Error adding description:', error);
     }
+  };
+
+  const handleDocumentClick = (document) => {
+    setSelectedDocument(document);
+    setShowFormModal(true);
+  };
+
+  const handleCloseFormModal = () => {
+    setShowFormModal(false);
+    setSelectedDocument(null);
   };
 
   return (
     <div className="documents-container">
       <ul>
         {documents.map((document) => (
-          <li key={document.id}>
+          <li key={document.id} onClick={() => handleDocumentClick(document)}>
             <div>
               <strong>{document.title}</strong>
               <p>{document.description}</p>
-              <input
-                type="text"
-                placeholder="Add description"
-                value={descriptions[document.id] || ''}
-                onChange={(e) => handleDescriptionChange(document.id, e.target.value)}
-              />
-              <button  onClick={() => handleAddDescription(document.id, document.title)}>Add Description</button>
             </div>
           </li>
         ))}
       </ul>
+
+      {selectedDocument && (
+        <Modal show={showFormModal} onHide={handleCloseFormModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>Add Description for {selectedDocument.title}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <input
+              type="text"
+              placeholder="Add description"
+              value={descriptions[selectedDocument.id] || ''}
+              onChange={(e) => handleDescriptionChange(selectedDocument.id, e.target.value)}
+            />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseFormModal}>
+              Close
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => handleAddDescription(selectedDocument.id, selectedDocument.title)}
+            >
+              Add Description
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      )}
     </div>
   );
 }
