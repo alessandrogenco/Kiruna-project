@@ -1,34 +1,34 @@
 // HomePage.jsx
-import { Row, Col } from 'react-bootstrap';
-import Auth from './Auth'; // Import del componente Auth per il login
-import '../App.css';
-import PropTypes from "prop-types";
+import { useNavigate } from 'react-router-dom';
+import { Row, Col } from 'react-bootstrap'; // Importa i componenti Row e Col
+import '../App.css'; 
 
-function HomePage(props) {
+function HomePage({ username }) {
+  const navigate = useNavigate();
+
   return (
-    <div className="text-white m-0"> 
-      <Row> 
-        <Col xs={5} className="welcome-text justify-content-center align-items-center d-flex"> 
-          <div>
-            <h1 className='large-heading'>KirunaExplorer</h1>
-            <p>
-              Discover Kiruna, a unique Swedish city that tells a story of transformation and innovation through its architecture.
-              Due to mining development, Kiruna has undergone profound changes over the years, with buildings that reflect its industrial history and resilient spirit.
-              In this guide, you will explore the highlights of the city’s architectural evolution, from its iconic historic buildings to modern sustainable solutions.
-              Join us on this journey to understand how mining has shaped not only the urban landscape but also the identity of Kiruna.
-            </p>
-          </div>
-        </Col>
-        <Col sm={5} className="text-dark"> 
-          <Auth login={props.login}/> 
-        </Col>
-      </Row>
-    </div>
+    <Row className="homepage"> {/* Usa Row per il layout a griglia */}
+      <Col md={6} className="welcome-text"> {/* Colonna per il testo di benvenuto */}
+        <h1>KirunaExplorer</h1>
+        <p>
+        Discover Kiruna, a unique Swedish city that tells a story of transformation and innovation through its architecture. 
+        Due to mining development, Kiruna has undergone profound changes over the years, 
+        with buildings that reflect its industrial history and resilient spirit. 
+        In this guide, you will explore the highlights of the city’s architectural evolution, 
+        from its iconic historic buildings to modern sustainable solutions. 
+        Join us on this journey to understand how mining has shaped not only the urban landscape but also the identity of Kiruna.
+        </p>
+      </Col>
+      <Col md={6} className="button-container d-flex flex-column justify-content-center align-items-center"> {/* Colonna per i pulsanti */}
+        <button className="btn custom-green mb-3" onClick={() => navigate('/login')}>
+          Login
+        </button>
+        <button className="btn custom-green" onClick={() => navigate('/explore')}>
+          Start to Explore
+        </button>
+      </Col>
+    </Row>
   );
 }
-
-HomePage.propTypes = {
-  login: PropTypes.func,
-};
 
 export default HomePage;

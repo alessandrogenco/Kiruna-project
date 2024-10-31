@@ -12,7 +12,7 @@ app.use(express.json());
 
 // CORS middleware
 const corsOptions = {
-    origin: ["http://localhost:3000", "http://localhost:5173"], // we have to choose a single frontend!!
+    origin: ["http://localhost:5173"], // we have to choose a single frontend!!
     optionsSuccessStatus: 200,
     credentials: true
 };

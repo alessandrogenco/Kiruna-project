@@ -6,6 +6,8 @@ import API from './API.mjs';
 import LoginForm from './components/Auth';
 import HomePage from './components/HomePage'; // Importa il componente HomePage
 import ExplorePage from './components/ExplorePage'; // Importa il componente ExplorePage
+import LoggedInPage from './components/LoggedInPage';
+import Documents from './components/Documents';
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -35,22 +37,35 @@ function App() {
         {/* Home Page */}
         <Route
           path="/"
-          element={<HomePage login={handleLogin}/>}
+          element={<HomePage username={user?.username} />}
         />
         
-        {/* Login Page 
+        {/* Login Page */}
         <Route
           path="/login"
           element={
-            loggedIn ? <Navigate to="/" /> : <LoginForm login={handleLogin} />
+            loggedIn ? <Navigate to="/loggedInPage" /> : <LoginForm login={handleLogin} />
           }
-        />*/}
+        />
+
+          {/* Logged In Page */}
+          <Route
+          path="/loggedInPage"
+          element={<LoggedInPage/>}
+        />
 
         {/* Page to Explore */}
         <Route
           path="/explore"
           element={<ExplorePage />}
         />
+
+           {/* Documents Page */}
+           <Route
+          path="/documents"
+          element={<Documents />}
+        />
+
       </Routes>
     </>
   );
