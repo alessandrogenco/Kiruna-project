@@ -105,6 +105,7 @@ function Documents({ show, handleClose }) {
             </Button>
             <Button
               variant="primary"
+              className="btn custom-green"
               onClick={() => handleAddDescription(selectedDocument.id, selectedDocument.title)}
             >
               Add Description
