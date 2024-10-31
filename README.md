@@ -11,7 +11,7 @@ Story points:
 - KX8: 5 points;
 - KX9: 12 points;
 
-CC BY-NC-SA 4.0 license link: 
+# CC BY-NC-SA 4.0 License link: 
 
  https://creativecommons.org/licenses/by-nc-sa/4.0/
 
