@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Button, Form, FormControl } from 'react-bootstrap';
 import './Documents.css'; // Import the CSS file
 
 function Documents({ show, handleClose }) {
@@ -7,6 +7,7 @@ function Documents({ show, handleClose }) {
   const [descriptions, setDescriptions] = useState({});
   const [selectedDocument, setSelectedDocument] = useState(null); // State for selected document
   const [showFormModal, setShowFormModal] = useState(false); // State to control the form modal
+  const [searchQuery, setSearchQuery] = useState(''); // State for search query
 
   useEffect(() => {
     const fetchDocuments = async () => {
@@ -73,10 +74,28 @@ function Documents({ show, handleClose }) {
     setSelectedDocument(null);
   };
 
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const filteredDocuments = documents.filter((document) =>
+    document.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="documents-container">
+      <Form className="d-flex mb-3">
+        <FormControl
+          type="search"
+          placeholder="Search documents"
+          className="me-2"
+          aria-label="Search"
+          value={searchQuery}
+          onChange={handleSearchChange}
+        />
+      </Form>
       <ul>
-        {documents.map((document) => (
+        {filteredDocuments.map((document) => (
           <li key={document.id} onClick={() => handleDocumentClick(document)}>
             <div>
               <strong>{document.title}</strong>
@@ -105,7 +124,6 @@ function Documents({ show, handleClose }) {
             </Button>
             <Button
               variant="primary"
-              className="btn custom-green"
               onClick={() => handleAddDescription(selectedDocument.id, selectedDocument.title)}
             >
               Add Description

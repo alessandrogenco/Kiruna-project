@@ -6,7 +6,7 @@ function MessageModal({ show, handleClose, message }) {
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>
-        <Modal.Title>Message</Modal.Title>
+        <Modal.Title>Documents</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <p>{message}</p>

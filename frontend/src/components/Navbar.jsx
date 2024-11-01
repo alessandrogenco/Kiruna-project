@@ -44,7 +44,6 @@ const AppNavbar = ({ isLoggedIn, role, onLoginToggle }) => {
   <MessageModal
         show={showModal}
         handleClose={handleCloseModal}
-        message="This is a message in the modal."
       />
     </div>
     
