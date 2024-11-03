@@ -17,7 +17,7 @@ function LoginForm(props) {
         const credentials = { username, password };
 
         props.login(credentials)
-            .then(() => navigate("/loggedInPage"))
+            .then(() => navigate("/explore"))
             .catch((err) => {
                 if (err.message === "Unauthorized")
                     setErrorMessage("Invalid username and/or password");
@@ -44,7 +44,7 @@ function LoginForm(props) {
                         <Form.Control
                             type="text"
                             value={username}
-                            placeholder="Enter your game username."
+                            placeholder="Enter your username."
                             onChange={(ev) => setUsername(ev.target.value)}
                             required={true}
                             className="w-100"

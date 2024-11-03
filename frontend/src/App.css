@@ -1,8 +1,20 @@
 /* App.css */
 
+.navbar-brand {
+  font-weight: 700; /* oppure un valore numerico come 700 */
+}
+
+.navbar {
+  background-color: #000000;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
 /* Stile per lo sfondo della Homepage */
 .homepage {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../public/Kiruna_homepage.jpg');
+  background-image: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('../public/kiruna_wallpaper.jpg');
   background-size: cover; /* Copri l'intera area */
   background-position: center; /* Centra l'immagine */
   height: 100vh; /* Altezza della viewport */
@@ -27,33 +39,30 @@
   margin-bottom: 20px; /* Margine sotto il titolo per distanziare il testo successivo */
 }
 
-/* Contenitore per i pulsanti */
-.button-container {
-  display: flex;
-  flex-direction: column; /* Disporre i pulsanti in colonna */
-  align-items: flex-start; /* Allineare i pulsanti a sinistra */
-  padding-right: 20px; /* Margine destro per allontanare i pulsanti dal bordo */
-  margin-left: 40px; /* Aggiungi margine a sinistra per posizionare i pulsanti più a sinistra */
-}
 
-/* Pulsanti verdi */
-.custom-green {
-  background-color: #28a745; /* Verde Bootstrap */
-  color: white; /* Colore del testo */
-  border: none; /* Rimuove il bordo */
-  margin-bottom: 10px; /* Spazio tra i pulsanti */
-  padding: 12px 24px; /* Aggiungi padding per ingrandire i pulsanti */
-  font-size: 1.2rem; /* Aumenta leggermente la dimensione del font */
-  border-radius: 5px; /* Rendi i bordi dei pulsanti arrotondati */
-}
+.btn-grad {background-image: linear-gradient(to right, #1e9726 0%, #a5e243  51%, #1e9726  100%)}
+.btn-grad {
+  background-size: cover;
+   margin: 10px;
+   padding: 15px 45px;
+   text-align: center;
+   border: none;
+   transition: 0.5s;
+   background-size: 200% auto;        
+   font-weight: 700;
+   border-radius: 30px;
+   display: block;
+   color: #ffffff;
+ }
 
-.custom-green:hover {
-  background-color: #218838; /* Verde scuro al passaggio del mouse */
-  color: white; /* Mantiene il colore del testo */
-}
+ .btn-grad:hover {
+   background-position: right center; /* change the direction of the change here */
+   color: #ffffff;
+   text-decoration: none;
+ }
 
 body {
-  background-color: #a9a9a9; /* Light gray background */
+  /*background-color: #a9a9a9; /* Light gray background */
   margin: 0;
   font-family: Arial, sans-serif;
 }

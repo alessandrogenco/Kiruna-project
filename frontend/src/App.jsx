@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import API from './API.mjs';
 import LoginForm from './components/Auth';
@@ -10,9 +10,26 @@ import LoggedInPage from './components/LoggedInPage';
 import Documents from './components/Documents';
 
 function App() {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(null); // Inizializza come `null`
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    API.checkLogin()
+      .then(user => {
+        if (user) {
+          setLoggedIn(true);
+          setUser(user);
+        } else {
+          setLoggedIn(false);
+          setUser(null);
+        }
+      })
+      .catch(e => {
+        setLoggedIn(false);
+        setUser(null);
+      });
+  }, []);
 
   const handleLogin = async (credentials) => {
     try {
@@ -21,54 +38,51 @@ function App() {
       if (!user) {
         throw new Error("Wrong credentials.");
       }
-
       setUser(user);
       setLoggedIn(true);
-      navigate('/'); // Reindirizza alla homepage
+      navigate('/');
     } catch (err) {
       console.error("Login error:", err.message);
       throw err;
     }
   };
 
+  const handleLogout = async () => {
+    await API.logout();
+    setLoggedIn(false);
+    setUser(null);
+    navigate('/');
+  };
+
+  if (loggedIn === null) {
+    return <div>Loading...</div>; // Mostra un messaggio di caricamento
+  }
+
   return (
     <>
       <Routes>
-        {/* Home Page */}
         <Route
           path="/"
-          element={<HomePage username={user?.username} />}
+          element={<HomePage isLoggedIn={loggedIn} handleLogout={handleLogout} />}
         />
-        
-        {/* Login Page */}
         <Route
           path="/login"
           element={
             loggedIn ? <Navigate to="/loggedInPage" /> : <LoginForm login={handleLogin} />
           }
         />
-
-          {/* Logged In Page */}
-          <Route
-          path="/loggedInPage"
-          element={<LoggedInPage/>}
-        />
-
-        {/* Page to Explore */}
         <Route
           path="/explore"
-          element={<ExplorePage />}
+          element={<ExplorePage isLoggedIn={loggedIn} handleLogout={handleLogout} />}
         />
-
-           {/* Documents Page */}
-           <Route
+        <Route
           path="/documents"
           element={<Documents />}
         />
-
       </Routes>
     </>
   );
 }
+
 
 export default App;
