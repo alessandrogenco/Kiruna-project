@@ -135,3 +135,27 @@ describe("GET Check user login", () => {
     });
 
 });
+
+describe("GET Logout user", () => {
+    test("User has logged out successfully", async () => {
+        const app = (await import("../index")).app;
+        const agent = request.agent(app);
+        await agent.post('/api/login').send({
+            username: user1.username,
+            password: user1.password
+        });
+
+        const response = await agent.post('/api/logout');
+        expect(response.status).toBe(200);
+        expect(response.body.message).toBe(`${user1.username} has logged out successfully`);
+    });
+
+    test("No user is currently logged in", async () => {
+        const app = (await import("../index")).app;
+
+        const response = await request(app).post('/api/logout');
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe('No user is currently logged in');
+    });
+
+});
