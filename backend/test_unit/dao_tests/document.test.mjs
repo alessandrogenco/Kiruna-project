@@ -92,3 +92,67 @@ describe("Add new description", () => {
             .toThrow("Database error: Database error during update");
     });
 });
+
+    // Test per getDocumentById
+describe("Get document by ID", () => {
+    test("Successfully retrieves a document by ID", async () => {
+        const id = 1;
+        const mockDocument = { id, title: "Sample Document", description: "Sample description" };
+
+        // Mocking db.get per simulare il recupero del documento
+        jest.spyOn(db, "get").mockImplementation((sql, params, callback) => {
+            callback(null, mockDocument);
+        });
+
+        const result = await documentDao.getDocumentById(id);
+        
+        expect(result).toEqual(mockDocument);
+    });
+
+    test("Fails when document is not found by ID", async () => {
+        const id = 1;
+
+        jest.spyOn(db, "get").mockImplementation((sql, params, callback) => {
+            callback(null, null);  // Documento non trovato
+        });
+
+        await expect(documentDao.getDocumentById(id)).rejects.toThrow("Document not found");
+    });
+
+    test("Fails when there is a database error during getDocumentById", async () => {
+        const id = 1;
+
+        jest.spyOn(db, "get").mockImplementation((sql, params, callback) => {
+            callback(new Error("Database error during getDocumentById"), null);
+        });
+
+        await expect(documentDao.getDocumentById(id)).rejects.toThrow("Database error: Database error during getDocumentById");
+    });
+});
+
+// Test per getAllDocuments
+describe("Get all documents", () => {
+    test("Successfully retrieves all documents", async () => {
+        const mockDocuments = [
+            { id: 1, title: "Document 1", description: "Description 1" },
+            { id: 2, title: "Document 2", description: "Description 2" }
+        ];
+
+        // Mocking db.all per simulare il recupero di tutti i documenti
+        jest.spyOn(db, "all").mockImplementation((sql, params, callback) => {
+            callback(null, mockDocuments);
+        });
+
+        const result = await documentDao.getAllDocuments();
+        
+        expect(result).toEqual(mockDocuments);
+    });
+
+    test("Fails when there is a database error during getAllDocuments", async () => {
+        jest.spyOn(db, "all").mockImplementation((sql, params, callback) => {
+            callback(new Error("Database error during getAllDocuments"), null);
+        });
+
+        await expect(documentDao.getAllDocuments()).rejects.toThrow("Database error: Database error during getAllDocuments");
+    });
+});
