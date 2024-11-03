@@ -62,6 +62,18 @@ describe("Register a new user", () => {
 
         await expect(login.registerUser('newUser', 'password', 'name', 'surname')).rejects.toThrow(Error);
     });
+
+    test("Error during password hashing", async () => {
+        const spyGet = jest.spyOn(db, 'get')
+            .mockImplementation((sql, params, callback) => {
+                return callback(null, null);
+            });
+        const spy = jest.spyOn(crypto, 'scrypt').mockImplementation((password, salt, keylen, callback) => {
+            callback(Error);
+        });
+
+        await expect(login.registerUser(user1.username, user1.password, user1.name, user1.surname)).rejects.toThrow(Error);
+    });
 });
 
 describe("Login user", () => {
