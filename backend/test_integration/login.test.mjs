@@ -19,8 +19,7 @@ afterEach(()=>{
     jest.restoreAllMocks()
 });
 
-afterAll(async () => {
-    await cleanup();
+afterAll(() => {
     server.close();
 });
 
@@ -64,6 +63,50 @@ describe("POST Register a new user", () => {
         });
 
         expect(response.status).toBe(400);
+    });
+
+});
+
+describe("POST Login user", () => {
+    test("User logged in successfully", async () => {
+        const app = (await import("../index")).app;
+        const response = await request(app).post(baseURL + "login").send({
+            username: user1.username,
+            password: user1.password
+        });
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({
+            message: 'Login successful',
+            user: {
+                id: expect.any(Number),
+                username: user1.username,
+                name: user1.name,
+                surname: user1.surname
+            }
+        });  
+    });
+
+    test("Should reject if a field is missing", async () => {
+        const app = (await import("../index")).app;
+        const response = await request(app).post(baseURL + "login").send({
+            username: user1.username
+        });
+
+        expect(response.status).toBe(400);
+    });
+
+    test("Should reject if invalid username or password", async () => {
+        const app = (await import("../index")).app;
+        const response = await request(app).post(baseURL + "login").send({
+            username: "invalidUsername",
+            password: user1.password
+        });
+
+        expect(response.status).toBe(401);
+        expect(response.body).toEqual({ 
+            message: 'Invalid username or password.' 
+        });
     });
 
 });
