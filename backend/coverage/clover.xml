@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1730367546419" clover="3.2.0">
-  <project timestamp="1730367546419" name="All files">
-    <metrics statements="149" coveredstatements="98" conditionals="68" coveredconditionals="42" methods="32" coveredmethods="16" elements="249" coveredelements="156" complexity="0" loc="149" ncloc="149" packages="3" files="5" classes="5"/>
+<coverage generated="1730632527314" clover="3.2.0">
+  <project timestamp="1730632527314" name="All files">
+    <metrics statements="149" coveredstatements="114" conditionals="68" coveredconditionals="48" methods="32" coveredmethods="22" elements="249" coveredelements="184" complexity="0" loc="149" ncloc="149" packages="3" files="5" classes="5"/>
     <package name="backend">
       <metrics statements="72" coveredstatements="39" conditionals="30" coveredconditionals="14" methods="12" coveredmethods="2"/>
       <file name="index.mjs" path="C:\Users\Hp\Documents\GitHub\Kiruna-project\backend\index.mjs">
@@ -81,25 +81,25 @@
       </file>
     </package>
     <package name="backend.dao">
-      <metrics statements="73" coveredstatements="55" conditionals="32" coveredconditionals="25" methods="19" coveredmethods="13"/>
+      <metrics statements="73" coveredstatements="71" conditionals="32" coveredconditionals="31" methods="19" coveredmethods="19"/>
       <file name="document.mjs" path="C:\Users\Hp\Documents\GitHub\Kiruna-project\backend\dao\document.mjs">
-        <metrics statements="32" coveredstatements="16" conditionals="16" coveredconditionals="10" methods="10" coveredmethods="4"/>
-        <line num="9" count="0" type="stmt"/>
-        <line num="10" count="0" type="stmt"/>
-        <line num="12" count="0" type="stmt"/>
-        <line num="13" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="14" count="0" type="stmt"/>
-        <line num="15" count="0" type="stmt"/>
-        <line num="17" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="18" count="0" type="stmt"/>
-        <line num="20" count="0" type="stmt"/>
-        <line num="28" count="0" type="stmt"/>
-        <line num="29" count="0" type="stmt"/>
-        <line num="31" count="0" type="stmt"/>
-        <line num="32" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="33" count="0" type="stmt"/>
-        <line num="34" count="0" type="stmt"/>
-        <line num="37" count="0" type="stmt"/>
+        <metrics statements="32" coveredstatements="32" conditionals="16" coveredconditionals="16" methods="10" coveredmethods="10"/>
+        <line num="9" count="3" type="stmt"/>
+        <line num="10" count="3" type="stmt"/>
+        <line num="12" count="3" type="stmt"/>
+        <line num="13" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="17" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="18" count="1" type="stmt"/>
+        <line num="20" count="1" type="stmt"/>
+        <line num="28" count="2" type="stmt"/>
+        <line num="29" count="2" type="stmt"/>
+        <line num="31" count="2" type="stmt"/>
+        <line num="32" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="34" count="1" type="stmt"/>
+        <line num="37" count="1" type="stmt"/>
         <line num="43" count="5" type="stmt"/>
         <line num="45" count="5" type="cond" truecount="4" falsecount="0"/>
         <line num="46" count="1" type="stmt"/>
