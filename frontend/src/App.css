@@ -1,5 +1,6 @@
 /* App.css */
 
+/* Stili generali della navbar */
 .navbar-brand {
   font-weight: 700; /* oppure un valore numerico come 700 */
 }
@@ -14,56 +15,112 @@
 
 /* Stile per lo sfondo della Homepage */
 .homepage {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('../public/kiruna_wallpaper.jpg');
+  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../public/kiruna_wallpaper.jpg');
   background-size: cover; /* Copri l'intera area */
   background-position: center; /* Centra l'immagine */
-  height: 100vh; /* Altezza della viewport */
+  min-height: 100vh; /* Altezza minima della viewport */
   display: flex;
-  flex-direction: row; /* Cambia la direzione a riga per affiancare gli elementi */
-  justify-content: space-between; /* Spazia gli elementi su tutta la larghezza */
-  align-items: center; /* Allinea verticalmente al centro */
+  flex-direction: column; /* Cambia la direzione a colonna per centrare verticalmente */
+  justify-content: center; /* Centra verticalmente gli elementi */
+  align-items: center; /* Centra orizzontalmente gli elementi */
   color: white; /* Colore del testo */
-  padding: 0 40px; /* Padding orizzontale maggiore */
+  padding: 20px; /* Padding uniforme */
 }
 
 /* Stile per il testo di presentazione */
 .welcome-text {
-  flex: 1; /* Occupa lo spazio disponibile */
-  padding-left: 20px; /* Margine sinistro per allontanare il testo dal bordo */
-  max-width: 600px; /* Limita la larghezza massima del testo */
+  text-align: center; /* Centra il testo */
+  padding: 20px; /* Padding uniforme per il testo */
 }
 
 /* Titolo specifico */
 .welcome-text h1 {
-  font-size: 7rem; /* Ingrandisci la dimensione del font */
+  font-size: 4rem; /* Dimensione grande per desktop */
   margin-bottom: 20px; /* Margine sotto il titolo per distanziare il testo successivo */
 }
 
+/* Testo descrittivo */
+.welcome-text p {
+  font-size: 1.2rem; /* Dimensione più piccola rispetto al titolo */
+}
 
-.btn-grad {background-image: linear-gradient(to right, #1e9726 0%, #a5e243  51%, #1e9726  100%)}
+/* Stili per il pulsante */
 .btn-grad {
+  background-image: linear-gradient(to right, #1e9726 0%, #a5e243 51%, #1e9726 100%);
   background-size: cover;
-   margin: 10px;
-   padding: 15px 45px;
-   text-align: center;
-   border: none;
-   transition: 0.5s;
-   background-size: 200% auto;        
-   font-weight: 700;
-   border-radius: 30px;
-   display: block;
-   color: #ffffff;
- }
+  margin: 10px;
+  padding: 15px 45px;
+  text-align: center;
+  border: none;
+  transition: 0.5s;
+  background-size: 200% auto;        
+  font-weight: 700;
+  border-radius: 30px;
+  display: block; /* Assicura che il pulsante sia trattato come un blocco */
+  color: #ffffff;
+}
 
- .btn-grad:hover {
-   background-position: right center; /* change the direction of the change here */
-   color: #ffffff;
-   text-decoration: none;
- }
+.btn-grad:hover {
+  background-position: right center; /* Cambia la direzione della transizione */
+  color: #ffffff;
+}
 
+/* Contenitore per il pulsante */
+.button-container {
+  display: flex; /* Usa flexbox per centrare il pulsante */
+  justify-content: center; /* Centra orizzontalmente */
+  margin-top: 20px; /* Aggiungi un margine superiore per distanziare dal testo */
+}
+
+/* Stili generali per il body */
 body {
-  /*background-color: #a9a9a9; /* Light gray background */
   margin: 0;
   font-family: Arial, sans-serif;
 }
 
+/* Stili per dispositivi mobili */
+@media (max-width: 768px) {
+  /* Modifica il layout della homepage per i dispositivi mobili */
+  .homepage {
+    flex-direction: column; /* Mantieni la direzione a colonna per i dispositivi mobili */
+    align-items: center; /* Centra orizzontalmente */
+    justify-content: center; /* Centra verticalmente */
+    padding: 20px; /* Padding più piccolo per dispositivi mobili */
+    height: auto; /* Imposta l'altezza automatica per adattarsi al contenuto */
+  }
+
+  /* Testo di benvenuto */
+  .welcome-text {
+    max-width: 90%; /* Rimuovi la larghezza massima per consentire una visualizzazione migliore */
+    padding: 10px; /* Padding uniforme */
+    text-align: center; /* Centra il testo sui dispositivi mobili */
+  }
+
+  .welcome-text h1 {
+    font-size: 2.5rem; /* Dimensione maggiore per il titolo su dispositivi mobili */
+  }
+
+  .welcome-text p {
+    font-size: 1rem; /* Dimensione ridotta per il testo descrittivo su mobile */
+  }
+
+  /* Stile per il pulsante su dispositivi mobili */
+  .btn-grad {
+    padding: 12px 30px; /* Riduci il padding per i dispositivi mobili */
+    width: auto; /* Larghezza automatica per il pulsante */
+  }
+
+  /* Navbar fissa al fondo della pagina in modalità mobile */
+  .navbar {
+    position: fixed; /* Fissa la navbar al fondo della pagina */
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000; /* Assicurati che sia sopra ad altri contenuti */
+  }
+}
+
+/* Stili per la versione desktop */
+@media (min-width: 769px) {
+  /* Puoi mantenere le regole già definite senza modifiche */
+}
