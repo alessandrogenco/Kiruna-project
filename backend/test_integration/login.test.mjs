@@ -110,3 +110,28 @@ describe("POST Login user", () => {
     });
 
 });
+
+describe("GET Check user login", () => {
+    test("User is logged in", async () => {
+        const app = (await import("../index")).app;
+        const agent = request.agent(app);
+        await agent.post('/api/login').send({
+            username: user1.username,
+            password: user1.password
+        });
+
+        const response = await agent.get('/api/check-login');
+        expect(response.status).toBe(200);
+        expect(response.body.message).toBe('User is logged in');
+        expect(response.body.user).toBeDefined(); 
+    });
+
+    test("User is not logged in", async () => {
+        const app = (await import("../index")).app;
+
+        const response = await request(app).get('/api/check-login');
+        expect(response.status).toBe(401);
+        expect(response.body.message).toBe('User is not logged in');
+    });
+
+});
