@@ -1,0 +1,308 @@
+import React, { useEffect, useState } from 'react';
+import { Modal, Button, Form, FormControl } from 'react-bootstrap';
+import './Documents.css'; // Import the CSS file
+
+function Documents({ show, handleClose }) {
+  const [documents, setDocuments] = useState([]);
+  const [descriptions, setDescriptions] = useState({});
+  const [selectedDocument, setSelectedDocument] = useState(null); // State for selected document
+  const [showFormModal, setShowFormModal] = useState(false); // State to control the form modal
+  const [searchQuery, setSearchQuery] = useState(''); // State for search query
+  const [newDocument, setNewDocument] = useState({
+    title: '',
+    stakeholders: '',
+    scale: '',
+    date: '',
+    type: '',
+    connections: '',
+    language: '',
+    pages: '',
+    lat: '',
+    lon: '',
+    description: ''
+  });
+
+  useEffect(() => {
+    const fetchDocuments = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/documents');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setDocuments(data);
+      } catch (error) {
+        console.error('Error fetching documents:', error);
+      }
+    };
+
+    fetchDocuments();
+  }, []);
+
+  const handleAddDocument = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/api/addDocument', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newDocument),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const addedDocument = await response.json();
+      setDocuments((prevDocuments) => [...prevDocuments, addedDocument]);
+      setNewDocument({
+        title: '',
+        stakeholders: '',
+        scale: '',
+        date: '',
+        type: '',
+        connections: '',
+        language: '',
+        pages: '',
+        lat: '',
+        lon: '',
+        description: ''
+      }); // Clear the form
+      setShowFormModal(false); // Close the form modal
+    } catch (error) {
+      console.error('Error adding document:', error);
+    }
+  };
+
+  const handleDescriptionChange = (id, value) => {
+    setDescriptions({
+      ...descriptions,
+      [id]: value,
+    });
+  };
+
+  const handleAddDescription = async (id, title) => {
+    const newDescription = descriptions[id];
+    if (!newDescription) return;
+
+    try {
+      const response = await fetch('http://localhost:3001/api/addDescription', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id, title, description: newDescription }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      // Optionally, update the document list or show a success message
+      const updatedDocument = await response.json();
+      setDocuments((prevDocuments) =>
+        prevDocuments.map((doc) =>
+          doc.id === id ? { ...doc, description: updatedDocument.document.description } : doc
+        )
+      );
+      setDescriptions({ ...descriptions, [id]: '' }); // Clear the input field after submission
+      setShowFormModal(false); // Close the form modal
+    } catch (error) {
+      console.error('Error adding description:', error);
+    }
+  };
+
+  const handleDocumentClick = (document) => {
+    setSelectedDocument(document);
+    setShowFormModal(true);
+  };
+
+  const handleCloseFormModal = () => {
+    setShowFormModal(false);
+    setSelectedDocument(null);
+  };
+  const handleNewDocumentChange = (e) => {
+    const { name, value } = e.target;
+    setNewDocument((prevDocument) => ({
+      ...prevDocument,
+      [name]: value,
+    }));
+  };
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const filteredDocuments = documents.filter((document) =>
+    document.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  return (
+    <div className="documents-container">
+      <Form className="d-flex mb-3">
+        <FormControl
+          type="search"
+          placeholder="Search documents"
+          className="me-2"
+          aria-label="Search"
+          value={searchQuery}
+          onChange={handleSearchChange}
+        />
+      </Form>
+      <Button variant="primary" onClick={() => setShowFormModal(true)}>
+        Add Document
+      </Button>
+      <ul>
+        {filteredDocuments.map((document) => (
+          <li key={document.id} onClick={() => handleDocumentClick(document)}>
+            <div>
+              <strong>{document.title}</strong>
+              <p>{document.description}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+      
+      <Modal show={showFormModal} onHide={handleCloseFormModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>{selectedDocument ? `Add Description for ${selectedDocument.title}` : 'Add New Document'}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedDocument ? (
+            <input
+              type="text"
+              placeholder="Add description"
+              value={descriptions[selectedDocument.id] || ''}
+              onChange={(e) => handleDescriptionChange(selectedDocument.id, e.target.value)}
+            />
+          ) :  (
+            <Form>
+              <Form.Group controlId="formTitle">
+                <Form.Label>Title</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter title"
+                  name="title"
+                  value={newDocument.title}
+                  onChange={handleNewDocumentChange}
+                />
+              </Form.Group>
+              <Form.Group controlId="formStakeholders">
+                <Form.Label>Stakeholders</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter stakeholders"
+                  name="stakeholders"
+                  value={newDocument.stakeholders}
+                  onChange={handleNewDocumentChange}
+                />
+                 </Form.Group>
+              <Form.Group controlId="formScale">
+                <Form.Label>Scale</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter scale"
+                  name="scale"
+                  value={newDocument.scale}
+                  onChange={handleNewDocumentChange}
+                />
+              </Form.Group>
+              <Form.Group controlId="formDate">
+                <Form.Label>Date</Form.Label>
+                <Form.Control
+                  type="date"
+                  name="date"
+                  value={newDocument.date}
+                  onChange={handleNewDocumentChange}
+                />
+              </Form.Group>
+              <Form.Group controlId="formType">
+                <Form.Label>Type</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter type"
+                  name="type"
+                  value={newDocument.type}
+                  onChange={handleNewDocumentChange}
+                />
+                    </Form.Group>
+              <Form.Group controlId="formConnections">
+                <Form.Label>Connections</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter connections"
+                  name="connections"
+                  value={newDocument.connections}
+                  onChange={handleNewDocumentChange}
+                />
+              </Form.Group>
+              <Form.Group controlId="formLanguage">
+                <Form.Label>Language</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter language"
+                  name="language"
+                  value={newDocument.language}
+                  onChange={handleNewDocumentChange}
+                />
+              </Form.Group>
+              <Form.Group controlId="formPages">
+                <Form.Label>Pages</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="Enter pages"
+                  name="pages"
+                  value={newDocument.pages}
+                  onChange={handleNewDocumentChange}
+                />
+                  </Form.Group>
+              <Form.Group controlId="formLat">
+                <Form.Label>Latitude</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter latitude"
+                  name="lat"
+                  value={newDocument.lat}
+                  onChange={handleNewDocumentChange}
+                />
+              </Form.Group>
+              <Form.Group controlId="formLon">
+                <Form.Label>Longitude</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter longitude"
+                  name="lon"
+                  value={newDocument.lon}
+                  onChange={handleNewDocumentChange}
+                />
+              </Form.Group>
+              <Form.Group controlId="formDescription">
+                <Form.Label>Description</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  placeholder="Enter description"
+                  name="description"
+                  value={newDocument.description}
+                  onChange={handleNewDocumentChange}
+                />
+                </Form.Group>
+            </Form>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseFormModal}>
+            Close
+          </Button>
+          <Button
+            variant="primary"
+            onClick={selectedDocument ? () => handleAddDescription(selectedDocument.id, selectedDocument.title) : handleAddDocument}
+          >
+            {selectedDocument ? 'Add Description' : 'Add Document'}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </div>
+  );
+}
+
+export default Documents;

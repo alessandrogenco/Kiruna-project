@@ -61,9 +61,7 @@ function LoginForm(props) {
                             className="w-100"
                         />
                     </Form.Group>
-                    <Button className="mt-3 w-auto btn-sm custom-login-button mx-auto d-block" type="submit">Login</Button>
-                    <hr className="custom-divider" /> 
-                    <Button className="mt-2 w-100 btn-sm custom-login-button" type="button" onClick={() => navigate("/explore")}>Start to Explore</Button>
+                    <Button className="mt-3 w-auto btn-sm btn-dark mx-auto d-block" type="submit">Login</Button>
                 </Form>
             </Col>
         </Row>

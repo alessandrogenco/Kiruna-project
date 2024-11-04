@@ -1,13 +1,12 @@
 // ExplorePage.jsx
 import React from 'react';
-import Navbar from './Navbar'; // Adjust the path based on your folder structure
+import AppNavbar from './Navbar';
+import PropTypes from "prop-types";
 
-function ExplorePage({ isLoggedIn, role, onLoginToggle }) {
+function ExplorePage(props) {
   return (
     <div className="vh-100 d-flex flex-column">
-      {/* Navbar at the top */}
-      <Navbar isLoggedIn={isLoggedIn} role={role} onLoginToggle={onLoginToggle} />
-
+      <AppNavbar isLoggedIn={props.isLoggedIn} handleLogout={props.handleLogout}></AppNavbar>
       {/* Page content centered below */}
       <div className="text-center flex-grow-1 d-flex flex-column justify-content-center align-items-center">
         <h1>Explore Page</h1>
@@ -16,5 +15,10 @@ function ExplorePage({ isLoggedIn, role, onLoginToggle }) {
     </div>
   );
 }
+
+ExplorePage.propTypes = {
+  isLoggedIn: PropTypes.bool,
+  handleLogout: PropTypes.func,
+};
 
 export default ExplorePage;

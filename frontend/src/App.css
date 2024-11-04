@@ -1,59 +1,126 @@
+/* App.css */
 
-.welcome-text {
-    flex: 2; 
-    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../public/Kiruna_homepage.jpg');
-    background-size: cover;
-    background-position: center;
-    color: white; 
-    padding: 40px; 
+/* Stili generali della navbar */
+.navbar-brand {
+  font-weight: 700; /* oppure un valore numerico come 700 */
 }
 
-.large-heading {
-    font-size: 5rem; 
-    margin-bottom: 1rem;
+.navbar {
+  background-color: #000000;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+/* Stile per lo sfondo della Homepage */
+.homepage {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../public/kiruna_wallpaper.jpg');
+  background-size: cover; /* Copri l'intera area */
+  background-position: center; /* Centra l'immagine */
+  min-height: 100vh; /* Altezza minima della viewport */
+  display: flex;
+  flex-direction: column; /* Cambia la direzione a colonna per centrare verticalmente */
+  justify-content: center; /* Centra verticalmente gli elementi */
+  align-items: center; /* Centra orizzontalmente gli elementi */
+  color: white; /* Colore del testo */
+  padding: 20px; /* Padding uniforme */
+}
+
+/* Stile per il testo di presentazione */
+.welcome-text {
+  text-align: center; /* Centra il testo */
+  padding: 20px; /* Padding uniforme per il testo */
+}
+
+/* Titolo specifico */
+.welcome-text h1 {
+  font-size: 4rem; /* Dimensione grande per desktop */
+  margin-bottom: 20px; /* Margine sotto il titolo per distanziare il testo successivo */
+}
+
+/* Testo descrittivo */
+.welcome-text p {
+  font-size: 1.2rem; /* Dimensione più piccola rispetto al titolo */
+}
+
+/* Stili per il pulsante */
+.btn-grad {
+  background-image: linear-gradient(to right, #1e9726 0%, #a5e243 51%, #1e9726 100%);
+  background-size: cover;
+  margin: 10px;
+  padding: 15px 45px;
+  text-align: center;
+  border: none;
+  transition: 0.5s;
+  background-size: 200% auto;        
+  font-weight: 700;
+  border-radius: 30px;
+  display: block; /* Assicura che il pulsante sia trattato come un blocco */
+  color: #ffffff;
+}
+
+.btn-grad:hover {
+  background-position: right center; /* Cambia la direzione della transizione */
+  color: #ffffff;
+}
+
+/* Contenitore per il pulsante */
+.button-container {
+  display: flex; /* Usa flexbox per centrare il pulsante */
+  justify-content: center; /* Centra orizzontalmente */
+  margin-top: 20px; /* Aggiungi un margine superiore per distanziare dal testo */
+}
+
+/* Stili generali per il body */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* Stili per dispositivi mobili */
+@media (max-width: 768px) {
+  /* Modifica il layout della homepage per i dispositivi mobili */
+  .homepage {
+    flex-direction: column; /* Mantieni la direzione a colonna per i dispositivi mobili */
+    align-items: center; /* Centra orizzontalmente */
+    justify-content: center; /* Centra verticalmente */
+    padding: 20px; /* Padding più piccolo per dispositivi mobili */
+    height: auto; /* Imposta l'altezza automatica per adattarsi al contenuto */
   }
 
-.custom-login-button {
-    background-color: rgb(34, 229, 34);   
-    color: black;              
-    border-radius: 30px;       
-    border: none;  
-    padding: 0.5rem 1.5rem;       
-    font-size: 1rem; 
-    transition: background-color 0.3s ease;             
+  /* Testo di benvenuto */
+  .welcome-text {
+    max-width: 90%; /* Rimuovi la larghezza massima per consentire una visualizzazione migliore */
+    padding: 10px; /* Padding uniforme */
+    text-align: center; /* Centra il testo sui dispositivi mobili */
+  }
+
+  .welcome-text h1 {
+    font-size: 2.5rem; /* Dimensione maggiore per il titolo su dispositivi mobili */
+  }
+
+  .welcome-text p {
+    font-size: 1rem; /* Dimensione ridotta per il testo descrittivo su mobile */
+  }
+
+  /* Stile per il pulsante su dispositivi mobili */
+  .btn-grad {
+    padding: 12px 30px; /* Riduci il padding per i dispositivi mobili */
+    width: auto; /* Larghezza automatica per il pulsante */
+  }
+
+  /* Navbar fissa al fondo della pagina in modalità mobile */
+  .navbar {
+    position: fixed; /* Fissa la navbar al fondo della pagina */
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000; /* Assicurati che sia sopra ad altri contenuti */
+  }
 }
 
-.custom-login-button:hover {
-    background-color: darkgreen; 
-    color: white; 
-}
-
-.custom-divider {
-    border: none;             
-    height: 2px;             
-    background-color: rgb(94, 94, 94); 
-    width: 60%;              
-    margin: 20px auto;       
-}
-
-@media (max-width: 768px) {
-    .welcome-container {
-        flex-direction: column; /* Passa a disposizione verticale su schermi più piccoli */
-        height: auto; /* Permetti all'altezza di adattarsi al contenuto */
-    }
-
-    .welcome-text,
-    .auth-container {
-        flex: none; /* Rimuovi la flessibilità per la disposizione verticale */
-        width: 100%; /* Assicura che le colonne occupino tutta la larghezza */
-    }
-
-    .welcome-text {
-        padding: 20px; /* Riduci il padding su schermi più piccoli */
-    }
-
-    .auth-container {
-        padding: 20px; /* Riduci il padding su schermi più piccoli */
-        border-left: none; /* Rimuovi la linea di separazione */
-    }
+/* Stili per la versione desktop */
+@media (min-width: 769px) {
+  /* Puoi mantenere le regole già definite senza modifiche */
 }

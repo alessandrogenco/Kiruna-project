@@ -1,51 +1,98 @@
-import React from 'react';
-import { Navbar, Nav, Button, Container, Form, FormControl } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import MessageModal from './MessageModal';
+import PropTypes from "prop-types";
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
-const AppNavbar = ({ isLoggedIn, role, onLoginToggle }) => {
-  const navigate = useNavigate(); // Allows navigation between pages
+const AppNavbar = (props) => {
+  const { isLoggedIn } = props;
+  const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  // Function to handle login/logout button clicks
+  const handleShowModal = () => setShowModal(true);
+  const handleCloseModal = () => setShowModal(false);
+
   const handleLoginClick = () => {
     if (isLoggedIn) {
-      onLoginToggle(); // Logs out if currently logged in
+      props.handleLogout();
     } else {
-      navigate('/login'); // Redirects to login page if not logged in
+      navigate('/login');
     }
   };
 
+  // Rileva il dispositivo mobile in base alla larghezza dello schermo
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 992); // Imposta isMobile su true per schermi inferiori a 768px
+    };
+
+    window.addEventListener('resize', handleResize); // Aggiungi listener per la ridimensione
+    return () => window.removeEventListener('resize', handleResize); // Rimuovi listener su dismount
+  }, []);
+
   return (
-    <Navbar bg="dark" variant="dark" expand="md" className="mb-3">
-      <Container>
-        <Navbar.Brand as={Link} to="/">Kiruna</Navbar.Brand>
-
-        {/* Toggle button for mobile view */}
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            {/* Description Input Field */}
-            <Form className="d-flex flex-grow-1">
-              <FormControl
-                type="text"
-                placeholder="Add description"
-                className="me-2"
-              />
-            </Form>
-
-            {/* Link Documents and Role Display */}
-            <Nav.Link as={Link} to="/documents" className="text-light">Link documents</Nav.Link>
-            <Nav.Link className="text-light">Role | {isLoggedIn ? role : 'Not logged in'}</Nav.Link>
-          </Nav>
-
-          {/* Login/Logout Button */}
-          <Button onClick={handleLoginClick} variant="outline-light">
-            {isLoggedIn ? 'Logout' : 'Login'}
-          </Button>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+    <>
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div className="container-fluid">
+          <a className="navbar-brand" href="/">
+            {isMobile ? (
+              <i className="bi bi-house-fill text-white"></i>
+            ) : (
+              "KirunaExplorer"
+            )}
+          </a>
+          <button
+            className="navbar-toggler"
+            type="button"
+            onClick={() => document.getElementById('navbarText').classList.toggle('collapse')}
+            aria-controls="navbarText"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <div className="collapse navbar-collapse" id="navbarText">
+            {isLoggedIn && (
+              <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                <li className="nav-item">
+                  <a className="nav-link active clickable" onClick={handleShowModal}>
+                    Manage Documents
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link active" to="/link-documents">
+                    Link documents
+                  </Link>
+                </li>
+              </ul>
+            )}
+            <span className="navbar-text ms-auto">
+              {isMobile ? (
+                <span
+                  className="login-logout-text"
+                  onClick={handleLoginClick}
+                  style={{ cursor: 'pointer', color: 'white' }}
+                >
+                  {isLoggedIn ? 'Logout' : 'Login'}
+                </span>
+              ) : (
+                <button onClick={handleLoginClick} className="btn btn-outline-light">
+                  {isLoggedIn ? 'Logout' : 'Login'}
+                </button>
+              )}
+            </span>
+          </div>
+        </div>
+      </nav>
+      <MessageModal show={showModal} handleClose={handleCloseModal} />
+    </>
   );
+};
+
+AppNavbar.propTypes = {
+  isLoggedIn: PropTypes.bool,
+  handleLogout: PropTypes.func,
 };
 
 export default AppNavbar;

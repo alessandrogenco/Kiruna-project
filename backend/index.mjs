@@ -12,7 +12,7 @@ app.use(express.json());
 
 // CORS middleware
 const corsOptions = {
-    origin: ["http://localhost:3000"], // Aggiornato per includere la porta corretta
+    origin: ["http://localhost:5173"], // we have to choose a single frontend!!
     optionsSuccessStatus: 200,
     credentials: true
 };
@@ -170,6 +170,35 @@ app.put('/api/addDescription', async (req, res) => {
         }
     }
 });
+
+// Add a document - to be tested
+app.post('/api/addDocument', async (req, res) => {
+    const { title, stakeholders, scale, date, type, connections, language, pages, lat, lon, description } = req.body;
+  
+    try {
+      const result = await documentDao.addDocument(title, stakeholders, scale, date, type, connections, language, pages, lat, lon, description);
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+//link documents
+app.post('/api/linkDocuments', async (req, res) => {
+    const { id1, id2, linkDate, linkType } = req.body;
+  
+    try {
+      const result = await documentDao.linkDocuments(id1, id2, linkDate, linkType);
+      res.status(200).json({
+        message: 'Documents linked successfully',
+        link: result
+      });
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+
 
 /* ACTIVATING THE SERVER */
 let server = app.listen(PORT, () => {

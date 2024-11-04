@@ -32,7 +32,7 @@
   
   .documents-container li strong {
     font-size: 1.2em;
-    color: #007bff; /* Bootstrap primary color */
+    color: #28a745; /* Bootstrap primary color */
   }
   
   .documents-container li p {
@@ -49,7 +49,7 @@
   
   .documents-container button {
     padding: 10px 15px;
-    background-color: #007bff; /* Bootstrap primary color */
+    background-color: #28a745; /* Bootstrap primary color */
     color: white;
     border: none;
     border-radius: 4px;
@@ -57,5 +57,5 @@
   }
   
   .documents-container button:hover {
-    background-color: #0056b3; /* Darker shade of Bootstrap primary color */
+    background-color: #218838; /* Darker shade of Bootstrap primary color */
   }

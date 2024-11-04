@@ -1,6 +1,12 @@
 
 import db from '../db/db.mjs';
+import { v4 as uuidv4 } from 'uuid';
 
+function generateNumericId() {
+    const timestamp = Date.now(); // Current timestamp
+    const randomNum = Math.floor(Math.random() * 1000); // Random number between 0 and 999
+    return `${timestamp}${randomNum}`; // Combine timestamp and random number
+  }
 
 class DocumentDao{
 
@@ -35,6 +41,42 @@ class DocumentDao{
                 }
 
                 resolve(documents);
+            });
+        });
+    }
+
+    //add document - to be tested
+
+    addDocument(title, stakeholders, scale, date, type, connections, language, pages, lat, lon, description) {
+        return new Promise((resolve, reject) => {
+            if (!title || title.trim() === "") {
+                return reject(new Error('Title cannot be empty.'));
+            }
+            
+            const id = generateNumericId(); 
+            const addDocument = 'INSERT INTO Documents (id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+
+            db.run(addDocument, [id, title, stakeholders, scale, date, type, connections, language, pages, lat, lon, description], function (err) {
+                if (err) {
+                    console.error('Database error while adding document:', err.message);
+                    return reject(new Error('Database error: ' + err.message));
+                }
+
+                resolve({
+                    id,
+                    title,
+                    stakeholders,
+                    scale,
+                    date,
+                    type,
+                    connections,
+                    language,
+                    pages,
+                    lat,
+                    lon,
+                    description,
+                    message: 'Document added successfully.'
+                  });
             });
         });
     }
@@ -80,6 +122,28 @@ class DocumentDao{
                 }
             });
         });
+    }
+
+    //link documents
+    linkDocuments(id1, id2, linkDate, linkType){
+        return new Promise((resolve, reject) => {
+            const linkDocuments = 'INSERT INTO DocumentsLinks (idDocument1, idDocument2, date, type) VALUES (?, ?, ?, ?)';
+            db.run(linkDocuments, [id1, id2, linkDate, linkType], (err) => {
+                if (err) {
+                    console.error('Database error while linking documents:', err.message);
+                    return reject(new Error('Database error: ' + err.message));
+                }
+                
+                const updateConnections = 'UPDATE Documents SET connections = connections + 1 WHERE id IN (?, ?)';
+                db.run(updateConnections, [id1, id2], (err) => {
+                    if (err) {
+                        console.error('Database error while updating connections:', err.message);
+                        return reject(new Error('Database error: ' + err.message));
+                    }
+                    resolve({ idDocument1: id1, idDocument2: id2, date: linkDate, type: linkType });
+                });
+            });
+        })
     }
     
 }
