@@ -183,12 +183,12 @@ app.post('/api/addDocument', async (req, res) => {
     }
   });
 
-//link documents - to be tested
+//link documents
 app.post('/api/linkDocuments', async (req, res) => {
-    const { id1, id2 } = req.body;
+    const { id1, id2, linkDate, linkType } = req.body;
   
     try {
-      const result = await documentDao.linkDocuments(id1, id2);
+      const result = await documentDao.linkDocuments(id1, id2, linkDate, linkType);
       res.status(200).json({
         message: 'Documents linked successfully',
         link: result

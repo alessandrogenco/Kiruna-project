@@ -117,17 +117,24 @@ class DocumentDao{
         });
     }
 
-    //link documents - to be tested
-    linkDocuments(id1, id2){
-        return new Promise((id1, id2) => {
-            const linkDocuments = 'INSERT INTO DocumentsLinks (idDocument1, idDocument2, date) VALUES (?, ?, ?)';
-            const date = new Date().toISOString();
-            db.run(linkDocuments, [id1, id2, date], (err) => {
+    //link documents
+    linkDocuments(id1, id2, linkDate, linkType){
+        return new Promise((resolve, reject) => {
+            const linkDocuments = 'INSERT INTO DocumentsLinks (idDocument1, idDocument2, date, type) VALUES (?, ?, ?, ?)';
+            db.run(linkDocuments, [id1, id2, linkDate, linkType], (err) => {
                 if (err) {
                     console.error('Database error while linking documents:', err.message);
                     return reject(new Error('Database error: ' + err.message));
                 }
-                resolve({idDocument1: id1, idDocument2: id2, date});
+                
+                const updateConnections = 'UPDATE Documents SET connections = connections + 1 WHERE id IN (?, ?)';
+                db.run(updateConnections, [id1, id2], (err) => {
+                    if (err) {
+                        console.error('Database error while updating connections:', err.message);
+                        return reject(new Error('Database error: ' + err.message));
+                    }
+                    resolve({ idDocument1: id1, idDocument2: id2, date: linkDate, type: linkType });
+                });
             });
         })
     }

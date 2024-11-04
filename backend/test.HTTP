@@ -51,3 +51,14 @@ Content-Type: application/json
 ########### get all documents
 GET http://localhost:3001/api/documents
 Accept: application/json
+
+########### link documents
+POST http://localhost:3001/api/linkDocuments
+Content-Type: application/json
+
+{
+    "id1": 1,
+    "id2": 2,
+    "linkDate": "2022-09-27",
+    "linkType": "direct consequence"
+}
