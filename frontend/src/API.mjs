@@ -77,5 +77,28 @@ const checkLogin = async () => {
     }
 }
 
-const API = { login, logout, checkLogin };
+const linkDocument = async (id1, id2, linkDate, linkType) => {
+    try {
+        const response = await fetch(SERVER_URL + '/linkDocuments', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id1, id2, linkDate, linkType }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const result = await response.json();
+        alert('Documents linked successfully!');
+        return result;
+    } catch (error) {
+        console.error('Error linking documents:', error);
+        throw error;
+    }
+};
+
+const API = { login, logout, checkLogin, linkDocument };
 export default API;
