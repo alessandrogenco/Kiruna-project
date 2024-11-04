@@ -193,6 +193,29 @@ class DocumentDao{
         });
     }
     
+    updateLink(idDocument1, idDocument2, newLinkDate, newLinkType) {
+        return new Promise((resolve, reject) => {
+            const checkLinkQuery = 'SELECT COUNT(*) AS count FROM DocumentsLinks WHERE (idDocument1 = ? AND idDocument2 = ?) OR (idDocument2 = ? AND idDocument1 = ?)';
+            db.get(checkLinkQuery, [idDocument1, idDocument2, idDocument1, idDocument2], (err, row) => {
+                if (err) {
+                    console.error('Database error while checking link:', err.message);
+                    return reject(new Error('Database error: ' + err.message));
+                }
+                if (row.count === 0) {
+                    return reject(new Error('Link not found'));
+                }
+
+                const updateLinkQuery = 'UPDATE DocumentsLinks SET date = ?, type = ? WHERE (idDocument1 = ? AND idDocument2 = ?) OR (idDocument2 = ? AND idDocument1 = ?)';
+                db.run(updateLinkQuery, [newLinkDate, newLinkType, idDocument1, idDocument2, idDocument1, idDocument2], (err) => {
+                    if (err) {
+                        console.error('Database error while updating link:', err.message);
+                        return reject(new Error('Database error: ' + err.message));
+                    }
+                    resolve({ id1: idDocument1, id2: idDocument2, date: newLinkDate, type: newLinkType });
+                });
+            });
+        });
+    }
 }
 
 export default DocumentDao;

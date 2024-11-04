@@ -229,6 +229,32 @@ app.get('/api/documentLinks/:id', async (req, res) => {
     }
 });
 
+app.put('/api/links', async (req, res) => {
+    const { idDocument1, idDocument2, newLinkDate, newLinkType } = req.body;
+
+    try {
+        if (newLinkDate.trim() === '') {
+            throw new Error('The new link date must be a non-empty string');
+        }
+    
+        if (newLinkType.trim() === '') {
+            throw new Error('The new link type must be a non-empty string');
+        }
+
+        const updatedLink = await documentDao.updateLink(idDocument1, idDocument2, newLinkDate, newLinkType);
+        res.status(200).json({
+            message: 'Link updated successfully',
+            link: updatedLink
+        });
+    } catch (error) {
+        if (error.message === 'Link not found') {
+            res.status(404).json({ message: error.message });
+        } else {
+            res.status(400).json({ message: error.message });
+        }
+    }
+});
+
 /* ACTIVATING THE SERVER */
 let server = app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

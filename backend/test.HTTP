@@ -66,3 +66,14 @@ Content-Type: application/json
 ########### get document links
 GET http://localhost:3001/api/documentLinks/7
 Accept: application/json
+
+########### update document links
+PUT http://localhost:3001/api/links
+Content-Type: application/json
+
+{
+    "idDocument1": 1,
+    "idDocument2": 2,
+    "newLinkDate": "2023-02-16",
+    "newLinkType": "collateral consequence"
+}
