@@ -186,19 +186,29 @@ app.post('/api/addDocument', async (req, res) => {
 //link documents
 app.post('/api/linkDocuments', async (req, res) => {
     const { id1, id2, linkDate, linkType } = req.body;
-  
+
     try {
-      const result = await documentDao.linkDocuments(id1, id2, linkDate, linkType);
-      res.status(200).json({
-        message: 'Documents linked successfully',
-        link: result
-      });
+        if (linkDate.trim() === '') {
+            throw new Error('The link date must be a non-empty string');
+        }
+    
+        if (linkType.trim() === '') {
+            throw new Error('The link type must be a non-empty string');
+        }
+
+        const result = await documentDao.linkDocuments(id1, id2, linkDate, linkType);
+        res.status(200).json({
+            message: 'Documents linked successfully',
+            link: result
+        });
     } catch (error) {
-      res.status(400).json({ message: error.message });
+        if (error.message === 'Link already exists') {
+            res.status(409).json({ message: error.message });
+        } else {
+            res.status(400).json({ message: error.message });
+        }
     }
   });
-
-
 
 /* ACTIVATING THE SERVER */
 let server = app.listen(PORT, () => {
