@@ -7,6 +7,8 @@ import LoginForm from './components/Auth';
 import HomePage from './components/HomePage';
 import ExplorePage from './components/ExplorePage';
 import Navbar from './components/Navbar';
+import Documents from './components/Documents';
+import LinkDocuments from './components/LinkDocuments';
 import MessageModal from './components/MessageModal'; // Import the MessageModal component
 
 function App() {
@@ -34,6 +36,14 @@ function App() {
     }
   };
 
+  
+  const handleLogout = () => {
+    setUser(null);
+    setLoggedIn(false);
+    navigate('/login'); // Navigate to the login page after logout
+  };
+
+
   const handleShowModal = (content, type) => {
     setModalContent(content);
     setModalType(type);
@@ -57,6 +67,13 @@ function App() {
       <MessageModal show={showModal} handleClose={handleCloseModal} message={modalContent} modalType={modalType} />
       <Routes>
         
+        {/* Home Page */}
+        <Route
+          path="/"
+          element={<HomePage />}
+        />
+
+
         {/* Login Page */}
         <Route
           path="/login"

@@ -5,6 +5,7 @@ import HomePage from './HomePage';
 import ExplorePage from './ExplorePage';
 import Navbar from './Navbar';
 import MessageModal from './MessageModal'; // Import the MessageModal component
+import LoginForm from './Auth';
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -53,11 +54,7 @@ function App() {
       />
       <MessageModal show={showModal} handleClose={handleCloseModal} message={modalContent} modalType={modalType} />
       <Routes>
-        {/* Register Page */}
-        <Route
-          path="/register"
-          element={<Register />}
-        />
+        
         
         {/* Login Page */}
         <Route
@@ -77,7 +74,7 @@ function App() {
 
         {/* Home Page */}
         <Route
-          path="/"
+          path="*"
           element={loggedIn ? <HomePage /> : <Navigate to="/login" />}
         />
       </Routes>
