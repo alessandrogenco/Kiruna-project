@@ -23,7 +23,8 @@
     "passport-local": "^1.0.0",
     "session": "^0.1.0",
     "sqlite3": "^5.1.7",
-    "supertest": "^7.0.0"
+    "supertest": "^7.0.0",
+    "uuid": "^11.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
