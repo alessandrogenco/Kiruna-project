@@ -156,6 +156,42 @@ class DocumentDao{
             });
         })
     }
+
+    getDocumentLinks(documentId) {
+        return new Promise((resolve, reject) => {
+            const query1 = `
+            SELECT d.*, dl.date, dl.type
+            FROM DocumentsLinks dl, Documents d
+            WHERE dl.idDocument1 = ? AND dl.idDocument2 = d.id
+            `;
+        
+            const query2 = `
+                SELECT  d.*, dl.date, dl.type
+                FROM DocumentsLinks dl, Documents d
+                WHERE dl.idDocument2 = ? AND dl.idDocument1 = d.id
+            `;
+        
+            db.all(query1, [documentId], (err, rows1) => {
+                if (err) {
+                    console.error('Database error while fetching document links for idDocument1:', err.message);
+                    return reject(new Error('Database error: ' + err.message));
+                }
+
+                db.all(query2, [documentId], (err, rows2) => {
+                    if (err) {
+                        console.error('Database error while fetching document links for idDocument2:', err.message);
+                        return reject(new Error('Database error: ' + err.message));
+                    }
+
+                    const combinedRows = [...rows1, ...rows2];
+                    if (combinedRows.length === 0) {
+                        return resolve({ message: `Document ${documentId} has no links` });
+                    }
+                    resolve(combinedRows);
+                });
+            });
+        });
+    }
     
 }
 

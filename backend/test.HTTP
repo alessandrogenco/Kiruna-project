@@ -62,3 +62,7 @@ Content-Type: application/json
     "linkDate": "2022-09-27",
     "linkType": "direct consequence"
 }
+
+########### get document links
+GET http://localhost:3001/api/documentLinks/7
+Accept: application/json

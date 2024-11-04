@@ -210,6 +210,25 @@ app.post('/api/linkDocuments', async (req, res) => {
     }
   });
 
+app.get('/api/documentLinks/:id', async (req, res) => {
+    const documentId = req.params.id;
+
+    try {
+        const links = await documentDao.getDocumentLinks(documentId);
+        if (links.message) {
+            console.log(links.message);
+            res.status(200).json({ message: links.message });
+        } else {
+            res.status(200).json({
+                message: 'Document links fetched successfully',
+                links: links
+            });
+        }
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+});
+
 /* ACTIVATING THE SERVER */
 let server = app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
