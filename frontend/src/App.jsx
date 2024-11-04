@@ -75,8 +75,12 @@ function App() {
 
         {/* Home Page */}
         <Route
-          path="/"
-          element={loggedIn ? <HomePage /> : <Navigate to="/login" />}
+          path="/documents"
+          element={<Documents />}
+        />
+        <Route
+          path="/link-documents"
+          element={<LinkDocuments isLoggedIn={loggedIn} handleLogout={handleLogout} />}
         />
       </Routes>
     </div>
