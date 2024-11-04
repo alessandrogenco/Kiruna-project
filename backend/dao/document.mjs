@@ -1,6 +1,12 @@
 
 import db from '../db/db.mjs';
+import { v4 as uuidv4 } from 'uuid';
 
+function generateNumericId() {
+    const timestamp = Date.now(); // Current timestamp
+    const randomNum = Math.floor(Math.random() * 1000); // Random number between 0 and 999
+    return `${timestamp}${randomNum}`; // Combine timestamp and random number
+  }
 
 class DocumentDao{
 
@@ -46,17 +52,18 @@ class DocumentDao{
             if (!title || title.trim() === "") {
                 return reject(new Error('Title cannot be empty.'));
             }
+            
+            const id = generateNumericId(); 
+            const addDocument = 'INSERT INTO Documents (id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
-            const addDocument = 'INSERT INTO Documents (title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-
-            db.run(addDocument, [title, description], function (err) {
+            db.run(addDocument, [id, title, stakeholders, scale, date, type, connections, language, pages, lat, lon, description], function (err) {
                 if (err) {
                     console.error('Database error while adding document:', err.message);
                     return reject(new Error('Database error: ' + err.message));
                 }
 
                 resolve({
-                    id: this.lastID,
+                    id,
                     title,
                     stakeholders,
                     scale,
