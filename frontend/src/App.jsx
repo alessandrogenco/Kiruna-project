@@ -8,6 +8,7 @@ import HomePage from './components/HomePage'; // Importa il componente HomePage
 import ExplorePage from './components/ExplorePage'; // Importa il componente ExplorePage
 import LoggedInPage from './components/LoggedInPage';
 import Documents from './components/Documents';
+import LinkDocuments from './components/LinkDocuments';
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(null); // Inizializza come `null`
@@ -81,7 +82,7 @@ function App() {
         />
         <Route
           path="/link-documents"
-          element={<Documents />}
+          element={<LinkDocuments />}
         />
       </Routes>
     </>

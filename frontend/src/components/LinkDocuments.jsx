@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Form, ListGroup } from 'react-bootstrap';
-import './LinkDocuments.css'; // Import the CSS file
+//import './LinkDocuments.css'; // Import the CSS file
 
 function LinkDocuments() {
   const [documents, setDocuments] = useState([]);
@@ -9,7 +9,7 @@ function LinkDocuments() {
   useEffect(() => {
     const fetchDocuments = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/linkDocuments');
+        const response = await fetch('http://localhost:3001/api/documents');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
