@@ -82,7 +82,7 @@ function App() {
         />
         <Route
           path="/link-documents"
-          element={<LinkDocuments />}
+          element={<LinkDocuments isLoggedIn={loggedIn} handleLogout={handleLogout} />}
         />
       </Routes>
     </>

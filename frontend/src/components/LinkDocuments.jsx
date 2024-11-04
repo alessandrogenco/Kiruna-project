@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Button, Form, ListGroup } from 'react-bootstrap';
 import '../App.css';
 import API from '../API.mjs'; 
+import PropTypes from "prop-types";
+import AppNavbar from './Navbar';
 
-function LinkDocuments() {
+function LinkDocuments(props) {
   const [documents, setDocuments] = useState([]);
   const [selectedDocuments, setSelectedDocuments] = useState([]);
   const [linkDate, setLinkDate] = useState(''); // Stato per la data del link
@@ -57,6 +59,8 @@ function LinkDocuments() {
   };
 
   return (
+    <>
+    <AppNavbar isLoggedIn={props.isLoggedIn} handleLogout={props.handleLogout} />
     <div className="link-documents-container">
       <h2>Link Documents</h2>
       <ListGroup>
@@ -97,7 +101,13 @@ function LinkDocuments() {
         Link Documents
       </Button>
     </div>
+    </>
   );
 }
+
+LinkDocuments.propTypes = {
+  isLoggedIn: PropTypes.bool,
+  handleLogout: PropTypes.func,
+};
 
 export default LinkDocuments;
