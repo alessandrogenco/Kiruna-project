@@ -156,3 +156,37 @@ describe("Get all documents", () => {
         await expect(documentDao.getAllDocuments()).rejects.toThrow("Database error: Database error during getAllDocuments");
     });
 });
+
+
+
+describe("Link Documents", () => {
+    test("Successfully links two documents", async () => {
+        const id1 = 1;
+        const id2 = 2;
+        const linkDate = "2023-11-05";
+        const linkType = "related";
+
+        jest.spyOn(db, "get").mockImplementation((sql, params, callback) => {
+            callback(null, { count: 0 });  
+        });
+
+        // inserting a new link
+        jest.spyOn(db, "run").mockImplementation((sql, params, callback) => {
+            callback(null);  
+        });
+
+        // updating the connections
+        jest.spyOn(db, "run").mockImplementation((sql, params, callback) => {
+            callback(null);  
+        });
+
+        const result = await documentDao.linkDocuments(id1, id2, linkDate, linkType);
+        
+        expect(result).toEqual({
+            idDocument1: id1,
+            idDocument2: id2,
+            date: linkDate,
+            type: linkType
+        });
+    });
+})
