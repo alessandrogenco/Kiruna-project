@@ -163,8 +163,8 @@ describe("Link Documents", () => {
     test("Successfully links two documents", async () => {
         const id1 = 1;
         const id2 = 2;
-        const linkDate = "2023-11-05";
-        const linkType = "related";
+        const linkDate = "2024-11-05";
+        const linkType = "Informative document";
 
         jest.spyOn(db, "get").mockImplementation((sql, params, callback) => {
             callback(null, { count: 0 });  
@@ -189,4 +189,20 @@ describe("Link Documents", () => {
             type: linkType
         });
     });
+
+    test("Fails when link already exists", async () => {
+        const id1 = 1;
+        const id2 = 2;
+        const linkDate = "2024-11-05";
+        const linkType = "Informative document";
+
+        jest.spyOn(db, "get").mockImplementation((sql, params, callback) => {
+            callback(null, { count: 1 });  
+        });
+
+        await expect(documentDao.linkDocuments(id1, id2, linkDate, linkType))
+            .rejects
+            .toThrow("Link already exists");
+    });
+
 })
