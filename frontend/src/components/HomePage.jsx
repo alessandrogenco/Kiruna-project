@@ -1,45 +1,88 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import '../App.css';
-import AppNavbar from './Navbar';
-import PropTypes from "prop-types";
+import React, { useState } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
+import HomePage from './HomePage';
+import ExplorePage from './ExplorePage';
+import Navbar from './Navbar';
+import MessageModal from './MessageModal'; // Import the MessageModal component
 
-function HomePage(props) {
+function App() {
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState('');
+  const [modalType, setModalType] = useState(''); // State to determine which component to render
   const navigate = useNavigate();
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const handleLogin = async (credentials) => {
+    try {
+      const user = await API.login(credentials.username, credentials.password);
+
+      if (!user) {
+        throw new Error("Wrong credentials.");
+      }
+
+      setUser(user);
+      setLoggedIn(true);
+      navigate('/'); // Navigate to the home page after successful login
+    } catch (error) {
+      console.error(error);
+      // Handle login error (e.g., show an error message)
+    }
+  };
+
+  const handleShowModal = (content, type) => {
+    setModalContent(content);
+    setModalType(type);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalContent('');
+    setModalType('');
+  };
 
   return (
-    <>
-      <AppNavbar isLoggedIn={props.isLoggedIn} handleLogout={props.handleLogout} />
-      <div className="homepage">
-        <div className="welcome-text">
-          <h1>KirunaExplorer</h1>
-          <p>
-            {isMobile
-              ? "Explore Kiruna, a unique Swedish city that tells a story of transformation through its architecture. Join us to understand how the mining industry has shaped the urban landscape and identity of Kiruna."
-              : "Discover Kiruna, a unique Swedish city that tells a story of transformation and innovation through its architecture. Due to mining development, Kiruna has undergone profound changes over the years, with buildings that reflect its industrial history and resilient spirit. In this guide, you will explore the highlights of the city’s architectural evolution, from its iconic historic buildings to modern sustainable solutions. Join us on this journey to understand how mining has shaped not only the urban landscape but also the identity of Kiruna."
-            }
-          </p>
-          <div className="button-container">
-            <button className="btn-grad mt-3" onClick={() => navigate('/explore')}>
-              EXPLORE
-            </button>
-          </div>
-        </div>
-      </div>
-    </>
+    <div className="App">
+      <Navbar
+        loggedIn={loggedIn}
+        user={user}
+        handleLoginClick={handleLogin}
+        handleShowModal={handleShowModal} // Pass the handler to show the modal
+      />
+      <MessageModal show={showModal} handleClose={handleCloseModal} message={modalContent} modalType={modalType} />
+      <Routes>
+        {/* Register Page */}
+        <Route
+          path="/register"
+          element={<Register />}
+        />
+        
+        {/* Login Page */}
+        <Route
+          path="/login"
+          element={
+            loggedIn ? <Navigate to="/" /> : <LoginForm login={handleLogin} />
+          }
+        />
+
+        {/* Page to Explore */}
+        <Route
+          path="/explore"
+          element={
+            loggedIn ? <ExplorePage /> : <Navigate to="/login" />
+          }
+        />
+
+        {/* Home Page */}
+        <Route
+          path="/"
+          element={loggedIn ? <HomePage /> : <Navigate to="/login" />}
+        />
+      </Routes>
+    </div>
   );
 }
 
-HomePage.propTypes = {
-  isLoggedIn: PropTypes.bool,
-  handleLogout: PropTypes.func,
-};
-
-export default HomePage;
+export default App;

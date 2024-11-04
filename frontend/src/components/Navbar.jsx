@@ -1,72 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import MessageModal from './MessageModal';
-import PropTypes from "prop-types";
-import 'bootstrap-icons/font/bootstrap-icons.css';
+import React from 'react';
+import { Navbar, Nav, Container } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
-const AppNavbar = (props) => {
-  const { isLoggedIn } = props;
-  const navigate = useNavigate();
-  const [showModal, setShowModal] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
-  const handleShowModal = () => setShowModal(true);
-  const handleCloseModal = () => setShowModal(false);
-
-  const handleLoginClick = () => {
-    if (isLoggedIn) {
-      props.handleLogout();
-    } else {
-      navigate('/login');
-    }
-  };
-
-  // Rileva il dispositivo mobile in base alla larghezza dello schermo
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 992); // Imposta isMobile su true per schermi inferiori a 768px
-    };
-
-    window.addEventListener('resize', handleResize); // Aggiungi listener per la ridimensione
-    return () => window.removeEventListener('resize', handleResize); // Rimuovi listener su dismount
-  }, []);
+function AppNavbar({ loggedIn, handleLoginClick, handleShowModal }) {
+  const isMobile = window.innerWidth <= 768;
 
   return (
     <>
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div className="container-fluid">
-          <a className="navbar-brand" href="/">
-            {isMobile ? (
-              <i className="bi bi-house-fill text-white"></i>
-            ) : (
-              "KirunaExplorer"
-            )}
-          </a>
-          <button
-            className="navbar-toggler"
-            type="button"
-            onClick={() => document.getElementById('navbarText').classList.toggle('collapse')}
-            aria-controls="navbarText"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarText">
-            {isLoggedIn && (
-              <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                <li className="nav-item">
-                  <a className="nav-link active clickable" onClick={handleShowModal}>
+      <Navbar bg="dark" variant="dark" expand="lg">
+        <Container>
+          <Navbar.Brand as={Link} to="/">Kiruna</Navbar.Brand>
+          {/* Toggle button for mobile view */}
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="me-auto">
+              (
+                <>
+                  <Nav.Link onClick={() => handleShowModal('Manage Documents', 'manage')}>
                     Manage Documents
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link active" to="/link-documents">
-                    Link documents
-                  </Link>
-                </li>
-              </ul>
-            )}
+                  </Nav.Link>
+                  <Nav.Link onClick={() => handleShowModal('Link Documents', 'link')}>
+                    Link Documents
+                  </Nav.Link>
+                </>
+              )
+            </Nav>
             <span className="navbar-text ms-auto">
               {isMobile ? (
                 <span
@@ -74,25 +33,25 @@ const AppNavbar = (props) => {
                   onClick={handleLoginClick}
                   style={{ cursor: 'pointer', color: 'white' }}
                 >
-                  {isLoggedIn ? 'Logout' : 'Login'}
+                  {loggedIn ? 'Logout' : 'Login'}
                 </span>
               ) : (
                 <button onClick={handleLoginClick} className="btn btn-outline-light">
-                  {isLoggedIn ? 'Logout' : 'Login'}
+                  {loggedIn ? 'Logout' : 'Login'}
                 </button>
               )}
             </span>
-          </div>
-        </div>
-      </nav>
-      <MessageModal show={showModal} handleClose={handleCloseModal} />
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
     </>
   );
-};
+}
 
 AppNavbar.propTypes = {
-  isLoggedIn: PropTypes.bool,
-  handleLogout: PropTypes.func,
+  loggedIn: PropTypes.bool,
+  handleLoginClick: PropTypes.func,
+  handleShowModal: PropTypes.func,
 };
 
 export default AppNavbar;

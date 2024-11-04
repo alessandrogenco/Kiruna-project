@@ -1,0 +1,63 @@
+.documents-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f8f9fa; /* Light gray background */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .documents-container h2 {
+    text-align: center;
+    color: #343a40; /* Dark gray color */
+  }
+  
+  .documents-container ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .documents-container li {
+    background-color: #ffffff; /* White background for list items */
+    margin-bottom: 10px;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .documents-container li div {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .documents-container li strong {
+    font-size: 1.2em;
+    color: #007bff; /* Bootstrap primary color */
+  }
+  
+  .documents-container li p {
+    margin: 10px 0;
+    color: #6c757d; /* Bootstrap secondary color */
+  }
+  
+  .documents-container input[type="text"],
+  .documents-container input[type="date"],
+  .documents-container select {
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+  
+  .documents-container button {
+    padding: 10px 15px;
+    background-color: #007bff; /* Bootstrap primary color */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .documents-container button:hover {
+    background-color: #0056b3; /* Darker shade of Bootstrap primary color */
+  }

@@ -1,36 +1,21 @@
+import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import { useEffect, useState } from 'react';
 import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import API from './API.mjs';
 import LoginForm from './components/Auth';
-import HomePage from './components/HomePage'; // Importa il componente HomePage
-import ExplorePage from './components/ExplorePage'; // Importa il componente ExplorePage
-import LoggedInPage from './components/LoggedInPage';
-import Documents from './components/Documents';
-import LinkDocuments from './components/LinkDocuments';
+import HomePage from './components/HomePage';
+import ExplorePage from './components/ExplorePage';
+import Navbar from './components/Navbar';
+import MessageModal from './components/MessageModal'; // Import the MessageModal component
 
 function App() {
-  const [loggedIn, setLoggedIn] = useState(null); // Inizializza come `null`
+  const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState('');
+  const [modalType, setModalType] = useState(''); // State to determine which component to render
   const navigate = useNavigate();
-
-  useEffect(() => {
-    API.checkLogin()
-      .then(user => {
-        if (user) {
-          setLoggedIn(true);
-          setUser(user);
-        } else {
-          setLoggedIn(false);
-          setUser(null);
-        }
-      })
-      .catch(e => {
-        setLoggedIn(false);
-        setUser(null);
-      });
-  }, []);
 
   const handleLogin = async (credentials) => {
     try {
@@ -39,55 +24,63 @@ function App() {
       if (!user) {
         throw new Error("Wrong credentials.");
       }
+
       setUser(user);
       setLoggedIn(true);
-      navigate('/');
-    } catch (err) {
-      console.error("Login error:", err.message);
-      throw err;
+      navigate('/'); // Navigate to the home page after successful login
+    } catch (error) {
+      console.error(error);
+      // Handle login error (e.g., show an error message)
     }
   };
 
-  const handleLogout = async () => {
-    await API.logout();
-    setLoggedIn(false);
-    setUser(null);
-    navigate('/');
+  const handleShowModal = (content, type) => {
+    setModalContent(content);
+    setModalType(type);
+    setShowModal(true);
   };
 
-  if (loggedIn === null) {
-    return <div>Loading...</div>; // Mostra un messaggio di caricamento
-  }
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalContent('');
+    setModalType('');
+  };
 
   return (
-    <>
+    <div className="App">
+      <Navbar
+        loggedIn={loggedIn}
+        user={user}
+        handleLoginClick={handleLogin}
+        handleShowModal={handleShowModal} // Pass the handler to show the modal
+      />
+      <MessageModal show={showModal} handleClose={handleCloseModal} message={modalContent} modalType={modalType} />
       <Routes>
-        <Route
-          path="/"
-          element={<HomePage isLoggedIn={loggedIn} handleLogout={handleLogout} />}
-        />
+        
+        {/* Login Page */}
         <Route
           path="/login"
           element={
-            loggedIn ? <Navigate to="/loggedInPage" /> : <LoginForm login={handleLogin} />
+            loggedIn ? <Navigate to="/" /> : <LoginForm login={handleLogin} />
           }
         />
+
+        {/* Page to Explore */}
         <Route
           path="/explore"
-          element={<ExplorePage isLoggedIn={loggedIn} handleLogout={handleLogout} />}
+          element={
+            loggedIn ? <ExplorePage /> : <Navigate to="/login" />
+          }
         />
+
+        {/* Home Page */}
         <Route
-          path="/documents"
-          element={<Documents />}
-        />
-        <Route
-          path="/link-documents"
-          element={<LinkDocuments />}
+          path="/"
+          element={loggedIn ? <HomePage /> : <Navigate to="/login" />}
         />
       </Routes>
-    </>
+    </div>
   );
 }
-
 
 export default App;

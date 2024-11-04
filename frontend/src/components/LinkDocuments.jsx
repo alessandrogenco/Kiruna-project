@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Form, ListGroup } from 'react-bootstrap';
-import '../App.css';
+import "./LinkDocuments.css";
 import API from '../API.mjs'; 
 
 function LinkDocuments() {
