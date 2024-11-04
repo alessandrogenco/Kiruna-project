@@ -171,6 +171,18 @@ app.put('/api/addDescription', async (req, res) => {
     }
 });
 
+// Add a document - to be tested
+app.post('/api/addDocument', async (req, res) => {
+    const { title, stakeholders, scale, date, type, connections, language, pages, lat, lon, description } = req.body;
+  
+    try {
+      const result = await documentDao.addDocument(title, stakeholders, scale, date, type, connections, language, pages, lat, lon, description);
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
 //link documents - to be tested
 app.post('/api/linkDocuments', async (req, res) => {
     const { id1, id2 } = req.body;

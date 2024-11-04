@@ -39,6 +39,41 @@ class DocumentDao{
         });
     }
 
+    //add document - to be tested
+
+    addDocument(title, stakeholders, scale, date, type, connections, language, pages, lat, lon, description) {
+        return new Promise((resolve, reject) => {
+            if (!title || title.trim() === "") {
+                return reject(new Error('Title cannot be empty.'));
+            }
+
+            const addDocument = 'INSERT INTO Documents (title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+
+            db.run(addDocument, [title, description], function (err) {
+                if (err) {
+                    console.error('Database error while adding document:', err.message);
+                    return reject(new Error('Database error: ' + err.message));
+                }
+
+                resolve({
+                    id: this.lastID,
+                    title,
+                    stakeholders,
+                    scale,
+                    date,
+                    type,
+                    connections,
+                    language,
+                    pages,
+                    lat,
+                    lon,
+                    description,
+                    message: 'Document added successfully.'
+                  });
+            });
+        });
+    }
+
     addDocumentDescription(id, title, description) {
         return new Promise((resolve, reject) => {
 
