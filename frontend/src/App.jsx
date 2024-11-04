@@ -4,14 +4,15 @@ import { useEffect, useState } from 'react';
 import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import API from './API.mjs';
 import LoginForm from './components/Auth';
-import HomePage from './components/HomePage'; // Importa il componente HomePage
-import ExplorePage from './components/ExplorePage'; // Importa il componente ExplorePage
+import HomePage from './components/HomePage';
+import ExplorePage from './components/ExplorePage';
 import LoggedInPage from './components/LoggedInPage';
 import Documents from './components/Documents';
 import LinkDocuments from './components/LinkDocuments';
+import DocumentUploadForm from './components/DocumentUploadForm'; 
 
 function App() {
-  const [loggedIn, setLoggedIn] = useState(null); // Inizializza come `null`
+  const [loggedIn, setLoggedIn] = useState(null);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
@@ -35,7 +36,6 @@ function App() {
   const handleLogin = async (credentials) => {
     try {
       const user = await API.login(credentials.username, credentials.password);
-
       if (!user) {
         throw new Error("Wrong credentials.");
       }
@@ -56,13 +56,11 @@ function App() {
   };
 
   if (loggedIn === null) {
-    return <div>Loading...</div>; // Mostra un messaggio di caricamento
+    return <div>Loading...</div>;
   }
 
   return (
     <>
-      
-
       <Routes>
         <Route
           path="/"
@@ -86,10 +84,14 @@ function App() {
           path="/link-documents"
           element={<LinkDocuments isLoggedIn={loggedIn} handleLogout={handleLogout} />}
         />
+        
+        <Route
+          path="/upload-document"
+          element={<DocumentUploadForm />}
+        />
       </Routes>
     </>
   );
 }
-
 
 export default App;
