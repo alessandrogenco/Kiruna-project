@@ -171,6 +171,23 @@ app.put('/api/addDescription', async (req, res) => {
     }
 });
 
+//link documents - to be tested
+app.post('/api/linkDocuments', async (req, res) => {
+    const { id1, id2 } = req.body;
+  
+    try {
+      const result = await documentDao.linkDocuments(id1, id2);
+      res.status(200).json({
+        message: 'Documents linked successfully',
+        link: result
+      });
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+
+
 /* ACTIVATING THE SERVER */
 let server = app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

@@ -81,6 +81,21 @@ class DocumentDao{
             });
         });
     }
+
+    //link documents - to be tested
+    linkDocuments(id1, id2){
+        return new Promise((id1, id2) => {
+            const linkDocuments = 'INSERT INTO DocumentsLinks (idDocument1, idDocument2, date) VALUES (?, ?, ?)';
+            const date = new Date().toISOString();
+            db.run(linkDocuments, [id1, id2, date], (err) => {
+                if (err) {
+                    console.error('Database error while linking documents:', err.message);
+                    return reject(new Error('Database error: ' + err.message));
+                }
+                resolve({idDocument1: id1, idDocument2: id2, date});
+            });
+        })
+    }
     
 }
 
