@@ -61,7 +61,7 @@ const AppNavbar = (props) => {
                   </a>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link active" to="/documents">
+                  <Link className="nav-link active" to="/link-documents">
                     Link documents
                   </Link>
                 </li>

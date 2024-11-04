@@ -79,6 +79,10 @@ function App() {
           path="/documents"
           element={<Documents />}
         />
+        <Route
+          path="/link-documents"
+          element={<Documents />}
+        />
       </Routes>
     </>
   );
