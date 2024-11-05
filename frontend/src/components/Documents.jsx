@@ -186,7 +186,7 @@ function Documents({ show, handleClose }) {
                   onChange={handleNewDocumentChange}
                 />
               </Form.Group>
-              <Form.Group controlId="formStakeholders">
+              <Form.Group className="mt-3" controlId="formStakeholders">
                 <Form.Label>Stakeholders</Form.Label>
                 <Form.Control
                   type="text"
@@ -196,7 +196,7 @@ function Documents({ show, handleClose }) {
                   onChange={handleNewDocumentChange}
                 />
                  </Form.Group>
-              <Form.Group controlId="formScale">
+              <Form.Group className="mt-3" controlId="formScale">
                 <Form.Label>Scale</Form.Label>
                 <Form.Control
                   type="text"
@@ -206,7 +206,7 @@ function Documents({ show, handleClose }) {
                   onChange={handleNewDocumentChange}
                 />
               </Form.Group>
-              <Form.Group controlId="formDate">
+              <Form.Group className="mt-3" controlId="formDate">
                 <Form.Label>Date</Form.Label>
                 <Form.Control
                   type="date"
@@ -215,7 +215,7 @@ function Documents({ show, handleClose }) {
                   onChange={handleNewDocumentChange}
                 />
               </Form.Group>
-              <Form.Group controlId="formType">
+              <Form.Group className="mt-3" controlId="formType">
                 <Form.Label>Type</Form.Label>
                 <Form.Control
                   type="text"
@@ -225,7 +225,7 @@ function Documents({ show, handleClose }) {
                   onChange={handleNewDocumentChange}
                 />
               </Form.Group>
-              <Form.Group controlId="formConnections">
+              <Form.Group className="mt-3" controlId="formConnections">
                 <Form.Label>Connections</Form.Label>
                 <Form.Control
                   type="text"
@@ -235,17 +235,27 @@ function Documents({ show, handleClose }) {
                   onChange={handleNewDocumentChange}
                 />
               </Form.Group>
-              <Form.Group controlId="formLanguage">
+              <Form.Group className="mt-3" controlId="formLanguage">
                 <Form.Label>Language</Form.Label>
                 <Form.Control
-                  type="text"
-                  placeholder="Enter language"
+                  as="select"
                   name="language"
                   value={newDocument.language}
                   onChange={handleNewDocumentChange}
-                />
+                >
+                  <option value="">Select a language</option>
+                  <option value="English">English</option>
+                  <option value="Swedish">Swedish</option>
+                  <option value="Danish">Danish</option>
+                  <option value="Norwegian">Norwegian</option>
+                  <option value="Finnish">Finnish</option>
+                  <option value="Icelandic">Icelandic</option>
+                  <option value="Estonian">Estonian</option>
+                  <option value="Latvian">Latvian</option>
+                  <option value="Lithuanian">Lithuanian</option>
+                </Form.Control>
               </Form.Group>
-              <Form.Group controlId="formPages">
+              <Form.Group className="mt-3" controlId="formPages">
                 <Form.Label>Pages</Form.Label>
                 <Form.Control
                   type="number"
@@ -255,27 +265,33 @@ function Documents({ show, handleClose }) {
                   onChange={handleNewDocumentChange}
                 />
                   </Form.Group>
-              <Form.Group controlId="formLat">
+              <Form.Group className="mt-4" controlId="formLat">
                 <Form.Label>Latitude</Form.Label>
                 <Form.Control
-                  type="text"
+                  type="number" // Allows only numeric input
                   placeholder="Enter latitude"
                   name="lat"
+                  step="0.0001" // Allows up to 4 decimal places
+                  min="-90" // Minimum latitude
+                  max="90"  // Maximum latitude
                   value={newDocument.lat}
                   onChange={handleNewDocumentChange}
                 />
               </Form.Group>
-              <Form.Group controlId="formLon">
+              <Form.Group className="mt-3" controlId="formLon">
                 <Form.Label>Longitude</Form.Label>
                 <Form.Control
-                  type="text"
+                  type="number" // Allows only numeric input
                   placeholder="Enter longitude"
                   name="lon"
+                  step="0.0001" // Allows up to 4 decimal places
+                  min="-180" // Minimum longitude
+                  max="180"  // Maximum longitude
                   value={newDocument.lon}
                   onChange={handleNewDocumentChange}
                 />
               </Form.Group>
-              <Form.Group controlId="formDescription">
+              <Form.Group className="mt-4" controlId="formDescription">
                 <Form.Label>Description</Form.Label>
                 <Form.Control
                   as="textarea"
