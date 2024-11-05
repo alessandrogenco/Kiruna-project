@@ -205,4 +205,23 @@ describe("Link Documents", () => {
             .toThrow("Link already exists");
     });
 
+    test("Fails when there is a database error during link insertion", async () => {
+        const id1 = 1;
+        const id2 = 2;
+        const linkDate = "2025-11-05";
+        const linkType = "Informative document";
+
+        jest.spyOn(db, "get").mockImplementation((sql, params, callback) => {
+            callback(null, { count: 0 });
+        });
+
+        jest.spyOn(db, "run").mockImplementation((sql, params, callback) => {
+            callback(new Error("Database error during link insertion"));
+        });
+
+        await expect(documentDao.linkDocuments(id1, id2, linkDate, linkType))
+            .rejects
+            .toThrow("Database error: Database error during link insertion");
+    });
+
 })
