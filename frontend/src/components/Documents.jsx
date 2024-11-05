@@ -143,7 +143,7 @@ function Documents({ show, handleClose }) {
   function validateLatitude(e){
       let value = e.target.value;
       // check of the correct lat value
-      if (value < 67.7500 || value > 68.3333) {
+      if (value != '' && (value < 67.7500 || value > 68.3333)) {
         alert("Latitude is out of Kiruna Municipality borders!");
         setNewDocument((prevDocument) => ({
           ...prevDocument,
@@ -157,7 +157,7 @@ function Documents({ show, handleClose }) {
     let value = e.target.value;
 
     // check of the correct lat value
-    if (value < 20.7833 || value > 21.1333) {
+    if (value != '' && (value < 20.7833 || value > 21.1333)) {
       alert("Longitude is out of Kiruna Municipality borders!");
       setNewDocument((prevDocument) => ({
         ...prevDocument,
