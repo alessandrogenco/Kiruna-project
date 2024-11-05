@@ -266,7 +266,29 @@ describe("Link Documents", () => {
 
 
 describe("Get Document Links", () => {
-    test("Returns a message when the document has no links", async () => {
+    test("Successfully retrieves links for a document", async () => {
+        const documentId = 1;
+        const mockLinks1 = [
+            { id: 2, title: "Linked Document 1", date: "2024-11-05", type: "Informative document" },
+        ];
+        const mockLinks2 = [
+            { id: 3, title: "Linked Document 2", date: "2024-11-05", type: "Design document" },
+        ];
+
+        jest.spyOn(db, "all").mockImplementationOnce((sql, params, callback) => {
+            callback(null, mockLinks1);  
+        });
+
+        jest.spyOn(db, "all").mockImplementationOnce((sql, params, callback) => {
+            callback(null, mockLinks2);  
+        });
+
+        const result = await documentDao.getDocumentLinks(documentId);
+        
+        expect(result).toEqual([...mockLinks1, ...mockLinks2]);
+    });
+
+    test("Document has no links", async () => {
         const documentId = 1;
 
         jest.spyOn(db, "all").mockImplementationOnce((sql, params, callback) => {
