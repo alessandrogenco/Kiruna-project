@@ -41,7 +41,7 @@ function App() {
       }
       setUser(user);
       setLoggedIn(true);
-      navigate('/');
+      navigate('/explore');
     } catch (err) {
       console.error("Login error:", err.message);
       throw err;
@@ -69,7 +69,7 @@ function App() {
         <Route
           path="/login"
           element={
-            loggedIn ? <Navigate to="/loggedInPage" /> : <LoginForm login={handleLogin} isLoggedIn={loggedIn} handleLogout={handleLogout} />
+            loggedIn ? <Navigate to="/explore" /> : <LoginForm login={handleLogin} isLoggedIn={loggedIn} handleLogout={handleLogout} />
           }
         />
         <Route
