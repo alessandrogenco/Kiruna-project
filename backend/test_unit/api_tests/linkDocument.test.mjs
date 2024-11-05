@@ -1,5 +1,5 @@
 import { describe, test, expect, jest, afterEach } from "@jest/globals";
-import { server } from "../../index.mjs";
+import { app, server } from "../../index.mjs";
 import request from "supertest";
 import DocumentDao from "../../dao/document.mjs";
 
@@ -23,7 +23,6 @@ describe("POST Link Documents", () => {
             type: "Informative document",
         });
 
-        const app = (await import("../../index")).app;
         const response = await request(app).post(baseURL + "linkDocuments").send({
             id1: 1,
             id2: 2,
@@ -46,7 +45,6 @@ describe("POST Link Documents", () => {
     });
 
     test("Should return 400 if link Date is an empty string", async () => {
-        const app = (await import("../../index")).app;
         const response = await request(app).post(baseURL + "linkDocuments").send({
             id1: 1,
             id2: 2,
@@ -61,7 +59,6 @@ describe("POST Link Documents", () => {
     });
 
     test("Should return 400 if Link Type is an empty string", async () => {
-        const app = (await import("../../index")).app;
         const response = await request(app).post(baseURL + "linkDocuments").send({
             id1: 1,
             id2: 2,
@@ -78,7 +75,6 @@ describe("POST Link Documents", () => {
     test("Should return 409 if link already exists", async () => {
         const spyDao = jest.spyOn(DocumentDao.prototype, "linkDocuments").mockRejectedValueOnce(new Error("Link already exists"));
 
-        const app = (await import("../../index")).app;
         const response = await request(app).post(baseURL + "linkDocuments").send({
             id1: 1,
             id2: 2,
@@ -96,7 +92,6 @@ describe("POST Link Documents", () => {
     test("Should return 400 if an unexpected error occurs", async () => {
         const spyDao = jest.spyOn(DocumentDao.prototype, "linkDocuments").mockRejectedValueOnce(new Error("Unexpected error"));
 
-        const app = (await import("../../index")).app;
         const response = await request(app).post(baseURL + "linkDocuments").send({
             id1: 1,
             id2: 2,
@@ -108,6 +103,59 @@ describe("POST Link Documents", () => {
         expect(spyDao).toHaveBeenCalledTimes(1);
         expect(response.body).toEqual({
             message: "Unexpected error",
+        });
+    });
+});
+
+
+describe("GET Document Links", () => {
+
+    test("Successfully fetches document links", async () => {
+        const mockLinks = [
+            { idDocument1: 1, idDocument2: 2, date: "2024-11-05", type: "Reference" },
+            { idDocument1: 1, idDocument2: 3, date: "2024-11-06", type: "Supplementary" }
+        ];
+        jest.spyOn(DocumentDao.prototype, "getDocumentLinks").mockResolvedValueOnce(mockLinks);
+
+        const response = await request(app).get(baseURL + "documentLinks/1");
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({
+            message: "Document links fetched successfully",
+            links: mockLinks
+        });
+    });
+
+    test("Returns a message if no links are found for the document", async () => {
+        jest.spyOn(DocumentDao.prototype, "getDocumentLinks").mockResolvedValueOnce({ message: "No links found for this document" });
+
+        const response = await request(app).get(baseURL + "documentLinks/1");
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({
+            message: "No links found for this document"
+        });
+    });
+
+    test("Should return 400 if an invalid document ID is provided", async () => {
+        jest.spyOn(DocumentDao.prototype, "getDocumentLinks").mockRejectedValueOnce(new Error("Invalid document ID"));
+
+        const response = await request(app).get(baseURL + "documentLinks/invalidId");
+
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({
+            message: "Invalid document ID"
+        });
+    });
+
+    test("Should handle internal server errors", async () => {
+        jest.spyOn(DocumentDao.prototype, "getDocumentLinks").mockRejectedValueOnce(new Error("Internal server error"));
+
+        const response = await request(app).get(baseURL + "documentLinks/1");
+
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({
+            message: "Internal server error"
         });
     });
 });
