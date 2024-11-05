@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Form, ListGroup } from 'react-bootstrap';
-import "./LinkDocuments.css";
+import "./Documents.css";
 import API from '../API.mjs'; 
 
 function LinkDocuments() {
@@ -57,8 +57,7 @@ function LinkDocuments() {
   };
 
   return (
-    <div className="link-documents-container">
-      <h2>Link Documents</h2>
+    <div className="documents-container">
       <ListGroup>
         {documents.map((document) => (
           <ListGroup.Item key={document.id}>
@@ -74,7 +73,7 @@ function LinkDocuments() {
 
       {/* Campo per linkDate */}
       <Form.Group controlId="linkDate" className="mt-3">
-        <Form.Label>Link Date</Form.Label>
+        <Form.Label>Date</Form.Label>
         <Form.Control
           type="date"
           value={linkDate}
@@ -84,7 +83,7 @@ function LinkDocuments() {
 
       {/* Campo per linkType */}
       <Form.Group controlId="linkType" className="mt-3">
-        <Form.Label>Link Type</Form.Label>
+        <Form.Label>Type</Form.Label>
         <Form.Control
           type="text"
           placeholder="Enter link type"

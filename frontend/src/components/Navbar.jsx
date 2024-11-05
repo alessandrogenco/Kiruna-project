@@ -1,10 +1,31 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Navbar, Nav, Container } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import MessageModal from './MessageModal';
 
-function AppNavbar({ loggedIn, handleLoginClick, handleShowModal }) {
+function AppNavbar({ isLoggedIn, handleLogout }) {
+  const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState('');
+  const [modalType, setModalType] = useState('');
   const isMobile = window.innerWidth <= 768;
+
+  const handleShowModal = (content, type) => {
+    setModalContent(content);
+    setModalType(type);
+    setShowModal(true);
+  };
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalContent('');
+    setModalType('');
+  };
+
+
+  const handleLoginClick = () => {
+      navigate('/login');
+  };
 
   return (
     <>
@@ -15,7 +36,7 @@ function AppNavbar({ loggedIn, handleLoginClick, handleShowModal }) {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              (
+              {isLoggedIn && (
                 <>
                   <Nav.Link onClick={() => handleShowModal('Manage Documents', 'manage')}>
                     Manage Documents
@@ -24,7 +45,7 @@ function AppNavbar({ loggedIn, handleLoginClick, handleShowModal }) {
                     Link Documents
                   </Nav.Link>
                 </>
-              )
+              )}
             </Nav>
             <span className="navbar-text ms-auto">
               {isMobile ? (
@@ -33,25 +54,26 @@ function AppNavbar({ loggedIn, handleLoginClick, handleShowModal }) {
                   onClick={handleLoginClick}
                   style={{ cursor: 'pointer', color: 'white' }}
                 >
-                  {loggedIn ? 'Logout' : 'Login'}
+                  {isLoggedIn ? 'Logout' : 'Login'}
                 </span>
               ) : (
                 <button onClick={handleLoginClick} className="btn btn-outline-light">
-                  {loggedIn ? 'Logout' : 'Login'}
+                  {isLoggedIn ? 'Logout' : 'Login'}
                 </button>
               )}
             </span>
           </Navbar.Collapse>
         </Container>
       </Navbar>
+      <MessageModal show={showModal} handleClose={handleCloseModal} modalType={modalType} />
     </>
   );
 }
 
+
 AppNavbar.propTypes = {
-  loggedIn: PropTypes.bool,
-  handleLoginClick: PropTypes.func,
-  handleShowModal: PropTypes.func,
+  isLoggedIn: PropTypes.bool.isRequired,
+  handleLogout: PropTypes.func.isRequired,
 };
 
 export default AppNavbar;
