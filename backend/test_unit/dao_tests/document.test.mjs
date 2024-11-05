@@ -208,7 +208,7 @@ describe("Link Documents", () => {
     test("Fails when there is a database error during link insertion", async () => {
         const id1 = 1;
         const id2 = 2;
-        const linkDate = "2025-11-05";
+        const linkDate = "2024-11-05";
         const linkType = "Informative document";
 
         jest.spyOn(db, "get").mockImplementation((sql, params, callback) => {
@@ -222,6 +222,29 @@ describe("Link Documents", () => {
         await expect(documentDao.linkDocuments(id1, id2, linkDate, linkType))
             .rejects
             .toThrow("Database error: Database error during link insertion");
+    });
+
+    test("Fails when there is a database error during connections update", async () => {
+        const id1 = 1;
+        const id2 = 2;
+        const linkDate = "2024-11-05";
+        const linkType = "Informative document";
+
+        jest.spyOn(db, "get").mockImplementation((sql, params, callback) => {
+            callback(null, { count: 0 });  
+        });
+
+        jest.spyOn(db, "run")
+            .mockImplementationOnce((sql, params, callback) => {
+                callback(null);  
+            })
+            .mockImplementationOnce((sql, params, callback) => {
+                callback(new Error("Database error during connections update"));  
+            });
+
+        await expect(documentDao.linkDocuments(id1, id2, linkDate, linkType))
+            .rejects
+            .toThrow("Database error: Database error during connections update");
     });
 
 })
