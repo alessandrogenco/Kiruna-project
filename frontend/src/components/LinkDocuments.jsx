@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Form, ListGroup } from 'react-bootstrap';
+import React, { useEffect, useState, useRef } from 'react';
+import { Button, Form, ListGroup, Alert } from 'react-bootstrap';
 import "./Documents.css";
 import API from '../API.mjs'; 
 
@@ -8,6 +8,8 @@ function LinkDocuments() {
   const [selectedDocuments, setSelectedDocuments] = useState([]);
   const [linkDate, setLinkDate] = useState(''); // Stato per la data del link
   const [linkType, setLinkType] = useState(''); // Stato per il tipo di link
+  const [message, setMessage] = useState(''); 
+  const isLinkedRef = useRef(false);
 
   useEffect(() => {
     const fetchDocuments = async () => {
@@ -37,6 +39,8 @@ function LinkDocuments() {
   };
 
   const handleLinkDocuments = async () => {
+    if (isLinkedRef.current) return;
+
     if (selectedDocuments.length !== 2) {
       alert('Please select exactly two documents to link.');
       return;
@@ -46,10 +50,11 @@ function LinkDocuments() {
 
     try {
       await API.linkDocument(id1, id2, linkDate, linkType);
-      alert('Documents linked successfully!');
       setSelectedDocuments([]);
       setLinkDate(''); 
       setLinkType(''); 
+      isLinkedRef.current = true; // Aggiorna il flag
+      setMessage('Documents linked successfully!');
     } catch (error) {
       console.error('Error linking documents:', error);
       alert('Error linking documents.');
@@ -58,6 +63,7 @@ function LinkDocuments() {
 
   return (
     <div className="documents-container">
+      {message && <Alert variant={message.includes('successfully') ? 'success' : 'danger'}>{message}</Alert>}
       <ListGroup>
         {documents.map((document) => (
           <ListGroup.Item key={document.id}>
