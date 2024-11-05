@@ -2,9 +2,11 @@
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
+    
     background-color: #f8f9fa; /* Light gray background */
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
   }
   
   .documents-container h1 {
@@ -52,6 +54,7 @@
     background-color: #28a745; /* Bootstrap primary color */
     color: white;
     border: none;
+    margin-bottom: 10px;
     border-radius: 4px;
     cursor: pointer;
   }

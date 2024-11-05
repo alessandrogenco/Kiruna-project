@@ -3,7 +3,7 @@ import { Alert, Button, Col, Form, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from "prop-types";
 
-function LoginForm(props) {
+function LoginForm({ login, isLoggedIn, handleLogout }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
@@ -16,8 +16,8 @@ function LoginForm(props) {
         event.preventDefault();
         const credentials = { username, password };
 
-        props.login(credentials)
-            .then(() => navigate("/explore"))
+        login(credentials)
+            .then(() => navigate("/loggedInPage", { state: { isLoggedIn, handleLogout } }))
             .catch((err) => {
                 if (err.message === "Unauthorized")
                     setErrorMessage("Invalid username and/or password");
@@ -70,6 +70,8 @@ function LoginForm(props) {
 
 LoginForm.propTypes = {
     login: PropTypes.func,
+    isLoggedIn: PropTypes.bool,
+    handleLogout: PropTypes.func,
 };
 
 export default LoginForm;
