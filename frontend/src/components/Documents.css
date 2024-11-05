@@ -62,3 +62,14 @@
   .documents-container button:hover {
     background-color: #218838; /* Darker shade of Bootstrap primary color */
   }
+
+  .green-button {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: white; /* Assicurati che il testo sia leggibile */
+  }
+  
+  .green-button:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+  }

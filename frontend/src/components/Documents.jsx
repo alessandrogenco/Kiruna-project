@@ -294,7 +294,7 @@ function Documents({ show, handleClose }) {
             Close
           </Button>
           <Button
-            variant="primary"
+             className="green-button" 
             onClick={selectedDocument ? () => handleAddDescription(selectedDocument.id, selectedDocument.title) : handleAddDocument}
           >
             {selectedDocument ? 'Add Description' : 'Add Document'}
