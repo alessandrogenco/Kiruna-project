@@ -105,7 +105,7 @@ function Documents({ show, handleClose }) {
           doc.id === id ? { ...doc, description: updatedDocument.document.description } : doc
         )
       );
-      setDescriptions({ ...descriptions, [id]: '' }); // Clear the input field after submission
+      setDescriptions({ ...descriptions, [id]: ''}); // Clear the input field after submission
       setShowFormModal(false); // Close the form modal
     } catch (error) {
       console.error('Error adding description:', error);
@@ -140,8 +140,11 @@ function Documents({ show, handleClose }) {
     document.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  
+  // validates the latitude coordinates
   function validateLatitude(e){
       let value = e.target.value;
+
       // check of the correct lat value
       if (value != '' && (value < 67.7500 || value > 68.3333)) {
         alert("Latitude is out of Kiruna Municipality borders!");
@@ -153,6 +156,7 @@ function Documents({ show, handleClose }) {
       }
   }
 
+  // validates the lognitude coordinates
   function validateLongitude(e){
     let value = e.target.value;
 
@@ -195,15 +199,19 @@ function Documents({ show, handleClose }) {
       
       <Modal show={showFormModal} onHide={handleCloseFormModal}>
         <Modal.Header closeButton>
-          <Modal.Title>{selectedDocument ? `Add Description for ${selectedDocument.title}` : 'Add New Document'}</Modal.Title>
+          <Modal.Title>{selectedDocument ? `Set description for \"${selectedDocument.title}\"` : 'Add new document'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {selectedDocument ? (
-            <input
+            <textarea className='w-100 my-2 form-control'
               type="text"
-              placeholder="Add description"
+              placeholder="Set description"
+              minLength={1}
+              rows={8}
+              maxLength={8*80} // rows number multiplied by characters per row
               value={descriptions[selectedDocument.id] || ''}
               onChange={(e) => handleDescriptionChange(selectedDocument.id, e.target.value)}
+              required
             />
           ) :  (
             <Form>
@@ -265,6 +273,7 @@ function Documents({ show, handleClose }) {
                   <option value="Consultation">Concept - Consultation</option>
                   <option value="Material effect">Concept - Material effect</option>
                   <option value="Paper">Concept - Paper</option>
+                  <option value="Action">Action</option>
                   </Form.Control>
               </Form.Group>
               <Form.Group className="mt-3" controlId="formConnections">
@@ -338,7 +347,7 @@ function Documents({ show, handleClose }) {
                 <Form.Label>Description</Form.Label>
                 <Form.Control
                   as="textarea"
-                  rows={3}
+                  rows={8}
                   placeholder="Enter description"
                   name="description"
                   value={newDocument.description}
@@ -356,7 +365,7 @@ function Documents({ show, handleClose }) {
              className="green-button" 
             onClick={selectedDocument ? () => handleAddDescription(selectedDocument.id, selectedDocument.title) : handleAddDocument}
           >
-            {selectedDocument ? 'Add Description' : 'Add Document'}
+            {selectedDocument ? 'Set Description' : 'Add Document'}
           </Button>
         </Modal.Footer>
       </Modal>
