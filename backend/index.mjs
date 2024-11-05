@@ -1,6 +1,5 @@
 import cors from 'cors';
 import express from 'express';
-import multer from 'multer';
 import session from 'express-session';
 import passport from 'passport';
 import LoginDao from './dao/login.mjs';
@@ -8,9 +7,6 @@ import DocumentDao from './dao/document.mjs';
 
 const app = express();
 const PORT = 3001;
-//multer configuration to manage the upload of a file 
-const storage = multer.memoryStorage(); // Store a file in memory as Buffer 
-const upload = multer({ storage: storage });
 
 app.use(express.json());
 
@@ -258,60 +254,6 @@ app.put('/api/links', async (req, res) => {
         }
     }
 });
-
-/*app.post('/api/newDocuments', upload.single('file'), async (req, res) => {
-    try {
-        const { name } = req.body;
-        const file = req.file?.buffer; // Get the buffer of the file just uploaded 
-
-        // Check the needed filds
-        if (!name || !file) {
-            return res.status(400).json({ error: 'Name and file are required' });
-        }
-
-        const result = await documentDao.newDocument(name, file);
-
-        // success response
-        res.status(201).json(result);
-    } catch (error) {
-        console.error('Error inserting document:', error.message);
-        res.status(500).json({ error: error.message });
-    }
-});*/
-
-app.post('/api/newDocuments', upload.single('file'), async (req, res) => {
-    try {
-        const { name } = req.body;
-        const file = req.file?.buffer; // Get the buffer of the file just uploaded 
-        const documentDetails = {
-            title: req.body.title,
-            stakeholders: req.body.stakeholders,
-            scale: req.body.scale,
-            issuanceDate: req.body.issuanceDate,
-            type: req.body.type,
-            connections: req.body.connections,
-            language: req.body.language,
-            pages: req.body.pages,
-            lat: req.body.lat,
-            lon: req.body.lon,
-            description: req.body.description,
-        };
-
-        // Check the needed filds
-        if (!name || !file || !documentDetails.title) {
-            return res.status(400).json({ error: 'Name, file, and title are required' });
-        }
-
-        const result = await documentDao.newDocument(name, file, documentDetails);
-
-        // Success response
-        res.status(201).json(result);
-    } catch (error) {
-        console.error('Error inserting document:', error.message);
-        res.status(500).json({ error: error.message });
-    }
-});
-
 
 /* ACTIVATING THE SERVER */
 let server = app.listen(PORT, () => {
