@@ -17,7 +17,7 @@ function LoginForm({ login, isLoggedIn, handleLogout }) {
         const credentials = { username, password };
 
         login(credentials)
-            .then(() => navigate("/loggedInPage", { state: { isLoggedIn, handleLogout } }))
+            .then(() => navigate("/explore", { state: { isLoggedIn, handleLogout } }))
             .catch((err) => {
                 if (err.message === "Unauthorized")
                     setErrorMessage("Invalid username and/or password");
