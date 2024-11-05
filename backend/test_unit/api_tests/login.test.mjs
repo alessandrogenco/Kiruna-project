@@ -1,5 +1,5 @@
 import { describe, test, expect, jest, afterEach } from "@jest/globals";
-import { server } from "../../index.mjs";
+import { app, server } from "../../index.mjs";
 import request from "supertest";
 
 // import the dao
@@ -28,7 +28,6 @@ describe("POST Register a new user", () => {
             salt: expect.any(String)
         });
 
-        const app = (await import("../../index")).app;
         const response = await request(app).post(baseURL + "register").send({
             username: user1.username,
             name: user1.name,
@@ -56,7 +55,6 @@ describe("POST Register a new user", () => {
     test("Should reject if username already exists", async () => {
         const spyDao = jest.spyOn(LoginDao.prototype, "registerUser").mockRejectedValueOnce(new Error('Username already exists. Please choose another one.'));
 
-        const app = (await import("../../index")).app;
         const response = await request(app).post(baseURL + "register").send({
             username: user1.username,
             name: user1.name,
@@ -75,7 +73,6 @@ describe("POST Register a new user", () => {
     });
 
     test("Should reject if a field is missing", async () => {
-        const app = (await import("../../index")).app;
         const response = await request(app).post(baseURL + "register").send({
             username: user1.username,
             surname: user1.surname,
@@ -88,7 +85,6 @@ describe("POST Register a new user", () => {
     test("Should reject if an internal server error occurs", async () => {
         const spyDao = jest.spyOn(LoginDao.prototype, "registerUser").mockRejectedValueOnce(new Error());
 
-        const app = (await import("../../index")).app;
         const response = await request(app).post(baseURL + "register").send({
             username: user1.username,
             name: user1.name,
@@ -116,7 +112,6 @@ describe("POST Login user", () => {
             surname: user1.surname
         });
 
-        const app = (await import("../../index")).app;
         const response = await request(app).post(baseURL + "login").send({
             username: user1.username,
             password: user1.password
@@ -140,7 +135,6 @@ describe("POST Login user", () => {
     });
 
     test("Should reject if a field is missing", async () => {
-        const app = (await import("../../index")).app;
         const response = await request(app).post(baseURL + "login").send({
             username: user1.username
         });
@@ -151,7 +145,6 @@ describe("POST Login user", () => {
     test("Should reject if invalid username or password", async () => {
         const spyDao = jest.spyOn(LoginDao.prototype, "Login").mockResolvedValueOnce(false);
 
-        const app = (await import("../../index")).app;
         const response = await request(app).post(baseURL + "login").send({
             username: user1.username,
             password: user1.password
@@ -171,7 +164,6 @@ describe("POST Login user", () => {
     test("Should reject if an internal server error occurs", async () => {
         const spyDao = jest.spyOn(LoginDao.prototype, "Login").mockRejectedValueOnce(new Error());
 
-        const app = (await import("../../index")).app;
         const response = await request(app).post(baseURL + "login").send({
             username: user1.username,
             password: user1.password
