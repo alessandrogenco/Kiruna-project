@@ -7,7 +7,6 @@ const documentDao = new DocumentDao();
 afterEach(() => {
     jest.restoreAllMocks();
 });
-
 describe("Link Documents", () => {
     test("Successfully links two documents", async () => {
         const id1 = 1;
