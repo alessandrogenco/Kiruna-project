@@ -123,6 +123,10 @@ function Documents({ show, handleClose }) {
   };
   const handleNewDocumentChange = (e) => {
     const { name, value } = e.target;
+
+    if (name == "lon"){
+      
+    }
     setNewDocument((prevDocument) => ({
       ...prevDocument,
       [name]: value,
@@ -135,6 +139,33 @@ function Documents({ show, handleClose }) {
   const filteredDocuments = documents.filter((document) =>
     document.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  function validateLatitude(e){
+      let value = e.target.value;
+      // check of the correct lat value
+      if (value < 67.7500 || value > 68.3333) {
+        alert("Latitude is out of Kiruna Municipality borders!");
+        setNewDocument((prevDocument) => ({
+          ...prevDocument,
+          lat: '',
+        }));
+        return;
+      }
+  }
+
+  function validateLongitude(e){
+    let value = e.target.value;
+
+    // check of the correct lat value
+    if (value < 20.7833 || value > 21.1333) {
+      alert("Longitude is out of Kiruna Municipality borders!");
+      setNewDocument((prevDocument) => ({
+        ...prevDocument,
+        lon: '',
+      }));
+      return;
+    }
+}
 
   return (
     <div className="documents-container">
@@ -241,8 +272,7 @@ function Documents({ show, handleClose }) {
                   as="select"
                   name="language"
                   value={newDocument.language}
-                  onChange={handleNewDocumentChange}
-                >
+                  onChange={handleNewDocumentChange}>
                   <option value="">Select a language</option>
                   <option value="English">English</option>
                   <option value="Swedish">Swedish</option>
@@ -258,12 +288,11 @@ function Documents({ show, handleClose }) {
               <Form.Group className="mt-3" controlId="formPages">
                 <Form.Label>Pages</Form.Label>
                 <Form.Control
-                  type="number"
+                  type="text"
                   placeholder="Enter pages"
                   name="pages"
                   value={newDocument.pages}
-                  onChange={handleNewDocumentChange}
-                />
+                  onChange={handleNewDocumentChange}/>
                   </Form.Group>
               <Form.Group className="mt-4" controlId="formLat">
                 <Form.Label>Latitude</Form.Label>
@@ -272,10 +301,11 @@ function Documents({ show, handleClose }) {
                   placeholder="Enter latitude"
                   name="lat"
                   step="0.0001" // Allows up to 4 decimal places
-                  min="-90" // Minimum latitude
-                  max="90"  // Maximum latitude
+                  min="67.7500" // Minimum latitude
+                  max="68.3333"  // Maximum latitude
                   value={newDocument.lat}
                   onChange={handleNewDocumentChange}
+                  onBlur={validateLatitude}
                 />
               </Form.Group>
               <Form.Group className="mt-3" controlId="formLon">
@@ -285,10 +315,11 @@ function Documents({ show, handleClose }) {
                   placeholder="Enter longitude"
                   name="lon"
                   step="0.0001" // Allows up to 4 decimal places
-                  min="-180" // Minimum longitude
-                  max="180"  // Maximum longitude
+                  min="20.7833" // Minimum longitude
+                  max="21.1333"  // Maximum longitude
                   value={newDocument.lon}
                   onChange={handleNewDocumentChange}
+                  onBlur={validateLongitude}
                 />
               </Form.Group>
               <Form.Group className="mt-4" controlId="formDescription">
