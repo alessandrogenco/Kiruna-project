@@ -304,4 +304,16 @@ describe("Get Document Links", () => {
         expect(result).toEqual({ message: `Document ${documentId} has no links` });
     });
 
+    test("Fails when there is a database error during first query", async () => {
+        const documentId = 1;
+
+        jest.spyOn(db, "all").mockImplementationOnce((sql, params, callback) => {
+            callback(new Error("Database error during query1"), null);
+        });
+
+        await expect(documentDao.getDocumentLinks(documentId))
+            .rejects
+            .toThrow("Database error: Database error during query1");
+    });
+
 })
