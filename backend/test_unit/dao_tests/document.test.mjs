@@ -336,3 +336,31 @@ describe("Get Document Links", () => {
     });
 
 })
+
+
+describe("Update Link", () => {
+    test("Successfully updates an existing link", async () => {
+        const idDocument1 = 1;
+        const idDocument2 = 2;
+        const newLinkDate = "2024-11-05";
+        const newLinkType = "Updated";
+
+        jest.spyOn(db, "get").mockImplementation((sql, params, callback) => {
+            callback(null, { count: 1 });  
+        });
+
+        jest.spyOn(db, "run").mockImplementation((sql, params, callback) => {
+            callback(null);  
+        });
+
+        const result = await documentDao.updateLink(idDocument1, idDocument2, newLinkDate, newLinkType);
+
+        expect(result).toEqual({
+            id1: idDocument1,
+            id2: idDocument2,
+            date: newLinkDate,
+            type: newLinkType,
+        });
+    });
+
+})
