@@ -316,4 +316,23 @@ describe("Get Document Links", () => {
             .toThrow("Database error: Database error during query1");
     });
 
+    test("Fails when there is a database error during second query", async () => {
+        const documentId = 1;
+        const mockLinks1 = [
+            { id: 2, title: "Linked Document 1", date: "2024-11-05", type: "Informative document" },
+        ];
+
+        jest.spyOn(db, "all").mockImplementationOnce((sql, params, callback) => {
+            callback(null, mockLinks1);  
+        });
+
+        jest.spyOn(db, "all").mockImplementationOnce((sql, params, callback) => {
+            callback(new Error("Database error during query2"), null);
+        });
+
+        await expect(documentDao.getDocumentLinks(documentId))
+            .rejects
+            .toThrow("Database error: Database error during query2");
+    });
+
 })
