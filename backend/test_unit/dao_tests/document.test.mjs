@@ -157,8 +157,6 @@ describe("Get all documents", () => {
     });
 });
 
-
-
 describe("Link Documents", () => {
     test("Successfully links two documents", async () => {
         const id1 = 1;
@@ -361,6 +359,55 @@ describe("Update Link", () => {
             date: newLinkDate,
             type: newLinkType,
         });
+    });
+
+    test("Link does not exist", async () => {
+        const idDocument1 = 1;
+        const idDocument2 = 2;
+        const newLinkDate = "2024-11-05";
+        const newLinkType = "Updated";
+
+        jest.spyOn(db, "get").mockImplementation((sql, params, callback) => {
+            callback(null, { count: 0 });  
+        });
+
+        await expect(documentDao.updateLink(idDocument1, idDocument2, newLinkDate, newLinkType))
+            .rejects
+            .toThrow("Link not found");
+    });
+
+    test("Fails when there is a database error while checking the link", async () => {
+        const idDocument1 = 1;
+        const idDocument2 = 2;
+        const newLinkDate = "2024-11-05";
+        const newLinkType = "Updated ";
+
+        jest.spyOn(db, "get").mockImplementation((sql, params, callback) => {
+            callback(new Error("Database error during link check"), null);
+        });
+
+        await expect(documentDao.updateLink(idDocument1, idDocument2, newLinkDate, newLinkType))
+            .rejects
+            .toThrow("Database error: Database error during link check");
+    });
+
+    test("Fails when there is a database error while updating the link", async () => {
+        const idDocument1 = 1;
+        const idDocument2 = 2;
+        const newLinkDate = "2024-11-05";
+        const newLinkType = "Updated";
+
+        jest.spyOn(db, "get").mockImplementation((sql, params, callback) => {
+            callback(null, { count: 1 }); 
+        });
+
+        jest.spyOn(db, "run").mockImplementation((sql, params, callback) => {
+            callback(new Error("Database error during link update"));
+        });
+
+        await expect(documentDao.updateLink(idDocument1, idDocument2, newLinkDate, newLinkType))
+            .rejects
+            .toThrow("Database error: Database error during link update");
     });
 
 })
