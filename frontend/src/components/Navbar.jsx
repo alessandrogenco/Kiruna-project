@@ -22,7 +22,6 @@ function AppNavbar({ isLoggedIn, handleLogout }) {
     setModalType('');
   };
 
-
   const handleLoginClick = () => {
     if(!isLoggedIn){
       navigate('/login');

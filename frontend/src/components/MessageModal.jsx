@@ -9,7 +9,7 @@ function MessageModal({ show, handleClose, message, modalType }) {
       <Modal.Header closeButton>
         <Modal.Title>{modalType === 'manage' ? 'Manage Documents' : 'Link Documents'}</Modal.Title>
       </Modal.Header>
-      <Modal.Body>
+      <Modal.Body >
         <p>{message}</p>
         {modalType === 'manage' ? (
           <Documents show={show} handleClose={handleClose} />
@@ -17,11 +17,6 @@ function MessageModal({ show, handleClose, message, modalType }) {
           <LinkDocuments />
         )}
       </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
-          Close
-        </Button>
-      </Modal.Footer>
     </Modal>
   );
 }

@@ -29,13 +29,22 @@ function LinkDocuments() {
   }, []);
 
   const handleDocumentSelection = (id) => {
-    setSelectedDocuments((prevSelected) => {
-      if (prevSelected.includes(id)) {
-        return prevSelected.filter((docId) => docId !== id);
+
+    // Check if the document is already selected
+    const isSelected = selectedDocuments.includes(id);
+
+    // If it is selected, unselect it
+    if (isSelected) {
+      setSelectedDocuments(selectedDocuments.filter(docId => docId !== id));
+    } else {
+      // If it is not selected, check if we can select more documents
+      if (selectedDocuments.length < 2) {
+        setSelectedDocuments([...selectedDocuments, id]);
       } else {
-        return [...prevSelected, id];
+        // Alert user if they attempt to select more than 2
+        alert("You can only select a maximum of 2 documents.");
       }
-    });
+    }
   };
 
   const handleLinkDocuments = async () => {
@@ -62,8 +71,35 @@ function LinkDocuments() {
   };
 
   return (
-    <div className="documents-container">
+    <div className="documents-containe w-100">
       {message && <Alert variant={message.includes('successfully') ? 'success' : 'danger'}>{message}</Alert>}
+      
+      {/* Campo per linkDate */}
+      <Form.Group controlId="linkDate">
+        <Form.Label>Date</Form.Label>
+        <Form.Control
+          type="date"
+          value={linkDate}
+          onChange={(e) => setLinkDate(e.target.value)}
+        />
+      </Form.Group>
+
+      {/* Campo per linkType */}
+      <Form.Group controlId="linkType" className="mt-3 mb-4">
+        <Form.Label>Type</Form.Label>
+        <Form.Control
+          as="select"  // This turns the input into a select dropdown
+          value={linkType}
+          onChange={(e) => setLinkType(e.target.value)}
+        >
+          <option value="">Select link type</option>
+          <option value="Direct">Direct</option>
+          <option value="Collateral">Collateral</option>
+          <option value="Projection">Projection</option>
+          <option value="Update">Update</option>
+        </Form.Control>
+      </Form.Group>
+
       <ListGroup>
         {documents.map((document) => (
           <ListGroup.Item key={document.id}>
@@ -77,28 +113,7 @@ function LinkDocuments() {
         ))}
       </ListGroup>
 
-      {/* Campo per linkDate */}
-      <Form.Group controlId="linkDate" className="mt-3">
-        <Form.Label>Date</Form.Label>
-        <Form.Control
-          type="date"
-          value={linkDate}
-          onChange={(e) => setLinkDate(e.target.value)}
-        />
-      </Form.Group>
-
-      {/* Campo per linkType */}
-      <Form.Group controlId="linkType" className="mt-3">
-        <Form.Label>Type</Form.Label>
-        <Form.Control
-          type="text"
-          placeholder="Enter link type"
-          value={linkType}
-          onChange={(e) => setLinkType(e.target.value)}
-        />
-      </Form.Group>
-
-      <Button variant="primary" onClick={handleLinkDocuments} className="mt-3">
+      <Button onClick={handleLinkDocuments} disabled={selectedDocuments.length != 2} className="mt-3 w-100 green-button">
         Link Documents
       </Button>
     </div>

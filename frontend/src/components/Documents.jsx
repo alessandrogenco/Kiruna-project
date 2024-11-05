@@ -224,7 +224,7 @@ function Documents({ show, handleClose }) {
                   value={newDocument.type}
                   onChange={handleNewDocumentChange}
                 />
-                    </Form.Group>
+              </Form.Group>
               <Form.Group controlId="formConnections">
                 <Form.Label>Connections</Form.Label>
                 <Form.Control
