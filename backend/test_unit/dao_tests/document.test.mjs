@@ -263,3 +263,23 @@ describe("Link Documents", () => {
     });
 
 })
+
+
+describe("Get Document Links", () => {
+    test("Returns a message when the document has no links", async () => {
+        const documentId = 1;
+
+        jest.spyOn(db, "all").mockImplementationOnce((sql, params, callback) => {
+            callback(null, []);  
+        });
+
+        jest.spyOn(db, "all").mockImplementationOnce((sql, params, callback) => {
+            callback(null, []);  
+        });
+
+        const result = await documentDao.getDocumentLinks(documentId);
+        
+        expect(result).toEqual({ message: `Document ${documentId} has no links` });
+    });
+
+})
