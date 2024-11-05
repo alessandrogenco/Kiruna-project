@@ -24,7 +24,11 @@ function AppNavbar({ isLoggedIn, handleLogout }) {
 
 
   const handleLoginClick = () => {
+    if(!isLoggedIn){
       navigate('/login');
+    } else {
+      handleLogout();
+    }
   };
 
   return (
