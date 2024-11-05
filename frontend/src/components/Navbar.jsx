@@ -32,7 +32,7 @@ function AppNavbar({ isLoggedIn, handleLogout }) {
 
   return (
     <>
-      <Navbar bg="dark" variant="dark" expand="lg">
+      <Navbar style={{ backgroundColor: '#004000' }} variant="dark" expand="lg">
         <Container>
           <Navbar.Brand as={Link} to="/">Kiruna</Navbar.Brand>
           {/* Toggle button for mobile view */}
