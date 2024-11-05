@@ -249,12 +249,23 @@ function Documents({ show, handleClose }) {
               <Form.Group className="mt-3" controlId="formType">
                 <Form.Label>Type</Form.Label>
                 <Form.Control
-                  type="text"
+                  as="select"
                   placeholder="Enter type"
                   name="type"
                   value={newDocument.type}
-                  onChange={handleNewDocumentChange}
-                />
+                  onChange={handleNewDocumentChange}>
+
+                  <option value="">Select document type</option>
+                  <option value="Design">Text - Design</option>
+                  <option value="Informative">Text - Informative</option>
+                  <option value="Prescriptive">Text - Prescriptive</option>
+                  <option value="Technical">Text - Technical</option>
+                  <option value="Agreement">Concept - Agreement</option>
+                  <option value="Conflict">Concept - Conflict</option>
+                  <option value="Consultation">Concept - Consultation</option>
+                  <option value="Material effect">Concept - Material effect</option>
+                  <option value="Paper">Concept - Paper</option>
+                  </Form.Control>
               </Form.Group>
               <Form.Group className="mt-3" controlId="formConnections">
                 <Form.Label>Connections</Form.Label>
@@ -273,6 +284,7 @@ function Documents({ show, handleClose }) {
                   name="language"
                   value={newDocument.language}
                   onChange={handleNewDocumentChange}>
+
                   <option value="">Select a language</option>
                   <option value="English">English</option>
                   <option value="Swedish">Swedish</option>
