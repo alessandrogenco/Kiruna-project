@@ -89,7 +89,7 @@ function Documents({ show, handleClose }) {
 
     try {
       await deleteDocument(selectedDocument.id);
-      setDocuments((prevDocuments) => prevDocuments.filter((doc) => doc.id !== selectedDocument));
+      setDocuments((prevDocuments) => prevDocuments.filter((doc) => doc.id !== selectedDocument.id));
       setSelectedDocument(null);
       setMessage('Document deleted successfully!');
       setShowFormModal(false);
@@ -116,6 +116,7 @@ function Documents({ show, handleClose }) {
       area: document.area || '',
       description: document.description || ''
     });
+
     setShowFormModal(true);
   };
 
@@ -135,8 +136,10 @@ function Documents({ show, handleClose }) {
       area: '',
       description: ''
     });
+
     setSelectedDocument(null);
   };
+
   const handleNewDocumentChange = (e) => {
     const { name, value } = e.target;
     setNewDocument((prevDocument) => ({
@@ -144,11 +147,10 @@ function Documents({ show, handleClose }) {
       [name]: value,
     }));
   };
+
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
-
-  
 
   const filteredDocuments = documents.filter((document) =>
     document.title.toLowerCase().includes(searchQuery.toLowerCase())
