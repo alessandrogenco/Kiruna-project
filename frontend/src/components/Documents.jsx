@@ -230,7 +230,7 @@ const handleUpdateDocument = async () => {
 };
 
   return (
-    <div className="documents-container">
+    <div className="documents-container" style={{marginTop: '-1em'}}>
       <Form className="d-flex mb-3">
         <FormControl
           type="search"
@@ -247,19 +247,18 @@ const handleUpdateDocument = async () => {
         </Button>
       </div>
 
-
       <ul>
         {filteredDocuments.map((document) => (
           <li className='my-3' key={document.id} onClick={() => handleDocumentClick(document)}>
             <div>
-              <strong>{document.title}</strong>
-              <p className='mb-1'>{document.description}</p>
+              <strong style={{ marginTop: '-0.4em'}}>{document.title}</strong>
+              <p style={{ marginTop: '0.2em', marginBottom: '-5px' }}>{document.description}</p>
             </div>
           </li>
         ))}
       </ul>
       
-      <Modal show={showFormModal} onHide={handleCloseFormModal}>
+      <Modal className='modal-xl' show={showFormModal} onHide={handleCloseFormModal}>
         <Modal.Header closeButton>
         <Modal.Title>{selectedDocument ? 'Edit Document' : 'Add Document'}</Modal.Title>
         </Modal.Header>
