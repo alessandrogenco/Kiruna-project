@@ -335,7 +335,7 @@ app.post('/api/newDocuments', upload.single('file'), async (req, res) => {
 app.post('/api/updateDocument', async (req, res) => {
     console.log("Data received by /api/updateDocument:", req.body); // Log dei dati ricevuti
 
-    const { id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, description } = req.body;
+    const { id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description } = req.body;
     console.log("Received document update data:", req.body);
     
     // Verifica che i campi necessari siano presenti
@@ -344,7 +344,7 @@ app.post('/api/updateDocument', async (req, res) => {
     }
 
     try {
-        const result = await documentDao.updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, description);
+        const result = await documentDao.updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description);
         res.status(200).json(result); // Risposta positiva con il documento aggiornato
     } catch (error) {
         console.error("Error in /api/updateDocument:", error); // Log dettagliato per debug
