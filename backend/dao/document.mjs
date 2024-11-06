@@ -350,7 +350,7 @@ class DocumentDao{
                 }
     
                 if (this.changes === 0) {
-                    return reject(new Error('No document found with the provided ID.'));
+                    return reject(new Error('No document found with the provided ID'));
                 }
     
                 resolve({

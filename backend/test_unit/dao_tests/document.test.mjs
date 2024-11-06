@@ -280,3 +280,71 @@ describe("Add new document and delete it", () => {
     
 
 });
+
+describe("Update document test", () => {
+    // Test data
+    const validId = 1;
+    const title = "Updated Title";
+    const stakeholders = "Updated Stakeholders";
+    const scale = "1:10.000";
+    const issuanceDate = "2022-01-01";
+    const type = "Report";
+    const connections = "Related Documents";
+    const language = "English";
+    const pages = 10;
+    const lat = 68.0001;
+    const lon = 21.0001;
+    const area = "";
+    const description = "Updated description.";
+
+    afterEach(() => {
+        jest.restoreAllMocks();
+    });
+
+    test("Successfully updates a document", async () => {
+        // Mock db.run to simulate a successful update
+        const mockRun = jest.spyOn(db, "run").mockImplementation((sql, params, callback) => {
+            callback.call({ changes: 1 }, null); // Simulate `this.changes = 1`
+        });
+
+        const result = await documentDao.updateDocument(validId, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description);
+
+        expect(result).toEqual({
+            id: validId,
+            title,
+            stakeholders,
+            scale,
+            issuanceDate,
+            type,
+            connections,
+            language,
+            pages,
+            lat,
+            lon,
+            area,
+            description,
+            message: 'Document updated successfully.'
+        });
+
+        // Clean up mock
+        mockRun.mockRestore();
+    });
+
+    test("Throws error if ID is missing", async () => {
+        await expect(documentDao.updateDocument(null, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description))
+            .rejects.toThrow('ID is required.');
+    });
+
+    test("Throws error if no document is found with the provided ID", async () => {
+        // Mock db.run to simulate no changes in the database
+        const mockRun = jest.spyOn(db, "run").mockImplementation((sql, params, callback) => {
+            callback.call({ changes: 0 }, null); // Simulate `this.changes = 0`
+        });
+
+        await expect(documentDao.updateDocument(validId, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description))
+            .rejects.toThrow('No document found with the provided ID.');
+
+        // Clean up mock
+        mockRun.mockRestore();
+    });
+});
