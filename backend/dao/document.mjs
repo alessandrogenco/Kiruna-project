@@ -45,7 +45,7 @@ class DocumentDao{
         });
     }
 
-    //add document - to be tested
+    //add document
     addDocument(title, stakeholders, scale, date, type, connections, language, pages, lat, lon, area, description) {
         return new Promise((resolve, reject) => {
             if (!title || title.trim() === "") {

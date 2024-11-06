@@ -175,7 +175,7 @@ app.put('/api/addDescription', async (req, res) => {
     }
 });
 
-// Add a document - to be tested
+// Add a document
 app.post('/api/addDocument', async (req, res) => {
     console.log("Data received by /api/addDocument:", req.body); // Log dei dati ricevuti
 
