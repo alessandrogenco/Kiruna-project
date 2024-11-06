@@ -230,7 +230,7 @@ const handleUpdateDocument = async () => {
 };
 
   return (
-    <div className="documents-container">
+    <div className="documents-container" style={{marginTop: '-1em'}}>
       <Form className="d-flex mb-3">
         <FormControl
           type="search"
