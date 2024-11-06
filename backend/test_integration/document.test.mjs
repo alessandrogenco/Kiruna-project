@@ -335,27 +335,125 @@ describe("POST Added a document", () => {
     });
 });
 
+describe('POST /api/updateDocument', () => {
+
+    test('Updates document successfully with valid fields', async () => {
+        const documentId = await request(app).get('/api/documents').then((response) => response.body[0].id);
+        const mockResult = {
+            id: documentId,
+            title: 'Updated Document',
+            stakeholders: 'Stakeholder A',
+            scale: 'large',
+            issuanceDate: '2022-01-01',
+            type: 'research',
+            connections: 3,
+            language: 'EN',
+            pages: 10,
+            lat: 68,
+            lon: 21,
+            area: '',
+            description: 'An updated description,',
+        };
+
+        const response = await request(app)
+            .post('/api/updateDocument')
+            .send(mockResult);
+
+        expect(response.status).toBe(200);
+        mockResult.message = 'Document updated successfully.';
+        expect(response.body).toEqual(mockResult);
+    });
+
+    
+    test('Returns 400 error for missing required fields (id, title)', async () => {
+        const response = await request(app)
+            .post('/api/updateDocument')
+            .send({
+                stakeholders: 'Stakeholder A',
+                scale: 'large',
+                issuanceDate: '2022-01-01',
+                type: 'research'
+            });
+
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({ message: "Missing required fields" });
+    });
+
+    test('Returns 400 error for invalid area and lat/lon combination', async () => {
+        const response = await request(app)
+            .post('/api/updateDocument')
+            .send({
+                id: 1,
+                title: 'Document with Invalid Area and Lat/Lon',
+                stakeholders: 'Stakeholder A',
+                scale: 'large',
+                issuanceDate: '2022-01-01',
+                type: 'research',
+                lat: 67.9,
+                lon: 20.8,
+                area: 'North Zone'
+            });
+
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({ message: "Invalid parameters" });
+    });
+
+    test('Returns 400 error for out-of-range latitude and longitude', async () => {
+        const response = await request(app)
+            .post('/api/updateDocument')
+            .send({
+                id: 1,
+                title: 'Document with Invalid Lat/Lon',
+                stakeholders: 'Stakeholder A',
+                scale: 'large',
+                issuanceDate: '2022-01-01',
+                type: 'research',
+                lat: 68.5, // Out of valid range
+                lon: 20.8,
+                area: ''
+            });
+
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({ message: "Invalid parameters" });
+    });
+
+    test('Returns error when no document found with provided ID', async () => {
+        const mockError = new Error('No document found with the provided ID.');
+
+        const response = await request(app)
+            .post('/api/updateDocument')
+            .send({
+                id: 999, // Non-existent ID
+                title: 'Non-existent Document',
+                stakeholders: 'Stakeholder B',
+                scale: 'small',
+                issuanceDate: '2023-01-01',
+                type: 'summary',
+                connections: 5,
+                language: 'EN',
+                pages: 5,
+                lat: 67.9,
+                lon: 20.8,
+                area: '',
+                description: 'Non-existent document description',
+            });
+
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({ message: mockError.message });
+    });
+});
+
 describe('DELETE /api/deleteDocument', () => {
-    // Mock deleteDocumentById method from documentDao
-    beforeAll(() => {
-      jest.spyOn(documentDao.prototype, 'deleteDocumentById');
-    });
-  
-    afterAll(() => {
-      documentDao.prototype.deleteDocumentById.mockRestore();
-    });
   
     test('Deletes document successfully when valid ID is provided', async () => {
-      const mockResult = { id: 1, message: 'Document deleted successfully.' };
-      documentDao.prototype.deleteDocumentById.mockResolvedValue(mockResult);
-  
+      const documentId = await request(app).get('/api/documents').then((response) => response.body[0].id);
+
       const response = await request(app)
         .post('/api/deleteDocument')
-        .send({ id: 1 }); // Send a valid document ID
+        .send({ id: documentId}); // Send a valid document ID
   
       expect(response.status).toBe(200);
-      expect(response.body).toEqual(mockResult);
-      expect(documentDao.prototype.deleteDocumentById).toHaveBeenCalledWith(1);
+      expect(response.body).toEqual({id: documentId, message: 'Document deleted successfully.'});
     });
   
     test('Returns 400 error when ID is not provided', async () => {
@@ -367,7 +465,7 @@ describe('DELETE /api/deleteDocument', () => {
         expect(response.body).toEqual({ message: 'ID is required.' });
     });
     
-    /*
+    /*    
     test('Returns error when no document found with provided ID', async () => {
       documentDao.prototype.deleteDocumentById.mockRejectedValue({message: "No document found with the provided ID"});
   

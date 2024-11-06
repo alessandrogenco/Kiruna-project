@@ -6,6 +6,12 @@ export async function cleanup() {
             db.run("DELETE FROM users", function(err) {
                 if (err) return reject(err);
             });
+
+            db.run("DELETE FROM Documents", function(err) {
+                if (err) return reject(err);
+                resolve(true);
+            });
+            
             db.run("DELETE FROM DocumentsLinks", function(err) {
                 if (err) return reject(err);
                 resolve(true);
