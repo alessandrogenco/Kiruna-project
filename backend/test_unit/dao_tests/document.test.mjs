@@ -158,7 +158,7 @@ describe("Get all documents", () => {
 });
 
 // Test per addDocument
-describe("Add new document", () => {
+describe("Add new document and delete it", () => {
     test("Successfully adds a new document", async () => {
         // Test data
         const title = "New Document";
@@ -242,5 +242,41 @@ describe("Add new document", () => {
             title, stakeholders, scale, date, type, connections, language, pages, lat, lon, area, description
         )).rejects.toThrow("Database error: Database error while adding document");
     });
+
+    test("Successfully deletes a document", async () => {
+        // Test data
+        const mockId = 1;
+    
+        // Mocking db.run to simulate deletion of a document
+        const mockRun = jest.spyOn(db, "run").mockImplementation((sql, params, callback) => {
+            // Mocking `this` to simulate `changes` property in db.run function
+            callback.call({ changes: 1 }, null); // `this.changes = 1` to simulate one row deleted
+        });
+    
+        const result = await documentDao.deleteDocumentById(mockId);
+    
+        expect(result).toEqual({ id: mockId, message: 'Document deleted successfully.' });
+    
+        // Clean up the mock
+        mockRun.mockRestore();
+    });
+    
+    test("Error when deleting a non-existing document", async () => {
+        // Test data
+        const mockId = 1;
+    
+        // Mocking db.run to simulate deletion of a document
+        const mockRun = jest.spyOn(db, "run").mockImplementation((sql, params, callback) => {
+            // Mock `this` to simulate `changes` property in db.run function
+            callback.call({ changes: 0 }, null); // `this.changes = 0` to simulate no rows deleted
+        });
+    
+        // Expect the promise to reject with a specific error message
+        await expect(documentDao.deleteDocumentById(mockId)).rejects.toThrow('No document found with the provided ID');
+    
+        // Clean up the mock
+        mockRun.mockRestore();
+    });
+    
 
 });

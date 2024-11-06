@@ -229,18 +229,18 @@ const handleUpdateDocument = async () => {
         />
       </Form>
       <div className="d-flex justify-content-center">
-        <Button className="w-75 mb-3" variant="primary" onClick={() => setShowFormModal(true)}>
+        <Button className="w-75 mb-1" variant="primary" onClick={() => setShowFormModal(true)}>
           Add Document
         </Button>
       </div>
 
-      
+
       <ul>
         {filteredDocuments.map((document) => (
-          <li key={document.id} onClick={() => handleDocumentClick(document)}>
+          <li className='my-3' key={document.id} onClick={() => handleDocumentClick(document)}>
             <div>
               <strong>{document.title}</strong>
-              <p>{document.description}</p>
+              <p className='mb-1'>{document.description}</p>
             </div>
           </li>
         ))}
