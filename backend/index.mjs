@@ -343,8 +343,6 @@ app.post('/api/updateDocument', async (req, res) => {
         return res.status(400).json({ message: "Missing required fields" });
     }
 
-
-
     try {
         // Check if area is empty and lat/lon are provided
         if(area.trim() === '' && lat && lon){

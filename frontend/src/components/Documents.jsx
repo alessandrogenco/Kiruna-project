@@ -185,6 +185,8 @@ function Documents({ show, handleClose }) {
 }
 
 const handleUpdateDocument = async () => {
+
+  newDocument.id = selectedDocument.id;
   try {
     const result = await updateDocument(
       newDocument.id,
@@ -201,6 +203,7 @@ const handleUpdateDocument = async () => {
       newDocument.area,
       newDocument.description
     );
+
     setDocuments((prevDocuments) =>
       prevDocuments.map((doc) =>
         doc.id === newDocument.id ? { ...doc, ...newDocument } : doc
@@ -209,7 +212,6 @@ const handleUpdateDocument = async () => {
     setShowFormModal(false);
     setSelectedDocument(null);
     setMessage('Document updated successfully!');
-    window.location.reload(); 
   } catch (error) {
     console.error('Error updating document:', error);
     setMessage('Error updating document.');
@@ -415,7 +417,7 @@ const handleUpdateDocument = async () => {
         <Modal.Footer>
           <Button
              className="green-button" 
-            onClick={selectedDocument ? () => handleUpdateDocument : handleAddDocument}
+            onClick={selectedDocument ? handleUpdateDocument : handleAddDocument}
           >
             {selectedDocument ? 'Save' : 'Add Document'}
           </Button>
