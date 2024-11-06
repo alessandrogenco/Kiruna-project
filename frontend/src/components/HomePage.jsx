@@ -27,7 +27,7 @@ function HomePage(props) {
             }
           </p>
           <div className="button-container button-shadow">
-            <button className="btn-grad mt-4 w-25" onClick={() => navigate('/explore')}>
+            <button className="btn-grad mt-4" onClick={() => navigate('/explore')}>
               EXPLORE
             </button>
           </div>
