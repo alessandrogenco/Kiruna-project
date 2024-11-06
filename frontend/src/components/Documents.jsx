@@ -191,7 +191,7 @@ const handleUpdateDocument = async () => {
       newDocument.title,
       newDocument.stakeholders,
       newDocument.scale,
-      newDocument.date,
+      newDocument.issuanceDate,
       newDocument.type,
       newDocument.connections,
       newDocument.language,
