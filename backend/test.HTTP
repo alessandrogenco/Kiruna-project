@@ -57,8 +57,8 @@ POST http://localhost:3001/api/linkDocuments
 Content-Type: application/json
 
 {
-    "id1": 1,
-    "id2": 2,
+    "id1": 3,
+    "id2": 4,
     "linkDate": "2022-09-27",
     "linkType": "direct consequence"
 }
