@@ -62,10 +62,37 @@ describe("Document DAO Integration Tests", () => {
             ).rejects.toThrow("Link not found");
         });
 
-        
+    })
 
-        
 
-})
+    describe("getDocumentLinks", () => {
+
+        test("Returns links for a document that has linked documents", async () => {
+            const links = await DocumentDao.prototype.getDocumentLinks(1);
+            
+            expect(Array.isArray(links)).toBe(true);
+            expect(links.length).toBe(2);
+    
+            expect(links[0]).toMatchObject({
+                id: 2,
+                title: "Document 2",
+                date: "2024-11-05",
+                type: "Reference"
+            });
+            expect(links[1]).toMatchObject({
+                id: 3,
+                title: "Document 3",
+                date: "2024-11-06",
+                type: "Cited"
+            });
+        });
+
+        test("Returns a message when document has no links", async () => {
+            const result = await DocumentDao.prototype.getDocumentLinks(2);
+    
+            expect(result).toEqual({ message: "Document 2 has no links" });
+        });
+    
+    })
 
 })
