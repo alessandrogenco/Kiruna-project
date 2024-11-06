@@ -155,28 +155,8 @@ function LinkDocuments() {
     <div className="documents-container">
       {message && <Alert variant={message.includes('successfully') ? 'success' : 'danger'}>{message}</Alert>}
       <h1>Documents and their Links</h1>
-      <ListGroup>
-        {documents.map((document) => (
-          <ListGroup.Item key={document.id}>
-             <Form.Check
-              type="checkbox"
-              label={document.title}
-              checked={selectedDocuments.includes(document.id)}
-              onChange={() => handleDocumentSelection(document.id)}
-            />
-            <p>Linked Documents:</p>
-            <ListGroup>
-              {Array.isArray(document.links) && document.links.map((link) => (
-                <ListGroup.Item key={link.id}>
-                  {link.title} {/* Mostra solo il titolo del documento collegato */}
-                </ListGroup.Item>
-              ))}
-            </ListGroup>
-          </ListGroup.Item>
-        ))}
-      </ListGroup>
-       {/* Campo per linkDate */}
-       <Form.Group controlId="linkDate">
+      {/* Campo per linkDate */}
+      <Form.Group controlId="linkDate">
         <Form.Label>Link Date</Form.Label>
         <Form.Control
           type="date"
@@ -200,6 +180,27 @@ function LinkDocuments() {
           <option value="Update">Update</option>
         </Form.Control>
       </Form.Group>
+      <ListGroup className='mb-3'>
+        {documents.map((document) => (
+          <ListGroup.Item key={document.id}>
+             <Form.Check
+              type="checkbox"
+              label={document.title}
+              checked={selectedDocuments.includes(document.id)}
+              onChange={() => handleDocumentSelection(document.id)}
+            />
+            <p className='mt-4'>Linked Documents:</p>
+            <ListGroup classname='mb-2'>
+              {Array.isArray(document.links) && document.links.map((link) => (
+                <ListGroup.Item key={link.id}>
+                  {link.title} {/* Mostra solo il titolo del documento collegato */}
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+          </ListGroup.Item>
+        ))}
+      </ListGroup>
+       
 
       <Button onClick={handleLinkDocuments}>Create Link</Button>
       <Button onClick={handleUpdateLink}>Update Link</Button>
