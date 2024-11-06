@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Button, Form, FormControl } from 'react-bootstrap';
 import './Documents.css'; // Import the CSS file
-import {deleteDocument} from '../API.mjs'; // Import the API module
+import {deleteDocument, updateDocument} from '../API.mjs'; // Import the API module
 
 function Documents({ show, handleClose }) {
   const [documents, setDocuments] = useState([]);
@@ -211,8 +211,11 @@ const handleUpdateDocument = async () => {
     );
     setShowFormModal(false);
     setSelectedDocument(null);
+    setMessage('Document updated successfully!');
+    window.location.reload(); 
   } catch (error) {
     console.error('Error updating document:', error);
+    setMessage('Error updating document.');
   }
 };
 
@@ -413,7 +416,7 @@ const handleUpdateDocument = async () => {
         <Modal.Footer>
           <Button
              className="green-button" 
-            onClick={selectedDocument ? () => handleAddDescription(selectedDocument.id, selectedDocument.title) : handleAddDocument}
+            onClick={selectedDocument ? () => handleUpdateDocument : handleAddDocument}
           >
             {selectedDocument ? 'Save' : 'Add Document'}
           </Button>

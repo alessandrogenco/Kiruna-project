@@ -290,7 +290,7 @@ class DocumentDao{
         });
     }*/
 
-    updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, description) {
+    updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description) {
         return new Promise((resolve, reject) => {
             // Verifica che l'ID sia valido
             if (!id) {
@@ -300,7 +300,7 @@ class DocumentDao{
             const updateDocument = `
                 UPDATE Documents
                 SET title = ?, stakeholders = ?, scale = ?, issuanceDate = ?, type = ?, 
-                    connections = ?, language = ?, pages = ?, lat = ?, lon = ?, description = ?
+                    connections = ?, language = ?, pages = ?, lat = ?, lon = ?, area = ?, description = ?
                 WHERE id = ?
             `;
 
@@ -327,6 +327,7 @@ class DocumentDao{
                     pages,
                     lat,
                     lon,
+                    area,
                     description,
                     message: 'Document updated successfully.'
                 });

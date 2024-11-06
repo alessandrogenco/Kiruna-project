@@ -175,7 +175,7 @@ export const deleteDocument = async (id) => {
   };
 
   // API.mjs
-export const updateDocument = async (id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, description) => {
+export const updateDocument = async (id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description) => {
     try {
       const response = await fetch('http://localhost:3001/api/updateDocument', {
         method: 'POST',
@@ -194,6 +194,7 @@ export const updateDocument = async (id, title, stakeholders, scale, issuanceDat
           pages,
           lat,
           lon,
+          area,
           description,
         }),
       });
