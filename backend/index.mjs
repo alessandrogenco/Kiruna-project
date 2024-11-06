@@ -195,8 +195,8 @@ app.post('/api/addDocument', async (req, res) => {
         if(area.trim() !== '' && (lat || lon)){
             throw new Error("Invalid parameters");
         }
-        if (!title || (!area && (!lat && !lon))) {
-            throw new Error("Missing required fields." );
+        if (!title || (!area && (!lat ^ !lon))) {
+            throw new Error("Missing required fields" );
         }
 
         const result = await documentDao.addDocument(title, stakeholders, scale, date, type, connections, language, pages, lat, lon, area, description);

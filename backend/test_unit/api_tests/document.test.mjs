@@ -94,8 +94,8 @@ describe('PUT /api/addDescription', () => {
             connections: 5,
             language: "English",
             pages: "1-10",
-            lat: 59.3293,
-            lon: 18.0686,
+            lat: 68.0001,
+            lon: 21.0001,
             area: "Sample area",
             description: null 
         };
@@ -157,4 +157,396 @@ describe('PUT /api/addDescription', () => {
         expect(response.status).toBe(400);
         expect(response.body).toEqual({ message: 'Description cannot be empty.' });
     });
+    
+});
+
+describe('POST /api/addDocument', () => {
+    test('should successfully add a document', async () => {
+        const mockId = 1;
+        const mockTitle = "Sample Document";
+        const mockDescription = "Description for the document";
+        const mockStakeholders = "Sample stakeholders";
+        const mockScale = "1:10000";
+        const mockIssuanceDate = "2023-01-01";
+        const mockType = "Informative";
+        const mockConnections = 5;
+        const mockLanguage = "English";
+        const mockPages = "1-10";
+        const mockLat = '';
+        const mockLon = '';
+        const mockArea = "";
+
+        const mockDocument = { 
+            id: mockId, 
+            title: mockTitle,
+            stakeholders: "Sample stakeholders",
+            scale: "1:10000",
+            issuanceDate: "2023-01-01",
+            type: "Informative",
+            connections: 5,
+            language: "English",
+            pages: "1-10",
+            lat: '',
+            lon: '',
+            area: "",
+            description: null 
+        };
+
+        DocumentDao.prototype.addDocument.mockResolvedValue({
+            //id: mockId,
+            title: mockTitle,
+            stakeholders: mockStakeholders,
+            scale: mockScale,
+            date: mockIssuanceDate,
+            type: mockType,
+            connections: mockConnections,
+            language: mockLanguage,
+            pages: mockPages,
+            lat: mockLat,
+            lon: mockLon,
+            area: mockArea,
+            description: mockDescription,
+            message: 'Document added successfully.'
+        });
+    
+        // Send POST request to the API with mockId, mockTitle, and mockDescription
+        const response = await request(app)
+            .post(baseURL + 'addDocument')
+            .send({ id: mockId, title: mockTitle, stakeholders: mockStakeholders, scale: mockScale, date: mockIssuanceDate, type: mockType, connections: mockConnections, language: mockLanguage, pages: mockPages, lat: mockLat, lon: mockLon, area: mockArea, description: mockDescription });
+    
+        // Check that the response status is 200 and the response body matches the expected structure
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({
+            title: mockTitle,
+            stakeholders: mockStakeholders,
+            scale: mockScale,
+            date: mockIssuanceDate,
+            type: mockType,
+            connections: mockConnections,
+            language: mockLanguage,
+            pages: mockPages,
+            lat: mockLat,
+            lon: mockLon,
+            area: mockArea,
+            description: mockDescription,
+            message: 'Document added successfully.'
+        });
+    });
+
+    // Test for missing required fields TITLE
+    test('should return 400 error if title is empty', async () => {
+        const mockId = 1;
+        const mockTitle = "";
+        const mockDescription = "Description for the document";
+        const mockStakeholders = "Sample stakeholders";
+        const mockScale = "1:10000";
+        const mockIssuanceDate = "2023-01-01";
+        const mockType = "Informative";
+        const mockConnections = 5;
+        const mockLanguage = "English";
+        const mockPages = "1-10";
+        const mockLat = '';
+        const mockLon = '';
+        const mockArea = "";
+
+        // Send POST request
+        const response = await request(app)
+            .post(baseURL + 'addDocument')
+            .send({ id: mockId, title: mockTitle, stakeholders: mockStakeholders, scale: mockScale, date: mockIssuanceDate, type: mockType, connections: mockConnections, language: mockLanguage, pages: mockPages, lat: mockLat, lon: mockLon, area: mockArea, description: mockDescription });
+
+        // Check response status and body for 404 error
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({ message: 'Missing required fields' });
+    });
+
+    // Test for missing required fields LON
+    test('should return 400 error if lat filled and lon empty', async () => {
+        const mockId = 1;
+        const mockTitle = "";
+        const mockDescription = "Description for the document";
+        const mockStakeholders = "Sample stakeholders";
+        const mockScale = "1:10000";
+        const mockIssuanceDate = "2023-01-01";
+        const mockType = "Informative";
+        const mockConnections = 5;
+        const mockLanguage = "English";
+        const mockPages = "1-10";
+        const mockLat = 68.0001;
+        const mockLon = '';
+        const mockArea = "";
+
+        // Send POST request
+        const response = await request(app)
+            .post(baseURL + 'addDocument')
+            .send({ id: mockId, title: mockTitle, stakeholders: mockStakeholders, scale: mockScale, date: mockIssuanceDate, type: mockType, connections: mockConnections, language: mockLanguage, pages: mockPages, lat: mockLat, lon: mockLon, area: mockArea, description: mockDescription });
+
+        // Check response status and body for 404 error
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({ message: 'Missing required fields' });
+    });
+
+    // Test for missing required fields LAT
+    test('should return 400 error if lon filled and lat empty', async () => {
+        const mockId = 1;
+        const mockTitle = "";
+        const mockDescription = "Description for the document";
+        const mockStakeholders = "Sample stakeholders";
+        const mockScale = "1:10000";
+        const mockIssuanceDate = "2023-01-01";
+        const mockType = "Informative";
+        const mockConnections = 5;
+        const mockLanguage = "English";
+        const mockPages = "1-10";
+        const mockLat = '';
+        const mockLon = 21.0001;
+        const mockArea = "";
+
+        // Send POST request
+        const response = await request(app)
+            .post(baseURL + 'addDocument')
+            .send({ id: mockId, title: mockTitle, stakeholders: mockStakeholders, scale: mockScale, date: mockIssuanceDate, type: mockType, connections: mockConnections, language: mockLanguage, pages: mockPages, lat: mockLat, lon: mockLon, area: mockArea, description: mockDescription });
+
+        // Check response status and body for 404 error
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({ message: 'Missing required fields' });
+    });
+
+    test('should successfully add a document with lat and lon', async () => {
+        const mockId = 1;
+        const mockTitle = "Sample Document";
+        const mockDescription = "Description for the document";
+        const mockStakeholders = "Sample stakeholders";
+        const mockScale = "1:10000";
+        const mockIssuanceDate = "2023-01-01";
+        const mockType = "Informative";
+        const mockConnections = 5;
+        const mockLanguage = "English";
+        const mockPages = "1-10";
+        const mockLat = 68.0001;
+        const mockLon = 21.0001;
+        const mockArea = "";
+
+        const mockDocument = { 
+            id: mockId, 
+            title: mockTitle,
+            stakeholders: "Sample stakeholders",
+            scale: "1:10000",
+            issuanceDate: "2023-01-01",
+            type: "Informative",
+            connections: 5,
+            language: "English",
+            pages: "1-10",
+            lat: mockLat,
+            lon: mockLon,
+            area: "",
+            description: null 
+        };
+
+        DocumentDao.prototype.addDocument.mockResolvedValue({
+            //id: mockId,
+            title: mockTitle,
+            stakeholders: mockStakeholders,
+            scale: mockScale,
+            date: mockIssuanceDate,
+            type: mockType,
+            connections: mockConnections,
+            language: mockLanguage,
+            pages: mockPages,
+            lat: mockLat,
+            lon: mockLon,
+            area: mockArea,
+            description: mockDescription,
+            message: 'Document added successfully.'
+        });
+    
+        // Send POST request to the API with mockId, mockTitle, and mockDescription
+        const response = await request(app)
+            .post(baseURL + 'addDocument')
+            .send({ id: mockId, title: mockTitle, stakeholders: mockStakeholders, scale: mockScale, date: mockIssuanceDate, type: mockType, connections: mockConnections, language: mockLanguage, pages: mockPages, lat: mockLat, lon: mockLon, area: mockArea, description: mockDescription });
+    
+        // Check that the response status is 200 and the response body matches the expected structure
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({
+            title: mockTitle,
+            stakeholders: mockStakeholders,
+            scale: mockScale,
+            date: mockIssuanceDate,
+            type: mockType,
+            connections: mockConnections,
+            language: mockLanguage,
+            pages: mockPages,
+            lat: mockLat,
+            lon: mockLon,
+            area: mockArea,
+            description: mockDescription,
+            message: 'Document added successfully.'
+        });
+    });
+
+    test('should successfully add a document with area', async () => {
+        const mockId = 1;
+        const mockTitle = "Sample Document";
+        const mockDescription = "Description for the document";
+        const mockStakeholders = "Sample stakeholders";
+        const mockScale = "1:10000";
+        const mockIssuanceDate = "2023-01-01";
+        const mockType = "Informative";
+        const mockConnections = 5;
+        const mockLanguage = "English";
+        const mockPages = "1-10";
+        const mockLat = '';
+        const mockLon = '';
+        const mockArea = "Sample area";
+
+        const mockDocument = { 
+            id: mockId, 
+            title: mockTitle,
+            stakeholders: "Sample stakeholders",
+            scale: "1:10000",
+            issuanceDate: "2023-01-01",
+            type: "Informative",
+            connections: 5,
+            language: "English",
+            pages: "1-10",
+            lat: '',
+            lon: '',
+            area: mockArea,
+            description: null 
+        };
+
+        DocumentDao.prototype.addDocument.mockResolvedValue({
+            //id: mockId,
+            title: mockTitle,
+            stakeholders: mockStakeholders,
+            scale: mockScale,
+            date: mockIssuanceDate,
+            type: mockType,
+            connections: mockConnections,
+            language: mockLanguage,
+            pages: mockPages,
+            lat: mockLat,
+            lon: mockLon,
+            area: mockArea,
+            description: mockDescription,
+            message: 'Document added successfully.'
+        });
+    
+        // Send POST request to the API with mockId, mockTitle, and mockDescription
+        const response = await request(app)
+            .post(baseURL + 'addDocument')
+            .send({ id: mockId, title: mockTitle, stakeholders: mockStakeholders, scale: mockScale, date: mockIssuanceDate, type: mockType, connections: mockConnections, language: mockLanguage, pages: mockPages, lat: mockLat, lon: mockLon, area: mockArea, description: mockDescription });
+    
+        // Check that the response status is 200 and the response body matches the expected structure
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({
+            title: mockTitle,
+            stakeholders: mockStakeholders,
+            scale: mockScale,
+            date: mockIssuanceDate,
+            type: mockType,
+            connections: mockConnections,
+            language: mockLanguage,
+            pages: mockPages,
+            lat: mockLat,
+            lon: mockLon,
+            area: mockArea,
+            description: mockDescription,
+            message: 'Document added successfully.'
+        });
+    });
+
+    // Test for INVALIDE LAT
+    test('should return 400 error if lat invalid parameter', async () => {
+        const mockId = 1;
+        const mockTitle = "";
+        const mockDescription = "Description for the document";
+        const mockStakeholders = "Sample stakeholders";
+        const mockScale = "1:10000";
+        const mockIssuanceDate = "2023-01-01";
+        const mockType = "Informative";
+        const mockConnections = 5;
+        const mockLanguage = "English";
+        const mockPages = "1-10";
+        const mockLat = 90.0000;
+        const mockLon = 21.0001;
+        const mockArea = "";
+
+        // Send POST request
+        const response = await request(app)
+            .post(baseURL + 'addDocument')
+            .send({ id: mockId, title: mockTitle, stakeholders: mockStakeholders, scale: mockScale, date: mockIssuanceDate, type: mockType, connections: mockConnections, language: mockLanguage, pages: mockPages, lat: mockLat, lon: mockLon, area: mockArea, description: mockDescription });
+
+        // Check response status and body for 400 error
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({ message: 'Invalid parameters' });
+    });
+
+    // Test for INVALIDE LON
+    test('should return 400 error if lon invalid parameter', async () => {
+        const mockId = 1;
+        const mockTitle = "";
+        const mockDescription = "Description for the document";
+        const mockStakeholders = "Sample stakeholders";
+        const mockScale = "1:10000";
+        const mockIssuanceDate = "2023-01-01";
+        const mockType = "Informative";
+        const mockConnections = 5;
+        const mockLanguage = "English";
+        const mockPages = "1-10";
+        const mockLat = 68.0001;
+        const mockLon = 22.0001;
+        const mockArea = "";
+
+        // Send POST request
+        const response = await request(app)
+            .post(baseURL + 'addDocument')
+            .send({ id: mockId, title: mockTitle, stakeholders: mockStakeholders, scale: mockScale, date: mockIssuanceDate, type: mockType, connections: mockConnections, language: mockLanguage, pages: mockPages, lat: mockLat, lon: mockLon, area: mockArea, description: mockDescription });
+
+        // Check response status and body for 400 error
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({ message: 'Invalid parameters' });
+    });
+
+    // Test for LAT, LON and AREA set
+    test('should return 400 error if lat, lon and area are set', async () => {
+        const mockId = 1;
+        const mockTitle = "";
+        const mockDescription = "Description for the document";
+        const mockStakeholders = "Sample stakeholders";
+        const mockScale = "1:10000";
+        const mockIssuanceDate = "2023-01-01";
+        const mockType = "Informative";
+        const mockConnections = 5;
+        const mockLanguage = "English";
+        const mockPages = "1-10";
+        const mockLat = 68.0001;
+        const mockLon = 22.0001;
+        const mockArea = "Sample area";
+
+        // Send POST request
+        const response = await request(app)
+            .post(baseURL + 'addDocument')
+            .send({ id: mockId, title: mockTitle, stakeholders: mockStakeholders, scale: mockScale, date: mockIssuanceDate, type: mockType, connections: mockConnections, language: mockLanguage, pages: mockPages, lat: mockLat, lon: mockLon, area: mockArea, description: mockDescription });
+
+        // Check response status and body for 400 error
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({ message: 'Invalid parameters' });
+    });
+
+    /*
+    test('should return 400 error if description is empty', async () => {
+        const mockId = 1;
+        const mockTitle = "Sample Document";
+        const mockDescription = " "; // Empty description
+
+        // Send PUT request
+        const response = await request(app)
+            .put(baseURL + 'addDescription')
+            .send({ id: mockId, title: mockTitle, description: mockDescription });
+
+        // Check response status and body for 400 error
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({ message: 'Description cannot be empty.' });
+    });*/
+    
 });

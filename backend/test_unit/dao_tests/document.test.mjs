@@ -93,7 +93,7 @@ describe("Add new description", () => {
     });
 });
 
-    // Test per getDocumentById
+// Test per getDocumentById
 describe("Get document by ID", () => {
     test("Successfully retrieves a document by ID", async () => {
         const id = 1;
@@ -169,8 +169,9 @@ describe("Add new document", () => {
         const connections = "Connection1, Connection2";
         const language = "English";
         const pages = 20;
-        const lat = 45.1234;
-        const lon = 12.5678;
+        const lat = 68.0001;
+        const lon = 21.0001;
+        const area = "";
         const description = "This is a new document description.";
 
         // Mocking db.run to simulate inserting a new document
@@ -179,7 +180,7 @@ describe("Add new document", () => {
         });
 
         const result = await documentDao.addDocument(
-            title, stakeholders, scale, date, type, connections, language, pages, lat, lon, description
+            title, stakeholders, scale, date, type, connections, language, pages, lat, lon, area, description
         );
 
         expect(result).toEqual({
@@ -193,6 +194,7 @@ describe("Add new document", () => {
             pages,
             lat,
             lon,
+            area,
             description,
             message: 'Document added successfully.'
         });
@@ -207,12 +209,13 @@ describe("Add new document", () => {
         const connections = "Connection1, Connection2";
         const language = "English";
         const pages = 20;
-        const lat = 45.1234;
-        const lon = 12.5678;
+        const lat = 68.0001;
+        const lon = 21.0001;
+        const area = "";
         const description = "This is a new document description.";
 
         await expect(documentDao.addDocument(
-            title, stakeholders, scale, date, type, connections, language, pages, lat, lon, description
+            title, stakeholders, scale, date, type, connections, language, pages, lat, lon, area, description
         )).rejects.toThrow("Title cannot be empty.");
     });
 
@@ -225,8 +228,9 @@ describe("Add new document", () => {
         const connections = "Connection1, Connection2";
         const language = "English";
         const pages = 20;
-        const lat = 45.1234;
-        const lon = 12.5678;
+        const lat = 68.0001;
+        const lon = 21.0001;
+        const area = "";
         const description = "This is a new document description.";
 
         // Mocking db.run to simulate a database error during insertion
@@ -235,7 +239,8 @@ describe("Add new document", () => {
         });
 
         await expect(documentDao.addDocument(
-            title, stakeholders, scale, date, type, connections, language, pages, lat, lon, description
+            title, stakeholders, scale, date, type, connections, language, pages, lat, lon, area, description
         )).rejects.toThrow("Database error: Database error while adding document");
     });
+
 });
