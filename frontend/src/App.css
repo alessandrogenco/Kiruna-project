@@ -83,6 +83,14 @@ body {
     text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5); /* Larger offsets and blur */
 }
 
+@media (max-width: 992px) {
+  .btn.btn-outline-light {
+    border-color: transparent; /* Rimuove il colore del bordo */
+    padding-left: 0; /* Rimuove il padding sinistro */
+    padding-right: 0; /* Rimuove il padding destro */
+  }
+}
+
 /* Stili per dispositivi mobili */
 @media (max-width: 768px) {
   /* Modifica il layout della homepage per i dispositivi mobili */
