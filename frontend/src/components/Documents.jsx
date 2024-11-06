@@ -92,7 +92,7 @@ function Documents({ show, handleClose }) {
       setDocuments((prevDocuments) => prevDocuments.filter((doc) => doc.id !== selectedDocument));
       setSelectedDocument(null);
       setMessage('Document deleted successfully!');
-      setShhowFormModal(false);
+      setShowFormModal(false);
     } catch (error) {
       console.error('Error deleting document:', error);
       setMessage('Error deleting document.');
