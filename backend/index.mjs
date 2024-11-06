@@ -339,11 +339,29 @@ app.post('/api/updateDocument', async (req, res) => {
     console.log("Received document update data:", req.body);
     
     // Verifica che i campi necessari siano presenti
-    if (!id || !title || !lat || !lon) {
-        return res.status(400).json({ message: "Missing required fields." });
+    if (!id || !title) {
+        return res.status(400).json({ message: "Missing required fields" });
     }
 
+
+
     try {
+        // Check if area is empty and lat/lon are provided
+        if(area.trim() === '' && lat && lon){
+            // Check if lat and lon are valid
+            if ((lat < 67.7500 || lat > 68.3333) || (lon < 20.7833 || lon > 21.1333)) {
+                throw new Error("Invalid parameters");
+            }
+        }
+        
+        // Check if area is not empty and lat or lon are provided
+        if(area.trim() !== '' && (lat || lon)){
+            throw new Error("Invalid parameters");
+        }
+        if (!area && (!lat ^ !lon)) {
+            throw new Error("Missing required fields" );
+        }
+
         const result = await documentDao.updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description);
         res.status(200).json(result); // Risposta positiva con il documento aggiornato
     } catch (error) {

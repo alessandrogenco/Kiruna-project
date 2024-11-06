@@ -535,6 +535,165 @@ describe('POST /api/addDocument', () => {
     
 });
 
+describe("POST /api/updateDocument", () => {
+    afterEach(() => {
+        jest.restoreAllMocks();
+    });
+
+    test("Successfully updates a document", async () => {
+        const mockData = {
+            id: 1,
+            title: "Updated Document Title",
+            stakeholders: "Updated Stakeholder",
+            scale: "1:1000",
+            issuanceDate: "2023-01-01",
+            type: "report",
+            connections: ["doc2", "doc3"],
+            language: "English",
+            pages: 50,
+            lat: 68.0000,
+            lon: 20.9000,
+            area: "",
+            description: "Updated description"
+        };
+
+        jest.spyOn(DocumentDao.prototype, 'updateDocument').mockResolvedValue({
+            ...mockData,
+            message: "Document updated successfully."
+        });
+
+        const response = await request(app)
+            .post('/api/updateDocument')
+            .send(mockData);
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({
+            ...mockData,
+            message: "Document updated successfully."
+        });
+    });
+
+    test("Successfully updates a document", async () => {
+        const mockData = {
+            id: 1,
+            title: "Updated Document Title",
+            stakeholders: "Updated Stakeholder",
+            scale: "1:1000",
+            issuanceDate: "2023-01-01",
+            type: "report",
+            connections: ["doc2", "doc3"],
+            language: "English",
+            pages: 50,
+            lat: '',
+            lon: '',
+            area: "Sample Area",
+            description: "Updated description"
+        };
+
+        jest.spyOn(DocumentDao.prototype, 'updateDocument').mockResolvedValue({
+            ...mockData,
+            message: "Document updated successfully."
+        });
+
+        const response = await request(app)
+            .post('/api/updateDocument')
+            .send(mockData);
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({
+            ...mockData,
+            message: "Document updated successfully."
+        });
+    });
+
+    test("Returns error if required fields are missing", async () => {
+        const response = await request(app)
+            .post('/api/updateDocument')
+            .send({ id: 1 }); // `title` missing
+
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({ message: "Missing required fields" });
+    });
+    
+    test("Returns error for invalid lat without area", async () => {
+
+        const mockData = {
+            id: 1,
+            title: "Invalid Lat Test",
+            stakeholders: "Updated Stakeholder",
+            scale: "1:1000",
+            issuanceDate: "2023-01-01",
+            type: "report",
+            connections: ["doc2", "doc3"],
+            language: "English",
+            pages: 50,
+            lat: 70.0000,  // Outside permitted range
+            lon: 21.0000,  // Outside permitted range
+            area: "", // area is empty
+            description: "Updated description"
+        };
+
+        const response = await request(app)
+            .post('/api/updateDocument')
+            .send(mockData);
+
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({ message: "Invalid parameters" });
+
+    });
+
+    test("Returns error for invalid lon without area", async () => {
+        const invalidData = {
+            id: 1,
+            title: "Invalid Lon Test",
+            lat: 68.0000,  // Outside permitted range
+            lon: 12.0000,  // Outside permitted range
+            area: "", // area is empty
+        };
+
+        const response = await request(app)
+            .post('/api/updateDocument')
+            .send(invalidData);
+
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({ message: "Invalid parameters" });
+    });
+
+
+    test("Returns error when both area and lat/lon are provided", async () => {
+        const invalidData = {
+            id: 1,
+            title: "Invalid Area/LatLon Combo",
+            lat: 68.0000,
+            lon: 20.9000,
+            area: "Sample Area",
+        };
+
+        const response = await request(app)
+            .post('/api/updateDocument')
+            .send(invalidData);
+
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({ message: "Invalid parameters" });
+    });
+    
+    test("Returns error if lat or lon is partially missing", async () => {
+        const missingLonData = {
+            id: 1,
+            title: "Partial Lat/Lon Test",
+            lat: 68.0000,  // lat provided
+            area: ""       // area is empty
+        };
+
+        const response = await request(app)
+            .post('/api/updateDocument')
+            .send(missingLonData);
+
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({ message: "Missing required fields" });
+    });
+});
+
 describe("DELETE /api/deleteDocument", () => {
     afterEach(() => {
         jest.restoreAllMocks();
