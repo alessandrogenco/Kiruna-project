@@ -34,7 +34,7 @@ function AppNavbar({ isLoggedIn, handleLogout }) {
     <>
       <Navbar style={{ backgroundColor: '#004000' }} variant="dark" expand="lg">
         <Container>
-          <Navbar.Brand as={Link} to="/">Kiruna</Navbar.Brand>
+          <Navbar.Brand as={Link} to="/">KirunaExplorer</Navbar.Brand>
           {/* Toggle button for mobile view */}
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
