@@ -19,14 +19,49 @@ function LinkDocuments() {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        setDocuments(data);
+
+        const documentsWithLinks = await Promise.all(
+          data.map(async (document) => {
+            const links = await fetchDocumentLinks(document.id);
+            console.log('Links for document ID:', document.id, links);
+            return { ...document, links: links.links || [] };
+          })
+        );
+        
+        console.log('Documents with links:', documentsWithLinks);
+        
+        setDocuments(documentsWithLinks);
+       
       } catch (error) {
         console.error('Error fetching documents:', error);
       }
-    };
+
+   
+
+  };
 
     fetchDocuments();
   }, []);
+
+  const fetchDocumentLinks = async (documentId) => {
+    try {
+      console.log('Fetching links for document ID:', documentId);
+      const response = await fetch('http://localhost:3001/api/documentLinks/' + documentId, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching document links:', error);
+      throw error;
+    }
+  };
 
   const handleDocumentSelection = (id) => {
 
@@ -71,12 +106,32 @@ function LinkDocuments() {
   };
 
   return (
-    <div className="documents-containe w-100">
+    <div className="documents-container">
       {message && <Alert variant={message.includes('successfully') ? 'success' : 'danger'}>{message}</Alert>}
-      
-      {/* Campo per linkDate */}
-      <Form.Group controlId="linkDate">
-        <Form.Label>Date</Form.Label>
+      <h1>Documents and their Links</h1>
+      <ListGroup>
+        {documents.map((document) => (
+          <ListGroup.Item key={document.id}>
+             <Form.Check
+              type="checkbox"
+              label={document.title}
+              checked={selectedDocuments.includes(document.id)}
+              onChange={() => handleDocumentSelection(document.id)}
+            />
+            <p>Linked Documents:</p>
+            <ListGroup>
+              {Array.isArray(document.links) && document.links.map((link) => (
+                <ListGroup.Item key={link.id}>
+                  {link.title} {/* Mostra solo il titolo del documento collegato */}
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+          </ListGroup.Item>
+        ))}
+      </ListGroup>
+       {/* Campo per linkDate */}
+       <Form.Group controlId="linkDate">
+        <Form.Label>Link Date</Form.Label>
         <Form.Control
           type="date"
           value={linkDate}
@@ -100,22 +155,8 @@ function LinkDocuments() {
         </Form.Control>
       </Form.Group>
 
-      <ListGroup>
-        {documents.map((document) => (
-          <ListGroup.Item key={document.id}>
-            <Form.Check
-              type="checkbox"
-              label={document.title}
-              checked={selectedDocuments.includes(document.id)}
-              onChange={() => handleDocumentSelection(document.id)}
-            />
-          </ListGroup.Item>
-        ))}
-      </ListGroup>
-
-      <Button onClick={handleLinkDocuments} disabled={selectedDocuments.length != 2} className="mt-3 w-100 green-button">
-        Link Documents
-      </Button>
+      <Button onClick={handleLinkDocuments}>Create Link</Button>
+     
     </div>
   );
 }
