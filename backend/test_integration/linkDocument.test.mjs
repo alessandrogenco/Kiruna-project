@@ -42,4 +42,30 @@ describe("Document DAO Integration Tests", () => {
         });
     });
 
+    describe("updateLink", () => {
+        test("Successfully updates an existing link", async () => {
+            await DocumentDao.prototype.linkDocuments(1, 2, "2024-11-05", "Initial Type");
+    
+            const updatedLink = await DocumentDao.prototype.updateLink(1, 2, "2024-11-06", "Updated Type");
+    
+            expect(updatedLink).toEqual({
+                id1: 1,
+                id2: 2,
+                date: "2024-11-06",
+                type: "Updated Type"
+            });
+        });
+
+        test("Throws error if link does not exist", async () => {
+            await expect(
+                documentDao.updateLink(3, 4, "2024-11-06", "Non-existent Type")
+            ).rejects.toThrow("Link not found");
+        });
+
+        
+
+        
+
+})
+
 })
