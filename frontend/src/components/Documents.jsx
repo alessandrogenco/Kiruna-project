@@ -186,6 +186,16 @@ function Documents({ show, handleClose }) {
 
 const handleUpdateDocument = async () => {
 
+  if (!newDocument.lat ^ !newDocument.lon) {
+    alert('Please enter both latitude and longitude.');
+    return;
+  }
+
+  if (newDocument.area !== '' && (newDocument.lat || newDocument.lon)) {
+    alert('Please enter either area or latitude and longitude.');
+    return;
+  }
+
   newDocument.id = selectedDocument.id;
   try {
     const result = await updateDocument(
@@ -209,6 +219,7 @@ const handleUpdateDocument = async () => {
         doc.id === newDocument.id ? { ...doc, ...newDocument } : doc
       )
     );
+
     setShowFormModal(false);
     setSelectedDocument(null);
     setMessage('Document updated successfully!');
