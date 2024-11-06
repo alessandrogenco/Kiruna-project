@@ -24,18 +24,15 @@ function LinkDocuments() {
         const documentsWithLinks = await Promise.all(
           data.map(async (document) => {
             const links = await fetchDocumentLinks(document.id);
-            
             return { ...document, links: links.links || [] };
           })
         );
-        
+        console.log(documentsWithLinks);
         setDocuments(documentsWithLinks);
       } catch (error) {
         console.error('Error fetching documents:', error);
       }
-
   };
-
     fetchDocuments();
   }, [update]);
 
@@ -147,7 +144,15 @@ function LinkDocuments() {
 
   return (
     <div className="documents-container" style={{marginTop: '-1em'}}>
-      {message && <Alert variant={message.includes('successfully') ? 'success' : 'danger'}>{message}</Alert>}
+      {message && (
+        <Alert 
+          variant={message.includes('successfully') ? 'success' : 'danger'} 
+          dismissible 
+          onClose={() => setMessage('')}> // This will clear the message and close the alert
+          {message}
+        </Alert>
+      )}
+      
       <h1 style={{marginTop: '-0.2em'}}>Documents and their Links</h1>
       {/* Campo per linkDate */}
       <Form.Group controlId="linkDate">
@@ -202,8 +207,8 @@ function LinkDocuments() {
       </ListGroup>       
 
       <div style={{ marginBottom: '-1em', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px' }}>
-        <Button onClick={handleLinkDocuments}>Create Link</Button>
-        <Button onClick={handleUpdateLink}>Update Link</Button>
+        {selectedDocuments.length == 2 ? <> <Button onClick={handleLinkDocuments}>Create Link</Button>
+        <Button onClick={handleUpdateLink}>Update Link</Button></> : null}
       </div>
     </div>  
   );
