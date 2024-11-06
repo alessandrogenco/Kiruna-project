@@ -339,6 +339,25 @@ app.post('/api/updateDocument', async (req, res) => {
     }
 });
 
+app.post('/api/deleteDocument', async (req, res) => {
+    console.log("Data received by /api/deleteDocument:", req.body); // Log dei dati ricevuti
+
+    const { id } = req.body;
+    console.log("Received document ID:", id);
+    
+    if (!id) {
+        return res.status(400).json({ message: "ID is required." });
+    }
+
+    try {
+        const result = await documentDao.deleteDocumentById(id); // Utilizza il metodo deleteDocumentById dal tuo DAO
+        res.status(200).json(result); // Risposta positiva con il risultato della cancellazione
+    } catch (error) {
+        console.error("Error in /api/deleteDocument:", error); // Log dettagliato per debug
+        res.status(400).json({ message: error.message }); // Risposta con messaggio di errore
+    }
+});
+
 
 /* ACTIVATING THE SERVER */
 let server = app.listen(PORT, () => {

@@ -96,3 +96,11 @@ Content-Type: application/json
     "lon": 20.8060,
     "description": "Updated description of the document"
 }
+
+########## delete document 
+POST http://localhost:3001/api/deleteDocument 
+Content-Type: application/json
+
+{
+    "id": 173082689802499
+}

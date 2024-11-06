@@ -332,6 +332,32 @@ class DocumentDao{
             });
         });
     }
+
+    deleteDocumentById(id) {
+        return new Promise((resolve, reject) => {
+            if (!id) {
+                return reject(new Error('ID cannot be empty.'));
+            }
+    
+            const deleteDocument = 'DELETE FROM Documents WHERE id = ?';
+    
+            db.run(deleteDocument, [id], function(err) {
+                if (err) {
+                    console.error('Database error while deleting document:', err.message);
+                    return reject(new Error('Database error: ' + err.message));
+                }
+    
+                if (this.changes === 0) {
+                    return reject(new Error('No document found with the provided ID.'));
+                }
+    
+                resolve({
+                    id,
+                    message: 'Document deleted successfully.'
+                });
+            });
+        });
+    }
         
 }
 
