@@ -153,9 +153,6 @@ function Documents({ show, handleClose }) {
   const filteredDocuments = documents.filter((document) =>
     document.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  
-
   
   // validates the latitude coordinates
   function validateLatitude(e){
@@ -231,9 +228,12 @@ const handleUpdateDocument = async () => {
           onChange={handleSearchChange}
         />
       </Form>
-      <Button variant="primary" onClick={() => setShowFormModal(true)}>
-        Add Document
-      </Button>
+      <div className="d-flex justify-content-center">
+        <Button className="w-75 mb-3" variant="primary" onClick={() => setShowFormModal(true)}>
+          Add Document
+        </Button>
+      </div>
+
       
       <ul>
         {filteredDocuments.map((document) => (
@@ -295,9 +295,7 @@ const handleUpdateDocument = async () => {
               <Form.Group className="mt-3" controlId="areaText">
                 <Form.Label>Area</Form.Label>
                 <Form.Control as="select" name="area" value={newDocument.area} onChange={handleNewDocumentChange}>
-
                   <option value="">Select the area</option>
-                  
                   <option value="Area1">Area 1</option>
                   <option value="Area2">Area 2</option>
                   <option value="Area3">Area 3</option>
