@@ -179,7 +179,7 @@ describe("PUT links", () => {
 
         expect(response.status).toBe(200);
         expect(spyDao).toHaveBeenCalledTimes(1);
-        expect(spyDao).toHaveBeenCalledWith(1, 2, "2024-11-05", "related");
+        expect(spyDao).toHaveBeenCalledWith(1, 2, "2024-11-05", "Informative document");
         expect(response.body).toEqual({
             message: 'Link updated successfully',
             link: {
