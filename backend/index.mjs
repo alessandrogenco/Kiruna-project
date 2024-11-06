@@ -299,7 +299,7 @@ app.put('/api/links', async (req, res) => {
     }
 });*/
 
-app.post('/api/newDocuments', upload.single('file'), async (req, res) => {
+/*app.post('/api/newDocuments', upload.single('file'), async (req, res) => {
     try {
         const { name } = req.body;
         const file = req.file?.buffer; // Get the buffer of the file just uploaded 
@@ -330,7 +330,7 @@ app.post('/api/newDocuments', upload.single('file'), async (req, res) => {
         console.error('Error inserting document:', error.message);
         res.status(500).json({ error: error.message });
     }
-});
+});*/
 
 app.post('/api/updateDocument', async (req, res) => {
     console.log("Data received by /api/updateDocument:", req.body); // Log dei dati ricevuti
