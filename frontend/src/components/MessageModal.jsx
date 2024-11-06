@@ -5,7 +5,7 @@ import LinkDocuments from './LinkDocuments'; // Import the LinkDocuments compone
 
 function MessageModal({ show, handleClose, message, modalType }) {
   return (
-    <Modal show={show} onHide={handleClose}>
+    <Modal show={show} onHide={handleClose} className='modal-xl'>
       <Modal.Header closeButton>
         <Modal.Title>{modalType === 'manage' ? 'Manage Documents' : 'Link Documents'}</Modal.Title>
       </Modal.Header>
