@@ -296,7 +296,7 @@ const handleUpdateDocument = async () => {
                 <Form.Label>Area</Form.Label>
                 <Form.Control as="select" name="area" value={newDocument.area} onChange={handleNewDocumentChange}>
                   <option value="">Select the area</option>
-                  <option value="Area1">Area 1</option>
+                  <option value="EntireMunicipality">Entire municipality of Kiruna</option>
                   <option value="Area2">Area 2</option>
                   <option value="Area3">Area 3</option>
                   <option value="Area4">Area 4</option>
@@ -336,6 +336,7 @@ const handleUpdateDocument = async () => {
                   name="connections"
                   value={newDocument.connections}
                   onChange={handleNewDocumentChange}
+                  disabled
                 />
               </Form.Group>
               <Form.Group className="mt-3" controlId="formLanguage">
