@@ -192,7 +192,7 @@ function LinkDocuments() {
               checked={selectedDocuments.includes(document.id)}
               onChange={() => handleDocumentSelection(document.id)}
             />
-            <p className='mt-3 mx-3 mb-1'>Linked Documents:</p>
+            {document.links != 0 ? <p className='mt-3 mx-3 mb-1'>Linked Documents:</p> : null}
             <ListGroup className='mb-2'>
               {Array.isArray(document.links) && document.links.map((link, index) => (
                 <ListGroup.Item 
