@@ -171,8 +171,7 @@ function LinkDocuments() {
         <Form.Control
           as="select"  // This turns the input into a select dropdown
           value={linkType}
-          onChange={(e) => setLinkType(e.target.value)}
-        >
+          onChange={(e) => setLinkType(e.target.value)}>
           <option value="">Select link type</option>
           <option value="Direct">Direct</option>
           <option value="Collateral">Collateral</option>
@@ -181,25 +180,33 @@ function LinkDocuments() {
         </Form.Control>
       </Form.Group>
       <ListGroup className='mb-3'>
-        {documents.map((document) => (
-          <ListGroup.Item key={document.id}>
-             <Form.Check
+        {documents.map((document, index) => (
+          <ListGroup.Item
+            key={document.id}
+            style={{
+              backgroundColor: index % 2 === 0 ? 'white' : '#e7e7e7' // Alternates between white and light gray
+            }}>
+            <Form.Check
               type="checkbox"
               label={document.title}
               checked={selectedDocuments.includes(document.id)}
               onChange={() => handleDocumentSelection(document.id)}
             />
-            <p className='mt-4'>Linked Documents:</p>
-            <ListGroup classname='mb-2'>
-              {Array.isArray(document.links) && document.links.map((link) => (
-                <ListGroup.Item key={link.id}>
-                  {link.title} {/* Mostra solo il titolo del documento collegato */}
+            <p className='mt-3 mx-3 mb-1'>Linked Documents:</p>
+            <ListGroup className='mb-2'>
+              {Array.isArray(document.links) && document.links.map((link, index) => (
+                <ListGroup.Item 
+                  key={link.id} 
+                  style={{ backgroundColor: index % 2 === 0 ? 'white' : '#f5f5f5' }} // Alternating background color
+                >
+                  {link.title}
                 </ListGroup.Item>
               ))}
             </ListGroup>
           </ListGroup.Item>
         ))}
       </ListGroup>
+
        
 
       <Button onClick={handleLinkDocuments}>Create Link</Button>
