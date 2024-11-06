@@ -62,3 +62,45 @@ Content-Type: application/json
     "linkDate": "2022-09-27",
     "linkType": "direct consequence"
 }
+
+########### get document links
+GET http://localhost:3001/api/documentLinks/7
+Accept: application/json
+
+########### update document links
+PUT http://localhost:3001/api/links
+Content-Type: application/json
+
+{
+    "idDocument1": 1,
+    "idDocument2": 2,
+    "newLinkDate": "2023-02-16",
+    "newLinkType": "collateral consequence"
+}
+
+########## update document
+POST http://localhost:3001/api/updateDocument
+Content-Type: application/json
+
+{
+    "id": 173082689802499,
+    "title": "prova1",
+    "stakeholders": "New Stakeholders",
+    "scale": "1:1000",
+    "issuanceDate": "2024-11-06",
+    "type": "Report",
+    "connections": "Updated connections",
+    "language": "English",
+    "pages": 10,
+    "lat": 67.9128,
+    "lon": 20.8060,
+    "description": "Updated description of the document"
+}
+
+########## delete document 
+POST http://localhost:3001/api/deleteDocument 
+Content-Type: application/json
+
+{
+    "id": 173082689802499
+}

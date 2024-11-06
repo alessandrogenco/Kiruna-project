@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "node ourtest.mjs",
-    "test_unit": "set NODE_ENV=test && jest --coverage --testPathPattern=test_unit",
-    "test_integration": "set NODE_ENV=test && jest --coverage --testPathPattern=test_integration"
+    "test_unit": "set NODE_ENV=test && jest --coverage --runInBand --testPathPattern=test_unit",
+    "test_integration": "set NODE_ENV=test && jest --coverage --runInBand --testPathPattern=test_integration"
   },
   "author": "",
   "license": "ISC",
@@ -19,6 +19,7 @@
     "dayjs": "^1.11.13",
     "express": "^4.21.1",
     "express-session": "^1.18.1",
+    "multer": "^1.4.5-lts.1",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "session": "^0.1.0",

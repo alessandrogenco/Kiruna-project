@@ -41,7 +41,7 @@ function App() {
       }
       setUser(user);
       setLoggedIn(true);
-      navigate('/');
+      navigate('/explore');
     } catch (err) {
       console.error("Login error:", err.message);
       throw err;
@@ -69,8 +69,12 @@ function App() {
         <Route
           path="/login"
           element={
-            loggedIn ? <Navigate to="/loggedInPage" /> : <LoginForm login={handleLogin} />
+            loggedIn ? <Navigate to="/explore" /> : <LoginForm login={handleLogin} isLoggedIn={loggedIn} handleLogout={handleLogout} />
           }
+        />
+        <Route
+          path="/loggedInPage"
+          element={<LoggedInPage isLoggedIn={loggedIn} handleLogout={handleLogout} />}
         />
         <Route
           path="/explore"
@@ -82,16 +86,11 @@ function App() {
         />
         <Route
           path="/link-documents"
-          element={<LinkDocuments isLoggedIn={loggedIn} handleLogout={handleLogout} />}
-        />
-        
-        <Route
-          path="/upload-document"
-          element={<DocumentUploadForm />}
         />
       </Routes>
     </>
   );
 }
+
 
 export default App;

@@ -1,19 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Form, ListGroup, Alert, Container, Row, Col, Spinner, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import '../App.css';
-import API from '../API.mjs';
-import PropTypes from "prop-types";
-import AppNavbar from './Navbar';
+import React, { useEffect, useState, useRef } from 'react';
+import { Button, Form, ListGroup, Alert } from 'react-bootstrap';
+import "./Documents.css";
+import API from '../API.mjs'; 
 
-function LinkDocuments({ isLoggedIn, handleLogout }) {
+function LinkDocuments() {
   const [documents, setDocuments] = useState([]);
   const [selectedDocuments, setSelectedDocuments] = useState([]);
-  const [linkDate, setLinkDate] = useState('');
-  const [linkType, setLinkType] = useState('');
-  const [message, setMessage] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [linkDate, setLinkDate] = useState(''); // Stato per la data del link
+  const [linkType, setLinkType] = useState(''); // Stato per il tipo di link
+  const [message, setMessage] = useState(''); 
+  const isLinkedRef = useRef(false);
 
-  
   useEffect(() => {
     const fetchDocuments = async () => {
       try {
@@ -21,27 +18,117 @@ function LinkDocuments({ isLoggedIn, handleLogout }) {
         if (!response.ok) throw new Error('Failed to fetch documents');
         
         const data = await response.json();
-        setDocuments(data);
+
+        const documentsWithLinks = await Promise.all(
+          data.map(async (document) => {
+            const links = await fetchDocumentLinks(document.id);
+            
+            return { ...document, links: links.links || [] };
+          })
+        );
+        
+    
+        
+        setDocuments(documentsWithLinks);
+       
       } catch (error) {
         console.error('Error fetching documents:', error);
         setMessage({ type: 'danger', text: 'Error loading documents.' });
       } finally {
         setLoading(false); 
       }
-    };
+
+   
+
+  };
+
     fetchDocuments();
   }, []);
 
-  // Handle document selection with a maximum of two selections
-  const handleDocumentSelection = (id) => {
-    setSelectedDocuments((prevSelected) => {
-      if (prevSelected.includes(id)) {
-        return prevSelected.filter((docId) => docId !== id);
-      } else if (prevSelected.length < 2) {
-        return [...prevSelected, id];
+  //update links
+  const updateLink = async (idDocument1, idDocument2, newLinkDate, newLinkType) => {
+    try {
+      const response = await fetch('http://localhost:3001/api/links', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          idDocument1: idDocument1,
+          idDocument2: idDocument2,
+          newLinkDate: newLinkDate,
+          newLinkType: newLinkType
+        })
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
-      return prevSelected;
-    });
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Error updating link:', error);
+      throw error;
+    }
+  };
+
+  const handleUpdateLink = async () => {
+    if (selectedDocuments.length !== 2) {
+      alert('Please select exactly two documents to update the link.');
+      return;
+    }
+
+    const [id1, id2] = selectedDocuments;
+
+    try {
+      const result = await API.updateLink(id1, id2, linkDate, linkType);
+      setSelectedDocuments([]);
+      setLinkDate(''); 
+      setLinkType(''); 
+   
+      setMessage('Links updated successfully!');
+      window.location.reload();
+    } catch (error) {
+      alert("the link must exist already and both the date and the type of the link must be filled in");
+    }
+  };
+
+  const fetchDocumentLinks = async (documentId) => {
+    try {
+     
+      const response = await fetch('http://localhost:3001/api/documentLinks/' + documentId, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching document links:', error);
+      throw error;
+    }
+  };
+
+  const handleDocumentSelection = (id) => {
+
+    // Check if the document is already selected
+    const isSelected = selectedDocuments.includes(id);
+
+    // If it is selected, unselect it
+    if (isSelected) {
+      setSelectedDocuments(selectedDocuments.filter(docId => docId !== id));
+    } else {
+      // If it is not selected, check if we can select more documents
+      if (selectedDocuments.length < 2) {
+        setSelectedDocuments([...selectedDocuments, id]);
+      } else {
+        // Alert user if they attempt to select more than 2
+        alert("You can only select a maximum of 2 documents.");
+      }
+    }
   };
 
   // Clear selection, messages, and form
@@ -62,11 +149,15 @@ function LinkDocuments({ isLoggedIn, handleLogout }) {
     const [id1, id2] = selectedDocuments;
     try {
       await API.linkDocument(id1, id2, linkDate, linkType);
-      setMessage({ type: 'success', text: 'Documents linked successfully!' });
-      handleClearSelection();
+      setSelectedDocuments([]);
+      setLinkDate(''); 
+      setLinkType(''); 
+      isLinkedRef.current = true; // Aggiorna il flag
+      setMessage('Documents linked successfully!');
+      window.location.reload();
     } catch (error) {
       console.error('Error linking documents:', error);
-      setMessage({ type: 'danger', text: 'Error linking documents. Please try again.' });
+      alert("the link must not exist already and both the date and the type of the link must be filled in");
     }
   };
 
@@ -79,109 +170,60 @@ function LinkDocuments({ isLoggedIn, handleLogout }) {
   }, [message]);
 
   return (
-    <>
-      <AppNavbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
-      <Container className="link-documents-container mt-4 p-4 rounded shadow-sm bg-light">
-        <h2 className="text-center mb-4">Link Documents</h2>
+    <div className="documents-container">
+      {message && <Alert variant={message.includes('successfully') ? 'success' : 'danger'}>{message}</Alert>}
+      <h1>Documents and their Links</h1>
+      {/* Campo per linkDate */}
+      <Form.Group controlId="linkDate">
+        <Form.Label>Link Date</Form.Label>
+        <Form.Control
+          type="date"
+          value={linkDate}
+          onChange={(e) => setLinkDate(e.target.value)}
+        />
+      </Form.Group>
 
-        {/* Display success/error message with auto-clear */}
-        {message && (
-          <Alert variant={message.type} onClose={() => setMessage(null)} dismissible>
-            {message.text}
-          </Alert>
-        )}
+      {/* Campo per linkType */}
+      <Form.Group controlId="linkType" className="mt-3 mb-4">
+        <Form.Label>Type</Form.Label>
+        <Form.Control
+          as="select"  // This turns the input into a select dropdown
+          value={linkType}
+          onChange={(e) => setLinkType(e.target.value)}
+        >
+          <option value="">Select link type</option>
+          <option value="Direct">Direct</option>
+          <option value="Collateral">Collateral</option>
+          <option value="Projection">Projection</option>
+          <option value="Update">Update</option>
+        </Form.Control>
+      </Form.Group>
+      <ListGroup className='mb-3'>
+        {documents.map((document) => (
+          <ListGroup.Item key={document.id}>
+             <Form.Check
+              type="checkbox"
+              label={document.title}
+              checked={selectedDocuments.includes(document.id)}
+              onChange={() => handleDocumentSelection(document.id)}
+            />
+            <p className='mt-4'>Linked Documents:</p>
+            <ListGroup classname='mb-2'>
+              {Array.isArray(document.links) && document.links.map((link) => (
+                <ListGroup.Item key={link.id}>
+                  {link.title} {/* Mostra solo il titolo del documento collegato */}
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+          </ListGroup.Item>
+        ))}
+      </ListGroup>
+       
 
-        {loading ? (
-          <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '200px' }}>
-            <Spinner animation="border" variant="primary" />
-          </div>
-        ) : (
-          <Row>
-            <Col md={6}>
-              <OverlayTrigger
-                placement="top"
-                overlay={<Tooltip>Select exactly two documents to link them together.</Tooltip>}
-              >
-                <h5 className="mb-3">Select Documents to Link (Choose Two)</h5>
-              </OverlayTrigger>
-              <ListGroup className="mb-3">
-                {documents.map((document) => (
-                  <ListGroup.Item
-                    key={document.id}
-                    className={`d-flex align-items-center document-item ${selectedDocuments.includes(document.id) ? 'selected' : ''}`}
-                    action
-                    onClick={() => handleDocumentSelection(document.id)}
-                  >
-                    <Form.Check
-                      type="checkbox"
-                      label={document.title}
-                      checked={selectedDocuments.includes(document.id)}
-                      onChange={() => handleDocumentSelection(document.id)}
-                    />
-                  </ListGroup.Item>
-                ))}
-              </ListGroup>
-            </Col>
-
-            <Col md={6}>
-              <Form>
-                <OverlayTrigger
-                  placement="top"
-                  overlay={<Tooltip>Select a date for the link.</Tooltip>}
-                >
-                  <Form.Group controlId="linkDate" className="mb-3">
-                    <Form.Label>Link Date</Form.Label>
-                    <Form.Control
-                      type="date"
-                      value={linkDate}
-                      onChange={(e) => setLinkDate(e.target.value)}
-                    />
-                  </Form.Group>
-                </OverlayTrigger>
-
-                <OverlayTrigger
-                  placement="top"
-                  overlay={<Tooltip>Specify the type of link (e.g., "Reference" or "Dependency").</Tooltip>}
-                >
-                  <Form.Group controlId="linkType" className="mb-3">
-                    <Form.Label>Link Type</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Enter link type"
-                      value={linkType}
-                      onChange={(e) => setLinkType(e.target.value)}
-                    />
-                  </Form.Group>
-                </OverlayTrigger>
-
-                <Button
-                  variant="primary"
-                  onClick={handleLinkDocuments}
-                  disabled={selectedDocuments.length !== 2 || !linkDate || !linkType}
-                  className="w-100 mt-3 d-flex align-items-center justify-content-center"
-                >
-                  <i className="bi bi-link-45deg me-2"></i> Link Selected Documents
-                </Button>
-
-                <Button
-                  variant="secondary"
-                  onClick={handleClearSelection}
-                  className="w-100 mt-2 d-flex align-items-center justify-content-center"
-                >
-                  <i className="bi bi-x-circle me-2"></i> Clear Selection
-                </Button>
-              </Form>
-            </Col>
-          </Row>
-        )}
-      </Container>
-    </>
+      <Button onClick={handleLinkDocuments}>Create Link</Button>
+      <Button onClick={handleUpdateLink}>Update Link</Button>
+    </div>
   );
 }
-
-LinkDocuments.propTypes = {
-  isLoggedIn: PropTypes.bool,
-  handleLogout: PropTypes.func,
-};
 
 export default LinkDocuments;

@@ -1,5 +1,6 @@
 import cors from 'cors';
 import express from 'express';
+import multer from 'multer';
 import session from 'express-session';
 import passport from 'passport';
 import LoginDao from './dao/login.mjs';
@@ -7,6 +8,9 @@ import DocumentDao from './dao/document.mjs';
 
 const app = express();
 const PORT = 3001;
+//multer configuration to manage the upload of a file 
+const storage = multer.memoryStorage(); // Store a file in memory as Buffer 
+const upload = multer({ storage: storage });
 
 app.use(express.json());
 
@@ -173,31 +177,186 @@ app.put('/api/addDescription', async (req, res) => {
 
 // Add a document - to be tested
 app.post('/api/addDocument', async (req, res) => {
+    console.log("Data received by /api/addDocument:", req.body); // Log dei dati ricevuti
+
     const { title, stakeholders, scale, date, type, connections, language, pages, lat, lon, description } = req.body;
-  
-    try {
-      const result = await documentDao.addDocument(title, stakeholders, scale, date, type, connections, language, pages, lat, lon, description);
-      res.status(200).json(result);
-    } catch (error) {
-      res.status(400).json({ message: error.message });
+    console.log("Received document data:", req.body);
+    if (!title || !lat || !lon) {
+        return res.status(400).json({ message: "Missing required fields." });
     }
-  });
+
+    try {
+        const result = await documentDao.addDocument(title, stakeholders, scale, date, type, connections, language, pages, lat, lon, description);
+        res.status(200).json(result); // Risposta positiva con il documento aggiunto
+    } catch (error) {
+        console.error("Error in /api/addDocument:", error); // Log dettagliato per debug
+        res.status(400).json({ message: error.message }); // Risposta con messaggio di errore
+    }
+});
 
 //link documents
 app.post('/api/linkDocuments', async (req, res) => {
     const { id1, id2, linkDate, linkType } = req.body;
-  
+
     try {
-      const result = await documentDao.linkDocuments(id1, id2, linkDate, linkType);
-      res.status(200).json({
-        message: 'Documents linked successfully',
-        link: result
-      });
+        if (linkDate.trim() === '') {
+            throw new Error('The link date must be a non-empty string');
+        }
+    
+        if (linkType.trim() === '') {
+            throw new Error('The link type must be a non-empty string');
+        }
+
+        const result = await documentDao.linkDocuments(id1, id2, linkDate, linkType);
+        res.status(200).json({
+            message: 'Documents linked successfully',
+            link: result
+        });
     } catch (error) {
-      res.status(400).json({ message: error.message });
+        if (error.message === 'Link already exists') {
+            res.status(409).json({ message: error.message });
+        } else {
+            res.status(400).json({ message: error.message });
+        }
     }
   });
 
+app.get('/api/documentLinks/:id', async (req, res) => {
+    const documentId = req.params.id;
+
+    try {
+        const links = await documentDao.getDocumentLinks(documentId);
+        if (links.message) {
+            console.log(links.message);
+            res.status(200).json({ message: links.message });
+        } else {
+            res.status(200).json({
+                message: 'Document links fetched successfully',
+                links: links
+            });
+        }
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+});
+
+app.put('/api/links', async (req, res) => {
+    const { idDocument1, idDocument2, newLinkDate, newLinkType } = req.body;
+
+    try {
+        if (newLinkDate.trim() === '') {
+            throw new Error('The new link date must be a non-empty string');
+        }
+    
+        if (newLinkType.trim() === '') {
+            throw new Error('The new link type must be a non-empty string');
+        }
+
+        const updatedLink = await documentDao.updateLink(idDocument1, idDocument2, newLinkDate, newLinkType);
+        res.status(200).json({
+            message: 'Link updated successfully',
+            link: updatedLink
+        });
+    } catch (error) {
+        if (error.message === 'Link not found') {
+            res.status(404).json({ message: error.message });
+        } else {
+            res.status(400).json({ message: error.message });
+        }
+    }
+});
+
+/*app.post('/api/newDocuments', upload.single('file'), async (req, res) => {
+    try {
+        const { name } = req.body;
+        const file = req.file?.buffer; // Get the buffer of the file just uploaded 
+
+        // Check the needed filds
+        if (!name || !file) {
+            return res.status(400).json({ error: 'Name and file are required' });
+        }
+
+        const result = await documentDao.newDocument(name, file);
+
+        // success response
+        res.status(201).json(result);
+    } catch (error) {
+        console.error('Error inserting document:', error.message);
+        res.status(500).json({ error: error.message });
+    }
+});*/
+
+app.post('/api/newDocuments', upload.single('file'), async (req, res) => {
+    try {
+        const { name } = req.body;
+        const file = req.file?.buffer; // Get the buffer of the file just uploaded 
+        const documentDetails = {
+            title: req.body.title,
+            stakeholders: req.body.stakeholders,
+            scale: req.body.scale,
+            issuanceDate: req.body.issuanceDate,
+            type: req.body.type,
+            connections: req.body.connections,
+            language: req.body.language,
+            pages: req.body.pages,
+            lat: req.body.lat,
+            lon: req.body.lon,
+            description: req.body.description,
+        };
+
+        // Check the needed filds
+        if (!name || !file || !documentDetails.title) {
+            return res.status(400).json({ error: 'Name, file, and title are required' });
+        }
+
+        const result = await documentDao.newDocument(name, file, documentDetails);
+
+        // Success response
+        res.status(201).json(result);
+    } catch (error) {
+        console.error('Error inserting document:', error.message);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/api/updateDocument', async (req, res) => {
+    console.log("Data received by /api/updateDocument:", req.body); // Log dei dati ricevuti
+
+    const { id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, description } = req.body;
+    console.log("Received document update data:", req.body);
+    
+    // Verifica che i campi necessari siano presenti
+    if (!id || !title || !lat || !lon) {
+        return res.status(400).json({ message: "Missing required fields." });
+    }
+
+    try {
+        const result = await documentDao.updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, description);
+        res.status(200).json(result); // Risposta positiva con il documento aggiornato
+    } catch (error) {
+        console.error("Error in /api/updateDocument:", error); // Log dettagliato per debug
+        res.status(400).json({ message: error.message }); // Risposta con messaggio di errore
+    }
+});
+
+app.post('/api/deleteDocument', async (req, res) => {
+    console.log("Data received by /api/deleteDocument:", req.body); // Log dei dati ricevuti
+
+    const { id } = req.body;
+    console.log("Received document ID:", id);
+    
+    if (!id) {
+        return res.status(400).json({ message: "ID is required." });
+    }
+
+    try {
+        const result = await documentDao.deleteDocumentById(id); // Utilizza il metodo deleteDocumentById dal tuo DAO
+        res.status(200).json(result); // Risposta positiva con il risultato della cancellazione
+    } catch (error) {
+        console.error("Error in /api/deleteDocument:", error); // Log dettagliato per debug
+        res.status(400).json({ message: error.message }); // Risposta con messaggio di errore
+    }
+});
 
 
 /* ACTIVATING THE SERVER */

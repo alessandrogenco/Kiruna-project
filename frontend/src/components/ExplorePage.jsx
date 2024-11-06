@@ -1,18 +1,19 @@
 // ExplorePage.jsx
 import React from 'react';
-import AppNavbar from './Navbar';
 import PropTypes from "prop-types";
+import AppNavbar from './Navbar';
+import { Row, Col } from 'react-bootstrap';
 
 function ExplorePage(props) {
   return (
-    <div className="vh-100 d-flex flex-column">
-      <AppNavbar isLoggedIn={props.isLoggedIn} handleLogout={props.handleLogout}></AppNavbar>
-      {/* Page content centered below */}
-      <div className="text-center flex-grow-1 d-flex flex-column justify-content-center align-items-center">
-        <h1>Explore Page</h1>
-        <p>Content will be added here.</p>
-      </div>
-    </div>
+    <>
+      <AppNavbar isLoggedIn={props.isLoggedIn} handleLogout={props.handleLogout} />
+      <Row className="vh-100 justify-content-center align-items-center">
+        <Col xs="auto">
+          <h1 className="text-center">Explore Page</h1>
+        </Col>
+      </Row>
+    </>
   );
 }
 

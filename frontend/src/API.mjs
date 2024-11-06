@@ -100,5 +100,58 @@ const linkDocument = async (id1, id2, linkDate, linkType) => {
     }
 };
 
-const API = { login, logout, checkLogin, linkDocument };
+const getDocumentLinks = async (documentId) => {
+    try {
+        const response = await fetch(SERVER_URL + '/documentLinks/' + documentId, { 
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch document links');
+        }
+
+        const result = await response.json();
+        return result;
+    } catch (error) {  
+        console.error('Error fetching document links:', error);
+        throw error;
+    }
+}
+
+const updateLink = async (idDocument1, idDocument2, newLinkDate, newLinkType) => {
+    try {
+        const response = await fetch(SERVER_URL + '/links', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                idDocument1: idDocument1,
+                idDocument2: idDocument2,
+                newLinkDate: newLinkDate,
+                newLinkType: newLinkType
+            })
+        });
+
+        if (!response.ok) {
+            if (response.status === 404) {
+                throw new Error('Link not found');
+            }
+            throw new Error('Failed to update link');
+        }
+
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error('Error updating link:', error);
+        throw error;
+    }
+}
+
+
+
+const API = { login, logout, checkLogin, linkDocument, getDocumentLinks, updateLink};
 export default API;

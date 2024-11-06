@@ -78,6 +78,11 @@ body {
   font-family: Arial, sans-serif;
 }
 
+.text-shadow-basic {
+    font-size: 2rem; /* Larger text for better visibility */
+    text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5); /* Larger offsets and blur */
+}
+
 /* Stili per dispositivi mobili */
 @media (max-width: 768px) {
   /* Modifica il layout della homepage per i dispositivi mobili */
