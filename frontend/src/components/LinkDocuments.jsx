@@ -84,6 +84,7 @@ function LinkDocuments() {
       setLinkType(''); 
    
       setMessage('Links updated successfully!');
+      window.location.reload();
     } catch (error) {
       alert("the link must exist already and both the date and the type of the link must be filled in");
     }
@@ -143,6 +144,7 @@ function LinkDocuments() {
       setLinkType(''); 
       isLinkedRef.current = true; // Aggiorna il flag
       setMessage('Documents linked successfully!');
+      window.location.reload();
     } catch (error) {
       console.error('Error linking documents:', error);
       alert("the link must not exist already and both the date and the type of the link must be filled in");

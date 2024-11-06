@@ -151,5 +151,7 @@ const updateLink = async (idDocument1, idDocument2, newLinkDate, newLinkType) =>
     }
 }
 
+
+
 const API = { login, logout, checkLogin, linkDocument, getDocumentLinks, updateLink};
 export default API;
