@@ -247,13 +247,12 @@ const handleUpdateDocument = async () => {
         </Button>
       </div>
 
-
       <ul>
         {filteredDocuments.map((document) => (
           <li className='my-3' key={document.id} onClick={() => handleDocumentClick(document)}>
             <div>
-              <strong>{document.title}</strong>
-              <p className='mb-1'>{document.description}</p>
+              <strong style={{ marginTop: '-0.4em'}}>{document.title}</strong>
+              <p style={{ marginTop: '-0.06em', marginBottom: '-5px' }}>{document.description}</p>
             </div>
           </li>
         ))}
