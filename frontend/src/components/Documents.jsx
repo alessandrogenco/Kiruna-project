@@ -430,9 +430,9 @@ const handleUpdateDocument = async () => {
           >
             {selectedDocument ? 'Save' : 'Add Document'}
           </Button>
-          <Button variant="danger" onClick={handleDeleteSelectedDocument}>
+          {selectedDocument ? <Button variant="danger" onClick={handleDeleteSelectedDocument}>
               Delete
-      </Button>
+      </Button> : null}
         </Modal.Footer>
       </Modal>
     </div>
