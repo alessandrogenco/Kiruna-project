@@ -60,7 +60,7 @@ function Documents({ show, handleClose }) {
       description: newDocument.description
     };
 
-    console.log(documentData);
+    //console.log(documentData);
 
     try {
         const response = await fetch('http://localhost:3001/api/addDocument', {
@@ -274,8 +274,7 @@ const handleUpdateDocument = async () => {
                   placeholder="Enter title"
                   name="title"
                   value={newDocument.title}
-                  onChange={handleNewDocumentChange}
-                />
+                  onChange={handleNewDocumentChange}/>
               </Form.Group>
               <Form.Group className="mt-3" controlId="formStakeholders">
                 <Form.Label>Stakeholders</Form.Label>
@@ -284,8 +283,7 @@ const handleUpdateDocument = async () => {
                   placeholder="Enter stakeholders"
                   name="stakeholders"
                   value={newDocument.stakeholders}
-                  onChange={handleNewDocumentChange}
-                />
+                  onChange={handleNewDocumentChange}/>
                  </Form.Group>
               <Form.Group className="mt-3" controlId="formScale">
                 <Form.Label>Scale</Form.Label>
@@ -294,8 +292,7 @@ const handleUpdateDocument = async () => {
                   placeholder="Enter scale"
                   name="scale"
                   value={newDocument.scale}
-                  onChange={handleNewDocumentChange}
-                />
+                  onChange={handleNewDocumentChange}/>
               </Form.Group>
               <Form.Group className="mt-3" controlId="formDate">
                 <Form.Label>Date</Form.Label>

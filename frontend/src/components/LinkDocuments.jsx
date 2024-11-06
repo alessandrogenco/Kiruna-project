@@ -9,6 +9,7 @@ function LinkDocuments() {
   const [linkDate, setLinkDate] = useState(''); // Stato per la data del link
   const [linkType, setLinkType] = useState(''); // Stato per il tipo di link
   const [message, setMessage] = useState(''); 
+  const [update, setUpdate] = useState(false);
   const isLinkedRef = useRef(false);
 
   useEffect(() => {
@@ -28,20 +29,15 @@ function LinkDocuments() {
           })
         );
         
-    
-        
         setDocuments(documentsWithLinks);
-       
       } catch (error) {
         console.error('Error fetching documents:', error);
       }
 
-   
-
   };
 
     fetchDocuments();
-  }, []);
+  }, [update]);
 
   //update links
   const updateLink = async (idDocument1, idDocument2, newLinkDate, newLinkType) => {
@@ -82,9 +78,7 @@ function LinkDocuments() {
       setSelectedDocuments([]);
       setLinkDate(''); 
       setLinkType(''); 
-   
       setMessage('Links updated successfully!');
-      window.location.reload();
     } catch (error) {
       alert("the link must exist already and both the date and the type of the link must be filled in");
     }
@@ -143,8 +137,8 @@ function LinkDocuments() {
       setLinkDate(''); 
       setLinkType(''); 
       isLinkedRef.current = true; // Aggiorna il flag
+      setUpdate(!update);
       setMessage('Documents linked successfully!');
-      window.location.reload();
     } catch (error) {
       console.error('Error linking documents:', error);
       alert("the link must not exist already and both the date and the type of the link must be filled in");
