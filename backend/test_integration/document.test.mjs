@@ -3,7 +3,8 @@ import { app, server } from "../index.mjs";
 import request from "supertest";
 import { cleanup } from "../db/cleanup.mjs";
 // import the dao
-import LoginDao from "../dao/login.mjs"
+import LoginDao from "../dao/login.mjs";
+import documentDao from "../dao/document.mjs";
 
 // define baseurl
 const baseURL = "/api/";
@@ -333,3 +334,49 @@ describe("POST Added a document", () => {
         expect(response.body).toEqual({ message: 'Invalid parameters' });
     });
 });
+
+describe('DELETE /api/deleteDocument', () => {
+    // Mock deleteDocumentById method from documentDao
+    beforeAll(() => {
+      jest.spyOn(documentDao.prototype, 'deleteDocumentById');
+    });
+  
+    afterAll(() => {
+      documentDao.prototype.deleteDocumentById.mockRestore();
+    });
+  
+    test('Deletes document successfully when valid ID is provided', async () => {
+      const mockResult = { id: 1, message: 'Document deleted successfully.' };
+      documentDao.prototype.deleteDocumentById.mockResolvedValue(mockResult);
+  
+      const response = await request(app)
+        .post('/api/deleteDocument')
+        .send({ id: 1 }); // Send a valid document ID
+  
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(mockResult);
+      expect(documentDao.prototype.deleteDocumentById).toHaveBeenCalledWith(1);
+    });
+  
+    test('Returns 400 error when ID is not provided', async () => {
+        const response = await request(app)
+            .post('/api/deleteDocument')
+            .send({});
+    
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({ message: 'ID is required.' });
+    });
+    
+    /*
+    test('Returns error when no document found with provided ID', async () => {
+      documentDao.prototype.deleteDocumentById.mockRejectedValue({message: "No document found with the provided ID"});
+  
+      const response = await request(app)
+        .post('/api/deleteDocument')
+        .send({ id: 999 }); // Non-existent ID
+  
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual({ message: "No document found with the provided ID" });
+      expect(documentDao.prototype.deleteDocumentById).toHaveBeenCalledWith(999);
+    });*/
+  });
