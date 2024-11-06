@@ -85,8 +85,7 @@ function LinkDocuments() {
    
       setMessage('Links updated successfully!');
     } catch (error) {
-      console.error('Error updating link:', error);
-      alert(error.message);
+      alert("the link must exist already and both the date and the type of the link must be filled in");
     }
   };
 
@@ -130,8 +129,6 @@ function LinkDocuments() {
   };
 
   const handleLinkDocuments = async () => {
-    if (isLinkedRef.current) return;
-
     if (selectedDocuments.length !== 2) {
       alert('Please select exactly two documents to link.');
       return;
@@ -148,7 +145,7 @@ function LinkDocuments() {
       setMessage('Documents linked successfully!');
     } catch (error) {
       console.error('Error linking documents:', error);
-      alert('Error linking documents.');
+      alert("the link must not exist already and both the date and the type of the link must be filled in");
     }
   };
 
