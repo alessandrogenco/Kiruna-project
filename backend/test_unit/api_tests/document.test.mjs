@@ -84,29 +84,36 @@ describe('PUT /api/addDescription', () => {
         const mockTitle = "Sample Document";
         const mockDescription = "Updated description for the document";
 
-        // Mock document data for getDocumentById to simulate a valid document found in the database
         const mockDocument = { 
             id: mockId, 
             title: mockTitle,
-            description: null
+            stakeholders: "Sample stakeholders",
+            scale: "1:10000",
+            issuanceDate: "2023-01-01",
+            type: "Informative",
+            connections: 5,
+            language: "English",
+            pages: "1-10",
+            lat: 59.3293,
+            lon: 18.0686,
+            area: "Sample area",
+            description: null 
         };
 
-        // Mock getDocumentById to return the mock document with the same ID and title
         DocumentDao.prototype.getDocumentById.mockResolvedValue(mockDocument);
-
-        // Mock addDocumentDescription to return the updated document with the new description
-        DocumentDao.prototype.addDocumentDescription = jest.fn().mockResolvedValue({
+        DocumentDao.prototype.addDocumentDescription.mockResolvedValue({
             id: mockId,
             title: mockTitle,
-            description: mockDescription
+            description: mockDescription,
+            message: 'Description updated successfully.'
         });
-
-        // Send PUT request with id, title, and description
+    
+        // Send PUT request to the API with mockId, mockTitle, and mockDescription
         const response = await request(app)
             .put(baseURL + 'addDescription')
             .send({ id: mockId, title: mockTitle, description: mockDescription });
-
-        // Check that the response status is 200 and the body contains the correct document data
+    
+        // Check that the response status is 200 and the response body matches the expected structure
         expect(response.status).toBe(200);
         expect(response.body).toEqual({
             message: 'Document description updated successfully',
@@ -124,7 +131,7 @@ describe('PUT /api/addDescription', () => {
         const mockDescription = "Description for nonexistent document";
 
         // Mock getDocumentById to reject with an error indicating document not found
-        DocumentDao.prototype.getDocumentById.mockRejectedValue(new Error('Document not found'));
+        DocumentDao.prototype.getDocumentById.mockRejectedValue(new Error('Document not found.'));
 
         // Send PUT request
         const response = await request(app)
@@ -133,7 +140,7 @@ describe('PUT /api/addDescription', () => {
 
         // Check response status and body for 404 error
         expect(response.status).toBe(404);
-        expect(response.body).toEqual({ message: 'Document not found' });
+        expect(response.body).toEqual({ message: 'Document not found.' });
     });
 
     test('should return 400 error if description is empty', async () => {
