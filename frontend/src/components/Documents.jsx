@@ -252,7 +252,7 @@ const handleUpdateDocument = async () => {
           <li className='my-3' key={document.id} onClick={() => handleDocumentClick(document)}>
             <div>
               <strong style={{ marginTop: '-0.4em'}}>{document.title}</strong>
-              <p style={{ marginTop: '-0.06em', marginBottom: '-5px' }}>{document.description}</p>
+              <p style={{ marginTop: '0.2em', marginBottom: '-5px' }}>{document.description}</p>
             </div>
           </li>
         ))}
