@@ -532,21 +532,60 @@ describe('POST /api/addDocument', () => {
         expect(response.status).toBe(400);
         expect(response.body).toEqual({ message: 'Invalid parameters' });
     });
-
-    /*
-    test('should return 400 error if description is empty', async () => {
-        const mockId = 1;
-        const mockTitle = "Sample Document";
-        const mockDescription = " "; // Empty description
-
-        // Send PUT request
-        const response = await request(app)
-            .put(baseURL + 'addDescription')
-            .send({ id: mockId, title: mockTitle, description: mockDescription });
-
-        // Check response status and body for 400 error
-        expect(response.status).toBe(400);
-        expect(response.body).toEqual({ message: 'Description cannot be empty.' });
-    });*/
     
+});
+
+describe("DELETE /api/deleteDocument", () => {
+    afterEach(() => {
+        jest.restoreAllMocks();
+    });
+
+    test("Successfully deletes a document", async () => {
+        const mockId = 1;
+
+        // Mock `deleteDocumentById` to simulate successful deletion
+        jest.spyOn(DocumentDao.prototype, 'deleteDocumentById').mockResolvedValue({
+            id: mockId,
+            message: 'Document deleted successfully.'
+        });
+
+        const response = await request(app)
+            .post('/api/deleteDocument')
+            .send({ id: mockId });
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({
+            id: mockId,
+            message: 'Document deleted successfully.'
+        });
+    });
+
+    test("Returns error if ID is missing", async () => {
+        const response = await request(app)
+            .post('/api/deleteDocument')
+            .send({}); // No ID provided
+
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({
+            message: 'ID is required.'
+        });
+    });
+
+    test("Returns error if document doesn't exist", async () => {
+        const mockId = 99;
+
+        // Mock `deleteDocumentById` to simulate a non-existing document
+        jest.spyOn(DocumentDao.prototype, 'deleteDocumentById').mockRejectedValue(
+            new Error('No document found with the provided ID.')
+        );
+
+        const response = await request(app)
+            .post('/api/deleteDocument')
+            .send({ id: mockId });
+
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({
+            message: 'No document found with the provided ID.'
+        });
+    });
 });

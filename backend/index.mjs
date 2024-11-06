@@ -353,10 +353,10 @@ app.post('/api/updateDocument', async (req, res) => {
 });
 
 app.post('/api/deleteDocument', async (req, res) => {
-    console.log("Data received by /api/deleteDocument:", req.body); // Log dei dati ricevuti
+    //console.log("Data received by /api/deleteDocument:", req.body); // Log dei dati ricevuti
 
     const { id } = req.body;
-    console.log("Received document ID:", id);
+    //console.log("Received document ID:", id);
     
     if (!id) {
         return res.status(400).json({ message: "ID is required." });
