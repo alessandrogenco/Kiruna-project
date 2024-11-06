@@ -152,12 +152,12 @@ function LinkDocuments() {
   };
 
   return (
-    <div className="documents-container">
+    <div className="documents-container" style={{marginTop: '-1em'}}>
       {message && <Alert variant={message.includes('successfully') ? 'success' : 'danger'}>{message}</Alert>}
-      <h1>Documents and their Links</h1>
+      <h1 style={{marginTop: '-0.2em'}}>Documents and their Links</h1>
       {/* Campo per linkDate */}
       <Form.Group controlId="linkDate">
-        <Form.Label>Link Date</Form.Label>
+        <Form.Label style={{paddingLeft: '0.84em'}}>Link Date</Form.Label>
         <Form.Control
           type="date"
           value={linkDate}
@@ -167,7 +167,7 @@ function LinkDocuments() {
 
       {/* Campo per linkType */}
       <Form.Group controlId="linkType" className="mt-3 mb-4">
-        <Form.Label>Type</Form.Label>
+        <Form.Label style={{paddingLeft: '0.84em'}}>Type</Form.Label>
         <Form.Control
           as="select"  // This turns the input into a select dropdown
           value={linkType}
@@ -205,13 +205,13 @@ function LinkDocuments() {
             </ListGroup>
           </ListGroup.Item>
         ))}
-      </ListGroup>
+      </ListGroup>       
 
-       
-
-      <Button onClick={handleLinkDocuments}>Create Link</Button>
-      <Button onClick={handleUpdateLink}>Update Link</Button>
-    </div>
+      <div style={{ marginBottom: '-1em', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px' }}>
+        <Button onClick={handleLinkDocuments}>Create Link</Button>
+        <Button onClick={handleUpdateLink}>Update Link</Button>
+      </div>
+    </div>  
   );
 }
 
