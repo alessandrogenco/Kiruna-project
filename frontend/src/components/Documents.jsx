@@ -40,37 +40,29 @@ function Documents({ show, handleClose }) {
   }, []);
 
   const handleAddDocument = async () => {
+    const requiredFields = ['title', 'lat', 'lon']; // , 'lat', 'lon'
+    for (const field of requiredFields) {
+        if (!newDocument[field]) {
+            console.error(`Field ${field} is missing.`);
+            return;
+        }
+    }
+
+    console.log("Sending document data:", newDocument); // Log dei dati inviati
+
     try {
-      const response = await fetch('http://localhost:3001/api/addDocument', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newDocument),
-      });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const addedDocument = await response.json();
-      setDocuments((prevDocuments) => [...prevDocuments, addedDocument]);
-      setNewDocument({
-        title: '',
-        stakeholders: '',
-        scale: '',
-        date: '',
-        type: '',
-        connections: '',
-        language: '',
-        pages: '',
-        lat: '',
-        lon: '',
-        description: ''
-      }); // Clear the form
-      setShowFormModal(false); // Close the form modal
+        const response = await fetch('http://localhost:3001/api/addDocument', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newDocument),
+        });
+        if (!response.ok) throw new Error('Network response was not ok');
+        const addedDocument = await response.json();
+        setDocuments((prevDocuments) => [...prevDocuments, addedDocument]);
+        setNewDocument({ title: '', stakeholders: '', scale: '', date: '', type: '', connections: '', language: '', pages: '', lat: '', lon: '', description: '' });
+        setShowFormModal(false);
     } catch (error) {
-      console.error('Error adding document:', error);
+        console.error('Error adding document:', error);
     }
   };
 

@@ -46,24 +46,23 @@ class DocumentDao{
     }
 
     //add document - to be tested
-
     addDocument(title, stakeholders, scale, date, type, connections, language, pages, lat, lon, description) {
         return new Promise((resolve, reject) => {
             if (!title || title.trim() === "") {
                 return reject(new Error('Title cannot be empty.'));
             }
             
-            const id = generateNumericId(); 
-            const addDocument = 'INSERT INTO Documents (id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            //const id = generateNumericId(); 
+            const addDocument = 'INSERT INTO Documents (title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
-            db.run(addDocument, [id, title, stakeholders, scale, date, type, connections, language, pages, lat, lon, description], function (err) {
+            db.run(addDocument, [title, stakeholders, scale, date, type, connections, language, pages, lat, lon, description], function (err) {
                 if (err) {
                     console.error('Database error while adding document:', err.message);
                     return reject(new Error('Database error: ' + err.message));
                 }
 
                 resolve({
-                    id,
+                    id: this.lastID,
                     title,
                     stakeholders,
                     scale,
