@@ -319,6 +319,26 @@ app.post('/api/newDocuments', upload.single('file'), async (req, res) => {
     }
 });
 
+app.post('/api/updateDocument', async (req, res) => {
+    console.log("Data received by /api/updateDocument:", req.body); // Log dei dati ricevuti
+
+    const { id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, description } = req.body;
+    console.log("Received document update data:", req.body);
+    
+    // Verifica che i campi necessari siano presenti
+    if (!id || !title || !lat || !lon) {
+        return res.status(400).json({ message: "Missing required fields." });
+    }
+
+    try {
+        const result = await documentDao.updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, description);
+        res.status(200).json(result); // Risposta positiva con il documento aggiornato
+    } catch (error) {
+        console.error("Error in /api/updateDocument:", error); // Log dettagliato per debug
+        res.status(400).json({ message: error.message }); // Risposta con messaggio di errore
+    }
+});
+
 
 /* ACTIVATING THE SERVER */
 let server = app.listen(PORT, () => {

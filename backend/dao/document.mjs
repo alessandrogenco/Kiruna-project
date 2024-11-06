@@ -288,6 +288,50 @@ class DocumentDao{
             });
         });
     }*/
+
+    updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, description) {
+        return new Promise((resolve, reject) => {
+            // Verifica che l'ID sia valido
+            if (!id) {
+                return reject(new Error('ID is required.'));
+            }
+    
+            const updateDocument = `
+                UPDATE Documents
+                SET title = ?, stakeholders = ?, scale = ?, issuanceDate = ?, type = ?, 
+                    connections = ?, language = ?, pages = ?, lat = ?, lon = ?, description = ?
+                WHERE id = ?
+            `;
+
+            db.run(updateDocument, [title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, description, id], function (err) {
+                if (err) {
+                    console.error('Database error while updating document:', err.message);
+                    return reject(new Error('Database error: ' + err.message));
+                }
+    
+                if (this.changes === 0) {
+                    // Se non ci sono modifiche (ad esempio se l'ID non esiste)
+                    return reject(new Error('No document found with the provided ID.'));
+                }
+    
+                resolve({
+                    id,
+                    title,
+                    stakeholders,
+                    scale,
+                    issuanceDate,
+                    type,
+                    connections,
+                    language,
+                    pages,
+                    lat,
+                    lon,
+                    description,
+                    message: 'Document updated successfully.'
+                });
+            });
+        });
+    }
         
 }
 

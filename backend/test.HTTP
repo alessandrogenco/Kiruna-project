@@ -77,3 +77,22 @@ Content-Type: application/json
     "newLinkDate": "2023-02-16",
     "newLinkType": "collateral consequence"
 }
+
+########## update document
+POST http://localhost:3001/api/updateDocument
+Content-Type: application/json
+
+{
+    "id": 173082689802499,
+    "title": "prova1",
+    "stakeholders": "New Stakeholders",
+    "scale": "1:1000",
+    "issuanceDate": "2024-11-06",
+    "type": "Report",
+    "connections": "Updated connections",
+    "language": "English",
+    "pages": 10,
+    "lat": 67.9128,
+    "lon": 20.8060,
+    "description": "Updated description of the document"
+}
