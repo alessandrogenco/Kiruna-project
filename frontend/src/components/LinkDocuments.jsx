@@ -23,12 +23,12 @@ function LinkDocuments() {
         const documentsWithLinks = await Promise.all(
           data.map(async (document) => {
             const links = await fetchDocumentLinks(document.id);
-            console.log('Links for document ID:', document.id, links);
+            
             return { ...document, links: links.links || [] };
           })
         );
         
-        console.log('Documents with links:', documentsWithLinks);
+    
         
         setDocuments(documentsWithLinks);
        
@@ -43,9 +43,56 @@ function LinkDocuments() {
     fetchDocuments();
   }, []);
 
+  //update links
+  const updateLink = async (idDocument1, idDocument2, newLinkDate, newLinkType) => {
+    try {
+      const response = await fetch('http://localhost:3001/api/links', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          idDocument1: idDocument1,
+          idDocument2: idDocument2,
+          newLinkDate: newLinkDate,
+          newLinkType: newLinkType
+        })
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Error updating link:', error);
+      throw error;
+    }
+  };
+
+  const handleUpdateLink = async () => {
+    if (selectedDocuments.length !== 2) {
+      alert('Please select exactly two documents to update the link.');
+      return;
+    }
+
+    const [id1, id2] = selectedDocuments;
+
+    try {
+      const result = await API.updateLink(id1, id2, linkDate, linkType);
+      setSelectedDocuments([]);
+      setLinkDate(''); 
+      setLinkType(''); 
+   
+      setMessage('Links updated successfully!');
+    } catch (error) {
+      console.error('Error updating link:', error);
+      alert(error.message);
+    }
+  };
+
   const fetchDocumentLinks = async (documentId) => {
     try {
-      console.log('Fetching links for document ID:', documentId);
+     
       const response = await fetch('http://localhost:3001/api/documentLinks/' + documentId, {
         method: 'GET',
         headers: {
@@ -156,7 +203,7 @@ function LinkDocuments() {
       </Form.Group>
 
       <Button onClick={handleLinkDocuments}>Create Link</Button>
-     
+      <Button onClick={handleUpdateLink}>Update Link</Button>
     </div>
   );
 }
