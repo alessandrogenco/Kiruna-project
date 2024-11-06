@@ -259,7 +259,7 @@ const handleUpdateDocument = async () => {
         ))}
       </ul>
       
-      <Modal show={showFormModal} onHide={handleCloseFormModal}>
+      <Modal className='modal-xl' show={showFormModal} onHide={handleCloseFormModal}>
         <Modal.Header closeButton>
         <Modal.Title>{selectedDocument ? 'Edit Document' : 'Add Document'}</Modal.Title>
         </Modal.Header>
