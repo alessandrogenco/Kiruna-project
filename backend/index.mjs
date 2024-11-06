@@ -239,12 +239,10 @@ app.get('/api/documentLinks/:id', async (req, res) => {
 
     try {
         const links = await documentDao.getDocumentLinks(documentId);
-        console.log("Links:", links);
         if (links.message) {
             console.log(links.message);
             res.status(200).json({ message: links.message });
         } else {
-            console.log(links);
             res.status(200).json({
                 message: 'Document links fetched successfully',
                 links: links
