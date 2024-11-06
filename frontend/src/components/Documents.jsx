@@ -60,7 +60,7 @@ function Documents({ show, handleClose }) {
       description: newDocument.description
     };
 
-    console.log(documentData);
+    //console.log(documentData);
 
     try {
         const response = await fetch('http://localhost:3001/api/addDocument', {
@@ -89,7 +89,7 @@ function Documents({ show, handleClose }) {
 
     try {
       await deleteDocument(selectedDocument.id);
-      setDocuments((prevDocuments) => prevDocuments.filter((doc) => doc.id !== selectedDocument));
+      setDocuments((prevDocuments) => prevDocuments.filter((doc) => doc.id !== selectedDocument.id));
       setSelectedDocument(null);
       setMessage('Document deleted successfully!');
       setShowFormModal(false);
@@ -116,6 +116,7 @@ function Documents({ show, handleClose }) {
       area: document.area || '',
       description: document.description || ''
     });
+
     setShowFormModal(true);
   };
 
@@ -135,8 +136,10 @@ function Documents({ show, handleClose }) {
       area: '',
       description: ''
     });
+
     setSelectedDocument(null);
   };
+
   const handleNewDocumentChange = (e) => {
     const { name, value } = e.target;
     setNewDocument((prevDocument) => ({
@@ -144,11 +147,10 @@ function Documents({ show, handleClose }) {
       [name]: value,
     }));
   };
+
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
-
-  
 
   const filteredDocuments = documents.filter((document) =>
     document.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -272,8 +274,7 @@ const handleUpdateDocument = async () => {
                   placeholder="Enter title"
                   name="title"
                   value={newDocument.title}
-                  onChange={handleNewDocumentChange}
-                />
+                  onChange={handleNewDocumentChange}/>
               </Form.Group>
               <Form.Group className="mt-3" controlId="formStakeholders">
                 <Form.Label>Stakeholders</Form.Label>
@@ -282,8 +283,7 @@ const handleUpdateDocument = async () => {
                   placeholder="Enter stakeholders"
                   name="stakeholders"
                   value={newDocument.stakeholders}
-                  onChange={handleNewDocumentChange}
-                />
+                  onChange={handleNewDocumentChange}/>
                  </Form.Group>
               <Form.Group className="mt-3" controlId="formScale">
                 <Form.Label>Scale</Form.Label>
@@ -292,8 +292,7 @@ const handleUpdateDocument = async () => {
                   placeholder="Enter scale"
                   name="scale"
                   value={newDocument.scale}
-                  onChange={handleNewDocumentChange}
-                />
+                  onChange={handleNewDocumentChange}/>
               </Form.Group>
               <Form.Group className="mt-3" controlId="formDate">
                 <Form.Label>Date</Form.Label>
