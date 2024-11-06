@@ -151,7 +151,66 @@ const updateLink = async (idDocument1, idDocument2, newLinkDate, newLinkType) =>
     }
 }
 
+// API.mjs
+export const deleteDocument = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:3001/api/deleteDocument`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id })
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to delete document');
+      }
+  
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Error deleting document:', error);
+      throw error;
+    }
+  };
+
+  // API.mjs
+export const updateDocument = async (id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, description) => {
+    try {
+      const response = await fetch('http://localhost:3001/api/updateDocument', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id,
+          title,
+          stakeholders,
+          scale,
+          issuanceDate,
+          type,
+          connections,
+          language,
+          pages,
+          lat,
+          lon,
+          description,
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to update document');
+      }
+  
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Error updating document:', error);
+      throw error;
+    }
+  };
 
 
-const API = { login, logout, checkLogin, linkDocument, getDocumentLinks, updateLink};
+
+const API = { login, logout, checkLogin, linkDocument, getDocumentLinks, updateLink, deleteDocument, updateDocument};
 export default API;

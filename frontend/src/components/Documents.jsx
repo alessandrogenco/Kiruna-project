@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Button, Form, FormControl } from 'react-bootstrap';
 import './Documents.css'; // Import the CSS file
+import {deleteDocument} from '../API.mjs'; // Import the API module
 
 function Documents({ show, handleClose }) {
   const [documents, setDocuments] = useState([]);
@@ -8,6 +9,8 @@ function Documents({ show, handleClose }) {
   const [selectedDocument, setSelectedDocument] = useState(null); // State for selected document
   const [showFormModal, setShowFormModal] = useState(false); // State to control the form modal
   const [searchQuery, setSearchQuery] = useState(''); // State for search query
+  const [selectedArea, setSelectedArea] = useState('');
+  const [message, setMessage] = useState(''); // Add this line
   const [newDocument, setNewDocument] = useState({
     title: '',
     stakeholders: '',
@@ -19,6 +22,7 @@ function Documents({ show, handleClose }) {
     pages: '',
     lat: '',
     lon: '',
+    area: '',
     description: ''
   });
 
@@ -40,85 +44,98 @@ function Documents({ show, handleClose }) {
   }, []);
 
   const handleAddDocument = async () => {
-    const requiredFields = ['title', 'lat', 'lon']; // , 'lat', 'lon'
-    for (const field of requiredFields) {
-        if (!newDocument[field]) {
-            console.error(`Field ${field} is missing.`);
-            return;
-        }
-    }
 
-    console.log("Sending document data:", newDocument); // Log dei dati inviati
+    const documentData = {
+      title: newDocument.title,
+      stakeholders: newDocument.stakeholders,
+      scale: newDocument.scale,
+      date: newDocument.date,
+      type: newDocument.type,
+      connections: newDocument.connections,
+      language: newDocument.language,
+      pages: newDocument.pages,
+      lat: newDocument.lat,
+      lon: newDocument.lon,
+      area: newDocument.area,
+      description: newDocument.description
+    };
+
+    console.log(documentData);
 
     try {
         const response = await fetch('http://localhost:3001/api/addDocument', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(newDocument),
+            body: JSON.stringify(documentData),
         });
         if (!response.ok) throw new Error('Network response was not ok');
         const addedDocument = await response.json();
         setDocuments((prevDocuments) => [...prevDocuments, addedDocument]);
-        setNewDocument({ title: '', stakeholders: '', scale: '', date: '', type: '', connections: '', language: '', pages: '', lat: '', lon: '', description: '' });
+        setNewDocument({ title: '', stakeholders: '', scale: '', date: '', type: '', connections: '', language: '', pages: '', lat: '', lon: '', area:'', description: '' });
         setShowFormModal(false);
+        setMessage('Document added successfully!');
     } catch (error) {
         console.error('Error adding document:', error);
+        setMessage(error.message);
     }
   };
 
-  const handleDescriptionChange = (id, value) => {
-    setDescriptions({
-      ...descriptions,
-      [id]: value,
-    });
-  };
 
-  const handleAddDescription = async (id, title) => {
-    const newDescription = descriptions[id];
-    if (!newDescription) return;
+  const handleDeleteSelectedDocument = async () => {
+    if (!selectedDocument) {
+      alert('Please select a document to delete.');
+      return;
+    }
 
     try {
-      const response = await fetch('http://localhost:3001/api/addDescription', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ id, title, description: newDescription }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      // Optionally, update the document list or show a success message
-      const updatedDocument = await response.json();
-      setDocuments((prevDocuments) =>
-        prevDocuments.map((doc) =>
-          doc.id === id ? { ...doc, description: updatedDocument.document.description } : doc
-        )
-      );
-      setDescriptions({ ...descriptions, [id]: ''}); // Clear the input field after submission
-      setShowFormModal(false); // Close the form modal
+      await deleteDocument(selectedDocument.id);
+      setDocuments((prevDocuments) => prevDocuments.filter((doc) => doc.id !== selectedDocument));
+      setSelectedDocument(null);
     } catch (error) {
-      console.error('Error adding description:', error);
+      console.error('Error deleting document:', error);
     }
   };
+
 
   const handleDocumentClick = (document) => {
     setSelectedDocument(document);
+    setNewDocument({
+      title: document.title || '',
+      stakeholders: document.stakeholders || '',
+      scale: document.scale || '',
+      date: document.date || '',
+      type: document.type || '',
+      connections: document.connections || '',
+      language: document.language || '',
+      pages: document.pages || '',
+      lat: document.lat || '',
+      lon: document.lon || '',
+      area: document.area || '',
+      description: document.description || ''
+    });
     setShowFormModal(true);
   };
 
   const handleCloseFormModal = () => {
     setShowFormModal(false);
+    setNewDocument({
+      title: '',
+      stakeholders: '',
+      scale: '',
+      date: '',
+      type: '',
+      connections: '',
+      language: '',
+      pages: '',
+      lat: '',
+      lon: '',
+      area: '',
+      description: ''
+    });
     setSelectedDocument(null);
   };
   const handleNewDocumentChange = (e) => {
     const { name, value } = e.target;
-
-    if (name == "lon"){
-      
-    }
     setNewDocument((prevDocument) => ({
       ...prevDocument,
       [name]: value,
@@ -128,9 +145,13 @@ function Documents({ show, handleClose }) {
     setSearchQuery(e.target.value);
   };
 
+  
+
   const filteredDocuments = documents.filter((document) =>
     document.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  
 
   
   // validates the latitude coordinates
@@ -163,6 +184,35 @@ function Documents({ show, handleClose }) {
     }
 }
 
+const handleUpdateDocument = async () => {
+  try {
+    const result = await updateDocument(
+      newDocument.id,
+      newDocument.title,
+      newDocument.stakeholders,
+      newDocument.scale,
+      newDocument.date,
+      newDocument.type,
+      newDocument.connections,
+      newDocument.language,
+      newDocument.pages,
+      newDocument.lat,
+      newDocument.lon,
+      newDocument.area,
+      newDocument.description
+    );
+    setDocuments((prevDocuments) =>
+      prevDocuments.map((doc) =>
+        doc.id === newDocument.id ? { ...doc, ...newDocument } : doc
+      )
+    );
+    setShowFormModal(false);
+    setSelectedDocument(null);
+  } catch (error) {
+    console.error('Error updating document:', error);
+  }
+};
+
   return (
     <div className="documents-container">
       <Form className="d-flex mb-3">
@@ -178,6 +228,7 @@ function Documents({ show, handleClose }) {
       <Button variant="primary" onClick={() => setShowFormModal(true)}>
         Add Document
       </Button>
+      
       <ul>
         {filteredDocuments.map((document) => (
           <li key={document.id} onClick={() => handleDocumentClick(document)}>
@@ -191,21 +242,10 @@ function Documents({ show, handleClose }) {
       
       <Modal show={showFormModal} onHide={handleCloseFormModal}>
         <Modal.Header closeButton>
-          <Modal.Title>{selectedDocument ? `Set description for \"${selectedDocument.title}\"` : 'Add new document'}</Modal.Title>
+        <Modal.Title>{selectedDocument ? 'Edit Document' : 'Add Document'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {selectedDocument ? (
-            <textarea className='w-100 my-2 form-control'
-              type="text"
-              placeholder="Set description"
-              minLength={1}
-              rows={8}
-              maxLength={8*80} // rows number multiplied by characters per row
-              value={descriptions[selectedDocument.id] || ''}
-              onChange={(e) => handleDescriptionChange(selectedDocument.id, e.target.value)}
-              required
-            />
-          ) :  (
+          { (
             <Form>
               <Form.Group controlId="formTitle">
                 <Form.Label>Title</Form.Label>
@@ -246,6 +286,22 @@ function Documents({ show, handleClose }) {
                   onChange={handleNewDocumentChange}
                 />
               </Form.Group>
+              <Form.Group className="mt-3" controlId="areaText">
+                <Form.Label>Area</Form.Label>
+                <Form.Control as="select" name="area" value={newDocument.area} onChange={handleNewDocumentChange}>
+
+                  <option value="">Select the area</option>
+                  
+                  <option value="Area1">Area 1</option>
+                  <option value="Area2">Area 2</option>
+                  <option value="Area3">Area 3</option>
+                  <option value="Area4">Area 4</option>
+                  <option value="Area5">Area 5</option>
+                  <option value="Area6">Area 6</option>
+                  <option value="Area7">Area 7</option>
+                  <option value="Area8">Area 8</option>
+                  </Form.Control>
+                  </Form.Group>
               <Form.Group className="mt-3" controlId="formType">
                 <Form.Label>Type</Form.Label>
                 <Form.Control
@@ -319,6 +375,7 @@ function Documents({ show, handleClose }) {
                   value={newDocument.lat}
                   onChange={handleNewDocumentChange}
                   onBlur={validateLatitude}
+                  disabled={selectedArea !== ''}
                 />
               </Form.Group>
               <Form.Group className="mt-3" controlId="formLon">
@@ -333,6 +390,7 @@ function Documents({ show, handleClose }) {
                   value={newDocument.lon}
                   onChange={handleNewDocumentChange}
                   onBlur={validateLongitude}
+                  disabled={selectedArea !== ''}
                 />
               </Form.Group>
               <Form.Group className="mt-4" controlId="formDescription">
@@ -350,15 +408,15 @@ function Documents({ show, handleClose }) {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseFormModal}>
-            Close
-          </Button>
           <Button
              className="green-button" 
             onClick={selectedDocument ? () => handleAddDescription(selectedDocument.id, selectedDocument.title) : handleAddDocument}
           >
-            {selectedDocument ? 'Set Description' : 'Add Document'}
+            {selectedDocument ? 'Save' : 'Add Document'}
           </Button>
+          <Button variant="danger" onClick={handleDeleteSelectedDocument}>
+              Delete
+      </Button>
         </Modal.Footer>
       </Modal>
     </div>
