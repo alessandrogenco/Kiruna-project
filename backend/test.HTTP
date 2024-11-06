@@ -33,8 +33,8 @@ PUT http://localhost:3001/api/addDescription
 Content-Type: application/json
 
 {
-    "id": 1,
-    "title": "Compilation of responses “So what the people of Kiruna think?” (15)",
+    "id": 1730712824791891,
+    "title": "a",
     "description": "This document is a compilation of the responses to the survey 'What is your impression of Kiruna?' From the citizens' responses to this last part of the survey, it is evident that certain buildings, such as the Kiruna Church, the Hjalmar Lundbohmsgården, and the Town Hall, are considered of significant value to the population. The municipality views the experience of this survey positively, to the extent that over the years it will propose various consultation opportunities"
 }
 
