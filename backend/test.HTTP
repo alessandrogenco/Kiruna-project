@@ -97,6 +97,44 @@ Content-Type: application/json
     "description": "Updated description of the document"
 }
 
+########## add document - bad request
+POST http://localhost:3001/api/addDocument
+Content-Type: application/json
+
+{
+    "title": "prova1",
+    "stakeholders": "New Stakeholders",
+    "scale": "1:1000",
+    "issuanceDate": "2024-11-06",
+    "type": "Report",
+    "connections": "Updated connections",
+    "language": "English",
+    "pages": 10,
+    "lat": 67.9128,
+    "lon": 20.8060,
+    "area": "North Kiruna",
+    "description": "Updated description of the document"
+}
+
+########## add document
+POST http://localhost:3001/api/addDocument
+Content-Type: application/json
+
+{
+    "title": "prova1",
+    "stakeholders": "New Stakeholders",
+    "scale": "1:1000",
+    "issuanceDate": "2024-11-06",
+    "type": "Report",
+    "connections": "Updated connections",
+    "language": "English",
+    "pages": 10,
+    "lat": null,
+    "lon": null,
+    "area": "North Kiruna",
+    "description": "Updated description of the document"
+}
+
 ########## update document
 POST http://localhost:3001/api/updateDocument
 Content-Type: application/json

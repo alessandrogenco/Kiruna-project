@@ -181,11 +181,24 @@ app.post('/api/addDocument', async (req, res) => {
 
     const { title, stakeholders, scale, date, type, connections, language, pages, lat, lon, area, description } = req.body;
     console.log("Received document data:", req.body);
-    if (!title || !lat || !lon) {
-        return res.status(400).json({ message: "Missing required fields." });
-    }
 
     try {
+        // Check if area is empty and lat/lon are provided
+        if(area.trim() === '' && lat && lon){
+            // Check if lat and lon are valid
+            if ((lat < 67.7500 || lat > 68.3333) || (lon < 20.7833 || lon > 21.1333)) {
+                throw new Error("Invalid parameters");
+            }
+        }
+        
+        // Check if area is not empty and lat or lon are provided
+        if(area.trim() !== '' && (lat || lon)){
+            throw new Error("Invalid parameters");
+        }
+        if (!title || (area.trim() === '' && (!lat || !lon))) {
+            throw new Error("Missing required fields." );
+        }
+
         const result = await documentDao.addDocument(title, stakeholders, scale, date, type, connections, language, pages, lat, lon, area, description);
         res.status(200).json(result); // Risposta positiva con il documento aggiunto
     } catch (error) {
