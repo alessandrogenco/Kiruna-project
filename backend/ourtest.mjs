@@ -3,7 +3,7 @@ import { execSync } from 'child_process';
 const type = process.argv[2];
 const comp = process.argv[3];
 
-let command = `jest --coverage`;
+let command = `jest --coverage --runInBand`;
 
 if (type) {
     if(type == "integration"){
