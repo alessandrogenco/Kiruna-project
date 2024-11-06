@@ -92,6 +92,7 @@ function Documents({ show, handleClose }) {
       setDocuments((prevDocuments) => prevDocuments.filter((doc) => doc.id !== selectedDocument));
       setSelectedDocument(null);
       setMessage('Document deleted successfully!');
+      setShhowFormModal(false);
     } catch (error) {
       console.error('Error deleting document:', error);
       setMessage('Error deleting document.');
@@ -425,14 +426,13 @@ const handleUpdateDocument = async () => {
         </Modal.Body>
         <Modal.Footer>
           <Button
-             className="green-button" 
-            onClick={selectedDocument ? handleUpdateDocument : handleAddDocument}
-          >
+            className="green-button" 
+            onClick={selectedDocument ? handleUpdateDocument : handleAddDocument}>
             {selectedDocument ? 'Save' : 'Add Document'}
           </Button>
           {selectedDocument ? <Button variant="danger" onClick={handleDeleteSelectedDocument}>
               Delete
-      </Button> : null}
+          </Button> : null}
         </Modal.Footer>
       </Modal>
     </div>
