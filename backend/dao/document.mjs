@@ -2,11 +2,11 @@
 import db from '../db/db.mjs';
 import { v4 as uuidv4 } from 'uuid';
 
-function generateNumericId() {
+/*function generateNumericId() {
     const timestamp = Date.now(); // Current timestamp
     const randomNum = Math.floor(Math.random() * 1000); // Random number between 0 and 999
     return `${timestamp}${randomNum}`; // Combine timestamp and random number
-  }
+  }*/
 
 class DocumentDao{
 
@@ -62,7 +62,7 @@ class DocumentDao{
                 }
 
                 resolve({
-                    id: this.lastID,
+                    //id: this.lastID,
                     title,
                     stakeholders,
                     scale,
@@ -235,7 +235,7 @@ class DocumentDao{
         });
     }*/
 
-    newDocument(name, file, documentDetails) {
+    /*newDocument(name, file, documentDetails) {
         return new Promise((resolve, reject) => {
             if (!Buffer.isBuffer(file)) {
                 return reject(new Error("The 'file' field must be a Buffer object."));
@@ -287,7 +287,7 @@ class DocumentDao{
                 });
             });
         });
-    }
+    }*/
         
 }
 

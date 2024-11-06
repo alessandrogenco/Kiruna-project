@@ -156,3 +156,86 @@ describe("Get all documents", () => {
         await expect(documentDao.getAllDocuments()).rejects.toThrow("Database error: Database error during getAllDocuments");
     });
 });
+
+// Test per addDocument
+describe("Add new document", () => {
+    test("Successfully adds a new document", async () => {
+        // Test data
+        const title = "New Document";
+        const stakeholders = "Stakeholder1, Stakeholder2";
+        const scale = "1:1000";
+        const date = "2024-11-06";
+        const type = "Report";
+        const connections = "Connection1, Connection2";
+        const language = "English";
+        const pages = 20;
+        const lat = 45.1234;
+        const lon = 12.5678;
+        const description = "This is a new document description.";
+
+        // Mocking db.run to simulate inserting a new document
+        jest.spyOn(db, "run").mockImplementation(function (sql, params, callback) {
+            callback(null);  // Simulate successful insertion
+        });
+
+        const result = await documentDao.addDocument(
+            title, stakeholders, scale, date, type, connections, language, pages, lat, lon, description
+        );
+
+        expect(result).toEqual({
+            title,
+            stakeholders,
+            scale,
+            date,
+            type,
+            connections,
+            language,
+            pages,
+            lat,
+            lon,
+            description,
+            message: 'Document added successfully.'
+        });
+    });
+
+    test("Fails when the title is empty", async () => {
+        const title = "";
+        const stakeholders = "Stakeholder1, Stakeholder2";
+        const scale = "1:1000";
+        const date = "2024-11-06";
+        const type = "Report";
+        const connections = "Connection1, Connection2";
+        const language = "English";
+        const pages = 20;
+        const lat = 45.1234;
+        const lon = 12.5678;
+        const description = "This is a new document description.";
+
+        await expect(documentDao.addDocument(
+            title, stakeholders, scale, date, type, connections, language, pages, lat, lon, description
+        )).rejects.toThrow("Title cannot be empty.");
+    });
+
+    test("Fails when there is a database error during document insertion", async () => {
+        const title = "New Document";
+        const stakeholders = "Stakeholder1, Stakeholder2";
+        const scale = "1:1000";
+        const date = "2024-11-06";
+        const type = "Report";
+        const connections = "Connection1, Connection2";
+        const language = "English";
+        const pages = 20;
+        const lat = 45.1234;
+        const lon = 12.5678;
+        const description = "This is a new document description.";
+
+        // Mocking db.run to simulate a database error during insertion
+        jest.spyOn(db, "run").mockImplementation(function (sql, params, callback) {
+            callback(new Error("Database error while adding document"));
+        });
+
+        await expect(documentDao.addDocument(
+            title, stakeholders, scale, date, type, connections, language, pages, lat, lon, description
+        )).rejects.toThrow("Database error: Database error while adding document");
+    });
+});
