@@ -3,6 +3,7 @@ import { app, server } from "../index.mjs";
 import request from "supertest";
 import DocumentDao from "../dao/document.mjs";
 import { cleanup } from "../db/cleanup.mjs";
+import db from "../db/db.mjs";
 
 const documentDao = new DocumentDao();
 
@@ -67,30 +68,50 @@ describe("Document DAO Integration Tests", () => {
 
     describe("getDocumentLinks", () => {
 
-        test("Returns links for a document that has linked documents", async () => {
-            const links = await DocumentDao.prototype.getDocumentLinks(1);
-            
-            expect(Array.isArray(links)).toBe(true);
-            expect(links.length).toBe(2);
-    
-            expect(links[0]).toMatchObject({
-                id: 2,
-                title: "Document 2",
-                date: "2024-11-05",
-                type: "Reference"
-            });
-            expect(links[1]).toMatchObject({
-                id: 3,
-                title: "Document 3",
-                date: "2024-11-06",
-                type: "Cited"
-            });
-        });
-
         test("Returns a message when document has no links", async () => {
             const result = await DocumentDao.prototype.getDocumentLinks(2);
     
             expect(result).toEqual({ message: "Document 2 has no links" });
+        });
+
+        test("Returns links for a document that has linked documents", async () => {
+
+            // Insert documents and links data for testing
+            await db.run(`
+                INSERT INTO Documents (id, title) VALUES (1, 'Document 1'), (2, 'Document 2'), (3, 'Document 3');
+            `);
+        
+            await db.run(`
+                INSERT INTO DocumentsLinks (idDocument1, idDocument2, date, type) 
+                VALUES (1, 2, '2024-11-05', 'Reference'), (1, 3, '2024-11-06', 'Cited');
+            `);
+
+            const response = await request(app).get('/api/documentLinks/1');
+            
+            // Check that the response status is 200
+            expect(response.status).toBe(200);
+            
+            // Check that the response message and data are correct
+            expect(response.body).toMatchObject({
+                message: 'Document links fetched successfully',
+                links: [
+                    {
+                        id: 2,
+                        title: "Document 2",
+                        date: "2024-11-05",
+                        type: "Reference"
+                    },
+                    {
+                        id: 3,
+                        title: "Document 3",
+                        date: "2024-11-06",
+                        type: "Cited"
+                    }
+                ]
+            });
+        
+            // Check that the links array contains exactly 2 items
+            expect(response.body.links.length).toBe(2);
         });
     
     })

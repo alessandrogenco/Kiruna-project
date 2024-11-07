@@ -21,6 +21,7 @@ afterAll(() => {
     server.close();
 });
 
+
 describe("POST Added a document", () => {
     test("Successfully added a document", async () => {
         const mockTitle = "Sample Document";
@@ -335,6 +336,7 @@ describe("POST Added a document", () => {
     });
 });
 
+
 describe('POST /api/updateDocument', () => {
 
     test('Updates document successfully with valid fields', async () => {
@@ -477,4 +479,4 @@ describe('DELETE /api/deleteDocument', () => {
       expect(response.body).toEqual({ message: "No document found with the provided ID" });
       expect(documentDao.prototype.deleteDocumentById).toHaveBeenCalledWith(999);
     });*/
-  });
+});
