@@ -58,7 +58,7 @@ sections:
   
 - Absolute relative task estimation error: sum( abs( spent-task-i / estimation-task-i - 1))/n
 
-    $$\frac{1}{n}\sum_i^n \left| \frac{spent_{task_i}}{estimation_task_i}-1 \right| = \frac{0,0769 + 0,333 + 0,125 + 0,066 + 0,2}{61} = 0,0865
+    $$\frac{1}{n}\sum_i^n \left| \frac{spent_{task_i}}{estimation_task_i}-1 \right| = \frac{0,0769 + 0,333 + 0,125 + 0,066 + 0,2}{61} = 0,0865 $$ 
   
 ## QUALITY MEASURES 
 
