@@ -188,7 +188,7 @@ function LinkDocuments() {
         <Alert 
           variant={message.includes('successfully') ? 'success' : 'danger'} 
           dismissible 
-          onClose={() => setMessage('')}> // This will clear the message and close the alert
+          onClose={() => setMessage('')}>
           {message}
         </Alert>
       )}
