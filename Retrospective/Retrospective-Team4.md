@@ -62,14 +62,11 @@ sections:
   
 ## QUALITY MEASURES 
 
-// To do
 - Unit Testing:
-  - Total hours estimated : 8h45m
-  - Total hours spent  : 8h35m
-  - Nr of automated unit test cases : 31 in the first 3 stories 
-  - Coverage (if available) : 100% in the first 3 stories for the dao, 93% in the first 3 stories for the api
-
-// Done
+  - Total hours estimated : 20h 00m
+  - Total hours spent : 20h 15m
+  - Nr of automated unit test cases : 86
+  - Coverage (if available) : 98% for DAOs; 89,4% for API
 - E2E testing:
   - Total hours estimated : 8h
   - Total hours spent : 8h
