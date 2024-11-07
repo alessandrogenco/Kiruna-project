@@ -54,11 +54,11 @@ sections:
 
 - Total estimation error ratio: sum of total hours spent / sum of total hours effort - 1
 
-    $$\frac{\sum_i spent_{task_i}}{\sum_i estimation_{task_i}} - 1 = \frac{4324 min}{4416 min} -1 = -0,02 $$ 
+    $$\frac{\sum_i spent_{task_i}}{\sum_i estimation_{task_i}} - 1 = \frac{5770 min}{5760 min} -1 = 0,00174 $$ 
   
 - Absolute relative task estimation error: sum( abs( spent-task-i / estimation-task-i - 1))/n
 
-    $$\frac{1}{n}\sum_i^n \left| \frac{spent_{task_i}}{estimation_task_i}-1 \right| = \frac{[(0,125 + 0,5) + (0,08 + 0,375 + 0,25 + 0,125 + 0,125 + 0,17 + 0,05 + 0,11 + 0,25) + (0,08 + 0,11 + 0,5 + 0,33) + (0,25 + 0,11 + 0,33 + 0,11)]}{10+15+10+11} = \frac{3,98}{46} = 0,0865
+    $$\frac{1}{n}\sum_i^n \left| \frac{spent_{task_i}}{estimation_task_i}-1 \right| = \frac{0,0769 + 0,333 + 0,125 + 0,066 + 0,2}{61} = 0,0865
   
 ## QUALITY MEASURES 
 
