@@ -121,7 +121,7 @@ app.post('/api/logout', (req, res) => {
         
         req.session.destroy((err) => {
             if (err) {
-                console.error('Error logging out:', err.message);
+                //console.error('Error logging out:', err.message);
                 return res.status(500).json({ error: 'Failed to log out' });
             }
             console.log(`User ${username} has logged out`);
@@ -239,10 +239,12 @@ app.get('/api/documentLinks/:id', async (req, res) => {
 
     try {
         const links = await documentDao.getDocumentLinks(documentId);
+        console.log("Links:", links);
         if (links.message) {
             console.log(links.message);
             res.status(200).json({ message: links.message });
         } else {
+            console.log(links);
             res.status(200).json({
                 message: 'Document links fetched successfully',
                 links: links

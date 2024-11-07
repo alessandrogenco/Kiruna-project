@@ -9,6 +9,7 @@ function LinkDocuments() {
   const [linkDate, setLinkDate] = useState(''); // Stato per la data del link
   const [linkType, setLinkType] = useState(''); // Stato per il tipo di link
   const [message, setMessage] = useState(''); 
+  const [update, setUpdate] = useState(false);
   const isLinkedRef = useRef(false);
 
   useEffect(() => {
@@ -23,25 +24,16 @@ function LinkDocuments() {
         const documentsWithLinks = await Promise.all(
           data.map(async (document) => {
             const links = await fetchDocumentLinks(document.id);
-            
             return { ...document, links: links.links || [] };
           })
         );
-        
-    
-        
         setDocuments(documentsWithLinks);
-       
       } catch (error) {
         console.error('Error fetching documents:', error);
       }
-
-   
-
   };
-
     fetchDocuments();
-  }, []);
+  }, [update]);
 
   //update links
   const updateLink = async (idDocument1, idDocument2, newLinkDate, newLinkType) => {
@@ -82,9 +74,7 @@ function LinkDocuments() {
       setSelectedDocuments([]);
       setLinkDate(''); 
       setLinkType(''); 
-   
       setMessage('Links updated successfully!');
-      window.location.reload();
     } catch (error) {
       alert("the link must exist already and both the date and the type of the link must be filled in");
     }
@@ -114,7 +104,6 @@ function LinkDocuments() {
 
     // Check if the document is already selected
     const isSelected = selectedDocuments.includes(id);
-
     // If it is selected, unselect it
     if (isSelected) {
       setSelectedDocuments(selectedDocuments.filter(docId => docId !== id));
@@ -125,9 +114,38 @@ function LinkDocuments() {
       } else {
         // Alert user if they attempt to select more than 2
         alert("You can only select a maximum of 2 documents.");
-      }
+      }    
     }
   };
+
+  useEffect(() => {
+    if (selectedDocuments.length == 2) {
+      const doc1 = documents.find(document => document.id === selectedDocuments[0])
+      if(isDocumentLinked(doc1, selectedDocuments[1])){
+        const res = findLinkedDocumentDetails(doc1, selectedDocuments[1]);
+        setLinkDate(res.Date);
+        setLinkType(res.type);
+      } 
+    } else {
+      setLinkDate('');
+      setLinkType('');
+    }
+  }, [selectedDocuments]);
+
+  function findLinkedDocumentDetails(document, targetId) {
+
+      // Check if the 'links' array exists and if it contains any document with the matching 'id'
+        for (let link of document.links) {
+          if (link.id === targetId) {
+            // If the link with targetId is found, return the necessary details
+            return {
+              type: link.type,        // Document type
+              Date: link.date // Link date
+            };
+          }
+        }
+    return null;  // Return null if no matching link is found
+  }
 
   const handleLinkDocuments = async () => {
     if (selectedDocuments.length !== 2) {
@@ -143,17 +161,38 @@ function LinkDocuments() {
       setLinkDate(''); 
       setLinkType(''); 
       isLinkedRef.current = true; // Aggiorna il flag
+      setUpdate(!update);
       setMessage('Documents linked successfully!');
-      window.location.reload();
     } catch (error) {
       console.error('Error linking documents:', error);
       alert("the link must not exist already and both the date and the type of the link must be filled in");
     }
   };
 
+  function isDocumentLinked(document, targetId) {
+    // Iterate through the array of documents
+    // Check if the 'links' array exists and if it contains any document with the matching 'id'
+      if (Array.isArray(document.links)) {
+        for (let link of document.links) {
+          if (link.id === targetId) {
+            return true;  // Found the linked document
+          }
+        }
+    }
+    return false;  // No linked document with the specified ID was found
+  }
+
   return (
     <div className="documents-container" style={{marginTop: '-1em'}}>
-      {message && <Alert variant={message.includes('successfully') ? 'success' : 'danger'}>{message}</Alert>}
+      {message && (
+        <Alert 
+          variant={message.includes('successfully') ? 'success' : 'danger'} 
+          dismissible 
+          onClose={() => setMessage('')}>
+          {message}
+        </Alert>
+      )}
+      
       <h1 style={{marginTop: '-0.2em'}}>Documents and their Links</h1>
       {/* Campo per linkDate */}
       <Form.Group controlId="linkDate">
@@ -206,10 +245,9 @@ function LinkDocuments() {
           </ListGroup.Item>
         ))}
       </ListGroup>       
-
       <div style={{ marginBottom: '-1em', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px' }}>
-        <Button onClick={handleLinkDocuments}>Create Link</Button>
-        <Button onClick={handleUpdateLink}>Update Link</Button>
+        {selectedDocuments.length == 2 && !isDocumentLinked(documents.find(document => document.id === selectedDocuments[0]), selectedDocuments[1]) ? <Button onClick={handleLinkDocuments}>Create Link</Button> : null}
+        {selectedDocuments.length == 2 && isDocumentLinked(documents.find(document => document.id === selectedDocuments[0]), selectedDocuments[1]) ? <Button onClick={handleUpdateLink}>Update Link</Button>: null}
       </div>
     </div>  
   );
