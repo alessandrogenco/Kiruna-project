@@ -306,7 +306,7 @@ class DocumentDao{
 
             db.run(updateDocument, [title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description, id], function (err) {
                 if (err) {
-                    console.error('Database error while updating document:', err.message);
+                    //console.error('Database error while updating document:', err.message);
                     return reject(new Error('Database error: ' + err.message));
                 }
     
@@ -345,7 +345,7 @@ class DocumentDao{
     
             db.run(deleteDocument, [id], function(err) {
                 if (err) {
-                    console.error('Database error while deleting document:', err.message);
+                    //console.error('Database error while deleting document:', err.message);
                     return reject(new Error('Database error: ' + err.message));
                 }
     
