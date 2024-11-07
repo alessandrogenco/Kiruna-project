@@ -83,10 +83,9 @@ In this sprint we tried to do estimations as accurately as possible.
 
 - What lessons did you learn (both positive and negative) in this sprint?
 
-// TO DO
-We understood that coordination is fundamental, in particular on crucial tasks for the project.
+We understood that coordination and communication are fundamental, in particular on crucial tasks for the project.
 We'll coordinate a lot more from now on.
-We also have understood the strong points of each of us so now we know how to organize and work more efficiently than before, always being calm and patient one to each other.
+We understood that it's better to let everybody choose the task they are more confident with, otherwise we will need more time to complete it.
 
 - Which improvement goals set in the previous retrospective were you able to achieve? 
   
