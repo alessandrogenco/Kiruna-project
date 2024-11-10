@@ -1,0 +1,47 @@
+/* src/styles/styles.css */
+@keyframes toggleAnim {
+    0% {
+      transform: scale(1);
+      background-color: #28a745;
+      color: white;
+    }
+    50% {
+      transform: scale(1.2);
+      background-color: #146726;
+    }
+    100% {
+      transform: scale(1);
+      background-color: #28a745;
+    }
+  }
+  
+  button {
+    margin: 2px;
+    padding: 8px 20px;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 14px;
+
+    border: 2px solid transparent;
+    background-color: #28a745;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  button.active {
+    animation: toggleAnim 0.6s ease-out forwards;
+  }
+  
+  button:hover {
+    background-color: #146726;
+    transform: scale(1.07);
+  }
+  
+  button:focus {
+    box-shadow: 0 0 10px rgba(20, 103, 38, 0.6);
+  }
+  

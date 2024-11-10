@@ -126,7 +126,7 @@ body {
   /* Navbar fissa al fondo della pagina in modalità mobile */
   .navbar {
     position: fixed; /* Fissa la navbar al fondo della pagina */
-    bottom: 0;
+    top: 0;
     left: 0;
     right: 0;
     z-index: 1000; /* Assicurati che sia sopra ad altri contenuti */
