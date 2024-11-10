@@ -1,0 +1,6 @@
+# .dockerignore
+node_modules
+coverage
+test_integration
+test_unit
+test.HTTP
