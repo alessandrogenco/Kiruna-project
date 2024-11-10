@@ -43,21 +43,8 @@ function ExplorePage(props) {
         maxBounds: [
           [20.1200, 67.82], // Lower bounds of the map (Longitude, Latitude)
           [20.400, 67.8800]  // Upper bounds of the map
-        ] // Set map view limits for Kiruna
-      });
-
-      mapInstance.on('load', () => {
-        // Remove 3D building visibility (if any)
-        mapInstance.setLayoutProperty('building', 'visibility', 'none');
-
-        // Remove all labels from the map
-        mapInstance.setLayoutProperty('poi-label', 'visibility', 'none'); // Points of interest labels (e.g., shops)
-        mapInstance.setLayoutProperty('poi', 'visibility', 'none'); // Points of interest
-        mapInstance.setLayoutProperty('road-label', 'visibility', 'none'); // Road labels
-        mapInstance.setLayoutProperty('road', 'visibility', 'none'); // Roads
-        mapInstance.setLayoutProperty('place-label', 'visibility', 'none'); // Place labels (e.g., cities)
-        mapInstance.setLayoutProperty('administrative', 'visibility', 'none'); // Administrative labels
-        mapInstance.setLayoutProperty('water-label', 'visibility', 'none'); // Water labels
+        ], // Set map view limits for Kiruna
+        attributionControl: false // Remove the default Mapbox attribution control
       });
 
       setMap(mapInstance);
