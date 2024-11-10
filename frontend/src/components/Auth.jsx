@@ -45,7 +45,7 @@ function LoginForm({ login, isLoggedIn, handleLogout }) {
                         <Form.Control
                             type="text"
                             value={username}
-                            placeholder="Enter your email"
+                            placeholder="Enter your name"
                             onChange={(ev) => setUsername(ev.target.value)}
                             required
                             className="form-control-custom"
