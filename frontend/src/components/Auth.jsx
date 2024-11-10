@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Alert, Button, Col, Form, Row } from 'react-bootstrap';
+import { Alert, Button, Col, Form, Row, Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from "prop-types";
+import '../App.css'; 
 
 function LoginForm({ login, isLoggedIn, handleLogout }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-
     const [show, setShow] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -28,50 +28,55 @@ function LoginForm({ login, isLoggedIn, handleLogout }) {
     };
 
     return (
-        <Row className="vh-100 justify-content-center align-items-center">
-            <Col xs={10} sm={8} md={6} lg={4} className="mx-auto">
-                <h1 className="text-center pb-3">Login</h1>
+        <div className="login-container">
+            <div className="glassy-form-container">
+                <h2 className="login-title">Login</h2>
                 <Form onSubmit={handleSubmit}>
                     <Alert
                         dismissible
                         show={show}
                         onClose={() => setShow(false)}
-                        variant="danger">
+                        variant="danger"
+                        className="alert-danger-custom"
+                    >
                         {errorMessage}
                     </Alert>
                     <Form.Group className="mb-3" controlId="username">
-                        <Form.Label>Username</Form.Label>
                         <Form.Control
                             type="text"
                             value={username}
-                            placeholder="Enter your username."
+                            placeholder="Enter your email"
                             onChange={(ev) => setUsername(ev.target.value)}
-                            required={true}
-                            className="w-100"
+                            required
+                            className="form-control-custom"
                         />
                     </Form.Group>
-                    <Form.Group className="mb-3" controlId="password">
-                        <Form.Label>Password</Form.Label>
+                    <Form.Group className="mb-4" controlId="password">
                         <Form.Control
                             type="password"
                             value={password}
-                            placeholder="Enter the password."
+                            placeholder="Enter your password"
                             onChange={(ev) => setPassword(ev.target.value)}
-                            required={true}
-                            className="w-100"
+                            required
+                            className="form-control-custom"
                         />
                     </Form.Group>
-                    <Button className="mt-3 w-auto btn-sm btn-dark mx-auto d-block" type="submit">Login</Button>
+                    <Button
+                        type="submit"
+                        className="submit-button"
+                    >
+                        Log In
+                    </Button>
                 </Form>
-            </Col>
-        </Row>
+            </div>
+        </div>
     );
 }
 
 LoginForm.propTypes = {
-    login: PropTypes.func,
-    isLoggedIn: PropTypes.bool,
-    handleLogout: PropTypes.func,
+    login: PropTypes.func.isRequired,
+    isLoggedIn: PropTypes.bool.isRequired,
+    handleLogout: PropTypes.func.isRequired,
 };
 
 export default LoginForm;
