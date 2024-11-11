@@ -110,25 +110,6 @@ function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) 
         setShowFormModal(true);
     };
     
-    const handleCloseFormModal = () => {
-        setShowFormModal(false);
-        setNewDocument({
-        title: '',
-        stakeholders: '',
-        scale: '',
-        date: '',
-        type: '',
-        connections: '',
-        language: '',
-        pages: '',
-        lat: '',
-        lon: '',
-        area: '',
-        description: ''
-        });
-        setSelectedDocument(null);
-    };
-    
     const handleNewDocumentChange = (e) => {
         const { name, value } = e.target;
         setNewDocument((prevDocument) => ({
@@ -144,34 +125,6 @@ function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) 
     const filteredDocuments = documents.filter((document) =>
         document.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
-    
-    // validates the latitude coordinates
-    function validateLatitude(e){
-        let value = e.target.value;
-        // check of the correct lat value
-        if (value != '' && (value < 67.7500 || value > 68.3333)) {
-            alert("Latitude is out of Kiruna Municipality borders!");
-            setNewDocument((prevDocument) => ({
-            ...prevDocument,
-            lat: '',
-            }));
-            return;
-        }
-    }
-    
-    // validates the lognitude coordinates
-    function validateLongitude(e){
-        let value = e.target.value;
-        // check of the correct lat value
-        if (value != '' && (value < 20.7833 || value > 21.1333)) {
-        alert("Longitude is out of Kiruna Municipality borders!");
-        setNewDocument((prevDocument) => ({
-            ...prevDocument,
-            lon: '',
-        }));
-        return;
-        }
-    }
     
     const handleUpdateDocument = async () => {
         if (!newDocument.lat ^ !newDocument.lon) {
