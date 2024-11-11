@@ -86,7 +86,6 @@ function ExplorePage(props) {
       const bounds = map.getBounds();
       const zoom = map.getZoom();
 
-      console.log(cluster);
       const clusters = cluster.current.getClusters(
         [bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()],
         zoom
