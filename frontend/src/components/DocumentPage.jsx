@@ -42,7 +42,8 @@ function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) 
     };
     
     useEffect(() => {
-        console.log(documents);        
+        console.log(documents);  
+        getDocuments();      
     }, []);  
     
     const handleAddDocument = async () => {
