@@ -15,8 +15,10 @@ import DocumentPage from './components/DocumentPage';
 function App() {
   const [loggedIn, setLoggedIn] = useState(null); // Inizializza come `null`
   const [user, setUser] = useState(null);
+  const [documents, setDocuments] = useState([]);
   const navigate = useNavigate();
 
+  // Login check
   useEffect(() => {
     API.checkLogin()
       .then(user => {
@@ -32,6 +34,25 @@ function App() {
         setLoggedIn(false);
         setUser(null);
       });
+  }, []);
+
+
+  // Loading documents
+  useEffect(() => {
+    const fetchDocuments = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/documents');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setDocuments(data);
+      } catch (error) {
+        console.error('Error fetching documents:', error);
+      }
+    };
+
+    fetchDocuments();
   }, []);
 
   const handleLogin = async (credentials) => {
@@ -80,11 +101,11 @@ function App() {
         />
         <Route
           path="/explore"
-          element={<ExplorePage isLoggedIn={loggedIn} handleLogout={handleLogout} />}
+          element={<ExplorePage isLoggedIn={loggedIn} handleLogout={handleLogout} documents={documents} setDocuments={setDocuments}/>}
         />
         <Route
           path="/documents"
-          element={<Documents />}
+          element={<Documents documents={documents} setDocuments={setDocuments}/>}
         />
         <Route
           path="/link-documents"

@@ -15,17 +15,32 @@ function ExplorePage(props) {
   const mapContainer = useRef(null);
   const [map, setMap] = useState(null);
   const [currentStyle, setCurrentStyle] = useState('streets');
+  const [markers, setMarkers] = useState([]);
 
-  const markers = [
-    { lat: 67.8558, lng: 20.2253, label: 'Kiruna Center' },
-    { lat: 67.8575, lng: 20.2258, label: 'Kiruna Station' },
-    { lat: 67.8550, lng: 20.2251, label: 'Marker A' },
-    { lat: 67.8560, lng: 20.2260, label: 'Marker B' },
-    { lat: 67.8545, lng: 20.2248, label: 'Marker C' },
-  ];
+  const handleSetMarkers = (newMarkers) => {
+    setMarkers([...newMarkers]);
+  };
+
+  useEffect(() => {
+    if (props.documents) {
+      const newMarkers = props.documents.map(document => {
+        return {
+          lat: document.lat,
+          lng: document.lon,
+          label: document.title
+        };
+      });
+      handleSetMarkers([...newMarkers]);
+    }
+
+  }, [props.documents]);
 
   const cluster = useRef(null);
   const markersLayer = useRef(null);
+
+  useEffect(() => {
+    updateMarkers();
+  }, [markers]);
 
   useEffect(() => {
     if (!map) {
@@ -71,6 +86,7 @@ function ExplorePage(props) {
       const bounds = map.getBounds();
       const zoom = map.getZoom();
 
+      console.log(cluster);
       const clusters = cluster.current.getClusters(
         [bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()],
         zoom
@@ -153,7 +169,7 @@ function ExplorePage(props) {
       map.on('move', updateMarkers);
       updateMarkers();
     }
-  }, [map]);
+  }, [map, markers]);
 
   const handleMapStyleChange = (style) => {
     if (map) {

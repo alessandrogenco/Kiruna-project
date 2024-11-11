@@ -7,8 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { Row, Form, FormControl, Col, Button, InputGroup } from "react-bootstrap";
 import '../styles/DocumentPage.css';
 
-function DocumentPage(props) {
-    const [documents, setDocuments] = useState([]);
+function DocumentPage({isLoggedIn, handleLogout, documents, setDocuments}) {
     //const [shouldRefresh, setShouldRefresh] = useState(0);
     const [descriptions, setDescriptions] = useState({});
     const [selectedDocument, setSelectedDocument] = useState(null); // State for selected document

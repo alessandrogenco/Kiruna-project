@@ -3,8 +3,7 @@ import { Modal, Button, Form, FormControl } from 'react-bootstrap';
 import './Documents.css'; // Import the CSS file
 import {deleteDocument, updateDocument} from '../API.mjs'; // Import the API module
 
-function Documents({ show, handleClose }) {
-  const [documents, setDocuments] = useState([]);
+function Documents({ show, handleClose, documents, setDocuments }) {
   const [descriptions, setDescriptions] = useState({});
   const [selectedDocument, setSelectedDocument] = useState(null); // State for selected document
   const [showFormModal, setShowFormModal] = useState(false); // State to control the form modal
@@ -25,23 +24,6 @@ function Documents({ show, handleClose }) {
     area: '',
     description: ''
   });
-
-  useEffect(() => {
-    const fetchDocuments = async () => {
-      try {
-        const response = await fetch('http://localhost:3001/api/documents');
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        setDocuments(data);
-      } catch (error) {
-        console.error('Error fetching documents:', error);
-      }
-    };
-
-    fetchDocuments();
-  }, []);
 
   const handleAddDocument = async () => {
 
