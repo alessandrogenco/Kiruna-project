@@ -86,8 +86,9 @@ function ExplorePage(props) {
 
         if (properties.cluster) {
           const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
-            ${properties.point_count_abbreviated} Document(s)
-          `);
+            <div style="padding-top: 8px; display: flex; flex-direction: column;">
+              <div style="flex-grow: 1;">${properties.point_count_abbreviated} Document(s)</div>
+            </div>`);
 
           const marker = new mapboxgl.Marker({
             color: 'green',
