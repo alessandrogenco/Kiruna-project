@@ -1,5 +1,4 @@
-
-import { Form, Button, Row, Col } from "react-bootstrap";
+import { Form, Button, Row, Col, Alert } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import PropTypes from 'prop-types';
 import { useState } from 'react';
@@ -30,6 +29,7 @@ function DocumentControl(props) {
 
     // Stato per i messaggi di feedback
     const [message, setMessage] = useState('');
+    const [error, setError] = useState(''); // Stato per il messaggio di errore
 
     // Gestore per l'aggiornamento dei campi
     const handleChange = (e) => {
@@ -37,10 +37,32 @@ function DocumentControl(props) {
         setFormData({ ...formData, [name]: value });
     };
 
+    // Funzione di validazione
+    function validateForm() {
+        const lat = parseFloat(formData.lat);
+        const lon = parseFloat(formData.lon);
+
+        if (lat < 67.7500 || lat > 68.3333) {
+            return "Latitude is out of Kiruna Municipality borders!";
+        }
+        if (lon < 20.7833 || lon > 21.1333) {
+            return "Longitude is out of Kiruna Municipality borders!";
+        }
+        return '';
+    }
+
     // Gestore per l'invio del modulo
     const handleSubmit = async (e) => {
         e.preventDefault(); // Previene il comportamento di default
 
+        // Controllo di validazione
+        const validationError = validateForm();
+        if (validationError) {
+            setError(validationError); // Imposta il messaggio di errore
+            setMessage(''); // Resetta il messaggio di successo
+            return;
+        }
+        
         try {
             const response = await fetch('http://localhost:3001/api/addDocument', {
                 method: 'POST',
@@ -52,24 +74,42 @@ function DocumentControl(props) {
             
             const addedDocument = await response.json();
             setMessage('Document added successfully!');
+            setError(''); // Resetta il messaggio di errore
             
             // Naviga alla pagina documenti dopo l'invio
             navigate('/documentsPage');
         } catch (error) {
             console.error('Error adding document:', error);
-            setMessage('Error adding document: ' + error.message);
+            setError('Error adding document: ' + error.message);
+            setMessage(''); // Resetta il messaggio di successo
         }
     };
 
     return (
       <>
         <AppNavbar isLoggedIn={props.isLoggedIn} handleLogout={props.handleLogout}/>
+        
         <Form className="mt-4 mx-5 mb-4" onSubmit={handleSubmit}>
           <Row className="d-flex justify-content-between align-items-center mx-3 mb-3">
             <Col>
               <h1 className="mt-3">Add a new document</h1>
             </Col>
           </Row>
+
+          {/* Banner di errore */}
+          {error && (
+            <Alert variant="danger" className="mx-3">
+              {error}
+            </Alert>
+          )}
+
+          {/* Banner di successo */}
+          {message && (
+            <Alert variant="success" className="mx-3">
+              {message}
+            </Alert>
+          )}
+
           <Row className="mb-3 mx-3">
             <Form.Group as={Col} controlId="formTitle">
               <Form.Label>Title</Form.Label>
@@ -177,12 +217,10 @@ function DocumentControl(props) {
             <Form.Group as={Col} controlId="formLat">
               <Form.Label>Latitude</Form.Label>
               <Form.Control
-                type="number"
+                type="text"
                 placeholder="Enter latitude"
                 name="lat"
                 step="0.0001"
-                min="67.7500"
-                max="68.3333"
                 value={formData.lat}
                 onChange={handleChange}
               />
@@ -190,12 +228,10 @@ function DocumentControl(props) {
             <Form.Group as={Col} controlId="formLon">
               <Form.Label>Longitude</Form.Label>
               <Form.Control
-                type="number"
+                type="text"
                 placeholder="Enter longitude"
                 name="lon"
                 step="0.0001"
-                min="20.7833"
-                max="21.1333"
                 value={formData.lon}
                 onChange={handleChange}
               />
@@ -226,10 +262,6 @@ function DocumentControl(props) {
                 </Button>
             </Col>
           </Row>
-
-          {/* Visualizza messaggio di feedback */}
-          {message && <p className="mx-3 text-success">{message}</p>}
-
         </Form>
       </>
     );
