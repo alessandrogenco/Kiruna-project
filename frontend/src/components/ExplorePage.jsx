@@ -200,16 +200,5 @@ ExplorePage.propTypes = {
   handleLogout: PropTypes.func,
 };
 
-const buttonStyle = {
-  margin: '2px',
-  padding: '8px 20px',
-  color: 'white',
-  border: 'none',
-  borderRadius: '7px',
-  cursor: 'pointer',
-  fontSize: '14px',
-  transition: 'background-color 0.3s ease, transform 0.3s ease, box-shadow 0.2s ease',
-};
-
 export default ExplorePage;
 
