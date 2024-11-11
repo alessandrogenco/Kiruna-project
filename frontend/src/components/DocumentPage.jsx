@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { Row, Form, FormControl, Col, Button, InputGroup } from "react-bootstrap";
 import '../styles/DocumentPage.css';
 
-function DocumentPage({isLoggedIn, handleLogout, documents, setDocuments}) {
+function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) {
     //const [shouldRefresh, setShouldRefresh] = useState(0);
     const [descriptions, setDescriptions] = useState({});
     const [selectedDocument, setSelectedDocument] = useState(null); // State for selected document
@@ -31,17 +31,18 @@ function DocumentPage({isLoggedIn, handleLogout, documents, setDocuments}) {
     });
 
     const navigate = useNavigate();
+
+    const getDocuments = async () => {
+        try {
+            const data = await API.getDocuments(); // Chiamata alla funzione getDocuments in API.mjs
+            setDocuments(data); // Aggiorna lo stato con i documenti ottenuti
+        } catch (error) {
+            setMessage('Error fetching documents');
+        }
+    };
     
     useEffect(() => {
-        const getDocuments = async () => {
-            try {
-                const data = await API.getDocuments(); // Chiamata alla funzione getDocuments in API.mjs
-                setDocuments(data); // Aggiorna lo stato con i documenti ottenuti
-            } catch (error) {
-                setMessage('Error fetching documents');
-            }
-        };
-        getDocuments();
+        console.log(documents);        
     }, []);  
     
     const handleAddDocument = async () => {
@@ -78,7 +79,6 @@ function DocumentPage({isLoggedIn, handleLogout, documents, setDocuments}) {
         }
     };
     
-    
     // Funzione per eliminare un documento
     const handleDelete = async (docId) => {
         try {
@@ -90,7 +90,6 @@ function DocumentPage({isLoggedIn, handleLogout, documents, setDocuments}) {
             setMessage('Error deleting document.');
         }
     };
-    
     
     const handleDocumentClick = (document) => {
         setSelectedDocument(document);
@@ -216,13 +215,13 @@ function DocumentPage({isLoggedIn, handleLogout, documents, setDocuments}) {
 
     return(
         <>
-            <AppNavbar isLoggedIn={props.isLoggedIn} handleLogout={props.handleLogout}/>
+            <AppNavbar isLoggedIn={isLoggedIn} handleLogout={handleLogout}/>
             <Row className="mt-3 mx-2">
                 <Col>
                 <Form className="d-flex mb-3">
                     <InputGroup>
                         <InputGroup.Text>
-                            <i className="bi bi-search"></i> {/* Icona di Bootstrap */}
+                            <i className="bi bi-search"/> {/* Icona di Bootstrap */}
                         </InputGroup.Text>
                         <FormControl
                             type="search"
@@ -230,8 +229,7 @@ function DocumentPage({isLoggedIn, handleLogout, documents, setDocuments}) {
                             aria-label="Search"
                             value={searchQuery}
                             onChange={handleSearchChange}
-                            style={{ maxWidth: '300px' }}
-                        />
+                            style={{ maxWidth: '300px' }}/>
                         </InputGroup>
                     </Form>
                 </Col>

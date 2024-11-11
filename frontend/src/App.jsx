@@ -112,7 +112,7 @@ function App() {
         />
         <Route
           path="/documentsPage"
-          element={<DocumentPage isLoggedIn={loggedIn} handleLogout={handleLogout}/>}
+          element={<DocumentPage isLoggedIn={loggedIn} handleLogout={handleLogout} documents={documents} setDocuments={setDocuments}/>}
         />
         <Route
           path="/addDocument"
