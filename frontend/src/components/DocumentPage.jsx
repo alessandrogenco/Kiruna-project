@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import API, {deleteDocument, updateDocument} from '../API.mjs';
 import DocumentList from "./DocumentList";
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Row, Form, FormControl, Col, Button, InputGroup } from "react-bootstrap";
 import '../styles/DocumentPage.css';
 
@@ -29,6 +30,8 @@ function DocumentPage(props) {
         area: '',
         description: ''
     });
+
+    const navigate = useNavigate();
     
     useEffect(() => {
         const getDocuments = async () => {
@@ -234,7 +237,7 @@ function DocumentPage(props) {
                     </Form>
                 </Col>
                 <Col xs="auto" className="text-end">
-                    <Button variant="success">
+                    <Button variant="success" onClick={() => navigate('/addDocument', { state: { newDocument } })}>
                         <i className="bi bi-plus me-2"></i> {/* Icona + con margine destro */}
                         Add Document
                     </Button>

@@ -8,6 +8,7 @@ import HomePage from './components/HomePage'; // Importa il componente HomePage
 import ExplorePage from './components/ExplorePage'; // Importa il componente ExplorePage
 import LoggedInPage from './components/LoggedInPage';
 import Documents from './components/Documents';
+import DocumentControl from './components/DocumentControl';
 import LinkDocuments from './components/LinkDocuments';
 import DocumentPage from './components/DocumentPage';
 
@@ -89,9 +90,13 @@ function App() {
           path="/link-documents"
         />
         <Route
-        path="/documentsPage"
-        element={<DocumentPage isLoggedIn={loggedIn} handleLogout={handleLogout}/>}
-      />
+          path="/documentsPage"
+          element={<DocumentPage isLoggedIn={loggedIn} handleLogout={handleLogout}/>}
+        />
+        <Route
+          path="/addDocument"
+          element={<DocumentControl isLoggedIn={loggedIn} handleLogout={handleLogout}/>}
+        />
       </Routes>
     </>
   );
