@@ -94,3 +94,28 @@ button:last-child:active {
     color: #555;
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
+
+.mapboxgl-popup-close-button {
+    width: 20px; /* Reduce size */
+    height: 20px;
+    background: none; /* Remove background color */
+    border: none; /* Remove border */
+    font-size: 14px; /* Adjust font size */
+    color: #555; /* Subtle color for the 'X' */
+    cursor: pointer; /* Ensure it still looks interactive */
+    position: absolute;
+    top: 5px; /* Adjust alignment */
+    right: 5px;
+}
+
+.mapboxgl-popup-close-button:hover {
+    color: #000; /* Darker color for hover state */
+}
+
+.mapboxgl-popup-content {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1rem;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}

@@ -123,7 +123,11 @@ function ExplorePage(props) {
           iconElement.style.border = '2px solid white';
           iconElement.style.backgroundImage = `url(${documentIcon})`;
 
-          const popup = new mapboxgl.Popup({ offset: 25 })
+          const popup = new mapboxgl.Popup({ 
+            offset: 25,
+            closeButton: false, // Removes the close button
+
+            })
             .setHTML(`
               <div style="padding: 8px; display: flex; flex-direction: column;">
                 <div>${properties.label}</div>
