@@ -8,10 +8,8 @@ import Supercluster from 'supercluster';
 import documentIcon from '../assets/document.png';
 import '../styles/ExplorePage.css';
 
-
 function ExplorePage(props) {
   const MAPBOX_TOKEN = "pk.eyJ1IjoiYWxlc3NhbmRyb2cwOCIsImEiOiJjbTNiZzFwbWEwdnU0MmxzYTdwNWhoY3dpIn0._52AcWROcPOQBr1Yz0toKw";
-  
   const mapContainer = useRef(null);
   const [map, setMap] = useState(null);
   const [currentStyle, setCurrentStyle] = useState('streets');
@@ -210,10 +208,4 @@ function ExplorePage(props) {
   );
 }
 
-ExplorePage.propTypes = {
-  isLoggedIn: PropTypes.bool,
-  handleLogout: PropTypes.func,
-};
-
 export default ExplorePage;
-
