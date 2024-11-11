@@ -7,6 +7,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import Supercluster from 'supercluster';
 import documentIcon from '../assets/document.png';
 import '../styles/ExplorePage.css';
+import DocumentViewer from './DocumentViewer'; // Import the DocumentViewer component
 
 function ExplorePage(props) {
   const MAPBOX_TOKEN = "pk.eyJ1IjoiYWxlc3NhbmRyb2cwOCIsImEiOiJjbTNiZzFwbWEwdnU0MmxzYTdwNWhoY3dpIn0._52AcWROcPOQBr1Yz0toKw";
@@ -14,6 +15,7 @@ function ExplorePage(props) {
   const [map, setMap] = useState(null);
   const [currentStyle, setCurrentStyle] = useState('streets');
   const [markers, setMarkers] = useState([]);
+  const [selectedDocument, setSelectedDocument] = useState(null); // State for the selected document
   const cluster = useRef(null);
   const markersLayer = useRef(null);
 
@@ -27,12 +29,12 @@ function ExplorePage(props) {
         return {
           lat: document.lat,
           lng: document.lon,
-          label: document.title
+          label: document.title,
+          data: document // Attach full document data for use in DocumentViewer
         };
       });
       handleSetMarkers([...newMarkers]);
     }
-
   }, [props.documents]);
 
   useEffect(() => {
@@ -67,7 +69,7 @@ function ExplorePage(props) {
     const points = markersData.map(marker => ({
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [marker.lng, marker.lat] },
-      properties: { label: marker.label }
+      properties: { label: marker.label, data: marker.data }
     }));
 
     const clusterInstance = new Supercluster({
@@ -123,10 +125,18 @@ function ExplorePage(props) {
 
           const popup = new mapboxgl.Popup({ offset: 25 })
             .setHTML(`
-              <div style="padding-top: 8px; display: flex; flex-direction: column;">
-                <div style="flex-grow: 1;">${properties.label}</div>
-              </div>`);
-
+              <div style="padding: 8px; display: flex; flex-direction: column;">
+                <div>${properties.label}</div>
+                <button id="view-details" style="margin-top: 5px; padding: 5px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                  View Description
+                </button>
+              </div>
+            `)
+            .on('open', () => {
+              document.getElementById('view-details').addEventListener('click', () => {
+                setSelectedDocument(properties.data); // Pass data to DocumentViewer
+              });
+            });
 
           const marker = new mapboxgl.Marker({
             element: iconElement,
@@ -181,7 +191,7 @@ function ExplorePage(props) {
       <button
         className='toggle'
         onClick={() => handleMapStyleChange(style)}
-        style={{backgroundColor: isActive ? '#146726' : '#28a745'}}>
+        style={{ backgroundColor: isActive ? '#146726' : '#28a745' }}>
         {label}
       </button>
     );
@@ -203,6 +213,14 @@ function ExplorePage(props) {
         <MapStyleToggleButton style="streets" label="Streets" />
         <MapStyleToggleButton style="satellite" label="Satellite" />
       </div>
+
+      {/* Document Viewer */}
+      {selectedDocument && (
+        <DocumentViewer
+          documentData={selectedDocument}
+          onClose={() => setSelectedDocument(null)}
+        />
+      )}
     </>
   );
 }
