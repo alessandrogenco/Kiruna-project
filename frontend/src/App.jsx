@@ -9,6 +9,7 @@ import ExplorePage from './components/ExplorePage'; // Importa il componente Exp
 import LoggedInPage from './components/LoggedInPage';
 import Documents from './components/Documents';
 import LinkDocuments from './components/LinkDocuments';
+import DocumentPage from './components/DocumentPage';
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(null); // Inizializza come `null`
@@ -87,6 +88,10 @@ function App() {
         <Route
           path="/link-documents"
         />
+        <Route
+        path="/documentsPage"
+        element={<DocumentPage isLoggedIn={loggedIn} handleLogout={handleLogout}/>}
+      />
       </Routes>
     </>
   );

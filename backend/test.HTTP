@@ -121,7 +121,7 @@ POST http://localhost:3001/api/addDocument
 Content-Type: application/json
 
 {
-    "title": "prova1",
+    "title": "prova7",
     "stakeholders": "New Stakeholders",
     "scale": "1:1000",
     "issuanceDate": "2024-11-06",
@@ -159,5 +159,5 @@ POST http://localhost:3001/api/deleteDocument
 Content-Type: application/json
 
 {
-    "id": 173082689802499
+    "id": 1730826916158307
 }

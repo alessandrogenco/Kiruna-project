@@ -77,6 +77,21 @@ const checkLogin = async () => {
     }
 }
 
+const getDocuments = async () => {
+    try {
+      const response = await fetch(SERVER_URL + '/documents', { method: 'GET' });
+      if (!response.ok) {
+        throw new Error('Failed to fetch documents');
+      }
+  
+      const documents = await response.json();
+      return documents;
+    } catch (error) {
+      console.error('Error fetching documents:', error);
+      throw error;
+    }
+  };
+
 const linkDocument = async (id1, id2, linkDate, linkType) => {
     try {
         const response = await fetch(SERVER_URL + '/linkDocuments', {
@@ -213,5 +228,5 @@ export const updateDocument = async (id, title, stakeholders, scale, issuanceDat
 
 
 
-const API = { login, logout, checkLogin, linkDocument, getDocumentLinks, updateLink, deleteDocument, updateDocument};
+const API = { login, logout, checkLogin, getDocuments, linkDocument, getDocumentLinks, updateLink, deleteDocument, updateDocument};
 export default API;
