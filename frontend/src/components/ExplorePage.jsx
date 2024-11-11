@@ -126,7 +126,6 @@ function ExplorePage(props) {
           const popup = new mapboxgl.Popup({ 
             offset: 25,
             closeButton: false, // Removes the close button
-
             })
             .setHTML(`
               <div style="padding: 8px; display: flex; flex-direction: column;">

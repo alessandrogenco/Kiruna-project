@@ -4,10 +4,12 @@
     left: 50%;
     transform: translateX(-50%);
     width: 40%;
+    max-width: 600px; /* Ensures it doesn't get too wide on larger screens */
+    min-width: 320px; /* Ensures usability on smaller screens */
     background: #ffffff;
     border: none;
     padding: 25px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Softer shadow */
     z-index: 1000;
     border-radius: 16px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -25,7 +27,8 @@
     }
 }
 
-.document-details, .document-description {
+.document-details,
+.document-description {
     margin: 20px 0;
     font-size: 1.1rem;
     line-height: 1.7;
@@ -52,13 +55,18 @@ button {
     cursor: pointer;
     font-size: 1rem;
     transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2); /* Slightly softer shadow */
 }
 
 button:hover {
     background-color: #0056b3;
     box-shadow: 0 6px 16px rgba(0, 123, 255, 0.3);
     transform: translateY(-3px);
+}
+
+button:focus {
+    outline: 2px solid #0056b3;
+    outline-offset: 2px;
 }
 
 button:active {
@@ -72,6 +80,11 @@ button:last-child {
 
 button:last-child:hover {
     background-color: #5a6268;
+}
+
+button:last-child:focus {
+    outline: 2px solid #5a6268;
+    outline-offset: 2px;
 }
 
 button:last-child:active {
@@ -92,24 +105,24 @@ button:last-child:active {
     border-radius: 8px;
     font-size: 1rem;
     color: #555;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.1); /* Slightly more prominent inset shadow */
 }
 
 .mapboxgl-popup-close-button {
-    width: 20px; /* Reduce size */
+    width: 20px;
     height: 20px;
-    background: none; /* Remove background color */
-    border: none; /* Remove border */
-    font-size: 14px; /* Adjust font size */
-    color: #555; /* Subtle color for the 'X' */
-    cursor: pointer; /* Ensure it still looks interactive */
+    background: none;
+    border: none;
+    font-size: 14px;
+    color: #555;
+    cursor: pointer;
     position: absolute;
-    top: 5px; /* Adjust alignment */
+    top: 5px;
     right: 5px;
 }
 
 .mapboxgl-popup-close-button:hover {
-    color: #000; /* Darker color for hover state */
+    color: #000;
 }
 
 .mapboxgl-popup-content {
@@ -117,5 +130,27 @@ button:last-child:active {
     font-size: 1rem;
     padding: 10px;
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Updated shadow */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .document-viewer {
+        width: 90%; /* Takes up more space on smaller screens */
+        padding: 20px;
+    }
+
+    h3 {
+        font-size: 1.5rem;
+    }
+
+    button {
+        font-size: 0.9rem;
+        padding: 10px 15px;
+    }
+
+    .document-details,
+    .document-description {
+        font-size: 1rem;
+    }
 }
