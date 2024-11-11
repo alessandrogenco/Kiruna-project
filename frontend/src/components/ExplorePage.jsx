@@ -14,6 +14,8 @@ function ExplorePage(props) {
   const [map, setMap] = useState(null);
   const [currentStyle, setCurrentStyle] = useState('streets');
   const [markers, setMarkers] = useState([]);
+  const cluster = useRef(null);
+  const markersLayer = useRef(null);
 
   const handleSetMarkers = (newMarkers) => {
     setMarkers([...newMarkers]);
@@ -32,9 +34,6 @@ function ExplorePage(props) {
     }
 
   }, [props.documents]);
-
-  const cluster = useRef(null);
-  const markersLayer = useRef(null);
 
   useEffect(() => {
     updateMarkers();
