@@ -240,7 +240,7 @@ function DocumentPage(props) {
                     </Button>
                 </Col>
             </Row>
-            <DocumentList documents={documents} updateDocument={handleUpdateDocument} deleteDocument={handleDelete}/>
+            <DocumentList documents={filteredDocuments} updateDocument={handleUpdateDocument} deleteDocument={handleDelete}/>
         </>
     );
 
