@@ -15,7 +15,7 @@
     }
   }
   
-  button {
+  .toggle {
     margin: 2px;
     padding: 8px 20px;
     color: white;
@@ -32,16 +32,16 @@
     justify-content: center;
   }
   
-  button.active {
+  .toggle.active {
     animation: toggleAnim 0.6s ease-out forwards;
   }
   
-  button:hover {
+  .toggle:hover {
     background-color: #146726;
     transform: scale(1.07);
   }
   
-  button:focus {
+  .toggle:focus {
     box-shadow: 0 0 10px rgba(20, 103, 38, 0.6);
   }
   

@@ -108,9 +108,12 @@ function ExplorePage(props) {
           iconElement.style.border = '2px solid white';
           iconElement.style.backgroundImage = `url(${documentIcon})`;
 
-          const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
-            ${properties.label}
-          `);
+          const popup = new mapboxgl.Popup({ offset: 25 })
+            .setHTML(`
+              <div style="padding-top: 8px; display: flex; flex-direction: column;">
+                <div style="flex-grow: 1;">${properties.label}</div>
+              </div>`);
+
 
           const marker = new mapboxgl.Marker({
             element: iconElement,
@@ -163,13 +166,9 @@ function ExplorePage(props) {
     const isActive = currentStyle === style;
     return (
       <button
+        className='toggle'
         onClick={() => handleMapStyleChange(style)}
-        style={{
-          backgroundColor: isActive ? '#146726' : '#28a745',
-          animation: `transformAnimation 2s ease-in-out infinite`,
-          transformOrigin: 'center', // Definisce il punto di origine della trasformazione
-        }}
-      >
+        style={{backgroundColor: isActive ? '#146726' : '#28a745'}}>
         {label}
       </button>
     );
