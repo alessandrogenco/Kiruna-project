@@ -24,7 +24,7 @@ DocumentList.propTypes = {
 
 function DocumentInList(props){
     return(
-        <ListGroupItem className="custom-border mx-3 mt-2 p-3 border border-secondary rounded" variant="secondary">
+        <ListGroupItem className="custom-border mx-3 mt-2 p-3 border border-secondary rounded" variant="dark">
             <Row>
                 <Col>
                     <label className='mt-2' onClick={() => handleLabelClick()}>{props.documentData.title}</label>
@@ -34,8 +34,8 @@ function DocumentInList(props){
                     <label>{props.documentData.date}</label>
                 </Col>
                 <Col className='text-end'>
-                    <Link className="btn btn-outline-primary bi bi-pencil me-3" to={'/'}/>
-                    <i className="btn btn-outline-danger bi bi-trash" onClick={() => props.deleteDocument(props.documentData.id)}/> 
+                    <Link className="btn btn-primary bi bi-pencil me-3" to={'/'}/>
+                    <i className="btn btn-danger bi bi-trash" onClick={() => props.deleteDocument(props.documentData.id)}/> 
                 </Col>
             </Row>
         </ListGroupItem>

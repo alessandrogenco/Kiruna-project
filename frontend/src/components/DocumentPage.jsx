@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import API, {deleteDocument, updateDocument} from '../API.mjs';
 import DocumentList from "./DocumentList";
 import { useEffect, useState } from 'react';
+import { Row, Form, FormControl, Col, Button, InputGroup } from "react-bootstrap";
 import '../styles/DocumentPage.css';
 
 function DocumentPage(props) {
@@ -214,6 +215,31 @@ function DocumentPage(props) {
     return(
         <>
             <AppNavbar isLoggedIn={props.isLoggedIn} handleLogout={props.handleLogout}/>
+            <Row className="mt-3 mx-2">
+                <Col>
+                <Form className="d-flex mb-3">
+                    <InputGroup>
+                        <InputGroup.Text>
+                            <i className="bi bi-search"></i> {/* Icona di Bootstrap */}
+                        </InputGroup.Text>
+                        <FormControl
+                            type="search"
+                            placeholder="Search documents"
+                            aria-label="Search"
+                            value={searchQuery}
+                            onChange={handleSearchChange}
+                            style={{ maxWidth: '300px' }}
+                        />
+                        </InputGroup>
+                    </Form>
+                </Col>
+                <Col xs="auto" className="text-end">
+                    <Button variant="success">
+                        <i className="bi bi-plus me-2"></i> {/* Icona + con margine destro */}
+                        Add Document
+                    </Button>
+                </Col>
+            </Row>
             <DocumentList documents={documents} updateDocument={handleUpdateDocument} deleteDocument={handleDelete}/>
         </>
     );
