@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import API, {deleteDocument, updateDocument} from '../API.mjs';
 import DocumentList from "./DocumentList";
 import { useEffect, useState } from 'react';
+import '../styles/DocumentPage.css';
 
 function DocumentPage(props) {
     const [documents, setDocuments] = useState([]);

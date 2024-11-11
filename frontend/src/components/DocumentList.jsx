@@ -24,7 +24,7 @@ DocumentList.propTypes = {
 
 function DocumentInList(props){
     return(
-        <ListGroupItem className="custom-border">
+        <ListGroupItem className="custom-border mx-3 mt-2 p-3 border border-secondary rounded" variant="secondary">
             <Row>
                 <Col>
                     <label className='mt-2' onClick={() => handleLabelClick()}>{props.documentData.title}</label>
