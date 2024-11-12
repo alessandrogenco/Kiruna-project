@@ -9,10 +9,38 @@ import DocumentDao from './dao/document.mjs';
 const app = express();
 const PORT = 3001;
 //multer configuration to manage the upload of a file 
-const storage = multer.memoryStorage(); // Store a file in memory as Buffer 
-const upload = multer({ storage: storage });
+//const storage = multer.memoryStorage(); // Store a file in memory as Buffer 
+//const upload = multer({ storage: storage });
 
 app.use(express.json());
+
+// Ensure uploads directory exists
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir);
+}
+
+// Configure storage and filter for only PDF files
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, uploadDir);
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ 
+    storage: storage,
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype !== 'application/pdf') {
+            cb(new Error('Only PDF files are allowed'), false);
+        } else {
+            cb(null, true);
+        }
+    }
+});
 
 // CORS middleware
 const corsOptions = {
