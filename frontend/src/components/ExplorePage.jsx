@@ -33,8 +33,11 @@ function ExplorePage(props) {
           data: document // Attach full document data for use in DocumentViewer
         };
       });
+
+      // To test clusters
       newMarkers.push({ lat: 67.8558, lng: 20.2253, label: 'Kiruna', data: props.documents[0] });
       newMarkers.push({ lat: 67.8558, lng: 20.2253, label: 'Kiruna1', data: props.documents[0] });
+      
       handleSetMarkers([...newMarkers]);
     }
   }, [props.documents]);
