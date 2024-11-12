@@ -118,6 +118,10 @@ function App() {
           path="/addDocument"
           element={<DocumentControl isLoggedIn={loggedIn} handleLogout={handleLogout}/>}
         />
+        <Route
+          path="/editDocument/:documentId"
+          element={<DocumentControl isLoggedIn={loggedIn} handleLogout={handleLogout} documents={documents} />}
+        />
       </Routes>
     </>
   );

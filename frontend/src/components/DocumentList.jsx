@@ -37,7 +37,11 @@ function DocumentInList(props){
                     <label>{props.documentData.date}</label>
                 </Col>
                 <Col className='text-end'>
-                    <Link className="btn btn-success bi bi-pencil me-2" to={'/'}/>
+                    <Link
+                        className="btn btn-success bi bi-pencil me-2"
+                        to={`/editDocument/${props.documentData.id}`}
+                        state={{ document: props.documentData }}
+                    />
                     <i className="btn btn-danger bi bi-trash" onClick={() => props.deleteDocument(props.documentData.id)}/> 
                 </Col>
             </Row>

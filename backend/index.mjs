@@ -15,10 +15,10 @@ const PORT = 3001;
 app.use(express.json());
 
 // Ensure uploads directory exists
-const uploadDir = path.join(__dirname, 'uploads');
+/*const uploadDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir);
-}
+}*/
 
 // Configure storage and filter for only PDF files
 const storage = multer.diskStorage({

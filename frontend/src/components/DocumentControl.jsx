@@ -1,31 +1,53 @@
 import { Form, Button, Row, Col, Alert } from "react-bootstrap";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AppNavbar from "./Navbar";
 
 function DocumentControl(props) {
-    const location = useLocation();
-    const newDocument = location.state?.newDocument;
-    console.log(newDocument);
 
-    const navigate = useNavigate();
+  const { documentId } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const existingDocument = location.state?.document;
 
     // Stati per i valori dei campi del modulo
     const [formData, setFormData] = useState({
-        title: '',
-        stakeholders: '',
-        scale: '',
-        date: '',
-        type: '',
-        connections: '',
-        language: '',
-        pages: '',
-        lat: '',
-        lon: '',
-        area: '',
-        description: ''
+      id: existingDocument?.id || '',
+      title: existingDocument?.title || '',
+      stakeholders: existingDocument?.stakeholders || '',
+      scale: existingDocument?.scale || '',
+      issuanceDate: existingDocument?.issuanceDate || '', // Assicurato valore predefinito
+      type: existingDocument?.type || '',
+      connections: existingDocument?.connections || '',
+      language: existingDocument?.language || '',
+      pages: existingDocument?.pages || '',
+      lat: existingDocument?.lat || '',
+      lon: existingDocument?.lon || '',
+      area: existingDocument?.area || '',
+      description: existingDocument?.description || ''
     });
+
+    useEffect(() => {
+      if (existingDocument) {
+        setFormData({
+          id: existingDocument.id || '',
+          title: existingDocument.title || '',
+          stakeholders: existingDocument.stakeholders || '',
+          scale: existingDocument.scale || '',
+          issuanceDate: existingDocument.issuanceDate || '',
+          type: existingDocument.type || '',
+          connections: existingDocument.connections || '',
+          language: existingDocument.language || '',
+          pages: existingDocument.pages || '',
+          lat: existingDocument.lat || '',
+          lon: existingDocument.lon || '',
+          area: existingDocument.area || '',
+          description: existingDocument.description || ''
+        });
+      }
+    }, [existingDocument]);
 
     // Stato per i messaggi di feedback
     const [message, setMessage] = useState('');
@@ -33,8 +55,8 @@ function DocumentControl(props) {
 
     // Gestore per l'aggiornamento dei campi
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+      const { name, value } = e.target;
+      setFormData({ ...formData, [name]: value ?? '' });
     };
 
     // Funzione di validazione
@@ -50,41 +72,62 @@ function DocumentControl(props) {
         }
         return '';
     }
-
+    
     // Gestore per l'invio del modulo
     const handleSubmit = async (e) => {
-        e.preventDefault(); // Previene il comportamento di default
+      e.preventDefault();
 
-        // Controllo di validazione
-        const validationError = validateForm();
-        if (validationError) {
-            setError(validationError); // Imposta il messaggio di errore
-            setMessage(''); // Resetta il messaggio di successo
-            return;
+      // Eseguiamo la validazione del form
+      const validationError = validateForm();
+      if (validationError) {
+        setError(validationError);
+        setMessage('');
+        return;
+      }
+
+      try {
+        // Determina l'URL e il metodo in base alla presenza di documentId
+        let url;
+        let method;
+
+        if (documentId) {
+          // Modifica di un documento esistente
+          url = 'http://localhost:3001/api/updateDocument'; // Usa l'endpoint di aggiornamento
+          method = 'POST'; // Metodo POST per la modifica
+        } else {
+          // Aggiunta di un nuovo documento
+          url = 'http://localhost:3001/api/addDocument'; // Usa l'endpoint per aggiungere
+          method = 'POST'; // Metodo POST per l'aggiunta
         }
+
+        // Esegui la richiesta
+        const response = await fetch(url, {
+          method: method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData), // Invia i dati del modulo
+        });
+
+        // Controlla se la risposta è positiva
+        if (!response.ok) throw new Error('Network response was not ok');
         
-        try {
-            const response = await fetch('http://localhost:3001/api/addDocument', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
-            });
+        // Ottieni la risposta JSON
+        const result = await response.json();
 
-            if (!response.ok) throw new Error('Network response was not ok');
-            
-            const addedDocument = await response.json();
-            setMessage('Document added successfully!');
-            setError(''); // Resetta il messaggio di errore
-            
-            // Naviga alla pagina documenti dopo l'invio
-            navigate('/documentsPage');
-        } catch (error) {
-            console.error('Error adding document:', error);
-            setError('Error adding document: ' + error.message);
-            setMessage(''); // Resetta il messaggio di successo
-        }
+        // Mostra il messaggio di successo
+        setMessage(documentId ? 'Document updated successfully!' : 'Document added successfully!');
+        setError(''); // Rimuovi eventuali errori
+
+        // Naviga alla pagina dei documenti
+        navigate('/documentsPage');
+      } catch (error) {
+        // Gestisci l'errore
+        setError(`Error: ${error.message}`);
+        setMessage(''); // Rimuovi eventuali messaggi di successo
+      }
     };
 
+
+    
     return (
       <>
         <AppNavbar isLoggedIn={props.isLoggedIn} handleLogout={props.handleLogout}/>
@@ -92,7 +135,7 @@ function DocumentControl(props) {
         <Form className="mt-4 mx-5 mb-4" onSubmit={handleSubmit}>
           <Row className="d-flex justify-content-between align-items-center mx-3 mb-3">
             <Col>
-              <h1 className="mt-3">Add a new document</h1>
+            <h1>{documentId ? "Edit Document" : "Add a New Document"}</h1>
             </Col>
           </Row>
 
@@ -150,8 +193,8 @@ function DocumentControl(props) {
               <Form.Label>Date</Form.Label>
               <Form.Control
                 type="date"
-                name="date"
-                value={formData.date}
+                name="issuanceDate" // Cambiato "date" in "issuanceDate"
+                value={formData.issuanceDate}
                 onChange={handleChange}
               />
             </Form.Group>
@@ -255,7 +298,7 @@ function DocumentControl(props) {
           <Row className="mx-3">
             <Col className="d-flex justify-content mt-3 pb-5">
                 <Button className="me-3" variant="success" type="submit">
-                  Add
+                  {documentId ? "Save" : "Add"}
                 </Button>
                 <Button variant="danger" onClick={() => navigate('/documentsPage')}>
                   Cancel
