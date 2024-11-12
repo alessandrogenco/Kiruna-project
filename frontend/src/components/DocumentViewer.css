@@ -8,7 +8,7 @@
     min-width: 320px;
     background: #ffffff;
     border: none;
-    padding: 25px;
+    padding: 4px 25px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     border-radius: 16px;
@@ -55,11 +55,11 @@
 .my-document-viewer-wrapper h3 {
     font-size: 1.8rem;
     margin-bottom: 20px;
-    color: #007bff;
+    color: #000000;
     text-align: center;
     font-weight: 600;
     border-bottom: 2px solid #f1f1f1;
-    padding-bottom: 10px;
+    padding-bottom: 5px;
 }
 
 .my-document-viewer-wrapper button {
