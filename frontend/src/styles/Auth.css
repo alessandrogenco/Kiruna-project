@@ -57,6 +57,7 @@ body, html {
     color: #ffffff;
     outline: none;
     box-shadow: none;
+    -webkit-box-shadow: none !important; /* Remove on webkit browsers */
   }
   
   .form-control-custom::placeholder {
@@ -85,6 +86,7 @@ body, html {
     border-bottom: 1px solid rgba(255, 255, 255, 1); /* Slightly stronger border on focus */
     outline: none; /* Remove focus outline */
     background-color: transparent; /* Keep transparent */
+    color: #ffffff !important;
   }
   
   /* Keep placeholder consistent even on focus */
@@ -92,3 +94,21 @@ body, html {
     color: rgba(255, 255, 255, 0.7);
     opacity: 1;
   }
+  
+  input {
+    all: unset; /* Resets all styles to remove default browser styling */
+}
+
+input.form-control-custom {
+    all: unset; /* Ensure reset specifically on these inputs */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.7);
+    padding: 10px 0;
+    color: #ffffff;
+    background-color: transparent;
+    width: 100%; /* Ensure input width is consistent */
+}
+
+.form-control-custom {
+    -webkit-appearance: none;
+    appearance: none; /* Remove default browser appearance */
+}
