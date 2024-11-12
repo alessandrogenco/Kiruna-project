@@ -4,3 +4,7 @@
     font-weight: bolder;
     font-size: large;
 }
+
+.form-control{
+    background-color:rgba(216, 216, 216, 0.207);
+}

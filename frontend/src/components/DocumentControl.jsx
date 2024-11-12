@@ -157,7 +157,7 @@ function DocumentControl(props) {
           <Row className="mb-3 mx-3">
             <Form.Group as={Col} controlId="formTitle">
               <Form.Label className='form-label'>Title</Form.Label>
-              <Form.Control
+              <Form.Control className="form-control"
                 type="text"
                 placeholder="Enter title"
                 name="title"
