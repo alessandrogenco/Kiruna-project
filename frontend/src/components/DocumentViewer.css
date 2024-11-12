@@ -65,12 +65,12 @@ button:hover {
 }
 
 button:focus {
-    outline: 2px solid #0056b3;
+    outline: 2px solid #218838;
     outline-offset: 2px;
 }
 
 button:active {
-    background-color: #004494;
+    background-color: #218838;
     transform: translateY(0);
 }
 

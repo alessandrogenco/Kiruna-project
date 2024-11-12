@@ -143,7 +143,7 @@ function ExplorePage(props) {
             .setHTML(`
               <div style="padding-right: 0.8em; margin-bottom: -0.4em; display: flex; flex-direction: column;">
                 <div>${properties.label}</div>
-                <button id="view-details" style="margin-top: 5px; padding: 5px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                <button id="view-details" style="margin-top: 5px; padding: 5px; background-color: #218838; color: white; border: none; border-radius: 4px; cursor: pointer;">
                   View Description
                 </button>
               </div>
