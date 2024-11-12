@@ -1,5 +1,5 @@
 .my-document-viewer-wrapper .document-viewer {
-    position: absolute;
+    position: absolute; 
     top: 20%;
     left: 50%;
     transform: translateX(-50%);
@@ -8,7 +8,7 @@
     min-width: 320px;
     background: #ffffff;
     border: none;
-    padding: 4px 25px;
+    padding: 4px 25px; 
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     border-radius: 16px;
@@ -16,85 +16,65 @@
     animation: fadeIn 0.3s ease-in-out;
 }
 
-/* Move @keyframes outside the wrapper */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #555;
+    cursor: pointer;
 }
 
-/* Component-specific styles remain scoped */
-.my-document-viewer-wrapper .document-viewer {
-    animation: fadeIn 0.3s ease-in-out;
+.close-button:hover {
+    color: #000;
 }
 
-.my-document-viewer-wrapper .document-details,
-.my-document-viewer-wrapper .document-description {
-    margin: 20px 0;
+.document-details, .document-description {
+    margin: 15px 0;
     font-size: 1.1rem;
     line-height: 1.7;
     color: #444;
 }
 
-/* Other styles */
-
-
-.my-document-viewer-wrapper .document-details,
-.my-document-viewer-wrapper .document-description {
-    margin: 20px 0;
-    font-size: 1.1rem;
-    line-height: 1.7;
-    color: #444;
-}
-
-.my-document-viewer-wrapper h3 {
+.document-details h3, .document-description h3 {
     font-size: 1.8rem;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     color: #000000;
     text-align: center;
     font-weight: 600;
-    border-bottom: 2px solid #f1f1f1;
-    padding-bottom: 5px;
 }
 
-.my-document-viewer-wrapper button {
-    margin: 10px 5px 0 0;
-    padding: 12px 20px;
-    background-color: #28a745;
-    color: white;
+/* Center aligned button-group with View Description aligned right */
+.button-group {
+    display: flex;
+    justify-content: flex-end; /* Ensures the buttons align to the right */
+    gap: 10px; /* Adds space between buttons */
+    margin-top: 15px;
+}
+
+.button-group button {
+    padding: 8px 15px;
     border: none;
     border-radius: 8px;
-    cursor: pointer;
     font-size: 1rem;
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.my-document-viewer-wrapper button:hover {
+
+
+.button-group button:first-child:hover {
+    background-color: #5a6268;
+}
+
+/* Style for right-side "View Description" button */
+.button-group button:last-child {
+    background-color: #28a745;
+    color: white;
+}
+
+.button-group button:last-child:hover {
     background-color: #218838;
-    box-shadow: 0 6px 16px rgba(0, 123, 255, 0.3);
-    transform: translateY(-3px);
 }
-/* Style for the Close button specifically */
-.my-document-viewer-wrapper .document-viewer button:last-child {
-    background-color: #6c757d; /* Set to a neutral color */
-}
-
-.my-document-viewer-wrapper .document-viewer button:last-child:hover {
-    background-color: #5a6268; /* Darker shade on hover */
-}
-
-.my-document-viewer-wrapper .document-viewer button:last-child:focus {
-    outline: 2px solid #5a6268;
-    outline-offset: 2px;
-}
-
-.my-document-viewer-wrapper .document-viewer button:last-child:active {
-    background-color: #495057;
-}
-
