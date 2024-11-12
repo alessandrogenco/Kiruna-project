@@ -33,6 +33,8 @@ function ExplorePage(props) {
           data: document // Attach full document data for use in DocumentViewer
         };
       });
+      newMarkers.push({ lat: 67.8558, lng: 20.2253, label: 'Kiruna', data: props.documents[0] });
+      newMarkers.push({ lat: 67.8558, lng: 20.2253, label: 'Kiruna1', data: props.documents[0] });
       handleSetMarkers([...newMarkers]);
     }
   }, [props.documents]);
@@ -99,10 +101,18 @@ function ExplorePage(props) {
         const { geometry, properties } = clusterPoint;
 
         if (properties.cluster) {
-          const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
-            <div style="padding-top: 8px; display: flex; flex-direction: column;">
-              <div style="flex-grow: 1;">${properties.point_count_abbreviated} Document(s)</div>
-            </div>`);
+          const clusterId = clusterPoint.id;
+          const documentList = cluster.current.getLeaves(clusterId, Infinity).map(leaf => leaf.properties);
+          const popup = new mapboxgl.Popup({ offset: 25, closeButton: false }).setHTML(`
+            <div style="padding-left: 0.2em; padding-right: 0.2em; margin-bottom: -1em; text-align: left;">
+               <strong>${properties.point_count_abbreviated} Documents</strong>
+               <ul style="padding-left: 1.15em; padding-top: 0.3em; padding-bottom: 0.2em;">
+                 ${documentList.map(doc => `<li data-id="${doc.data.id}" style="margin-left: 5px; cursor: pointer;">
+                   ${doc.label}
+                 </li>`).join('')}
+               </ul>
+             </div>
+          `);
 
           const marker = new mapboxgl.Marker({
             color: 'green',
@@ -128,7 +138,7 @@ function ExplorePage(props) {
             closeButton: false, // Removes the close button
             })
             .setHTML(`
-              <div style="padding: 8px; display: flex; flex-direction: column;">
+              <div style="padding-right: 0.8em; margin-bottom: -0.4em; display: flex; flex-direction: column;">
                 <div>${properties.label}</div>
                 <button id="view-details" style="margin-top: 5px; padding: 5px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
                   View Description
