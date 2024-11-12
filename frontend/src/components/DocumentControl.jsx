@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import AppNavbar from "./Navbar";
+import '../styles/DocumentControl.css';
 
 function DocumentControl(props) {
 
@@ -72,7 +73,7 @@ function DocumentControl(props) {
         }
         return '';
     }
-    
+
     // Gestore per l'invio del modulo
     const handleSubmit = async (e) => {
       e.preventDefault();
@@ -155,7 +156,7 @@ function DocumentControl(props) {
 
           <Row className="mb-3 mx-3">
             <Form.Group as={Col} controlId="formTitle">
-              <Form.Label>Title</Form.Label>
+              <Form.Label className='form-label'>Title</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter title"
@@ -166,7 +167,7 @@ function DocumentControl(props) {
             </Form.Group>
 
             <Form.Group as={Col} controlId="formStakeholders">
-              <Form.Label>Stakeholders</Form.Label>
+              <Form.Label className='form-label'>Stakeholders</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter stakeholders"
@@ -179,7 +180,7 @@ function DocumentControl(props) {
           
           <Row className="mb-3 mx-3">
             <Form.Group as={Col} controlId="formScale">
-              <Form.Label>Scale</Form.Label>
+              <Form.Label className='form-label'>Scale</Form.Label>
               <Form.Control
                 placeholder="Enter scale"
                 type="text"
@@ -190,7 +191,7 @@ function DocumentControl(props) {
             </Form.Group>
 
             <Form.Group as={Col} controlId="formDate">
-              <Form.Label>Date</Form.Label>
+              <Form.Label className='form-label'>Date</Form.Label>
               <Form.Control
                 type="date"
                 name="issuanceDate" // Cambiato "date" in "issuanceDate"
@@ -202,7 +203,7 @@ function DocumentControl(props) {
 
           <Row className="mb-3 mx-3">
             <Form.Group as={Col} controlId="formType">
-              <Form.Label>Type</Form.Label>
+              <Form.Label className='form-label'>Type</Form.Label>
               <Form.Control
                 as="select"
                 name="type"
@@ -224,7 +225,7 @@ function DocumentControl(props) {
             </Form.Group>
 
             <Form.Group as={Col} controlId="formLanguage">
-              <Form.Label>Language</Form.Label>
+              <Form.Label className='form-label'>Language</Form.Label>
               <Form.Control
                 as="select"
                 name="language"
@@ -234,18 +235,11 @@ function DocumentControl(props) {
                 <option value="">Select a language</option>
                 <option value="English">English</option>
                 <option value="Swedish">Swedish</option>
-                <option value="Danish">Danish</option>
-                <option value="Norwegian">Norwegian</option>
-                <option value="Finnish">Finnish</option>
-                <option value="Icelandic">Icelandic</option>
-                <option value="Estonian">Estonian</option>
-                <option value="Latvian">Latvian</option>
-                <option value="Lithuanian">Lithuanian</option>
               </Form.Control>
             </Form.Group>
 
             <Form.Group as={Col} controlId="formPages">
-              <Form.Label>Pages</Form.Label>
+              <Form.Label className='form-label'>Pages</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter pages"
@@ -258,7 +252,7 @@ function DocumentControl(props) {
 
           <Row className="mb-3 mx-3">
             <Form.Group as={Col} controlId="formLat">
-              <Form.Label>Latitude</Form.Label>
+              <Form.Label className='form-label'>Latitude</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter latitude"
@@ -269,7 +263,7 @@ function DocumentControl(props) {
               />
             </Form.Group>
             <Form.Group as={Col} controlId="formLon">
-              <Form.Label>Longitude</Form.Label>
+              <Form.Label className='form-label'>Longitude</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter longitude"
@@ -283,7 +277,7 @@ function DocumentControl(props) {
 
           <Row className="mx-3">
             <Form.Group controlId="formDescription">
-              <Form.Label>Description</Form.Label>
+              <Form.Label className='form-label'>Description</Form.Label>
               <Form.Control
                 as="textarea"
                 rows={8}
