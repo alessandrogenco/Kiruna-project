@@ -1,21 +1,22 @@
-.document-viewer {
+.my-document-viewer-wrapper .document-viewer {
     position: absolute;
     top: 20%;
     left: 50%;
     transform: translateX(-50%);
     width: 40%;
-    max-width: 600px; /* Ensures it doesn't get too wide on larger screens */
-    min-width: 320px; /* Ensures usability on smaller screens */
+    max-width: 600px;
+    min-width: 320px;
     background: #ffffff;
     border: none;
     padding: 25px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Softer shadow */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     border-radius: 16px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     animation: fadeIn 0.3s ease-in-out;
 }
 
+/* Move @keyframes outside the wrapper */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -27,15 +28,31 @@
     }
 }
 
-.document-details,
-.document-description {
+/* Component-specific styles remain scoped */
+.my-document-viewer-wrapper .document-viewer {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.my-document-viewer-wrapper .document-details,
+.my-document-viewer-wrapper .document-description {
     margin: 20px 0;
     font-size: 1.1rem;
     line-height: 1.7;
     color: #444;
 }
 
-h3 {
+/* Other styles */
+
+
+.my-document-viewer-wrapper .document-details,
+.my-document-viewer-wrapper .document-description {
+    margin: 20px 0;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #444;
+}
+
+.my-document-viewer-wrapper h3 {
     font-size: 1.8rem;
     margin-bottom: 20px;
     color: #007bff;
@@ -45,7 +62,7 @@ h3 {
     padding-bottom: 10px;
 }
 
-button {
+.my-document-viewer-wrapper button {
     margin: 10px 5px 0 0;
     padding: 12px 20px;
     background-color: #28a745;
@@ -55,102 +72,29 @@ button {
     cursor: pointer;
     font-size: 1rem;
     transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2); /* Slightly softer shadow */
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
 }
 
-button:hover {
+.my-document-viewer-wrapper button:hover {
     background-color: #218838;
     box-shadow: 0 6px 16px rgba(0, 123, 255, 0.3);
     transform: translateY(-3px);
 }
-
-button:focus {
-    outline: 2px solid #218838;
-    outline-offset: 2px;
+/* Style for the Close button specifically */
+.my-document-viewer-wrapper .document-viewer button:last-child {
+    background-color: #6c757d; /* Set to a neutral color */
 }
 
-button:active {
-    background-color: #218838;
-    transform: translateY(0);
+.my-document-viewer-wrapper .document-viewer button:last-child:hover {
+    background-color: #5a6268; /* Darker shade on hover */
 }
 
-button:last-child {
-    background-color: #6c757d;
-}
-
-button:last-child:hover {
-    background-color: #5a6268;
-}
-
-button:last-child:focus {
+.my-document-viewer-wrapper .document-viewer button:last-child:focus {
     outline: 2px solid #5a6268;
     outline-offset: 2px;
 }
 
-button:last-child:active {
+.my-document-viewer-wrapper .document-viewer button:last-child:active {
     background-color: #495057;
 }
 
-.document-viewer-footer {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 20px;
-    gap: 10px;
-}
-
-.document-content {
-    text-align: justify;
-    background: #f9f9f9;
-    padding: 15px;
-    border-radius: 8px;
-    font-size: 1rem;
-    color: #555;
-    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.1); /* Slightly more prominent inset shadow */
-}
-
-.mapboxgl-popup-close-button {
-    width: 20px;
-    height: 20px;
-    background: none;
-    border: none;
-    font-size: 14px;
-    color: #555;
-    cursor: pointer;
-    position: absolute;
-    top: 5px;
-    right: 5px;
-}
-
-.mapboxgl-popup-close-button:hover {
-    color: #000;
-}
-
-.mapboxgl-popup-content {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 1rem;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Updated shadow */
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .document-viewer {
-        width: 90%; /* Takes up more space on smaller screens */
-        padding: 20px;
-    }
-
-    h3 {
-        font-size: 1.5rem;
-    }
-
-    button {
-        font-size: 0.9rem;
-        padding: 10px 15px;
-    }
-
-    .document-details,
-    .document-description {
-        font-size: 1rem;
-    }
-}
