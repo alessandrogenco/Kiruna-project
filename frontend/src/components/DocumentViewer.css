@@ -48,7 +48,7 @@ h3 {
 button {
     margin: 10px 5px 0 0;
     padding: 12px 20px;
-    background-color: #007bff;
+    background-color: #28a745;
     color: white;
     border: none;
     border-radius: 8px;
@@ -59,7 +59,7 @@ button {
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #218838;
     box-shadow: 0 6px 16px rgba(0, 123, 255, 0.3);
     transform: translateY(-3px);
 }
