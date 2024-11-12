@@ -46,11 +46,11 @@
     font-weight: 600;
 }
 
-/* Center aligned button-group with View Description aligned right */
+
 .button-group {
     display: flex;
-    justify-content: flex-end; /* Ensures the buttons align to the right */
-    gap: 10px; /* Adds space between buttons */
+    justify-content: flex-end;
+    gap: 10px; 
     margin-top: 15px;
 }
 
@@ -64,12 +64,11 @@
 }
 
 
-
 .button-group button:first-child:hover {
     background-color: #5a6268;
 }
 
-/* Style for right-side "View Description" button */
+
 .button-group button:last-child {
     background-color: #28a745;
     color: white;
