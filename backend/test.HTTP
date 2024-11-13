@@ -161,3 +161,9 @@ Content-Type: application/json
 {
     "id": 1730826916158307
 }
+
+########## Upload file 
+curl -X POST "http://localhost:3001/api/upload?documentId=10" \
+  -F "resourceType=PDF" \
+  -F "description=Sample PDF document for upload" \
+  -F "resourceFile=@C:/Users/noman/Downloads/doc_18_info.pdf"
