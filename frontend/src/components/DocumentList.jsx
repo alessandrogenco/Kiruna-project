@@ -1,25 +1,23 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
-import { Col, ListGroupItem, Row, ListGroup } from 'react-bootstrap';
+import { Col, ListGroupItem, Row, ListGroup, Form, Button } from 'react-bootstrap';
 import { Link } from "react-router-dom";
-import DocumentViewer from './DocumentViewer';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import '../styles/DocumentList.css';
+import './DocumentList.css';
+import { getDocumentLinks } from '../API.mjs';
 
 function DocumentList(props){
   
 
     return(
         <>
-            <h1 className='mx-4'>Documents</h1>
+            <h1 className='mx-4'>Documents List</h1>
             <Row className='mx-4'>
-                <Col className='text-start ms-1'>
+                <Col>
                 </Col>
-                <Col md="auto" className='me-4'>
-                    Actions
-                </Col>
+                
             </Row>
-            <ListGroup id="documents-list" variant="flush" className='documents-list mt-2'>
+            <ListGroup>
                 {props.documents.map((doc) => <DocumentInList
                     key={doc.id}
                     documentData={doc}
@@ -42,25 +40,33 @@ DocumentList.propTypes = {
 
 function DocumentInList(props){
     const [selectedDocument, setSelectedDocument] = useState(null);
+    const [documentLinks, setDocumentLinks] = useState([]);
+    const [showLinks, setShowLinks] = useState(false);
+
 
     const handleDocumentClick = (document) => {
-      setSelectedDocument(document);
-    };
-  
-    const handleCloseViewer = () => {
-      setSelectedDocument(null);
-    };
-
+        setSelectedDocument(document);
+      };
+    
+      const handleCloseViewer = () => {
+        setSelectedDocument(null);
+        setShowLinks(false);
+      };
+    
+      const handleConnectionsClick = async () => {
+        try {
+          const response = await getDocumentLinks(selectedDocument.id);
+          const links = await response.json();
+          setDocumentLinks(links);
+          setShowLinks(true);
+        } catch (error) {
+          console.error('Error fetching document links:', error);
+        }
+      };
 
     return(
-        <div>
-        {selectedDocument && (
-          <DocumentViewer
-            documentData={selectedDocument}
-            onClose={handleCloseViewer}
-          />
-        )}
-        <ListGroupItem className="document-list-item rounded mx-4">
+        <div className="document-details1">
+        <ListGroupItem className="document-list-item-det rounded mx-4">
             <Row>
                 <Col>
                     <label className='mt-2' onClick={() => handleDocumentClick(props.documentData)}>{props.documentData.title}</label>
@@ -79,9 +85,120 @@ function DocumentInList(props){
                 </Col>
             </Row>
         </ListGroupItem>
+        {selectedDocument && (
+        <div className="document-details1 mt-4">
+          <h3>{selectedDocument.title}</h3>
+          <Row className ='row-det'>
+            <Col>
+              <Form.Group  className = 'form-group-det'>
+                <Form.Label className='form-label-det'>Stakeholders</Form.Label>
+                <Form.Control
+                  className='form-control-det'
+                  type="text"
+                  name="stakeholders"
+                  value={selectedDocument.stakeholders || ""}
+                  readOnly
+                />
+              </Form.Group>
+            </Col>
+            <Col>
+              <Form.Group  className = 'form-group-det' >
+                <Form.Label className='form-label-det'>Scale</Form.Label>
+                <Form.Control
+                className='form-control-det'
+                  type="text"
+                  name="scale"
+                  value={selectedDocument.scale || ""}
+                  readOnly
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+          <Col>
+              <Form.Group  className = 'form-group-det' >
+                <Form.Label className='form-label-det'>Issuance Date</Form.Label>
+                <Form.Control
+                className='form-control-det'
+                  type="date"
+                  name="date"
+                  value={selectedDocument.date || ""}
+                  readOnly
+                />
+              </Form.Group>
+            </Col>
+            <Col>
+            <Form.Group className = 'form-group-det' >
+                <Form.Label className='form-label-det'>Type</Form.Label>
+                <Form.Control
+                className='form-control-det'
+                  as="select"
+                  name="type"
+                  value={selectedDocument.type || ""}
+                  readOnly
+                >
+                  <option value="Technical">Text - Technical</option>
+                  <option value="Agreement">Concept - Agreement</option>
+                  <option value="Conflict">Concept - Conflict</option>
+                  <option value="Consultation">Concept - Consultation</option>
+                  <option value="Material effect">Concept - Material effect</option>
+                  <option value="Paper">Concept - Paper</option>
+                  <option value="Action">Action</option>
+                </Form.Control>
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            <Col >
+            <Form.Group  className = 'form-group-det'>
+                <Form.Label className='form-label-det'>Language</Form.Label>
+                <Form.Control
+                className='form-control-det'
+                  as="select"
+                  name="language"
+                  value={selectedDocument.language || ""}
+                  readOnly
+                >
+                  <option value="English">English</option>
+                  <option value="Swedish">Swedish</option>
+                </Form.Control>
+              </Form.Group>
+            </Col>
+            <Col>
+            <Form.Group className = 'form-group-det'>
+                <Form.Label className='form-label-det'>Description</Form.Label>
+                <Form.Control
+                className='form-control-det'
+                  as="textarea"
+                  name="description"
+                  value={selectedDocument.description || ""}
+                  readOnly
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+          <p onClick={handleConnectionsClick} style={{ cursor: 'pointer', color: 'blue' }}>
+              <strong>Connections:</strong> {selectedDocument.connections}
+            </p>
+          {showLinks && (
+              documentLinks.length > 0 ? (
+                <ul className="document-links">
+                  {documentLinks.map((link, index) => {
+                    console.log('Document link:', link.title); // Log per ogni elemento della lista
+                    return <li key={index}>{link.title}</li>;
+                  })}
+                </ul>
+              ) : (
+                <p>No connections available.</p>
+              )
+            )}
+           <div className="text-end">
+            <Button variant="secondary" onClick={handleCloseViewer}>Close</Button>
+          </div>
         </div>
-    );
-
+      )}
+    </div>
+  );
 }
 
 DocumentInList.propTypes = {
