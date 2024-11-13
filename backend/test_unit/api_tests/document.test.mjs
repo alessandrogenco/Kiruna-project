@@ -322,8 +322,8 @@ describe('POST /api/addDocument', () => {
         const mockConnections = 5;
         const mockLanguage = "English";
         const mockPages = "1-10";
-        const mockLat = 68.0001;
-        const mockLon = 21.0001;
+        const mockLat = 67.8301;
+        const mockLon = 20.3001;
         const mockArea = "";
 
         const mockDocument = { 
