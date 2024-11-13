@@ -1,23 +1,20 @@
 import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
 import { Col, ListGroupItem, Row, ListGroup } from 'react-bootstrap';
 import { Link } from "react-router-dom";
+import DocumentViewer from './DocumentViewer';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import '../styles/DocumentList.css';
 
 function DocumentList(props){
+  
+
     return(
         <>
             <h1 className='mx-4'>Documents</h1>
             <Row className='mx-4'>
                 <Col className='text-start ms-1'>
-                    <label>Title</label>
                 </Col>
-                {/*<Col className='text-center'>
-                    Stakeholder
-                </Col>
-                <Col className='text-center'>
-                    Date
-                </Col>*/}
                 <Col md="auto" className='me-4'>
                     Actions
                 </Col>
@@ -44,11 +41,29 @@ DocumentList.propTypes = {
 //custom-border mx-3 mb-2 p-2 border border-dark bg-light rounded
 
 function DocumentInList(props){
+    const [selectedDocument, setSelectedDocument] = useState(null);
+
+    const handleDocumentClick = (document) => {
+      setSelectedDocument(document);
+    };
+  
+    const handleCloseViewer = () => {
+      setSelectedDocument(null);
+    };
+
+
     return(
+        <div>
+        {selectedDocument && (
+          <DocumentViewer
+            documentData={selectedDocument}
+            onClose={handleCloseViewer}
+          />
+        )}
         <ListGroupItem className="document-list-item rounded mx-4">
             <Row>
                 <Col>
-                    <label className='mt-2' onClick={() => handleLabelClick()}>{props.documentData.title}</label>
+                    <label className='mt-2' onClick={() => handleDocumentClick(props.documentData)}>{props.documentData.title}</label>
                 </Col>
                 <Col>
                     {console.log(props.documentData)}
@@ -64,6 +79,7 @@ function DocumentInList(props){
                 </Col>
             </Row>
         </ListGroupItem>
+        </div>
     );
 
 }
