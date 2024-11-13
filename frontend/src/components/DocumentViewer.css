@@ -63,6 +63,21 @@
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
+.document-links {
+    margin-top: 10px;
+    padding-left: 0;
+    list-style-type: none;
+  }
+  
+  .document-links li {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
 
 .button-group button:first-child:hover {
     background-color: #5a6268;

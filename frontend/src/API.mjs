@@ -115,7 +115,7 @@ const linkDocument = async (id1, id2, linkDate, linkType) => {
     }
 };
 
-const getDocumentLinks = async (documentId) => {
+export const getDocumentLinks = async (documentId) => {
     try {
         const response = await fetch(SERVER_URL + '/documentLinks/' + documentId, { 
             method: 'GET',
