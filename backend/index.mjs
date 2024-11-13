@@ -5,6 +5,8 @@ import session from 'express-session';
 import passport from 'passport';
 import LoginDao from './dao/login.mjs';
 import DocumentDao from './dao/document.mjs';
+import path from 'path'; 
+import fs from 'fs';
 
 const app = express();
 const PORT = 3001;
@@ -13,12 +15,40 @@ const PORT = 3001;
 //const upload = multer({ storage: storage });
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Ensure uploads directory exists
-/*const uploadDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir);
-}*/
+const uploadDir = path.join(process.cwd(), 'backend', 'uploads');  
+
+console.log("Upload directory:", uploadDir);
+
+// Check write permissions for the uploads directory
+fs.access(uploadDir, fs.constants.F_OK, (err) => {
+    if (err) {
+        console.error("Uploads directory does not exist. Creating...");
+        fs.mkdir(uploadDir, { recursive: true }, (mkdirErr) => {
+            if (mkdirErr) {
+                console.error("Error creating uploads directory:", mkdirErr.message);
+            } else {
+                console.log("Uploads directory created successfully.");
+            }
+        });
+    } else {
+        console.log("Uploads directory exists.");
+    }
+});
+
+fs.access(uploadDir, fs.constants.W_OK, (err) => {
+    if (err) {
+        if (err.code === 'ENOENT') {
+            console.error("Directory does not exist:", uploadDir);
+        } else {
+            console.error("No write permission for uploads directory:", err.message);
+        }
+    } else {
+        console.log("Uploads directory is writable");
+    }
+});
+
 
 // Configure storage and filter for only PDF files
 const storage = multer.diskStorage({
@@ -27,6 +57,8 @@ const storage = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const filename = file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname);
+
         cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
     }
 });
@@ -41,6 +73,7 @@ const upload = multer({
         }
     }
 });
+
 
 // CORS middleware
 const corsOptions = {
@@ -414,6 +447,47 @@ app.post('/api/deleteDocument', async (req, res) => {
     } catch (error) {
         console.error("Error in /api/deleteDocument:", error); // Log dettagliato per debug
         res.status(400).json({ message: error.message }); // Risposta con messaggio di errore
+    }
+});
+
+// Upload File
+app.post('/api/upload', upload.single('resourceFile'), async (req, res) => {
+    
+    console.log("Reached multer middleware");  
+    console.log(req.headers);
+
+    console.log("File info:",req.file);  
+    console.log("Body:",req.body); 
+    console.log("Query:", req.query);
+
+
+    if (!req.file) {
+        console.error("File is missing in the request");
+        return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    const documentId = req.query.documentId; 
+    const { resourceType, description } = req.body; 
+    const resourcePath = req.file.path; 
+    
+
+    if (!resourcePath) {
+        return res.status(400).json({ message: 'File upload failed' });
+    }
+
+    try {
+        const resource = {
+            resourceType,
+            resourcePath,
+            description
+        };
+
+        const result = await FileUploadDao.addOriginalResource(documentId, resource);
+
+        res.status(200).json({ message: 'File uploaded successfully', resourceId: result.resourceId });
+    } catch (error) {
+        console.error('Error uploading file:', error.message);
+        res.status(500).json({ message: 'Failed to upload file', error: error.message });
     }
 });
 

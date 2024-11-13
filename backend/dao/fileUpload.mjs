@@ -2,7 +2,7 @@ import db from '../db/db.mjs';
 
 class fileUpload{
 
-    addOrignalResource(documentId, resource){
+    addOriginalResource(documentId, resource){
         return new Promise ((resolve, reject) => {
             const query = `
                 INSERT INTO OriginalResources (documentId, resourceType, resourcePath, description)
