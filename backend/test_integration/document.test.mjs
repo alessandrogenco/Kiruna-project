@@ -351,8 +351,8 @@ describe('POST /api/updateDocument', () => {
             connections: 3,
             language: 'EN',
             pages: 10,
-            lat: 68,
-            lon: 21,
+            lat: 67.8301,
+            lon: 20.3001,
             area: '',
             description: 'An updated description,',
         };
@@ -434,8 +434,8 @@ describe('POST /api/updateDocument', () => {
                 connections: 5,
                 language: 'EN',
                 pages: 5,
-                lat: 67.9,
-                lon: 20.8,
+                lat: 67.8301,
+                lon: 20.3001,
                 area: '',
                 description: 'Non-existent document description',
             });
