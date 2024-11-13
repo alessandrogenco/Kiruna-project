@@ -551,8 +551,8 @@ describe("POST /api/updateDocument", () => {
             connections: ["doc2", "doc3"],
             language: "English",
             pages: 50,
-            lat: 68.0000,
-            lon: 20.9000,
+            lat: 67.8301,
+            lon: 20.3001,
             area: "",
             description: "Updated description"
         };
