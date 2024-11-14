@@ -22,7 +22,13 @@ function ExplorePage(props) {
   const handleSetMarkers = (newMarkers) => {
     setMarkers([...newMarkers]);
   };
-
+  useEffect(() => {
+    if (selectedDocument) {
+      mapContainer.current.classList.add('blurred-map');
+    } else {
+      mapContainer.current.classList.remove('blurred-map');
+    }
+  }, [selectedDocument]);
   useEffect(() => {
     if (props.documents) {
       const newMarkers = props.documents.map(document => {
