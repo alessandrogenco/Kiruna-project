@@ -74,7 +74,7 @@
     padding: 10px;
     background-color: #fff;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    width: 284%; /* Imposta la larghezza dei controlli al 100% del contenitore */
+    width: 303%; /* Imposta la larghezza dei controlli al 100% del contenitore */
     box-sizing: border-box;
     margin-left: 0px;
   }
@@ -131,4 +131,9 @@
     padding: 5px 20px; /* Riduci il padding orizzontale */
     box-sizing: border-box; /* Include il padding e il bordo nella larghezza totale */
     text-align: left; /* Allinea il testo a sinistra */
+  }
+
+  .custom-dropdown-item {
+    padding: 5px 110px; /* Aumenta il padding per rendere l'elemento più grande */
+
   }
