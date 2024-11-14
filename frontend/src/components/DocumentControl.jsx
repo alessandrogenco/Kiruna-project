@@ -127,6 +127,11 @@ function DocumentControl(props) {
       }
     };
 
+    const handleMapSelection = () => {
+      // Logica per aprire la mappa (può essere un modal o una nuova pagina)
+      alert("Map selection functionality to be implemented.");
+    };
+
 
     
     return (
@@ -250,8 +255,8 @@ function DocumentControl(props) {
             </Form.Group>
           </Row>
 
-          <Row className="mb-3 mx-3">
-            <Form.Group as={Col} controlId="formLat">
+          <Row className="mb-3 mx-3 d-flex justify-content-between">
+            <Form.Group as={Col} controlId="formLat" md = {3}className="mr-3">
               <Form.Label className='form-label'>Latitude</Form.Label>
               <Form.Control
                 type="text"
@@ -262,7 +267,7 @@ function DocumentControl(props) {
                 onChange={handleChange}
               />
             </Form.Group>
-            <Form.Group as={Col} controlId="formLon">
+            <Form.Group as={Col} controlId="formLon" md = {3} className="mr-3">
               <Form.Label className='form-label'>Longitude</Form.Label>
               <Form.Control
                 type="text"
@@ -272,6 +277,12 @@ function DocumentControl(props) {
                 value={formData.lon}
                 onChange={handleChange}
               />
+            </Form.Group>
+
+            <Form.Group as={Col} md={2} className="d-flex align-items-center">
+            <Button variant="secondary" className="mt-3" onClick={handleMapSelection}>
+             Select Location on Map
+            </Button>
             </Form.Group>
           </Row>
 
