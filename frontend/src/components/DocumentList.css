@@ -33,7 +33,7 @@
     padding: 10px;
     margin-bottom: 5px;
     border-radius: 4px;
-  }
+   }
   
   /* Custom styles for Form.Group */
   .document-details1 .form-group-det {
@@ -45,6 +45,7 @@
     font-weight: bold;
     color: #333;
     width: 100%;
+    margin-left: -11px;
   }
   
   .document-details1 .form-control-det {
@@ -53,6 +54,29 @@
     padding: 10px;
     background-color: #fff;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    width: 90%; /* Imposta la larghezza dei controlli al 100% del contenitore */
+    box-sizing: border-box;
+  }
+
+  .document-details1 .form-control-lang {
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    padding: 10px;
+    background-color: #fff;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    width: 90%; /* Imposta la larghezza dei controlli al 100% del contenitore */
+    box-sizing: border-box;
+  }
+
+  .document-details1 .form-control-description {
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    padding: 10px;
+    background-color: #fff;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    width: 284%; /* Imposta la larghezza dei controlli al 100% del contenitore */
+    box-sizing: border-box;
+    margin-left: 0px;
   }
   
   .document-details1 .form-control-det:focus {
@@ -65,4 +89,46 @@
     margin-bottom: 10px; /* Riduci il margine inferiore delle righe */
     padding-left: 5px; /* Riduci il padding sinistro delle righe */
     padding-right: 5px; /* Riduci il padding destro delle righe */
+  }
+  
+  #dropdown-basic-button {
+    color: #28a745; /* Colore del testo verde */
+    border: 1px solid #28a745; /* Bordo verde */
+    background-color: transparent; /* Sfondo trasparente */
+    padding: 10px 20px; /* Padding personalizzato */
+    border-radius: 4px; /* Angoli arrotondati */
+    transition: color 0.3s ease, border-color 0.3s ease; /* Transizione per il colore del testo e del bordo */
+    margin-top: 34px; /* Sposta il pulsante verso il basso */
+    width: 90%;
+  }
+  
+  #dropdown-basic-button:hover,
+  #dropdown-basic-button:focus {
+    color: #218838; /* Colore del testo al passaggio del mouse e al focus */
+    border-color: #218838; /* Colore del bordo al passaggio del mouse e al focus */
+  }
+  
+  #dropdown-basic-button .dropdown-menu {
+    background-color: #f8f9fa; /* Colore di sfondo del menu a discesa */
+    border-radius: 4px; /* Angoli arrotondati */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Ombra del menu a discesa */
+  }
+  
+  #dropdown-basic-button .dropdown-item {
+    color: #333; /* Colore del testo degli elementi del menu */
+    padding: 10px 20px; /* Padding degli elementi del menu */
+  }
+  
+  #dropdown-basic-button .dropdown-item:hover,
+  #dropdown-basic-button .dropdown-item:focus {
+    background-color: #e9ecef; /* Colore di sfondo degli elementi del menu al passaggio del mouse e al focus */
+    color: #333; /* Colore del testo degli elementi del menu */
+  }
+
+
+  .custom-list-group-item {
+    width: 100%;
+    padding: 5px 20px; /* Riduci il padding orizzontale */
+    box-sizing: border-box; /* Include il padding e il bordo nella larghezza totale */
+    text-align: left; /* Allinea il testo a sinistra */
   }

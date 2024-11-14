@@ -12,11 +12,7 @@ function DocumentList(props){
     return(
         <>
             <h1 className='mx-4'>Documents List</h1>
-            <Row className='mx-4'>
-                <Col>
-                </Col>
-                
-            </Row>
+          
             <ListGroup>
                 {props.documents.map((doc) => <DocumentInList
                     key={doc.id}
@@ -66,7 +62,7 @@ function DocumentInList(props){
       
       return (
         <div className="document-details1">
-          <ListGroupItem className="document-list-item-det rounded mx-4">
+          <ListGroupItem className="document-list-item-det rounded custom-list-group-item">
             <Row>
               <Col>
                 <label className='mt-2' onClick={() => handleDocumentClick(props.documentData)}>{props.documentData.title}</label>
@@ -85,6 +81,7 @@ function DocumentInList(props){
               </Col>
             </Row>
           </ListGroupItem>
+          
           {selectedDocument && (
             <div className="document-details1 mt-4">
               <h3>{selectedDocument.title}</h3>
@@ -113,8 +110,6 @@ function DocumentInList(props){
                     />
                   </Form.Group>
                 </Col>
-              </Row>
-              <Row>
                 <Col>
                   <Form.Group className='form-group-det'>
                     <Form.Label className='form-label-det'>Issuance Date</Form.Label>
@@ -127,6 +122,8 @@ function DocumentInList(props){
                     />
                   </Form.Group>
                 </Col>
+              </Row>
+              <Row>
                 <Col>
                   <Form.Group className='form-group-det'>
                     <Form.Label className='form-label-det'>Type</Form.Label>
@@ -147,13 +144,11 @@ function DocumentInList(props){
                     </Form.Control>
                   </Form.Group>
                 </Col>
-              </Row>
-              <Row>
                 <Col>
                   <Form.Group className='form-group-det'>
                     <Form.Label className='form-label-det'>Language</Form.Label>
                     <Form.Control
-                      className='form-control-det'
+                      className='form-control-lang'
                       as="select"
                       name="language"
                       value={selectedDocument.language || ""}
@@ -165,10 +160,27 @@ function DocumentInList(props){
                   </Form.Group>
                 </Col>
                 <Col>
+                      <DropdownButton
+                     id="dropdown-basic-button"
+                     onClick={handleConnectionsClick}
+                     title="Connections"
+                      >
+                        {documentLinks ? (
+                          documentLinks.map((link, index) => {
+                            return <Dropdown.Item key={index}>{link.title}</Dropdown.Item>;
+                          })
+                        ) : (
+                          <Dropdown.ItemText>No connections available.</Dropdown.ItemText>
+                        )}
+                      </DropdownButton>
+                </Col>
+                </Row>
+                <Row>
+                <Col>
                   <Form.Group className='form-group-det'>
                     <Form.Label className='form-label-det'>Description</Form.Label>
                     <Form.Control
-                      className='form-control-det'
+                      className='form-control-description'
                       as="textarea"
                       name="description"
                       value={selectedDocument.description || ""}
@@ -177,24 +189,9 @@ function DocumentInList(props){
                   </Form.Group>
                 </Col>
               </Row>
-              <Row>
-                <Col>
-                      <DropdownButton
-                        id="dropdown-basic-button"
-                        onClick={handleConnectionsClick}
-                        title="Connections"
-                      >
-                        {documentLinks ? (
-                          documentLinks.map((link, index) => {
-                            console.log('Document link:', link.title); // Log per ogni elemento della lista
-                            return <Dropdown.Item key={index}>{link.title}</Dropdown.Item>;
-                          })
-                        ) : (
-                          <Dropdown.ItemText>No connections available.</Dropdown.ItemText>
-                        )}
-                      </DropdownButton>
-                </Col>
-              </Row>
+            
+                
+             
               <div className="text-end">
                 <Button variant="secondary" onClick={handleCloseViewer}>Close</Button>
               </div>
