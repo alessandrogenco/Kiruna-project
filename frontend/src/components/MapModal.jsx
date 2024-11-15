@@ -3,8 +3,6 @@ import { Modal, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import './MapModal.css';
-
 
 const MapModal = ({ show, handleClose, onLocationSelect }) => {
   const mapContainer = useRef(null);
@@ -23,8 +21,7 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
         style: 'mapbox://styles/mapbox/streets-v11',
         center: [20.25, 67.85], 
         zoom: 12,
-        maxBounds: [[20.1200, 67.82], [20.400, 67.8800]],
-
+        maxBounds: [[20.12, 67.82], [20.40, 67.88]], 
       });
   
       map.current.on('load', () => {
@@ -32,14 +29,20 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
       });
   
       map.current.on('click', (e) => {
-        const { lng, lat } = e.lngLat;
+        const { lng, lat } = e.lngLat; 
+  
+        if (lng < 20.1200 || lng > 20.4000 || lat < 67.82 || lat > 67.8800) {
+          alert("Selected coordinates are out of Kiruna Municipality borders!");
+          return;
+        }
+  
         setPosition([lat, lng]);
   
         if (marker.current) {
-          marker.current.setLngLat([lng, lat]);
+          marker.current.setLngLat([lng, lat]); 
         } else {
           marker.current = new mapboxgl.Marker({ color: '#007cbf' })
-            .setLngLat([lng, lat])
+            .setLngLat([lng, lat]) 
             .addTo(map.current);
         }
       });

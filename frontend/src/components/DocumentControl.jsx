@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import AppNavbar from "./Navbar";
 import '../styles/DocumentControl.css';
+import MapModal from './MapModal';
+
 
 function DocumentControl(props) {
 
@@ -29,6 +31,8 @@ function DocumentControl(props) {
       area: existingDocument?.area || '',
       description: existingDocument?.description || ''
     });
+    const [showMapModal, setShowMapModal] = useState(false);
+
 
     useEffect(() => {
       if (existingDocument) {
@@ -65,13 +69,14 @@ function DocumentControl(props) {
         const lat = parseFloat(formData.lat);
         const lon = parseFloat(formData.lon);
 
-        if (lat < 67.7500 || lat > 68.3333) {
+        if (lat < 67.82 || lat > 67.8800) {
             return "Latitude is out of Kiruna Municipality borders!";
         }
-        if (lon < 20.7833 || lon > 21.1333) {
+        if (lon < 20.1200 || lon > 20.4000) {
             return "Longitude is out of Kiruna Municipality borders!";
         }
         return '';
+        
     }
 
     // Gestore per l'invio del modulo
@@ -128,12 +133,17 @@ function DocumentControl(props) {
     };
 
     const handleMapSelection = () => {
-      // Logica per aprire la mappa (può essere un modal o una nuova pagina)
-      alert("Map selection functionality to be implemented.");
+      setShowMapModal(true);
+    };
+    
+    const handleLocationSelect = (position) => {
+      setFormData({ ...formData, lat: position[0], lon: position[1] });
+    };
+  
+    const handleCloseMapModal = () => {
+      setShowMapModal(false);
     };
 
-
-    
     return (
       <>
         <AppNavbar isLoggedIn={props.isLoggedIn} handleLogout={props.handleLogout}/>
@@ -285,6 +295,12 @@ function DocumentControl(props) {
             </Button>
             </Form.Group>
           </Row>
+
+          <MapModal
+              show={showMapModal}
+              handleClose={handleCloseMapModal}
+              onLocationSelect={handleLocationSelect}
+          />
 
           <Row className="mx-3">
             <Form.Group controlId="formDescription">
