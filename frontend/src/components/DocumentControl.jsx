@@ -261,7 +261,7 @@ function DocumentControl(props) {
           </Row>
           
           <Row className="mb-3 mx-3">
-            <Form.Group as={Col} controlId="formScale">
+            <Form.Group as={Col} md={4} controlId="formScale">
               <Form.Label className='form-label'>Scale</Form.Label>
               <Form.Control
                 placeholder="Enter scale"
@@ -272,55 +272,60 @@ function DocumentControl(props) {
               />
             </Form.Group>
 
-            <Form.Group as={Col} controlId="formDate">
-              <Form.Label className='form-label'>Date</Form.Label>
-              <Form.Control
-                type="number"
-                name="year"
-                placeholder="YYYY"
-                value={formData.issuanceDate.split('-')[0] || ''}
-                onChange={handleDateChange}
-                min="1800"
-                max={new Date().getFullYear()}
-                onKeyDown={(e) => {
-                  if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
-                    e.preventDefault();
-                  }
-                }}
-              />
-              <Form.Control
-                type="number"
-                name="month"
-                placeholder="MM"
-                value={formData.issuanceDate.split('-')[1] || ''}
-                onChange={handleDateChange}
-                min="1"
-                max="12"
-                disabled={!formData.issuanceDate.split('-')[0]  || formData.issuanceDate.split('-')[0] < 1800}
-                onKeyDown={(e) => {
-                  if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
-                    e.preventDefault();
-                  }
-                }}
-              >
-                
-              </Form.Control>
-              <Form.Control
-                type="number"
-                name="day"
-                placeholder="DD"
-                value={formData.issuanceDate.split('-')[2] || ''}
-                onChange={handleDateChange}
-                min="1"
-                max={getDaysInMonth(formData.issuanceDate.split('-')[0], formData.issuanceDate.split('-')[1])}
-                disabled={!formData.issuanceDate.split('-')[1]  || formData.issuanceDate.split('-')[1] < 1}
-                onKeyDown={(e) => {
-                  if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
-                    e.preventDefault();
-                  }
-                }}
-              >
-              </Form.Control>
+            <Form.Group as={Col} md={7} controlId="formDate" className="mx-5">
+              <Row className="d-flex justify-content-end mx-8">
+                <Form.Label className='form-label text-center'>Date</Form.Label>
+                <Col md={4} className="d-flex">
+                  <Form.Control
+                    type="number"
+                    name="year"
+                    placeholder="YYYY"
+                    value={formData.issuanceDate.split('-')[0] || ''}
+                    onChange={handleDateChange}
+                    min="1800"
+                    max={new Date().getFullYear()}
+                    onKeyDown={(e) => {
+                      if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
+                        e.preventDefault();
+                      }
+                    }}
+                  />
+                </Col>
+                <Col md={4} className="d-flex">
+                  <Form.Control
+                    type="number"
+                    name="month"
+                    placeholder="MM"
+                    value={formData.issuanceDate.split('-')[1] || ''}
+                    onChange={handleDateChange}
+                    min="1"
+                    max="12"
+                    disabled={!formData.issuanceDate.split('-')[0]  || formData.issuanceDate.split('-')[0] < 1800}
+                    onKeyDown={(e) => {
+                      if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
+                        e.preventDefault();
+                      }
+                    }}
+                  />
+                </Col>
+                <Col md={4} className="d-flex">
+                  <Form.Control
+                    type="number"
+                    name="day"
+                    placeholder="DD"
+                    value={formData.issuanceDate.split('-')[2] || ''}
+                    onChange={handleDateChange}
+                    min="1"
+                    max={getDaysInMonth(formData.issuanceDate.split('-')[0], formData.issuanceDate.split('-')[1])}
+                    disabled={!formData.issuanceDate.split('-')[1]  || formData.issuanceDate.split('-')[1] < 1}
+                    onKeyDown={(e) => {
+                      if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
+                        e.preventDefault();
+                      }
+                    }}
+                  />
+                </Col>
+              </Row>
             </Form.Group>
           </Row>
 
@@ -398,7 +403,7 @@ function DocumentControl(props) {
             </Form.Group>
 
             <Form.Group as={Col} md={2} className="d-flex align-items-center">
-            <Button variant="success" className="mt-3" onClick={handleMapSelection}>
+            <Button variant="secondary" className="mt-3" onClick={handleMapSelection}>
              Select Location on Map
             </Button>
             </Form.Group>
