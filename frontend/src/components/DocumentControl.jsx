@@ -64,6 +64,66 @@ function DocumentControl(props) {
       setFormData({ ...formData, [name]: value ?? '' });
     };
 
+    const handleDateChange = (e) => {
+      const { name, value } = e.target;
+      let newValue = value;
+
+      if (name === 'year') {
+        if (newValue.length > 4) {
+          newValue = newValue.slice(0, 4);
+        }
+        if (newValue.length === 4 && (newValue < 1800 || newValue > new Date().getFullYear())) {
+          newValue = '';
+        }
+      } else if (name === 'month') {
+        if (newValue.length > 2) {
+          newValue = newValue.slice(0, 2);
+        }
+        if (newValue < 1 || newValue > 12) {
+          newValue = '';
+        }
+      } else if (name === 'day') {
+        if (newValue.length > 2) {
+          newValue = newValue.slice(0, 2);
+        }
+        const daysInMonth = getDaysInMonth(formData.issuanceDate.split('-')[0], formData.issuanceDate.split('-')[1]);
+        if (newValue < 1 || newValue > daysInMonth) {
+          newValue = '';
+        }
+      }
+      
+      setFormData((prevFormData) => {
+        const dateParts = prevFormData.issuanceDate.split('-');
+        if (name === 'year') {
+          dateParts[0] = newValue;
+        } else if (name === 'month') {
+          dateParts[1] = newValue;
+        } else if (name === 'day') {
+          dateParts[2] = newValue;
+        }
+
+        let updatedDate = '';
+        if (Array.isArray(dateParts)) {
+          updatedDate = dateParts.filter(part => part !== '').join('-');
+        } else {
+          updatedDate = dateParts;        
+        }
+        
+        const updatedFormData = { ...prevFormData, issuanceDate: updatedDate };
+
+        // If the month or year changes, reset the day if it is invalid
+        if (name === 'month' || name === 'year') {
+          const daysInMonth = getDaysInMonth(dateParts[0], dateParts[1]);
+          if (dateParts[2] && (parseInt(dateParts[2], 10) > daysInMonth || newValue === '')) {
+            dateParts[2] = '';
+            updatedFormData.issuanceDate = dateParts.filter(part => part !== '').join('-');
+          }
+        }
+
+        return updatedFormData;
+      });
+    }
+    
     // Funzione di validazione
     function validateForm() {
         const lat = parseFloat(formData.lat);
@@ -144,6 +204,13 @@ function DocumentControl(props) {
       setShowMapModal(false);
     };
 
+    const getDaysInMonth = (year, month) => {
+      if (!year || !month) {
+        return 31;
+      }
+      return new Date(year, month, 0).getDate();
+    }
+
     return (
       <>
         <AppNavbar isLoggedIn={props.isLoggedIn} handleLogout={props.handleLogout}/>
@@ -208,11 +275,52 @@ function DocumentControl(props) {
             <Form.Group as={Col} controlId="formDate">
               <Form.Label className='form-label'>Date</Form.Label>
               <Form.Control
-                type="date"
-                name="issuanceDate" // Cambiato "date" in "issuanceDate"
-                value={formData.issuanceDate}
-                onChange={handleChange}
+                type="number"
+                name="year"
+                placeholder="YYYY"
+                value={formData.issuanceDate.split('-')[0] || ''}
+                onChange={handleDateChange}
+                min="1800"
+                max={new Date().getFullYear()}
+                onKeyDown={(e) => {
+                  if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
+                    e.preventDefault();
+                  }
+                }}
               />
+              <Form.Control
+                type="number"
+                name="month"
+                placeholder="MM"
+                value={formData.issuanceDate.split('-')[1] || ''}
+                onChange={handleDateChange}
+                min="1"
+                max="12"
+                disabled={!formData.issuanceDate.split('-')[0]  || formData.issuanceDate.split('-')[0] < 1800}
+                onKeyDown={(e) => {
+                  if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
+                    e.preventDefault();
+                  }
+                }}
+              >
+                
+              </Form.Control>
+              <Form.Control
+                type="number"
+                name="day"
+                placeholder="DD"
+                value={formData.issuanceDate.split('-')[2] || ''}
+                onChange={handleDateChange}
+                min="1"
+                max={getDaysInMonth(formData.issuanceDate.split('-')[0], formData.issuanceDate.split('-')[1])}
+                disabled={!formData.issuanceDate.split('-')[1]  || formData.issuanceDate.split('-')[1] < 1}
+                onKeyDown={(e) => {
+                  if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
+                    e.preventDefault();
+                  }
+                }}
+              >
+              </Form.Control>
             </Form.Group>
           </Row>
 

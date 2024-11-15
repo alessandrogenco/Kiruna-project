@@ -240,7 +240,7 @@ app.put('/api/addDescription', async (req, res) => {
 app.post('/api/addDocument', async (req, res) => {
     console.log("Data received by /api/addDocument:", req.body); // Log dei dati ricevuti
 
-    const { title, stakeholders, scale, date, type, connections, language, pages, lat, lon, area, description } = req.body;
+    const { title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description } = req.body;
     console.log("Received document data:", req.body);
 
     try {
@@ -260,7 +260,7 @@ app.post('/api/addDocument', async (req, res) => {
             throw new Error("Missing required fields" );
         }
 
-        const result = await documentDao.addDocument(title, stakeholders, scale, date, type, connections, language, pages, lat, lon, area, description);
+        const result = await documentDao.addDocument(title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description);
         res.status(200).json(result); // Risposta positiva con il documento aggiunto
     } catch (error) {
         console.error("Error in /api/addDocument:", error); // Log dettagliato per debug
