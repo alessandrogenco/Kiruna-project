@@ -398,7 +398,7 @@ function DocumentControl(props) {
             </Form.Group>
 
             <Form.Group as={Col} md={2} className="d-flex align-items-center">
-            <Button variant="secondary" className="mt-3" onClick={handleMapSelection}>
+            <Button variant="success" className="mt-3" onClick={handleMapSelection}>
              Select Location on Map
             </Button>
             </Form.Group>

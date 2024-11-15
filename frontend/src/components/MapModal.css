@@ -1,0 +1,38 @@
+.map-container {
+    height: 400px; 
+    width: 100%;   
+  }
+  
+  .modal-content {
+    border-radius: 8px;
+    padding: 20px;
+  }
+  
+  .modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  .modal-title {
+    font-size: 1.25rem;
+    color: #333;
+  }
+  
+  .modal-footer {
+    padding: 10px 20px;
+    text-align: center;
+  }
+  
+  button {
+    border-radius: 5px;
+  }
+  
+  button:disabled {
+    background-color: #d6d6d6; 
+  }
+  
+  .modal-body {
+    padding: 20px;
+    overflow: hidden; 
+  }
+  

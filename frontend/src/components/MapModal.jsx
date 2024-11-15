@@ -79,10 +79,10 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
         <div ref={mapContainer} style={{ height: '400px', width: '100%' }} />
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
+        <Button variant="danger" onClick={handleClose}>
           Cancel
         </Button>
-        <Button variant="primary" onClick={handleSave} disabled={!position}>
+        <Button variant="success" onClick={handleSave} disabled={!position}>
           Save Location
         </Button>
       </Modal.Footer>
