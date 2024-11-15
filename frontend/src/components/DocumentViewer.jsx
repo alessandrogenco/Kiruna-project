@@ -33,7 +33,7 @@ const DocumentViewer = ({ documentData, onClose }) => {
               <strong>Connections:</strong> {documentData.connections}
             </p>
             {showLinks && (
-              documentLinks.length > 0 ? (
+              documentLinks ? (
                 <ul className="document-links">
                   {documentLinks.map((link, index) => {
                     console.log('Document link:', link.title); // Log per ogni elemento della lista
