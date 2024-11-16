@@ -191,6 +191,17 @@ function DocumentControl(props) {
         // Ottieni la risposta JSON
         const result = await response.json();
 
+        const formDataFiles = new FormData();
+        for (let i = 0; i < files.length; i++) {
+          formDataFiles.append('resourceFiles', files[i]);
+        }
+
+        const uploadResponse = await axios.post(`http://localhost:3001/api/upload?documentId=${result.id}`, formDataFiles, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        
         // Mostra il messaggio di successo
         setMessage(documentId ? 'Document updated successfully!' : 'Document added successfully!');
         setError(''); // Rimuovi eventuali errori
