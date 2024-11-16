@@ -176,7 +176,7 @@ describe("Add new document and delete it", () => {
 
         // Mocking db.run to simulate inserting a new document
         jest.spyOn(db, "run").mockImplementation(function (sql, params, callback) {
-            callback(null);  // Simulate successful insertion
+            callback.call({ lastID: 1 }, null);  // Simulate successful insertion
         });
 
         const result = await documentDao.addDocument(
@@ -184,6 +184,7 @@ describe("Add new document and delete it", () => {
         );
 
         expect(result).toEqual({
+            id: 1,
             title,
             stakeholders,
             scale,
