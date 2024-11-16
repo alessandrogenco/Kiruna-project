@@ -1,11 +1,11 @@
-import { Form, Button, Row, Col, Alert } from "react-bootstrap";
+import { Form, Button, Row, Col, Alert, ListGroup } from "react-bootstrap";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import AppNavbar from "./Navbar";
 import '../styles/DocumentControl.css';
 import MapModal from './MapModal';
-
+import axios from 'axios';
 
 function DocumentControl(props) {
 
@@ -32,7 +32,7 @@ function DocumentControl(props) {
       description: existingDocument?.description || ''
     });
     const [showMapModal, setShowMapModal] = useState(false);
-
+    const [files, setFiles] = useState([]);
 
     useEffect(() => {
       if (existingDocument) {
@@ -62,6 +62,18 @@ function DocumentControl(props) {
     const handleChange = (e) => {
       const { name, value } = e.target;
       setFormData({ ...formData, [name]: value ?? '' });
+    };
+
+    const handleFileChange = (event) => {
+      const newFiles = Array.from(event.target.files);
+      const uniqueFiles = newFiles.filter(newFile => 
+        !files.some(existingFile => existingFile.name === newFile.name && existingFile.size === newFile.size)
+      );
+      setFiles((prevFiles) => [...prevFiles, ...uniqueFiles]);
+    };
+
+    const handleRemoveFile = (index) => {
+      setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
     };
 
     const handleDateChange = (e) => {
@@ -414,7 +426,39 @@ function DocumentControl(props) {
               handleClose={handleCloseMapModal}
               onLocationSelect={handleLocationSelect}
           />
-
+          
+          <Row className="mb-3 mx-3">
+            <Col md={8}>
+              <div className="mt-2">
+                <input 
+                  type="file" 
+                  id="fileInput" 
+                  multiple 
+                  style={{ display: 'none' }} 
+                  onChange={handleFileChange} 
+                />
+                <label 
+                  htmlFor="fileInput" 
+                  className="btn btn-primary" 
+                  style={{ cursor: 'pointer' , width: '150px'}}
+                >
+                  Upload files
+                </label>
+              </div>
+            </Col>
+          </Row>
+          <Row className="mb-3 mx-3">
+            <Col md={4}>
+              <ListGroup>
+                  {files.map((file, index) => (
+                    <ListGroup.Item key={index}>
+                      {file.name}
+                      <Button variant="danger" size="sm" onClick={() => handleRemoveFile(index)} style={{ float: 'right' }}>Remove</Button>
+                    </ListGroup.Item>
+                  ))}
+              </ListGroup>
+            </Col>
+          </Row>
           <Row className="mx-3">
             <Form.Group controlId="formDescription">
               <Form.Label className='form-label'>Description</Form.Label>
@@ -428,7 +472,7 @@ function DocumentControl(props) {
               />
             </Form.Group>
           </Row>
-
+          
           <Row className="mx-3">
             <Col className="d-flex justify-content mt-3 pb-5">
                 <Button className="me-3" variant="success" type="submit">
