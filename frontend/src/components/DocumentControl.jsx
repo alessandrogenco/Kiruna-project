@@ -439,7 +439,7 @@ function DocumentControl(props) {
                 />
                 <label 
                   htmlFor="fileInput" 
-                  className="btn btn-primary" 
+                  className="btn btn-outline-success" 
                   style={{ cursor: 'pointer' , width: '150px'}}
                 >
                   Upload files
@@ -452,7 +452,7 @@ function DocumentControl(props) {
               <ListGroup>
                   {files.map((file, index) => (
                     <ListGroup.Item key={index}>
-                      {file.name}
+                      <span style={{ paddingTop: '2px', display: 'inline-block' }}>{file.name}</span>
                       <Button variant="danger" size="sm" onClick={() => handleRemoveFile(index)} style={{ float: 'right' }}>Remove</Button>
                     </ListGroup.Item>
                   ))}
