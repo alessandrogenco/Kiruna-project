@@ -41,7 +41,7 @@ describe("POST Added a document", () => {
             title: mockTitle,
             stakeholders: mockStakeholders,
             scale: mockScale,
-            date: mockIssuanceDate,
+            issuanceDate: mockIssuanceDate,
             type: mockType,
             connections: mockConnections,
             language: mockLanguage,
@@ -54,6 +54,7 @@ describe("POST Added a document", () => {
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({
+            id: expect.any(Number),
             title: mockTitle,
             stakeholders: mockStakeholders,
             scale: mockScale,
@@ -88,7 +89,7 @@ describe("POST Added a document", () => {
             title: mockTitle,
             stakeholders: mockStakeholders,
             scale: mockScale,
-            date: mockIssuanceDate,
+            issuanceDate: mockIssuanceDate,
             type: mockType,
             connections: mockConnections,
             language: mockLanguage,
@@ -101,6 +102,7 @@ describe("POST Added a document", () => {
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({
+            id: expect.any(Number),
             title: mockTitle,
             stakeholders: mockStakeholders,
             scale: mockScale,
@@ -135,7 +137,7 @@ describe("POST Added a document", () => {
             title: mockTitle,
             stakeholders: mockStakeholders,
             scale: mockScale,
-            date: mockIssuanceDate,
+            issuanceDate: mockIssuanceDate,
             type: mockType,
             connections: mockConnections,
             language: mockLanguage,
@@ -148,6 +150,7 @@ describe("POST Added a document", () => {
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({
+            id: expect.any(Number),
             title: mockTitle,
             stakeholders: mockStakeholders,
             scale: mockScale,
