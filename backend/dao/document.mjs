@@ -62,7 +62,7 @@ class DocumentDao{
                 }
 
                 resolve({
-                    //id: this.lastID,
+                    id: this.lastID,
                     title,
                     stakeholders,
                     scale,
