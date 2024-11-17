@@ -6,6 +6,7 @@ import AppNavbar from "./Navbar";
 import '../styles/DocumentControl.css';
 import MapModal from './MapModal';
 import axios from 'axios';
+import LinkControl from "./LinkControl";
 
 function DocumentControl(props) {
 
@@ -402,7 +403,7 @@ function DocumentControl(props) {
           </Row>
 
           <Row className="mb-3 mx-3 d-flex justify-content-between">
-            <Form.Group as={Col} controlId="formLat" md = {3}className="mr-3">
+            <Form.Group as={Col} controlId="formLat" md = {3} className="mr-3">
               <Form.Label className='form-label'>Latitude</Form.Label>
               <Form.Control
                 type="text"
@@ -470,6 +471,7 @@ function DocumentControl(props) {
               </ListGroup>
             </Col>
           </Row>
+          <LinkControl document={existingDocument}/>
           <Row className="mx-3">
             <Form.Group controlId="formDescription">
               <Form.Label className='form-label'>Description</Form.Label>
