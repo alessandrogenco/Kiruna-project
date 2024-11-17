@@ -7,10 +7,12 @@ import '../styles/DocumentControl.css';
 import MapModal from './MapModal';
 import axios from 'axios';
 import LinkControl from "./LinkControl";
+import API from "../API.mjs";
 
 function DocumentControl(props) {
 
   const { documentId } = useParams();
+  console.log(documentId)
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -54,6 +56,29 @@ function DocumentControl(props) {
         });
       }
     }, [existingDocument]);
+
+    const [links, setLinks] = useState([]);
+
+    useEffect(() => {
+      if (documentId) {
+        const fetchLinks = async () => {
+          try {
+            const fetchedData = await API.getDocumentLinks(documentId);
+            
+            // Estrarre l'array di link dalla risposta (fetchedData.links)
+            const fetchedLinks = Array.isArray(fetchedData.links) ? fetchedData.links : [];
+    
+            setLinks(fetchedLinks); // Imposta solo l'array di link nello stato
+          } catch (error) {
+            setError('Failed to load links');
+          }
+        };
+    
+        fetchLinks(); // Esegui la funzione appena il component viene renderizzato con `documentId`
+      }
+    }, [documentId]);
+    
+  
 
     // Stato per i messaggi di feedback
     const [message, setMessage] = useState('');
@@ -471,7 +496,9 @@ function DocumentControl(props) {
               </ListGroup>
             </Col>
           </Row>
-          <LinkControl document={existingDocument}/>
+
+          <LinkControl document={existingDocument} links={links} setLinks={setLinks}/>
+          
           <Row className="mx-3">
             <Form.Group controlId="formDescription">
               <Form.Label className='form-label'>Description</Form.Label>

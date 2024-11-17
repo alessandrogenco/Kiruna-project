@@ -4,10 +4,12 @@ import PropTypes from 'prop-types';
 import API from '../API.mjs'; // Import delle funzioni API
 
 const LinkControl = (props) => {
+  const { document, links, setLinks } = props;  // Ricevi setLinks da DocumentControl
+
+  console.log(links);
+
   const [documents, setDocuments] = useState([]);
-  const [targetDocument, setTargetDocument] = useState('');
-  const [linkType, setLinkType] = useState('');
-  const [linkDate, setLinkDate] = useState('');
+  const [rows, setRows] = useState([{ targetDocument: '', linkType: '' }]);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
@@ -25,40 +27,34 @@ const LinkControl = (props) => {
     fetchDocuments();
   }, []);
 
-  // Handle link creation
-  /*const handleLink = async () => {
-    if (!targetDocument || !linkType || !linkDate) {
-      setError('Please fill all fields to create a link.');
-      return;
-    }
-
-    try {
-      const linkData = { id1: documentId, id2: targetDocument, linkDate, linkType };
-      await API.linkDocuments(linkData);
-      setMessage('Documents linked successfully!');
-      setError('');
-    } catch (err) {
-      console.error('Error linking documents:', err);
-      setError('Failed to link documents. Please try again.');
-      setMessage('');
-    }
-  };*/
-
-  const [rows, setRows] = useState([{ targetDocument: '', linkType: ''}]);
-
-  // Handle adding a new row
+  // Handle adding a new link
   const addRow = () => {
     const lastRow = rows[rows.length - 1];
 
-    // Controlla se tutti i campi dell'ultima riga sono completati
+    // Verifica che i campi della riga corrente siano compilati
     if (!lastRow.targetDocument || !lastRow.linkType) {
       setError('Please fill all fields in the current row before adding a new one.');
       return;
     }
 
-    // Aggiungi una nuova riga vuota
-    setRows([...rows, { targetDocument: '', linkType: ''}]);
-    setError(''); // Cancella eventuali errori
+    // Aggiungi il nuovo link all'array links
+    const newLink = {
+      documentId: document.id,         // ID del documento corrente
+      targetDocumentId: lastRow.targetDocument,
+      linkType: lastRow.linkType,
+    };
+
+    // Aggiungi il link allo stato `links` di DocumentControl
+    setLinks([...links, newLink]);
+
+    // Visualizza un messaggio di successo
+    setMessage('Link created successfully!');
+
+    // Aggiungi una nuova riga vuota per il prossimo link
+    setRows([...rows, { targetDocument: '', linkType: '' }]);
+
+    // Reset degli errori
+    setError('');
   };
 
   return (
@@ -116,7 +112,7 @@ const LinkControl = (props) => {
       ))}
 
       <Row className="d-flex justify-content-between">
-        <Col className="d-flex justify-content-center" style={{ height: '40px'}}>
+        <Col className="d-flex justify-content-center" style={{ height: '40px' }}>
           <Button className="me-3" variant="success" onClick={addRow}>
             Create Link
           </Button>
@@ -127,7 +123,9 @@ const LinkControl = (props) => {
 };
 
 LinkControl.propTypes = {
-  document: PropTypes.object,
+  document: PropTypes.object.isRequired,
+  links: PropTypes.array.isRequired,
+  setLinks: PropTypes.func.isRequired,  // Assicurati che setLinks venga passato da DocumentControl
 };
 
 export default LinkControl;
