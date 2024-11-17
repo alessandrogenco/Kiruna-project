@@ -13,6 +13,7 @@ function ExplorePage(props) {
   const MAPBOX_TOKEN = "pk.eyJ1IjoiYWxlc3NhbmRyb2cwOCIsImEiOiJjbTNiZzFwbWEwdnU0MmxzYTdwNWhoY3dpIn0._52AcWROcPOQBr1Yz0toKw";
   const mapContainer = useRef(null);
   const [map, setMap] = useState(null);
+  const [mapLoaded, setMapLoaded] = useState(false); // Flag to track when the map is loaded
   const [currentStyle, setCurrentStyle] = useState('streets');
   const [markers, setMarkers] = useState([]);
   const [selectedDocument, setSelectedDocument] = useState(null); // State for the selected document
@@ -22,35 +23,19 @@ function ExplorePage(props) {
   const handleSetMarkers = (newMarkers) => {
     setMarkers([...newMarkers]);
   };
-  useEffect(() => {
-    if (selectedDocument) {
-      mapContainer.current.classList.add('blurred-map');
-    } else {
-      mapContainer.current.classList.remove('blurred-map');
-    }
-  }, [selectedDocument]);
+
   useEffect(() => {
     if (props.documents) {
-      const newMarkers = props.documents.map(document => {
-        return {
-          lat: document.lat,
-          lng: document.lon,
-          label: document.title,
-          data: document // Attach full document data for use in DocumentViewer
-        };
-      });
+      const newMarkers = props.documents.map(document => ({
+        lat: document.lat,
+        lng: document.lon,
+        label: document.title,
+        data: document, // Attach full document data for use in DocumentViewer
+      }));
 
-      // To test clusters
-      newMarkers.push({ lat: 67.8558, lng: 20.2253, label: 'Kiruna', data: props.documents[0] });
-      newMarkers.push({ lat: 67.8558, lng: 20.2253, label: 'Kiruna1', data: props.documents[0] });
-      
-      handleSetMarkers([...newMarkers]);
+      handleSetMarkers(newMarkers);
     }
   }, [props.documents]);
-
-  useEffect(() => {
-    updateMarkers();
-  }, [markers]);
 
   useEffect(() => {
     if (!map) {
@@ -68,19 +53,21 @@ function ExplorePage(props) {
         minZoom: 8,
         maxBounds: [[20.1200, 67.82], [20.400, 67.8800]],
         attributionControl: false,
+        maxPitch: 0
       });
 
       mapInstance.on('load', () => {
         setMap(mapInstance);
+        setMapLoaded(true); // Set mapLoaded to true when the map is ready
       });
     }
-  }, [map, MAPBOX_TOKEN]);
+  }, [map]);
 
   const createCluster = (markersData) => {
     const points = markersData.map(marker => ({
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [marker.lng, marker.lat] },
-      properties: { label: marker.label, data: marker.data }
+      properties: { label: marker.label, data: marker.data },
     }));
 
     const clusterInstance = new Supercluster({
@@ -92,7 +79,7 @@ function ExplorePage(props) {
   };
 
   const updateMarkers = () => {
-    if (map && cluster.current) {
+    if (map && mapLoaded && cluster.current) {
       const bounds = map.getBounds();
       const zoom = map.getZoom();
 
@@ -142,10 +129,10 @@ function ExplorePage(props) {
           iconElement.style.border = '2px solid white';
           iconElement.style.backgroundImage = `url(${documentIcon})`;
 
-          const popup = new mapboxgl.Popup({ 
+          const popup = new mapboxgl.Popup({
             offset: 25,
-            closeButton: false, 
-            })
+            closeButton: false,
+          })
             .setHTML(`
               <div style="padding: 5px; margin-bottom: -0.4em; display: flex; flex-direction: column;">
                  <div style="font-size: 1.2em; font-weight: bold;">${properties.label}</div>
@@ -192,12 +179,12 @@ function ExplorePage(props) {
   };
 
   useEffect(() => {
-    if (map) {
+    if (map && mapLoaded) {
       cluster.current = createCluster(markers);
       map.on('move', updateMarkers);
       updateMarkers();
     }
-  }, [map, markers]);
+  }, [map, mapLoaded, markers]);
 
   const handleMapStyleChange = (style) => {
     if (map) {
