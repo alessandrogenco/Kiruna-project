@@ -5,8 +5,12 @@ import session from 'express-session';
 import passport from 'passport';
 import LoginDao from './dao/login.mjs';
 import DocumentDao from './dao/document.mjs';
+import FileUploadDao from './dao/fileUpload.mjs';
+
 import path from 'path'; 
 import fs from 'fs';
+import db from './db/db.mjs';
+
 
 const app = express();
 const PORT = 3001;
@@ -112,6 +116,7 @@ passport.deserializeUser((username, done) => {
 
 const loginDao = new LoginDao(); // Assicurati che questa riga sia presente
 const documentDao = new DocumentDao(); 
+const fileUploadDao = new FileUploadDao();
 
 
 // Register
@@ -450,44 +455,21 @@ app.post('/api/deleteDocument', async (req, res) => {
     }
 });
 
-// Upload File
-app.post('/api/upload', upload.single('resourceFile'), async (req, res) => {
-    
-    console.log("Reached multer middleware");  
-    console.log(req.headers);
 
-    console.log("File info:",req.file);  
-    console.log("Body:",req.body); 
-    console.log("Query:", req.query);
-
-
-    if (!req.file) {
-        console.error("File is missing in the request");
-        return res.status(400).json({ message: 'No file uploaded' });
-    }
-
-    const documentId = req.query.documentId; 
-    const { resourceType, description } = req.body; 
-    const resourcePath = req.file.path; 
-    
-
-    if (!resourcePath) {
-        return res.status(400).json({ message: 'File upload failed' });
-    }
+app.get('/api/files/:documentId', async (req, res) => {
+    const documentId = req.params.documentId;
 
     try {
-        const resource = {
-            resourceType,
-            resourcePath,
-            description
-        };
+        const files = await fileUploadDao.getFilesByDocumentId(documentId);
 
-        const result = await FileUploadDao.addOriginalResource(documentId, resource);
-
-        res.status(200).json({ message: 'File uploaded successfully', resourceId: result.resourceId });
+        if (files.length > 0) {
+            res.status(200).json(files);
+        } else {
+            res.status(404).json({ message: 'No files found for the specified document ID' });
+        }
     } catch (error) {
-        console.error('Error uploading file:', error.message);
-        res.status(500).json({ message: 'Failed to upload file', error: error.message });
+        console.error('Error fetching files:', error.message);
+        res.status(500).json({ message: 'Failed to fetch files', error: error.message });
     }
 });
 

@@ -1,15 +1,16 @@
 import db from '../db/db.mjs';
 
-class fileUpload{
+class FileUploadDao{
 
     addOriginalResource(documentId, resource) {
         return new Promise((resolve, reject) => {
             const query = `
                 INSERT INTO OriginalResources (documentId, resourceType, fileData, description)
-                VALUES (?, ?, ?, ?);`;
-
+                VALUES (?, ?, ?, ?);
+            `;
+            
             const { resourceType, fileData, description } = resource;
-
+    
             db.run(query, [documentId, resourceType, fileData, description], function (err) {
                 if (err) {
                     console.error('Error uploading file:', err.message);
@@ -19,7 +20,8 @@ class fileUpload{
             });
         });
     }
-
+    
+    
     getFilesByDocumentId(documentId) {
         return new Promise((resolve, reject) => {
             const query = `SELECT id, resourceType, description FROM OriginalResources WHERE documentId = ?;`;
@@ -35,4 +37,4 @@ class fileUpload{
     }
 }
 
-export default fileUpload;
+export default FileUploadDao;
