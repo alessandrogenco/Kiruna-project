@@ -33,7 +33,7 @@ function AppNavbar({ isLoggedIn, handleLogout }) {
   return (
     <>
       <Navbar style={{ backgroundColor: '#000000' }} variant="dark" expand="lg">
-        <Container>
+        <Container fluid className="px-4">
           <Navbar.Brand as={Link} to="/">KirunaExplorer</Navbar.Brand>
           {/* Toggle button for mobile view */}
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -44,8 +44,11 @@ function AppNavbar({ isLoggedIn, handleLogout }) {
                   <Nav.Link onClick={() => navigate('/documentsPage')/*handleShowModal('Manage Documents', 'manage')*/}>
                     Manage Documents
                   </Nav.Link>
-                  <Nav.Link onClick={() => handleShowModal('Link Documents', 'link')}>
+                  {/*<Nav.Link onClick={() => handleShowModal('Link Documents', 'link')}>
                     Link Documents
+                  </Nav.Link>*/}
+                  <Nav.Link onClick={() => navigate('/explore')}>
+                    Explore 
                   </Nav.Link>
                 </>
               )}
