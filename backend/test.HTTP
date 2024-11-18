@@ -162,19 +162,12 @@ Content-Type: application/json
     "id": 1730826916158307
 }
 
-  //------------
+  
+#### Upload file 
+curl -X POST "http://localhost:3001/api/upload?documentId=10&resourceType=pdf&description=Sample%20PDF%20File" \
+  -H "Content-Type: application/octet-stream" \
+  --data-binary @C:/Users/noman/Downloads/doc_18_info.pdf
 
-
-########## Upload file 
-
-curl -X POST http://localhost:3001/api/upload \
-  -H "Content-Type: multipart/form-data" \
-  -F "documentId=10" \
-  -F "resourceType=pdf" \
-  -F "description=This is a sample PDF file." \
-  -F "resourceFile=@C:/Users/noman/Downloads/doc_18_info.pdf"
-
-
-### Test to get files by documentId
+### get files by documentId
 GET http://localhost:3001/api/files/10 HTTP/1.1
 Content-Type: application/json

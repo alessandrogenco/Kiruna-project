@@ -6,6 +6,8 @@ import passport from 'passport';
 import LoginDao from './dao/login.mjs';
 import DocumentDao from './dao/document.mjs';
 import FileUploadDao from './dao/fileUpload.mjs';
+import bodyParser from 'body-parser';
+
 
 import path from 'path'; 
 import fs from 'fs';
@@ -456,6 +458,41 @@ app.post('/api/deleteDocument', async (req, res) => {
 });
 
 
+
+app.use(bodyParser.raw({ type: 'application/octet-stream', limit: '100mb' }));
+
+//Upload files
+app.post('/api/upload', async (req, res) => {
+    try {
+        const { documentId, resourceType, description } = req.query;
+
+        console.log("documentId:", documentId);
+        console.log("resourceType:", resourceType);
+        console.log("description:", description);
+        console.log("fileData (body):", req.body);
+
+        if (!documentId || !resourceType || !description || !req.body) {
+            return res.status(400).json({ message: 'Missing required fields' });
+        }
+
+        const resource = {
+            resourceType,
+            fileData: req.body, 
+            description
+        };
+
+        const result = await fileUploadDao.addOriginalResource(documentId, resource);
+        res.status(201).json({
+            message: 'File uploaded successfully',
+            resourceId: result.resourceId
+        });
+    } catch (error) {
+        console.error('Error in /api/upload:', error.message);
+        res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+});
+
+//Get files
 app.get('/api/files/:documentId', async (req, res) => {
     const documentId = req.params.documentId;
 
