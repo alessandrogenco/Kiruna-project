@@ -125,7 +125,7 @@ class DocumentDao{
     }
 
     //link documents
-    linkDocuments(id1, id2, linkDate, linkType){
+    linkDocuments(id1, id2, /*linkDate,*/ linkType){
         return new Promise((resolve, reject) => {
             const checkLinkQuery = 'SELECT COUNT(*) AS count FROM DocumentsLinks WHERE (idDocument1 = ? AND idDocument2 = ?) OR (idDocument2 = ? AND idDocument1 = ?)';
             db.get(checkLinkQuery, [id1, id2, id1, id2], (err, row) => {
@@ -137,8 +137,8 @@ class DocumentDao{
                     return reject(new Error('Link already exists'));
                 }
 
-                const linkDocuments = 'INSERT INTO DocumentsLinks (idDocument1, idDocument2, date, type) VALUES (?, ?, ?, ?)';
-                db.run(linkDocuments, [id1, id2, linkDate, linkType], (err) => {
+                const linkDocuments = 'INSERT INTO DocumentsLinks (idDocument1, idDocument2, type) VALUES (?, ?, ?)'; //const linkDocuments = 'INSERT INTO DocumentsLinks (idDocument1, idDocument2, date, type) VALUES (?, ?, ?, ?)';
+                db.run(linkDocuments, [id1, id2, /*linkDate,*/ linkType], (err) => {
                     if (err) {
                         console.error('Database error while linking documents:', err.message);
                         return reject(new Error('Database error: ' + err.message));
@@ -150,7 +150,7 @@ class DocumentDao{
                             console.error('Database error while updating connections:', err.message);
                             return reject(new Error('Database error: ' + err.message));
                         }
-                        resolve({ idDocument1: id1, idDocument2: id2, date: linkDate, type: linkType });
+                        resolve({ idDocument1: id1, idDocument2: id2, /*date: linkDate,*/ type: linkType });
                     });
                 });
             });

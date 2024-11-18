@@ -185,66 +185,90 @@ function DocumentControl(props) {
     // Gestore per l'invio del modulo
     const handleSubmit = async (e) => {
       e.preventDefault();
-
-      // Eseguiamo la validazione del form
+  
+      // Validazione del form
       const validationError = validateForm();
       if (validationError) {
-        setError(validationError);
-        setMessage('');
-        return;
+          setError(validationError);
+          setMessage('');
+          return;
       }
-
+  
       try {
-        // Determina l'URL e il metodo in base alla presenza di documentId
-        let url;
-        let method;
-
-        if (documentId) {
-          // Modifica di un documento esistente
-          url = 'http://localhost:3001/api/updateDocument'; // Usa l'endpoint di aggiornamento
-          method = 'POST'; // Metodo POST per la modifica
-        } else {
-          // Aggiunta di un nuovo documento
-          url = 'http://localhost:3001/api/addDocument'; // Usa l'endpoint per aggiungere
-          method = 'POST'; // Metodo POST per l'aggiunta
-        }
-
-        // Esegui la richiesta
-        const response = await fetch(url, {
-          method: method,
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData), // Invia i dati del modulo
-        });
-
-        // Controlla se la risposta è positiva
-        if (!response.ok) throw new Error('Network response was not ok');
-        
-        // Ottieni la risposta JSON
-        const result = await response.json();
-
-        const formDataFiles = new FormData();
-        for (let i = 0; i < files.length; i++) {
-          formDataFiles.append('resourceFiles', files[i]);
-        }
-
-        const uploadResponse = await axios.post(`http://localhost:3001/api/upload?documentId=${result.id}`, formDataFiles, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
+          // Determina l'URL e il metodo per la creazione o modifica del documento
+          let url, method;
+          if (documentId) {
+              url = 'http://localhost:3001/api/updateDocument'; // Endpoint per aggiornare
+              method = 'POST'; // Metodo POST per l'update
+          } else {
+              url = 'http://localhost:3001/api/addDocument'; // Endpoint per aggiungere
+              method = 'POST'; // Metodo POST per l'add
           }
-        });
-        
-        // Mostra il messaggio di successo
-        setMessage(documentId ? 'Document updated successfully!' : 'Document added successfully!');
-        setError(''); // Rimuovi eventuali errori
-
-        // Naviga alla pagina dei documenti
-        navigate('/documentsPage');
+  
+          // Esegui la richiesta per creare o aggiornare il documento
+          const response = await fetch(url, {
+              method: method,
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(formData), // Invia i dati del modulo
+          });
+  
+          if (!response.ok) throw new Error('Network response was not ok');
+  
+          // Ottieni il risultato della richiesta
+          const result = await response.json();
+          const newDocumentId = result.id; // Ottieni l'id del documento creato o aggiornato
+  
+          // Carica i file
+          const formDataFiles = new FormData();
+          for (let i = 0; i < files.length; i++) {
+              formDataFiles.append('resourceFiles', files[i]);
+          }
+  
+          /*await axios.post(
+              `http://localhost:3001/api/upload?documentId=${newDocumentId}`,
+              formDataFiles,
+              {
+                  headers: {
+                      'Content-Type': 'multipart/form-data',
+                  },
+              }
+          );*/
+  
+          // Creazione dei link
+          const createLinks = async () => {
+              for (const link of links) {
+                  try {
+                    console.log(newDocumentId);
+                    console.log(link.targetDocumentId);
+                    console.log(link.linkType);
+                      await API.linkDocument(
+                          newDocumentId, // id1 è l'id del documento corrente
+                          link.targetDocumentId,       // id2 è l'id del documento da collegare
+                          //new Date().toISOString(), // Data del collegamento
+                          link.linkType      // Tipo del collegamento
+                      );
+                  } catch (error) {
+                      console.error('Error linking documents:', error);
+                      setError('Some links could not be created');
+                  }
+              }
+          };
+  
+          await createLinks(); // Crea i link
+  
+          // Mostra il messaggio di successo
+          setMessage(documentId ? 'Document updated successfully!' : 'Document added successfully!');
+          setError('');
+  
+          // Naviga alla pagina dei documenti
+          navigate('/documentsPage');
       } catch (error) {
-        // Gestisci l'errore
-        setError(`Error: ${error.message}`);
-        setMessage(''); // Rimuovi eventuali messaggi di successo
+          console.error('Error during submission:', error);
+          setError(`Error: ${error.message}`);
+          setMessage('');
       }
-    };
+  };
+  
 
     const handleMapSelection = () => {
       setShowMapModal(true);

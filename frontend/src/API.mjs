@@ -92,14 +92,14 @@ const getDocuments = async () => {
     }
   };
 
-const linkDocument = async (id1, id2, linkDate, linkType) => {
+const linkDocument = async (id1, id2, /*linkDate,*/ linkType) => {
     try {
         const response = await fetch(SERVER_URL + '/linkDocuments', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ id1, id2, linkDate, linkType }),
+            body: JSON.stringify({ id1, id2, /*linkDate,*/ linkType }),
         });
 
         if (!response.ok) {

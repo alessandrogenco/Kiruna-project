@@ -275,18 +275,18 @@ app.post('/api/addDocument', async (req, res) => {
 
 //link documents
 app.post('/api/linkDocuments', async (req, res) => {
-    const { id1, id2, linkDate, linkType } = req.body;
+    const { id1, id2, /*linkDate,*/ linkType } = req.body;
 
     try {
-        if (linkDate.trim() === '') {
+        /*if (linkDate.trim() === '') {
             throw new Error('The link date must be a non-empty string');
-        }
+        }*/
     
         if (linkType.trim() === '') {
             throw new Error('The link type must be a non-empty string');
         }
 
-        const result = await documentDao.linkDocuments(id1, id2, linkDate, linkType);
+        const result = await documentDao.linkDocuments(id1, id2, /*linkDate,*/ linkType);
         res.status(200).json({
             message: 'Documents linked successfully',
             link: result
