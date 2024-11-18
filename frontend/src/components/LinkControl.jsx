@@ -4,10 +4,11 @@ import PropTypes from 'prop-types';
 import API from '../API.mjs'; // Import delle funzioni API
 
 const LinkControl = (props) => {
-  const { links, setLinks } = props;  // Ricevi setLinks da DocumentControl
+  const { links, newLinks, setNewLinks } = props;  // Ricevi setLinks da DocumentControl
 
   console.log(links);
-
+  console.log(newLinks);
+  
   const [documents, setDocuments] = useState([]);
   const [rows, setRows] = useState([{ targetDocument: '', linkType: '' }]);
   const [message, setMessage] = useState('');
@@ -30,31 +31,42 @@ const LinkControl = (props) => {
   // Handle adding a new link
   const addRow = () => {
     const lastRow = rows[rows.length - 1];
-
+  
     // Verifica che i campi della riga corrente siano compilati
     if (!lastRow.targetDocument || !lastRow.linkType) {
       setError('Please fill all fields in the current row before adding a new one.');
       return;
     }
-
-    // Aggiungi il nuovo link all'array links
+  
+    // Crea il nuovo link con il formato corretto
     const newLink = {
-      targetDocumentId: lastRow.targetDocument,
-      linkType: lastRow.linkType,
+      id: parseInt(lastRow.targetDocument, 10), // Converti l'ID in numero se necessario
+      type: lastRow.linkType,
     };
-
+  
+    // Verifica che il nuovo link non esista già
+    const linkExists = links.some(
+      (link) => link.id === newLink.id && link.type === newLink.type
+    );
+  
+    if (linkExists) {
+      setError('This link already exists.');
+      return;
+    }
+  
     // Aggiungi il link allo stato `links` di DocumentControl
-    setLinks([...links, newLink]);
-
+    setNewLinks([...newLinks, newLink]);
+  
     // Visualizza un messaggio di successo
     setMessage('Link created successfully!');
-
+  
     // Aggiungi una nuova riga vuota per il prossimo link
     setRows([...rows, { targetDocument: '', linkType: '' }]);
-
+  
     // Reset degli errori
     setError('');
   };
+  
 
   return (
     <div className="mx-4 mb-4">
@@ -123,7 +135,8 @@ const LinkControl = (props) => {
 
 LinkControl.propTypes = {
   links: PropTypes.array.isRequired,
-  setLinks: PropTypes.func.isRequired,  // Assicurati che setLinks venga passato da DocumentControl
+  newLinks: PropTypes.array.isRequired,
+  setNewLinks: PropTypes.func.isRequired,  // Assicurati che setLinks venga passato da DocumentControl
 };
 
 export default LinkControl;

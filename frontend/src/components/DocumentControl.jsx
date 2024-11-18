@@ -58,6 +58,7 @@ function DocumentControl(props) {
     }, [existingDocument]);
 
     const [links, setLinks] = useState([]);
+    const [newLinks, setNewLinks] = useState([]);
 
     useEffect(() => {
       if (documentId) {
@@ -236,17 +237,16 @@ function DocumentControl(props) {
   
           // Creazione dei link
           const createLinks = async () => {
-              for (const link of links) {
+              for (const link of newLinks) {
                   try {
                     console.log(newDocumentId);
                     console.log(link.targetDocumentId);
                     console.log(link.linkType);
-                      await API.linkDocument(
-                          newDocumentId, // id1 è l'id del documento corrente
-                          link.targetDocumentId,       // id2 è l'id del documento da collegare
-                          //new Date().toISOString(), // Data del collegamento
-                          link.linkType      // Tipo del collegamento
-                      );
+                    await API.linkDocument(
+                      newDocumentId,    // id del documento corrente
+                      link.id,          // id del documento da collegare (era link.targetDocumentId)
+                      link.type         // tipo di collegamento (era link.linkType)
+                  );
                   } catch (error) {
                       console.error('Error linking documents:', error);
                       setError('Some links could not be created');
@@ -255,6 +255,8 @@ function DocumentControl(props) {
           };
   
           await createLinks(); // Crea i link
+
+          setNewLinks([]);
   
           // Mostra il messaggio di successo
           setMessage(documentId ? 'Document updated successfully!' : 'Document added successfully!');
@@ -526,7 +528,7 @@ function DocumentControl(props) {
             </Col>
           </Row>
 
-          <LinkControl document={existingDocument} links={links} setLinks={setLinks}/>
+          <LinkControl document={existingDocument} links={links} newLinks={newLinks} setNewLinks={setNewLinks}/>
           
           <Row className="mx-3">
             <Form.Group controlId="formDescription">
