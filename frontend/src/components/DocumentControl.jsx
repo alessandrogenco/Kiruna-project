@@ -64,21 +64,26 @@ function DocumentControl(props) {
         const fetchLinks = async () => {
           try {
             const fetchedData = await API.getDocumentLinks(documentId);
-            
+    
             // Estrarre l'array di link dalla risposta (fetchedData.links)
             const fetchedLinks = Array.isArray(fetchedData.links) ? fetchedData.links : [];
+            
+            // Mappare i link per ottenere solo `id` e `type`
+            const processedLinks = fetchedLinks.map(link => ({
+              id: link.id,
+              type: link.type,
+            }));
     
-            setLinks(fetchedLinks); // Imposta solo l'array di link nello stato
+            setLinks(processedLinks); // Imposta solo id e type nello stato
           } catch (error) {
             setError('Failed to load links');
           }
         };
     
-        fetchLinks(); // Esegui la funzione appena il component viene renderizzato con `documentId`
+        fetchLinks(); // Esegui la funzione appena il componente viene renderizzato con `documentId`
       }
-    }, [documentId]);
+    }, [documentId]);    
     
-  
 
     // Stato per i messaggi di feedback
     const [message, setMessage] = useState('');

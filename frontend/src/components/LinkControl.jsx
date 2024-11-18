@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import API from '../API.mjs'; // Import delle funzioni API
 
 const LinkControl = (props) => {
-  const { document, links, setLinks } = props;  // Ricevi setLinks da DocumentControl
+  const { links, setLinks } = props;  // Ricevi setLinks da DocumentControl
 
   console.log(links);
 
@@ -39,7 +39,6 @@ const LinkControl = (props) => {
 
     // Aggiungi il nuovo link all'array links
     const newLink = {
-      documentId: document.id,         // ID del documento corrente
       targetDocumentId: lastRow.targetDocument,
       linkType: lastRow.linkType,
     };
@@ -123,7 +122,6 @@ const LinkControl = (props) => {
 };
 
 LinkControl.propTypes = {
-  document: PropTypes.object.isRequired,
   links: PropTypes.array.isRequired,
   setLinks: PropTypes.func.isRequired,  // Assicurati che setLinks venga passato da DocumentControl
 };
