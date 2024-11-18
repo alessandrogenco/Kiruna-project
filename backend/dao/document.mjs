@@ -157,6 +157,40 @@ class DocumentDao{
         })
     }
 
+    /*alternativa per collegare gli stessi documenti con tipo di link diverso
+    linkDocuments(id1, id2, linkType){
+        return new Promise((resolve, reject) => {
+            const checkLinkQuery = 'SELECT COUNT(*) AS count FROM DocumentsLinks WHERE ((idDocument1 = ? AND idDocument2 = ?) OR (idDocument2 = ? AND idDocument1 = ?)) AND type = ?';
+            db.get(checkLinkQuery, [id1, id2, id1, id2, linkType], (err, row) => {
+                if (err) {
+                    console.error('Database error while checking link:', err.message);
+                    return reject(new Error('Database error: ' + err.message));
+                }
+                if (row.count > 0) {
+                    return reject(new Error('Link of this type already exists between these documents'));
+                }
+    
+                const linkDocuments = 'INSERT INTO DocumentsLinks (idDocument1, idDocument2, type) VALUES (?, ?, ?)';
+                db.run(linkDocuments, [id1, id2, linkType], (err) => {
+                    if (err) {
+                        console.error('Database error while linking documents:', err.message);
+                        return reject(new Error('Database error: ' + err.message));
+                    }
+                    
+                    const updateConnections = 'UPDATE Documents SET connections = connections + 1 WHERE id IN (?, ?)';
+                    db.run(updateConnections, [id1, id2], (err) => {
+                        if (err) {
+                            console.error('Database error while updating connections:', err.message);
+                            return reject(new Error('Database error: ' + err.message));
+                        }
+                        resolve({ idDocument1: id1, idDocument2: id2, type: linkType });
+                    });
+                });
+            });
+        });
+    }
+    */
+
     getDocumentLinks(documentId) {
         return new Promise((resolve, reject) => {
             const query1 = `
