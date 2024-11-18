@@ -219,22 +219,24 @@ function DocumentControl(props) {
           // Ottieni il risultato della richiesta
           const result = await response.json();
           const newDocumentId = result.id; // Ottieni l'id del documento creato o aggiornato
-  
-          // Carica i file
-          const formDataFiles = new FormData();
-          for (let i = 0; i < files.length; i++) {
-              formDataFiles.append('resourceFiles', files[i]);
+          
+          if(!files) {
+            // Carica i file
+            const formDataFiles = new FormData();
+            for (let i = 0; i < files.length; i++) {
+                formDataFiles.append('resourceFiles', files[i]);
+            }
+
+            await axios.post(
+                `http://localhost:3001/api/upload?documentId=${newDocumentId}`,
+                formDataFiles,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                }
+            );
           }
-  
-          /*await axios.post(
-              `http://localhost:3001/api/upload?documentId=${newDocumentId}`,
-              formDataFiles,
-              {
-                  headers: {
-                      'Content-Type': 'multipart/form-data',
-                  },
-              }
-          );*/
   
           // Creazione dei link
           const createLinks = async () => {
