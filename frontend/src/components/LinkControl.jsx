@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Button, Row, Col, Alert } from "react-bootstrap";
+import { Form, Button, Row, Col, Alert, ListGroup, ListGroupItem } from "react-bootstrap";
 import PropTypes from 'prop-types';
 import API from '../API.mjs'; // Import delle funzioni API
+import '../styles/DocumentList.css';
 
 const LinkControl = (props) => {
   const { links, newLinks, setNewLinks } = props;  // Ricevi setLinks da DocumentControl
@@ -70,6 +71,9 @@ const LinkControl = (props) => {
 
   return (
     <div className="mx-4 mb-4">
+
+      <CurrentLinkList links={links} className="mt-3"/>
+
       <h5 style={{ fontWeight: 'bolder' }}>Create Link to Another Document</h5>
 
       {message && <Alert variant="success">{message}</Alert>}
@@ -137,6 +141,44 @@ LinkControl.propTypes = {
   links: PropTypes.array.isRequired,
   newLinks: PropTypes.array.isRequired,
   setNewLinks: PropTypes.func.isRequired,  // Assicurati che setLinks venga passato da DocumentControl
+};
+
+function CurrentLinkList(props){
+  console.log(props.links);
+  return(
+    <>
+      <h5 style={{ fontWeight: 'bolder' }}>Current links</h5>
+      <ListGroup className='mb-3'>
+                {props.links.map((link) => <LinkInList
+                    key={link.id+"_"+link.type}
+                    linkData={link}
+                    />)}
+      </ListGroup>
+    </>
+  );
+}
+
+LinkControl.propTypes = {
+  links: PropTypes.array.isRequired,
+};
+
+function LinkInList(props){
+  return(
+  <ListGroupItem className="document-list-item rounded custom-list-group-item mt-2">
+    <Row>
+      <Col>
+        <label>{props.linkData.title}</label>
+      </Col>
+      <Col>
+        <label>{props.linkData.type}</label>
+      </Col>
+    </Row>
+  </ListGroupItem>
+  );
+}
+
+LinkControl.propTypes = {
+  linkData: PropTypes.object,
 };
 
 export default LinkControl;

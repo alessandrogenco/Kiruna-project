@@ -73,6 +73,7 @@ function DocumentControl(props) {
             const processedLinks = fetchedLinks.map(link => ({
               id: link.id,
               type: link.type,
+              title: link.title,
             }));
     
             setLinks(processedLinks); // Imposta solo id e type nello stato
