@@ -8,3 +8,18 @@
 .form-control{
     background-color:rgba(216, 216, 216, 0.207);
 }
+
+.link-section{
+    background-color:rgba(216, 216, 216, 0.207);
+    padding: 10px;
+    border-radius: 10px;
+    border: 2px solid #ccc;
+}
+
+.document-section{
+    background-color:rgba(216, 216, 216, 0.207);
+    padding: 10px;
+    border-radius: 10px;
+    border: 2px solid #ccc;
+    margin-bottom: 20px;
+}

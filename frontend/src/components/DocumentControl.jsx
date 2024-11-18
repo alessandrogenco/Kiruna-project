@@ -317,8 +317,9 @@ function DocumentControl(props) {
             </Alert>
           )}
 
-          <Row className="mb-3 mx-3">
-            <Form.Group as={Col} controlId="formTitle">
+          <div className="document-section">
+          <Row className="mb-3 mx-3 mt-3">
+            <Form.Group as={Col} controlId="formTitle" className="me-4">
               <Form.Label className='form-label'>Title</Form.Label>
               <Form.Control className="form-control"
                 type="text"
@@ -529,9 +530,7 @@ function DocumentControl(props) {
             </Col>
           </Row>
 
-          <LinkControl document={existingDocument} links={links} newLinks={newLinks} setNewLinks={setNewLinks}/>
-          
-          <Row className="mx-3">
+          <Row className="mx-3 mb-4">
             <Form.Group controlId="formDescription">
               <Form.Label className='form-label'>Description</Form.Label>
               <Form.Control
@@ -544,9 +543,14 @@ function DocumentControl(props) {
               />
             </Form.Group>
           </Row>
+          </div>
           
-          <Row className="mx-3">
-            <Col className="d-flex justify-content mt-3 pb-5">
+          <div className="link-section">
+          <LinkControl document={existingDocument} links={links} newLinks={newLinks} setNewLinks={setNewLinks}/>
+          </div>
+
+          <Row className="mx-3 mt-5">
+            <Col className="d-flex justify-content-center pb-5">
                 <Button className="me-3" variant="success" type="submit">
                   {documentId ? "Save" : "Add"}
                 </Button>
