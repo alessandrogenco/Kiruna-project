@@ -148,11 +148,19 @@ function CurrentLinkList(props){
   return(
     <>
       <h5 style={{ fontWeight: 'bolder', marginTop: '15px' }}>Current links</h5>
-      <ListGroup className='mb-3'>
-                {props.links.map((link) => <LinkInList
-                    key={link.id+"_"+link.type}
-                    linkData={link}
-                    />)}
+      <ListGroup className="mb-3">
+        {props.links.length > 0 ? (
+          props.links.map((link) => (
+            <LinkInList
+              key={link.id + "_" + link.type}
+              linkData={link}
+            />
+          ))
+        ) : (
+          <label className="text-muted">
+            No links currently
+          </label>
+        )}
       </ListGroup>
     </>
   );
