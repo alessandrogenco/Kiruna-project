@@ -23,8 +23,6 @@ const DocumentViewer = ({ documentData, onClose }) => {
 
   if (!documentData) return null;
 
- 
-
   return (
     <div className="my-document-viewer-wrapper">
       <div className="document-viewer">

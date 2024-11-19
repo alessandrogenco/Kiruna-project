@@ -12,7 +12,6 @@ import API from "../API.mjs";
 function DocumentControl(props) {
 
   const { documentId } = useParams();
-  console.log(documentId)
   const location = useLocation();
   const navigate = useNavigate();
 
