@@ -47,4 +47,48 @@ describe("addOriginalResource", () => {
         
         });
 
+    describe("getFilesByDocumentId", () => {
+        test("should fetch files and resolve with the files array", async () => {
+            // Arrange
+            const documentId = 1;
+            const rows = [
+              { description: "Test file 1", fileData: Buffer.from("file data 1") },
+              { description: "Test file 2", fileData: Buffer.from("file data 2") }
+            ];
+        
+            // Mock del metodo db.all per chiamare il callback senza errori e con delle righe
+            jest.spyOn(db, "all").mockImplementation((query, params, callback) => {
+              callback(null, rows);
+            });
+        
+            // Act
+            const result = await document.getFilesByDocumentId(documentId);
+        
+            // Assert
+            expect(result).toEqual([
+              { name: "Test file 1", data: "ZmlsZSBkYXRhIDE=" },
+              { name: "Test file 2", data: "ZmlsZSBkYXRhIDI=" }
+            ]);
+            } );
+
+            test("should reject with an error message when the query fails", async () => {
+                // Arrange
+                const documentId = 1;
+                const errorMessage = "Failed to fetch files";
+            
+                // Mock del metodo db.all per chiamare il callback con un errore
+                jest.spyOn(db, "all").mockImplementation((query, params, callback) => {
+                  callback(new Error(errorMessage));
+                });
+            
+                // Act & Assert
+                await expect(document.getFilesByDocumentId(documentId)).rejects.toThrow(errorMessage);
+                expect(db.all).toHaveBeenCalledWith(
+                  expect.any(String),
+                  [documentId],
+                  expect.any(Function)
+                );
+              });
+    });
+
 });

@@ -82,3 +82,37 @@ describe("addOriginalResource API", () => {
   });
 });
 
+describe("GET /api/files/:documentId", () => {
+  test("should return files for the specified document ID", async () => {
+    const documentId = 1;
+    const files = [
+      { name: "Test file 1", data: "ZmlsZSBkYXRhIDE=" },
+      { name: "Test file 2", data: "ZmlsZSBkYXRhIDI=" }
+    ];
+
+    // Mock the getFilesByDocumentId function
+    FileUploadDao.prototype.getFilesByDocumentId.mockResolvedValue(files);
+
+    const response = await request(app)
+      .get(`${baseURL}files/${documentId}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(files);
+   
+  });
+
+  test("should return 500 if there is an error fetching files", async () => {
+    const documentId = 1;
+    const errorMessage = "Failed to fetch files";
+
+    // Mock the getFilesByDocumentId function to reject with an error
+    FileUploadDao.prototype.getFilesByDocumentId.mockRejectedValue(new Error(errorMessage));
+
+    const response = await request(app)
+      .get(`${baseURL}files/${documentId}`);
+
+    expect(response.status).toBe(500);
+    expect(response.body).toEqual({ message: 'Failed to fetch files', error: errorMessage });
+
+  });
+});
