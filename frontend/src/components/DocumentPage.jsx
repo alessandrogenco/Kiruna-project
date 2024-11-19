@@ -14,6 +14,7 @@ function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) 
     const [showFormModal, setShowFormModal] = useState(false); // State to control the form modal
     const [searchQuery, setSearchQuery] = useState(''); // State for search query
     const [selectedArea, setSelectedArea] = useState('');
+    const [filterType, setFilterType] = useState('');
     const [message, setMessage] = useState(''); // Add this line
     const [newDocument, setNewDocument] = useState({
         title: '',
@@ -123,8 +124,13 @@ function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) 
         setSearchQuery(e.target.value);
     };
     
+    const handleFilterChange = (e) => {
+        setFilterType(e.target.value); // Update filter type
+    };
+
     const filteredDocuments = documents.filter((document) =>
-        document.title.toLowerCase().includes(searchQuery.toLowerCase())
+        document.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        (filterType === '' || document.type === filterType)
     );
     
     const handleUpdateDocument = async () => {
@@ -172,32 +178,48 @@ function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) 
             <AppNavbar isLoggedIn={isLoggedIn} handleLogout={handleLogout}/>
             <Row className="mt-3 mx-2">
                 <Col>
-                <Form className="d-flex mb-3">
-                    <InputGroup>
-                        <InputGroup.Text>
-                            <i className="bi bi-search"/> {/* Icona di Bootstrap */}
-                        </InputGroup.Text>
-                        <FormControl
-                            type="search"
-                            placeholder="Search documents"
-                            aria-label="Search"
-                            value={searchQuery}
-                            onChange={handleSearchChange}
-                            style={{ maxWidth: '300px' }}/>
+                    <Form className="d-flex mb-3 align-items-center">
+                        <InputGroup style={{ width: '300px', marginRight: '10px' }}>
+                            <InputGroup.Text>
+                                <i className="bi bi-search" />
+                            </InputGroup.Text>
+                            <FormControl
+                                type="search"
+                                placeholder="Search documents"
+                                aria-label="Search"
+                                value={searchQuery}
+                                onChange={handleSearchChange}
+                            />
                         </InputGroup>
+                        <Form.Select
+                            value={filterType}
+                            onChange={handleFilterChange}
+                            style={{ width: '150px' }}
+                        >
+                            <option value="">All Types</option>
+                            <option value="Technical">Text - Technical</option>
+                            <option value="Agreement">Concept - Agreement</option>
+                            <option value="Conflict">Concept - Conflict</option>
+                            <option value="Consultation">Concept - Consultation</option>
+                            <option value="Material effect">Concept - Material effect</option>
+                            <option value="Paper">Concept - Paper</option>
+                            <option value="Action">Action</option>
+                        </Form.Select>
                     </Form>
                 </Col>
                 <Col xs="auto" className="text-end">
                     <Button variant="success" onClick={() => navigate('/addDocument', { state: { newDocument } })}>
-                        <i className="bi bi-plus me-2"></i> {/* Icona + con margine destro */}
-                        Add Document
+                        <i className="bi bi-plus me-2"></i> Add Document
                     </Button>
                 </Col>
             </Row>
-            <DocumentList documents={filteredDocuments} updateDocument={handleUpdateDocument} deleteDocument={handleDelete}/>
+            <DocumentList 
+                documents={filteredDocuments} 
+                updateDocument={handleUpdateDocument} 
+                deleteDocument={handleDelete}
+            />
         </>
     );
-
 }
 
 DocumentPage.propTypes = {
