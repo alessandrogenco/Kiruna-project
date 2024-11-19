@@ -85,7 +85,7 @@ const LinkControl = (props) => {
 
       <h5 style={{ fontWeight: 'bolder' }}>Create Link to Another Document</h5>
 
-      {message && <Alert variant="success">{message}</Alert>}
+      {/*message && <Alert variant="success">{message}</Alert>*/}
       {error && <Alert variant="danger">{error}</Alert>}
 
       {rows.map((row, index) => (
@@ -138,7 +138,7 @@ const LinkControl = (props) => {
       <Row className="d-flex justify-content-between">
         <Col className="d-flex justify-content-center" style={{ height: '40px' }}>
           <Button className="me-3" variant="outline-success" onClick={addRow}>
-            Add
+            New Link
           </Button>
         </Col>
       </Row>

@@ -41,15 +41,15 @@ function AppNavbar({ isLoggedIn, handleLogout }) {
             <Nav className="me-auto">
               {isLoggedIn && (
                 <>
+                  <Nav.Link onClick={() => navigate('/explore')}>
+                    Explore 
+                  </Nav.Link>
                   <Nav.Link onClick={() => navigate('/documentsPage')/*handleShowModal('Manage Documents', 'manage')*/}>
                     Manage Documents
                   </Nav.Link>
                   {/*<Nav.Link onClick={() => handleShowModal('Link Documents', 'link')}>
                     Link Documents
                   </Nav.Link>*/}
-                  <Nav.Link onClick={() => navigate('/explore')}>
-                    Explore 
-                  </Nav.Link>
                 </>
               )}
             </Nav>
