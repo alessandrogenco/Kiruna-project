@@ -44,7 +44,7 @@ const DocumentViewer = ({ documentData, onClose }) => {
             <ul className="document-links custom-document-links">
               {documentLinks.map((link, index) => {
                 console.log('Document link:', link.title); // Log per ogni elemento della lista
-                return <li key={index}>{link.title}</li>;
+                return <li key={index}>{link.title + " | " + link.type}</li>;
               })}
             </ul>
           ) : (
