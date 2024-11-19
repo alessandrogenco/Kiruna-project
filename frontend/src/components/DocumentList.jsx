@@ -230,6 +230,27 @@ function FileList(props) {
     URL.revokeObjectURL(fileUrl);  
   };
 
+  useEffect(() => {
+    const fetchFiles = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3001/api/files/${props.documentId}`, {
+          responseType: 'json',
+        });
+        console.log(response.data);
+        const dataFiles = response.data.map((file) => ({
+          name: file.name,
+          data: file.data, 
+        }));
+
+        setFiles(dataFiles);
+      } catch (error) {
+        setError(`This document has no files`);
+      }
+    };
+
+    fetchFiles();
+  }, [props.documentId]);
+
   return (
     <div>
       <Button variant="outline-success" onClick={toggleFileList}>
