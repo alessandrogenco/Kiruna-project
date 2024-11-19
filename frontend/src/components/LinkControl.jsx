@@ -68,7 +68,7 @@ const LinkControl = (props) => {
     setNewLinks([...newLinks, newLink]);
   
     // Visualizza un messaggio di successo
-    setMessage('Link created successfully!');
+    setMessage('Link added successfully!');
   
     // Aggiungi una nuova riga vuota per il prossimo link
     setRows([...rows, { targetDocument: '', linkType: '' }]);
