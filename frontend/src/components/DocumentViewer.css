@@ -32,6 +32,8 @@
 }
 
 .document-details, .document-description {
+    max-height: 300px; /* Imposta un'altezza massima per il menu a discesa */
+    overflow-y: auto;
     margin: 15px 0;
     font-size: 1.1rem;
     line-height: 1.7;
@@ -68,6 +70,8 @@
     padding-left: 0;
     list-style-type: none;
   }
+
+
   
   .document-links li {
     background-color: #f8f9fa;
@@ -92,3 +96,19 @@
 .button-group button:last-child:hover {
     background-color: #218838;
 }
+
+.custom-document-links {
+    max-width: 450px; /* Imposta una larghezza massima */
+    margin: 0 auto; /* Centra l'elemento orizzontalmente */
+    padding: 0; /* Rimuovi il padding */
+    list-style-type: none; /* Rimuovi i punti elenco */
+  }
+  
+  .custom-document-links li {
+    background-color: #e9ecef;
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    
+  }
+

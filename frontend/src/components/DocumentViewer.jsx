@@ -8,16 +8,22 @@ const DocumentViewer = ({ documentData, onClose }) => {
   const [showLinks, setShowLinks] = useState(false);
 
   const handleConnectionsClick = async () => {
-    try {
-      const links = await getDocumentLinks(documentData.id);
-      setDocumentLinks(links.links);
-      setShowLinks(true); // Mostra i link quando vengono recuperati
-    } catch (error) {
-      console.error('Error fetching document links:', error);
+    if (showLinks) {
+      setShowLinks(false); // Nascondi i link se sono già visibili
+    } else {
+      try {
+        const links = await getDocumentLinks(documentData.id);
+        setDocumentLinks(links.links);
+        setShowLinks(true); // Mostra i link quando vengono recuperati
+      } catch (error) {
+        console.error('Error fetching document links:', error);
+      }
     }
   };
 
   if (!documentData) return null;
+
+ 
 
   return (
     <div className="my-document-viewer-wrapper">
@@ -33,17 +39,19 @@ const DocumentViewer = ({ documentData, onClose }) => {
               <strong>Connections:</strong> {documentData.connections}
             </p>
             {showLinks && (
-              documentLinks ? (
-                <ul className="document-links">
-                  {documentLinks.map((link, index) => {
-                    console.log('Document link:', link.title); // Log per ogni elemento della lista
-                    return <li key={index}>{link.title}</li>;
-                  })}
-                </ul>
-              ) : (
-                <p>No connections available.</p>
-              )
-            )}
+        <>
+          {documentLinks ? (
+            <ul className="document-links custom-document-links">
+              {documentLinks.map((link, index) => {
+                console.log('Document link:', link.title); // Log per ogni elemento della lista
+                return <li key={index}>{link.title}</li>;
+              })}
+            </ul>
+          ) : (
+            <p>No connections available.</p>
+          )}
+        </>
+      )}
             <div className="button-group">
               <button onClick={() => setViewDescription(true)}>View Description</button>
             </div>
