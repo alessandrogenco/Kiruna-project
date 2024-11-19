@@ -332,7 +332,7 @@ function DocumentControl(props) {
               />
             </Form.Group>
 
-            <Form.Group as={Col} controlId="formStakeholders">
+            <Form.Group as={Col} controlId="formStakeholders" className="me-4">
               <Form.Label className='form-label'>Stakeholders</Form.Label>
               <Form.Control
                 type="text"
@@ -344,8 +344,8 @@ function DocumentControl(props) {
             </Form.Group>
           </Row>
           
-          <Row className="mb-3 mx-3">
-            <Form.Group as={Col} md={4} controlId="formScale">
+          <Row className="mb-4 mx-3">
+            <Form.Group as={Col} controlId="formScale" className="me-4">
               <Form.Label className='form-label'>Scale</Form.Label>
               <Form.Control
                 placeholder="Enter scale"
@@ -356,10 +356,10 @@ function DocumentControl(props) {
               />
             </Form.Group>
 
-            <Form.Group as={Col} md={7} controlId="formDate" className="mx-5">
-              <Row className="d-flex justify-content-end mx-8">
+            <Form.Group as={Col} controlId="formDate">
+              <Row className="d-flex justify-content-end mx-3">
                 <Form.Label className='form-label text-center'>Date</Form.Label>
-                <Col md={4} className="d-flex">
+                <Col as={Col} className="d-flex">
                   <Form.Control
                     type="number"
                     name="year"
@@ -375,7 +375,7 @@ function DocumentControl(props) {
                     }}
                   />
                 </Col>
-                <Col md={4} className="d-flex">
+                <Col as={Col} className="d-flex">
                   <Form.Control
                     type="number"
                     name="month"
@@ -392,7 +392,7 @@ function DocumentControl(props) {
                     }}
                   />
                 </Col>
-                <Col md={4} className="d-flex">
+                <Col as={Col} className="d-flex">
                   <Form.Control
                     type="number"
                     name="day"
@@ -413,8 +413,8 @@ function DocumentControl(props) {
             </Form.Group>
           </Row>
 
-          <Row className="mb-3 mx-3">
-            <Form.Group as={Col} controlId="formType">
+          <Row className="mb-4 mx-3">
+            <Form.Group as={Col} controlId="formType" className="me-4">
               <Form.Label className='form-label'>Type</Form.Label>
               <Form.Control
                 as="select"
@@ -436,7 +436,7 @@ function DocumentControl(props) {
               </Form.Control>
             </Form.Group>
 
-            <Form.Group as={Col} controlId="formLanguage">
+            <Form.Group as={Col} controlId="formLanguage" className="me-4">
               <Form.Label className='form-label'>Language</Form.Label>
               <Form.Control
                 as="select"
@@ -450,7 +450,7 @@ function DocumentControl(props) {
               </Form.Control>
             </Form.Group>
 
-            <Form.Group as={Col} controlId="formPages">
+            <Form.Group as={Col} controlId="formPages" className="me-4">
               <Form.Label className='form-label'>Pages</Form.Label>
               <Form.Control
                 type="text"
@@ -462,8 +462,8 @@ function DocumentControl(props) {
             </Form.Group>
           </Row>
 
-          <Row className="mb-3 mx-3 d-flex justify-content-between">
-            <Form.Group as={Col} controlId="formLat" md = {3} className="mr-3">
+          <Row className="mb-4 mx-3">
+            <Form.Group as={Col} controlId="formLat" className="me-4">
               <Form.Label className='form-label'>Latitude</Form.Label>
               <Form.Control
                 type="text"
@@ -474,7 +474,7 @@ function DocumentControl(props) {
                 onChange={handleChange}
               />
             </Form.Group>
-            <Form.Group as={Col} controlId="formLon" md = {3} className="mr-3">
+            <Form.Group as={Col} controlId="formLon" className="me-4">
               <Form.Label className='form-label'>Longitude</Form.Label>
               <Form.Control
                 type="text"
@@ -486,8 +486,8 @@ function DocumentControl(props) {
               />
             </Form.Group>
 
-            <Form.Group as={Col} md={2} className="d-flex align-items-center">
-            <Button variant="secondary" className="mt-3" onClick={handleMapSelection}>
+            <Form.Group as={Col} className="d-flex justify-content-center me-4">
+            <Button variant="outline-success" style={{marginTop: "32px"}} onClick={handleMapSelection}>
              Select Location on Map
             </Button>
             </Form.Group>
@@ -499,7 +499,8 @@ function DocumentControl(props) {
               onLocationSelect={handleLocationSelect}
           />
           
-          <Row className="mb-3 mx-3">
+          <Row className="mb-4 mx-3">
+          <label className="form-label ms-3 mb-0">Add original resources</label>
             <Col md={8}>
               <div className="mt-2">
                 <input 
@@ -548,7 +549,7 @@ function DocumentControl(props) {
           </div>
           
           <div className="link-section">
-          <LinkControl selectedId={existingDocument.id} links={links} newLinks={newLinks} setNewLinks={setNewLinks}/>
+          <LinkControl selectedId={documentId} links={links} newLinks={newLinks} setNewLinks={setNewLinks}/>
           </div>
 
           <Row className="mx-3 mt-5">
