@@ -548,7 +548,7 @@ function DocumentControl(props) {
           </div>
           
           <div className="link-section">
-          <LinkControl document={existingDocument} links={links} newLinks={newLinks} setNewLinks={setNewLinks}/>
+          <LinkControl selectedId={existingDocument.id} links={links} newLinks={newLinks} setNewLinks={setNewLinks}/>
           </div>
 
           <Row className="mx-3 mt-5">

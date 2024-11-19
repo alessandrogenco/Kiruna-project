@@ -19,6 +19,7 @@ function ExplorePage(props) {
   const [selectedDocument, setSelectedDocument] = useState(null); // State for the selected document
   const cluster = useRef(null);
   const markersLayer = useRef(null);
+  const activePopup = useRef(null);
 
   const handleSetMarkers = (newMarkers) => {
     setMarkers([...newMarkers]);
@@ -136,15 +137,22 @@ function ExplorePage(props) {
             .setHTML(`
               <div style="padding: 5px; margin-bottom: -0.4em; display: flex; flex-direction: column;">
                  <div style="font-size: 1.2em; font-weight: bold;">${properties.label}</div>
-                <button id="view-details" style="margin-top: 12px; padding: 5px; background-color: #218838; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                <button id="view-details-${properties.data.id}" style="margin-top: 12px; padding: 5px; background-color: #218838; color: white; border: none; border-radius: 4px; cursor: pointer;">
                   View Details
                 </button>
               </div>
             `)
             .on('open', () => {
-              document.getElementById('view-details').addEventListener('click', () => {
+              document.getElementById(`view-details-${properties.data.id}`).addEventListener('click', () => {
+                if (activePopup.current) {
+                  activePopup.current.remove(); // Close the currently active popup
+                }
                 setSelectedDocument(properties.data); // Pass data to DocumentViewer
               });
+              activePopup.current = popup; // Set the current popup
+            })
+            .on('close', () => {
+              activePopup.current = null; // Clear the reference when popup closes
             });
 
           const marker = new mapboxgl.Marker({
