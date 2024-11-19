@@ -12,7 +12,7 @@ function DocumentList(props){
 
     return(
         <>
-            <h1 className='mx-4'>Documents List</h1>
+            <h1 className='mx-4'>Documents</h1>
           
             <ListGroup>
                 {props.documents.map((doc) => <DocumentInList
