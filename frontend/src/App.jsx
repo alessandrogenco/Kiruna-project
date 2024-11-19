@@ -8,7 +8,6 @@ import HomePage from './components/HomePage'; // Importa il componente HomePage
 import ExplorePage from './components/ExplorePage'; // Importa il componente ExplorePage
 import Documents from './components/Documents';
 import DocumentControl from './components/DocumentControl';
-import LinkDocuments from './components/LinkDocuments';
 import DocumentPage from './components/DocumentPage';
 
 function App() {

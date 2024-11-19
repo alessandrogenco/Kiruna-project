@@ -1,7 +1,6 @@
 import React from 'react';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import Documents from './Documents'; // Import the Documents component
-import LinkDocuments from './LinkDocuments'; // Import the LinkDocuments component
 
 function MessageModal({ show, handleClose, message, modalType }) {
   return (
