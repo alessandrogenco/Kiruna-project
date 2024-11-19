@@ -109,24 +109,7 @@
     border-color: #218838; /* Colore del bordo al passaggio del mouse e al focus */
   }
   
-  #dropdown-basic-button .dropdown-menu {
-    background-color: #f8f9fa; /* Colore di sfondo del menu a discesa */
-    border-radius: 4px; /* Angoli arrotondati */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Ombra del menu a discesa */
-  }
   
-  #dropdown-basic-button .dropdown-item {
-    color: #333; /* Colore del testo degli elementi del menu */
-    padding: 10px 20px; /* Padding degli elementi del menu */
-  }
-  
-  #dropdown-basic-button .dropdown-item:hover,
-  #dropdown-basic-button .dropdown-item:focus {
-    background-color: #e9ecef; /* Colore di sfondo degli elementi del menu al passaggio del mouse e al focus */
-    color: #333; /* Colore del testo degli elementi del menu */
-  }
-
-
   .custom-list-group-item {
     width: 100%;
     padding: 5px 20px; /* Riduci il padding orizzontale */
@@ -154,15 +137,22 @@
       min-height: 60px; /* Riduci ulteriormente l'altezza minima per schermi molto piccoli */
     }
   }
+
+
   
   .custom-dropdown-item {
     color: #333; /* Colore del testo */
-    padding: 10px 20px; /* Padding personalizzato */
-    background-color: #e9ecef; /* Colore di sfondo */
+    padding: 5px 55px; /* Padding personalizzato */
     border-radius: 4px; /* Angoli arrotondati */
     text-decoration: none; /* Rimuovi la sottolineatura */
     display: block; /* Assicura che l'elemento occupi tutta la larghezza disponibile */
     pointer-events: none; 
+  }
+
+  @media (max-width: 900px) {
+    .custom-dropdown-item {
+      padding: 5px 5px; /* Riduci il padding per schermi medi */
+    }
   }
   
   .custom-dropdown-item:hover,
@@ -173,3 +163,12 @@
     cursor: default; /* Cambia il cursore per indicare che l'elemento non è cliccabile */
     pointer-events: none; /* Disabilita i clic sugli elementi */
   }
+
+  .dropdown-menu {
+    max-height: 100px; /* Imposta un'altezza massima per il menu a discesa */
+    overflow-y: auto; /* Aggiungi lo scorrimento verticale */
+    background-color: #f8f9fa; /* Colore di sfondo del menu a discesa */
+    border-radius: 4px; /* Angoli arrotondati */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Ombra del menu a discesa */
+  }
+  
