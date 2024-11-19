@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
-import { Col, ListGroupItem, Row, ListGroup, Form, Button, Dropdown, DropdownButton, Card } from 'react-bootstrap';
+import { Col, ListGroupItem, Row, ListGroup, Form, Button, Dropdown, DropdownButton } from 'react-bootstrap';
 import { Link } from "react-router-dom";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './DocumentList.css';

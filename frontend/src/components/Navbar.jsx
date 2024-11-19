@@ -6,21 +6,7 @@ import MessageModal from './MessageModal';
 
 function AppNavbar({ isLoggedIn, handleLogout }) {
   const navigate = useNavigate();
-  const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState('');
-  const [modalType, setModalType] = useState('');
   const isMobile = window.innerWidth <= 768;
-
-  const handleShowModal = (content, type) => {
-    setModalContent(content);
-    setModalType(type);
-    setShowModal(true);
-  };
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setModalContent('');
-    setModalType('');
-  };
 
   const handleLoginClick = () => {
     if(!isLoggedIn){
@@ -41,15 +27,12 @@ function AppNavbar({ isLoggedIn, handleLogout }) {
             <Nav className="me-auto">
               {isLoggedIn && (
                 <>
-                  <Nav.Link onClick={() => navigate('/explore')}>
+                  <Nav.Link onClick={() => navigate('/explore')} style={{color: 'lightgray'}}>
                     Explore 
                   </Nav.Link>
-                  <Nav.Link onClick={() => navigate('/documentsPage')/*handleShowModal('Manage Documents', 'manage')*/}>
+                  <Nav.Link onClick={() => navigate('/documentsPage')} style={{color: 'lightgray'}}>
                     Manage Documents
                   </Nav.Link>
-                  {/*<Nav.Link onClick={() => handleShowModal('Link Documents', 'link')}>
-                    Link Documents
-                  </Nav.Link>*/}
                 </>
               )}
             </Nav>
@@ -71,7 +54,6 @@ function AppNavbar({ isLoggedIn, handleLogout }) {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      <MessageModal show={showModal} handleClose={handleCloseModal} modalType={modalType} />
     </>
   );
 }

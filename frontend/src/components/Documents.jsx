@@ -343,13 +343,6 @@ const handleUpdateDocument = async () => {
                   <option value="">Select a language</option>
                   <option value="English">English</option>
                   <option value="Swedish">Swedish</option>
-                  <option value="Danish">Danish</option>
-                  <option value="Norwegian">Norwegian</option>
-                  <option value="Finnish">Finnish</option>
-                  <option value="Icelandic">Icelandic</option>
-                  <option value="Estonian">Estonian</option>
-                  <option value="Latvian">Latvian</option>
-                  <option value="Lithuanian">Lithuanian</option>
                 </Form.Control>
               </Form.Group>
               <Form.Group className="mt-3" controlId="formPages">

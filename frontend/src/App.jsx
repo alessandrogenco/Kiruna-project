@@ -6,7 +6,6 @@ import API from './API.mjs';
 import LoginForm from './components/Auth';
 import HomePage from './components/HomePage'; // Importa il componente HomePage
 import ExplorePage from './components/ExplorePage'; // Importa il componente ExplorePage
-import LoggedInPage from './components/LoggedInPage';
 import Documents from './components/Documents';
 import DocumentControl from './components/DocumentControl';
 import LinkDocuments from './components/LinkDocuments';
@@ -94,10 +93,6 @@ function App() {
           element={
             loggedIn ? <Navigate to="/explore" /> : <LoginForm login={handleLogin} isLoggedIn={loggedIn} handleLogout={handleLogout} />
           }
-        />
-        <Route
-          path="/loggedInPage"
-          element={<LoggedInPage isLoggedIn={loggedIn} handleLogout={handleLogout} />}
         />
         <Route
           path="/explore"
