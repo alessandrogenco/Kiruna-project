@@ -138,7 +138,7 @@ const LinkControl = (props) => {
       <Row className="d-flex justify-content-between">
         <Col className="d-flex justify-content-center" style={{ height: '40px' }}>
           <Button className="me-3" variant="outline-success" onClick={addRow}>
-            Add
+            New Link
           </Button>
         </Col>
       </Row>
