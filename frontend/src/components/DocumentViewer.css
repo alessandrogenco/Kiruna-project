@@ -8,46 +8,75 @@
     min-width: 320px;
     background: #ffffff;
     border: none;
-    padding: 4px 25px; 
+    padding: 20px; 
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     border-radius: 16px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     animation: fadeIn 0.3s ease-in-out;
+    overflow: hidden;
+}
+
+/* Header with close button */
+.fixed-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #dee2e6;
+    background-color: white;
+}
+
+.fixed-header h3 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #000000;
+    text-align: center;
+    flex-grow: 1; /* Ensures the title takes available space */
 }
 
 .close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
+    font-size: 1.5rem;
     background: none;
     border: none;
-    font-size: 1.5rem;
     color: #555;
     cursor: pointer;
+    margin-left: auto; /* Pushes the button to the far right */
 }
 
 .close-button:hover {
     color: #000;
+    transform: scale(1.1);
+}
+
+/* Scrollable content below the header */
+.scrollable-content {
+    max-height: calc(80vh - 80px); /* Adjust for header height */
+    overflow-y: auto;
+    padding-top: 10px;
 }
 
 .document-details, .document-description {
-    max-height: 300px; /* Imposta un'altezza massima per il menu a discesa */
-    overflow-y: auto;
-    margin: 15px 0;
     font-size: 1.1rem;
     line-height: 1.7;
     color: #444;
 }
 
-.document-details h3, .document-description h3 {
-    font-size: 1.8rem;
-    margin-bottom: 15px;
-    color: #000000;
-    text-align: center;
-    font-weight: 600;
+.document-links {
+    margin-top: 10px;
+    padding-left: 0; /* Remove default padding */
+    list-style-type: none; /* Removes the bullet points */
 }
 
+.document-links li {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
 .button-group {
     display: flex;
@@ -65,29 +94,6 @@
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.document-links {
-    margin-top: 10px;
-    padding-left: 0;
-    list-style-type: none;
-  }
-
-
-  
-  .document-links li {
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    padding: 5px 15px;
-    margin-bottom: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease, transform 0.2s ease;
-  }
-
-.button-group button:first-child:hover {
-    background-color: #5a6268;
-}
-
-
 .button-group button:last-child {
     background-color: #28a745;
     color: white;
@@ -96,19 +102,3 @@
 .button-group button:last-child:hover {
     background-color: #218838;
 }
-
-.custom-document-links {
-    max-width: 450px; /* Imposta una larghezza massima */
-    margin: 0 auto; /* Centra l'elemento orizzontalmente */
-    padding: 0; /* Rimuovi il padding */
-    list-style-type: none; /* Rimuovi i punti elenco */
-  }
-  
-  .custom-document-links li {
-    background-color: #e9ecef;
-    padding: 10px;
-    margin-bottom: 5px;
-    border-radius: 4px;
-    
-  }
-
