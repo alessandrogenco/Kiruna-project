@@ -33,6 +33,7 @@
     padding: 10px;
     margin-bottom: 5px;
     border-radius: 4px;
+    
    }
   
   /* Custom styles for Form.Group */
@@ -71,7 +72,7 @@
   .document-details1 .form-control-description {
     border-radius: 4px;
     border: 1px solid #ced4da;
-    padding: 10px;
+    padding: 25px 10px;
     background-color: #fff;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
     width: 303%; /* Imposta la larghezza dei controlli al 100% del contenitore */
@@ -136,4 +137,39 @@
   .custom-dropdown-item {
     padding: 5px 110px; /* Aumenta il padding per rendere l'elemento più grande */
 
+  }
+
+  @media (max-width: 900px) {
+    .document-details1 .form-control-description {
+      padding: 25px; /* Riduci il padding per schermi piccoli */
+      width: 200%; /* Imposta la larghezza al 100% per schermi piccoli */
+      min-height: 80px; /* Riduci l'altezza minima per schermi piccoli */
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .document-details1 .form-control-description {
+      padding: 10px 5px; /* Riduci ulteriormente il padding per schermi molto piccoli */
+      width: 100%; /* Imposta la larghezza al 100% per schermi molto piccoli */
+      min-height: 60px; /* Riduci ulteriormente l'altezza minima per schermi molto piccoli */
+    }
+  }
+  
+  .custom-dropdown-item {
+    color: #333; /* Colore del testo */
+    padding: 10px 20px; /* Padding personalizzato */
+    background-color: #e9ecef; /* Colore di sfondo */
+    border-radius: 4px; /* Angoli arrotondati */
+    text-decoration: none; /* Rimuovi la sottolineatura */
+    display: block; /* Assicura che l'elemento occupi tutta la larghezza disponibile */
+    pointer-events: none; 
+  }
+  
+  .custom-dropdown-item:hover,
+  .custom-dropdown-item:focus {
+    background-color: #e9ecef; /* Mantieni lo stesso colore di sfondo al passaggio del mouse e al focus */
+    color: #333; /* Mantieni lo stesso colore del testo al passaggio del mouse e al focus */
+    text-decoration: none; /* Mantieni la rimozione della sottolineatura */
+    cursor: default; /* Cambia il cursore per indicare che l'elemento non è cliccabile */
+    pointer-events: none; /* Disabilita i clic sugli elementi */
   }
