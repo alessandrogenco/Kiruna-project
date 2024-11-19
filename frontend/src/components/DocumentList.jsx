@@ -213,6 +213,23 @@ function FileList(props) {
     setShowFiles(prevState => !prevState);
   };
 
+  const handleDownload = (fileName, fileData) => {
+    const byteCharacters = atob(fileData);
+    const byteNumbers = new Array(byteCharacters.length);
+    
+    for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+
+    const fileBlob = new Blob([new Uint8Array(byteNumbers)], { type: 'application/pdf' });
+    const fileUrl = URL.createObjectURL(fileBlob);
+    const a = document.createElement('a');
+    a.href = fileUrl;
+    a.download = fileName;
+    a.click(); 
+    URL.revokeObjectURL(fileUrl);  
+  };
+
   return (
     <div>
       <Button variant="outline-success" onClick={toggleFileList}>
@@ -226,6 +243,14 @@ function FileList(props) {
               {files && files.length > 0 && files.map((file, index) => (
               <ListGroup.Item key={index}>
                 <span style={{ paddingTop: '2px', display: 'inline-block' }}>{file.name}</span>
+                <Button 
+                  variant="success" 
+                  onClick={() => handleDownload(file.name, file.data)} 
+                  size="sm"
+                  style={{ float: 'right' }}
+                >
+                  Download
+                </Button>
               </ListGroup.Item>
               ))}
               {error && <p>{error}</p>}
