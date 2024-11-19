@@ -8,7 +8,6 @@ import { getDocumentLinks } from '../API.mjs';
 import axios from 'axios';
 
 function DocumentList(props){
-  
 
     return(
         <>
@@ -31,8 +30,6 @@ DocumentList.propTypes = {
     updateDocument: PropTypes.func,
     deleteDocument: PropTypes.func,
 };
-
-//custom-border mx-3 mb-2 p-2 border border-dark bg-light rounded
 
 function DocumentInList(props){
     const [selectedDocument, setSelectedDocument] = useState(null);
