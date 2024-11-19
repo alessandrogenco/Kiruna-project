@@ -116,9 +116,8 @@ function DocumentInList(props){
                     <Form.Label className='form-label-det'>Issuance Date</Form.Label>
                     <Form.Control
                       className='form-control-det'
-                      type="date"
                       name="date"
-                      value={selectedDocument.date || ""}
+                      value={selectedDocument.issuanceDate || ""}
                       readOnly
                     />
                   </Form.Group>
