@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Alert, Button, Col, Form, Row, Container } from 'react-bootstrap';
+import { Alert, Button, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from "prop-types";
 import '../styles/Auth.css'; 
