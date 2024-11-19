@@ -5,7 +5,7 @@ import API from '../API.mjs'; // Import delle funzioni API
 import '../styles/DocumentList.css';
 
 const LinkControl = (props) => {
-  const { links, newLinks, setNewLinks } = props;  // Ricevi setLinks da DocumentControl
+  const { selectedId, links, newLinks, setNewLinks } = props;  // Ricevi setLinks da DocumentControl
 
   console.log(links);
   console.log(newLinks);
@@ -20,14 +20,17 @@ const LinkControl = (props) => {
     const fetchDocuments = async () => {
       try {
         const data = await API.getDocuments();
-        setDocuments(data);
+        // Filtra i documenti per escludere quello con l'id passato tramite props
+        const filteredData = data.filter(doc => doc.id !== selectedId); 
+        setDocuments(filteredData);
       } catch (err) {
         console.error('Error fetching documents:', err);
         setError('Unable to fetch documents. Please try again later.');
       }
     };
+  
     fetchDocuments();
-  }, []);
+  }, [selectedId]);
 
   // Handle adding a new link
   const addRow = () => {
@@ -138,6 +141,7 @@ const LinkControl = (props) => {
 };
 
 LinkControl.propTypes = {
+  selectedId: PropTypes.object.isRequired,
   links: PropTypes.array.isRequired,
   newLinks: PropTypes.array.isRequired,
   setNewLinks: PropTypes.func.isRequired,  // Assicurati che setLinks venga passato da DocumentControl
