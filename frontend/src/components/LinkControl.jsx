@@ -58,8 +58,12 @@ const LinkControl = (props) => {
     const linkExists = links.some(
       (link) => link.id === newLink.id && link.type === newLink.type
     );
+    
+    const linkExistsNew = newLinks.some(
+      (link) => link.id === newLink.id && link.type === newLink.type
+    );
   
-    if (linkExists) {
+    if (linkExists || linkExistsNew) {
       setError('This link already exists.');
       return;
     }
