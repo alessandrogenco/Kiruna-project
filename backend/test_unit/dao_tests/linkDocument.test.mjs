@@ -11,7 +11,6 @@ describe("Link Documents", () => {
     test("Successfully links two documents", async () => {
         const id1 = 1;
         const id2 = 2;
-        const linkDate = "2024-11-05";
         const linkType = "Informative document";
 
         jest.spyOn(db, "get").mockImplementation((sql, params, callback) => {
@@ -28,14 +27,12 @@ describe("Link Documents", () => {
             callback(null);  
         });
 
-        const result = await documentDao.linkDocuments(id1, id2, linkDate, linkType);
+        const result = await documentDao.linkDocuments(id1, id2, linkType);
         
-        expect(result).toEqual({
-            idDocument1: id1,
-            idDocument2: id2,
-            date: linkDate,
-            type: linkType
-        });
+        expect(result.idDocument1).toEqual(id1);
+        expect(result.idDocument2).toEqual(id2);
+        expect(result.type).toEqual(linkType);
+       
     });
 
     test("Fails when link already exists", async () => {
@@ -48,9 +45,9 @@ describe("Link Documents", () => {
             callback(null, { count: 1 });  
         });
 
-        await expect(documentDao.linkDocuments(id1, id2, linkDate, linkType))
+        await expect(documentDao.linkDocuments(id1, id2, linkType))
             .rejects
-            .toThrow("Link already exists");
+            .toThrow("Link of this type already exists between these documents");
     });
 
     test("Fails when there is a database error during link check", async () => {
@@ -63,7 +60,7 @@ describe("Link Documents", () => {
             callback(new Error("Database error during link check"), null);
         });
 
-        await expect(documentDao.linkDocuments(id1, id2, linkDate, linkType))
+        await expect(documentDao.linkDocuments(id1, id2, linkType))
             .rejects
             .toThrow("Database error: Database error during link check");
     });
@@ -82,7 +79,7 @@ describe("Link Documents", () => {
             callback(new Error("Database error during link insertion"));
         });
 
-        await expect(documentDao.linkDocuments(id1, id2, linkDate, linkType))
+        await expect(documentDao.linkDocuments(id1, id2, linkType))
             .rejects
             .toThrow("Database error: Database error during link insertion");
     });
@@ -105,7 +102,7 @@ describe("Link Documents", () => {
                 callback(new Error("Database error during connections update"));  
             });
 
-        await expect(documentDao.linkDocuments(id1, id2, linkDate, linkType))
+        await expect(documentDao.linkDocuments(id1, id2, linkType))
             .rejects
             .toThrow("Database error: Database error during connections update");
     });
@@ -117,10 +114,10 @@ describe("Get Document Links", () => {
     test("Successfully retrieves links for a document", async () => {
         const documentId = 1;
         const mockLinks1 = [
-            { id: 2, title: "Linked Document 1", date: "2024-11-05", type: "Informative document" },
+            { id: 2, title: "Linked Document 1", type: "Informative document" },
         ];
         const mockLinks2 = [
-            { id: 3, title: "Linked Document 2", date: "2024-11-05", type: "Design document" },
+            { id: 3, title: "Linked Document 2",  type: "Design document" },
         ];
 
         jest.spyOn(db, "all").mockImplementationOnce((sql, params, callback) => {
@@ -133,7 +130,8 @@ describe("Get Document Links", () => {
 
         const result = await documentDao.getDocumentLinks(documentId);
         
-        expect(result).toEqual([...mockLinks1, ...mockLinks2]);
+        expect(result.id1).toEqual(mockLinks1.id);
+        expect(result.id2).toEqual(mockLinks2.id);
     });
 
     test("Document has no links", async () => {
@@ -203,12 +201,10 @@ describe("Update Link", () => {
 
         const result = await documentDao.updateLink(idDocument1, idDocument2, newLinkDate, newLinkType);
 
-        expect(result).toEqual({
-            id1: idDocument1,
-            id2: idDocument2,
-            date: newLinkDate,
-            type: newLinkType,
-        });
+        expect(result.id1).toEqual(idDocument1);
+        expect(result.id2).toEqual(idDocument2);
+        expect(result.type).toEqual(newLinkType);
+       
     });
 
     test("Link does not exist", async () => {

@@ -241,7 +241,7 @@ describe("Add new document and delete it", () => {
 
         await expect(documentDao.addDocument(
             title, stakeholders, scale, date, type, connections, language, pages, lat, lon, area, description
-        )).rejects.toThrow("Database error: Database error while adding document");
+        )).rejects.toThrow("Database error while adding document");
     });
 
     test("Successfully deletes a document", async () => {

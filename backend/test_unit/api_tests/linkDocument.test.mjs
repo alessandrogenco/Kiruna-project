@@ -19,44 +19,29 @@ describe("POST Link Documents", () => {
         const spyDao = jest.spyOn(DocumentDao.prototype, "linkDocuments").mockResolvedValueOnce({
             idDocument1: 1,
             idDocument2: 2,
-            date: "2024-11-05",
             type: "Informative document",
         });
 
         const response = await request(app).post(baseURL + "linkDocuments").send({
             id1: 1,
             id2: 2,
-            linkDate: "2024-11-05",
             linkType: "Informative document",
         });
 
         expect(response.status).toBe(200);
         expect(spyDao).toHaveBeenCalledTimes(1);
-        expect(spyDao).toHaveBeenCalledWith(1, 2, "2024-11-05", "Informative document");
+        expect(spyDao).toHaveBeenCalledWith(1, 2, "Informative document");
         expect(response.body).toEqual({
             message: "Documents linked successfully",
             link: {
                 idDocument1: 1,
                 idDocument2: 2,
-                date: "2024-11-05",
                 type: "Informative document",
             },
         });
     });
 
-    test("Should return 400 if link Date is an empty string", async () => {
-        const response = await request(app).post(baseURL + "linkDocuments").send({
-            id1: 1,
-            id2: 2,
-            linkDate: "",
-            linkType: "Informative document",
-        });
-
-        expect(response.status).toBe(400);
-        expect(response.body).toEqual({
-            message: "The link date must be a non-empty string",
-        });
-    });
+   
 
     test("Should return 400 if Link Type is an empty string", async () => {
         const response = await request(app).post(baseURL + "linkDocuments").send({

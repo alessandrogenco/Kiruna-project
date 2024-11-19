@@ -26,20 +26,19 @@ describe("Document DAO Integration Tests", () => {
 
     describe("linkDocuments", () => {
         test("Successfully links two documents", async () => {
-            const linkResult = await DocumentDao.prototype.linkDocuments(testDocument1.id, testDocument2.id, "2024-11-06", "Informative document");
+            const linkResult = await DocumentDao.prototype.linkDocuments(testDocument1.id, testDocument2.id, "Informative document");
             expect(linkResult).toEqual({
                 idDocument1: testDocument1.id,
                 idDocument2: testDocument2.id,
-                date: "2024-11-06",
                 type: "Informative document",
             });
         });
 
         test("Rejects if link already exists", async () => {
-            await DocumentDao.prototype.linkDocuments(testDocument1.id, testDocument2.id, "2024-11-05", "Informative document");
+            await DocumentDao.prototype.linkDocuments(testDocument1.id, testDocument2.id, "Informative document");
             await expect(
-                DocumentDao.prototype.linkDocuments(testDocument1.id, testDocument2.id, "2024-11-06", "Design document")
-            ).rejects.toThrow("Link already exists");
+                DocumentDao.prototype.linkDocuments(testDocument1.id, testDocument2.id, "Informative document")
+            ).rejects.toThrow("Link of this type already exists between these documents");
         });
     });
 
