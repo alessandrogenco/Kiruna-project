@@ -85,7 +85,7 @@ const LinkControl = (props) => {
 
       <h5 style={{ fontWeight: 'bolder' }}>Create Link to Another Document</h5>
 
-      {message && <Alert variant="success">{message}</Alert>}
+      {/*message && <Alert variant="success">{message}</Alert>*/}
       {error && <Alert variant="danger">{error}</Alert>}
 
       {rows.map((row, index) => (
