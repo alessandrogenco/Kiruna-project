@@ -24,14 +24,24 @@ class FileUploadDao{
     
     getFilesByDocumentId(documentId) {
         return new Promise((resolve, reject) => {
-            const query = `SELECT id, resourceType, description FROM OriginalResources WHERE documentId = ?;`;
+            const query = `SELECT description, fileData FROM OriginalResources WHERE documentId = ?;`;
 
             db.all(query, [documentId], (err, rows) => {
                 if (err) {
                     console.error('Error fetching files:', err.message);
                     return reject(new Error('Failed to fetch files'));
                 }
-                resolve(rows);
+                
+                if (rows.length > 0) {
+                    const files = rows.map(row => ({
+                        name: row.description, 
+                        data: row.fileData.toString('base64'), 
+                    }));
+    
+                    resolve(files);
+                } else {
+                    resolve([]);
+                }
             });
         });
     }
