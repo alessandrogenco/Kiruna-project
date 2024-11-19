@@ -8,51 +8,47 @@
     min-width: 320px;
     background: #ffffff;
     border: none;
-    padding: 20px; 
+    padding: 4px 25px; 
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     border-radius: 16px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     animation: fadeIn 0.3s ease-in-out;
-    overflow: hidden;
-}
-
-/* Header with close button */
-.fixed-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px solid #dee2e6;
-    background-color: white;
-}
-
-.fixed-header h3 {
-    margin: 0;
-    font-size: 1.8rem;
-    font-weight: 600;
-    color: #000000;
-    text-align: center;
-    flex-grow: 1; /* Ensures the title takes available space */
+    overflow: hidden; /* Prevent content overflow */
 }
 
 .close-button {
-    font-size: 1.5rem;
+    position: absolute;
+    top: 10px;
+    right: 10px;
     background: none;
     border: none;
+    font-size: 1.5rem;
     color: #555;
     cursor: pointer;
-    margin-left: auto; /* Pushes the button to the far right */
 }
 
 .close-button:hover {
     color: #000;
-    transform: scale(1.1);
 }
 
-/* Scrollable content below the header */
+/* Fixed header for the title */
+.fixed-header {
+    position: sticky;
+    top: 0;
+    background-color: #ffffff;
+    z-index: 1;
+    padding: 10px 0;
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #000000;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Scrollable content area */
 .scrollable-content {
-    max-height: calc(80vh - 80px); /* Adjust for header height */
+    max-height: calc(80vh - 120px); /* Adjust based on header height and padding */
     overflow-y: auto;
     padding-top: 10px;
 }
@@ -63,19 +59,11 @@
     color: #444;
 }
 
-.document-links {
-    margin-top: 10px;
-    padding-left: 0; /* Remove default padding */
-    list-style-type: none; /* Removes the bullet points */
-}
-
-.document-links li {
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    padding: 10px 15px;
-    margin-bottom: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.document-details h3, .document-description h3 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    color: #000000;
+    font-weight: 600;
 }
 
 .button-group {
@@ -94,6 +82,26 @@
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
+.document-links {
+    margin-top: 10px;
+    padding-left: 0;
+    list-style-type: none;
+}
+
+.document-links li {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 5px 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.button-group button:first-child:hover {
+    background-color: #5a6268;
+}
+
 .button-group button:last-child {
     background-color: #28a745;
     color: white;
@@ -101,4 +109,28 @@
 
 .button-group button:last-child:hover {
     background-color: #218838;
+}
+
+.custom-document-links {
+    max-width: 450px; /* Set a max width */
+    margin: 0 auto; /* Center the element horizontally */
+    padding: 0; /* Remove padding */
+    list-style-type: none; /* Remove bullets */
+}
+  
+.custom-document-links li {
+    background-color: #e9ecef;
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+}
+
+/* Fade-in animation for smooth appearance */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
