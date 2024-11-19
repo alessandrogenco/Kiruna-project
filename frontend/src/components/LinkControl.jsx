@@ -9,6 +9,7 @@ const LinkControl = (props) => {
 
   console.log(links);
   console.log(newLinks);
+  console.log(selectedId);
   
   const [documents, setDocuments] = useState([]);
   const [rows, setRows] = useState([{ targetDocument: '', linkType: '' }]);
@@ -20,17 +21,22 @@ const LinkControl = (props) => {
     const fetchDocuments = async () => {
       try {
         const data = await API.getDocuments();
-        // Filtra i documenti per escludere quello con l'id passato tramite props
-        const filteredData = data.filter(doc => doc.id !== selectedId); 
+
+        // Se selectedId è vuoto, usa tutti i documenti; altrimenti, filtra
+        const filteredData = selectedId
+          ? data.filter(doc => doc.id !== Number(selectedId))
+          : data;
+
         setDocuments(filteredData);
       } catch (err) {
         console.error('Error fetching documents:', err);
         setError('Unable to fetch documents. Please try again later.');
       }
     };
-  
+
     fetchDocuments();
   }, [selectedId]);
+
 
   // Handle adding a new link
   const addRow = () => {
@@ -131,8 +137,8 @@ const LinkControl = (props) => {
 
       <Row className="d-flex justify-content-between">
         <Col className="d-flex justify-content-center" style={{ height: '40px' }}>
-          <Button className="me-3" variant="success" onClick={addRow}>
-            Create Link
+          <Button className="me-3" variant="outline-success" onClick={addRow}>
+            Add
           </Button>
         </Col>
       </Row>
@@ -141,7 +147,7 @@ const LinkControl = (props) => {
 };
 
 LinkControl.propTypes = {
-  selectedId: PropTypes.object.isRequired,
+  selectedId: PropTypes.object,
   links: PropTypes.array.isRequired,
   newLinks: PropTypes.array.isRequired,
   setNewLinks: PropTypes.func.isRequired,  // Assicurati che setLinks venga passato da DocumentControl
