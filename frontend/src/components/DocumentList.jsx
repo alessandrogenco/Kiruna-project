@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
-import { Col, ListGroupItem, Row, ListGroup, Form, Button, Dropdown, DropdownButton } from 'react-bootstrap';
+import { Col, ListGroupItem, Row, ListGroup, Form, Button, Dropdown, DropdownButton, Card } from 'react-bootstrap';
 import { Link } from "react-router-dom";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './DocumentList.css';
 import { getDocumentLinks } from '../API.mjs';
+import axios from 'axios';
 
 function DocumentList(props){
   
@@ -189,7 +190,9 @@ function DocumentInList(props){
                   </Form.Group>
                 </Col>
               </Row>
-            
+              <Row>
+                <FileList documentId={selectedDocument.id}/>
+              </Row>
                 
              
               <div className="text-end">
@@ -201,4 +204,36 @@ function DocumentInList(props){
       );
       }
 
+function FileList(props) {
+  const [files, setFiles] = useState([]);
+  const [showFiles, setShowFiles] = useState(false);
+  const [error, setError] = useState(null);
+
+  const toggleFileList = () => {
+    setShowFiles(prevState => !prevState);
+  };
+
+  return (
+    <div>
+      <Button variant="outline-success" onClick={toggleFileList}>
+        {showFiles ? 'Hide files' : 'Show files'}
+      </Button>
+
+      {showFiles && (
+        <Row className="mt-3">
+          <Col md={4}>
+            <ListGroup>
+              {files && files.length > 0 && files.map((file, index) => (
+              <ListGroup.Item key={index}>
+                <span style={{ paddingTop: '2px', display: 'inline-block' }}>{file.name}</span>
+              </ListGroup.Item>
+              ))}
+              {error && <p>{error}</p>}
+            </ListGroup>
+          </Col>
+        </Row>
+      )}
+    </div>
+  );
+}
 export default DocumentList;
