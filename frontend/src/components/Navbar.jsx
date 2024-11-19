@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import { Navbar, Nav, Container } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import MessageModal from './MessageModal';
 
 function AppNavbar({ isLoggedIn, handleLogout }) {
   const navigate = useNavigate();
