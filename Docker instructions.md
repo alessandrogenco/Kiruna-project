@@ -1,5 +1,12 @@
 ## DOCKER instructions to run the project
 
+# Prerequisites
+
+- Docker
+- Docker compose
+
+# Instructions
+
 - 1 Run Docker on your machine;
 - 2 Clone this repository;
 - 3 Open this project on VSCode;
