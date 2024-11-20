@@ -58,6 +58,7 @@ function DocumentControl(props) {
 
     const [links, setLinks] = useState([]);
     const [newLinks, setNewLinks] = useState([]);
+    const [hasDuplicates, setHasDuplicates] = useState(false);
 
     useEffect(() => {
       if (documentId) {
@@ -173,6 +174,9 @@ function DocumentControl(props) {
         const lat = parseFloat(formData.lat);
         const lon = parseFloat(formData.lon);
 
+        if(hasDuplicates){
+          return "Duplicate links detected. Please remove duplicates.";
+        }
         if (lat < 67.82 || lat > 67.8800) {
             return "Latitude is out of Kiruna Municipality borders!";
         }
@@ -548,7 +552,7 @@ function DocumentControl(props) {
           </div>
           
           <div className="link-section">
-          <LinkControl selectedId={documentId} links={links} newLinks={newLinks} setNewLinks={setNewLinks}/>
+          <LinkControl selectedId={documentId} links={links} newLinks={newLinks} setNewLinks={setNewLinks} setHasDuplicates={setHasDuplicates} hasDuplicates={hasDuplicates}/>
           </div>
 
           <Row className="mx-3 mt-5">

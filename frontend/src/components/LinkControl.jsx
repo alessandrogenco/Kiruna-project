@@ -5,16 +5,14 @@ import API from '../API.mjs'; // Import delle funzioni API
 import '../styles/DocumentList.css';
 
 const LinkControl = (props) => {
-  const { selectedId, links, newLinks, setNewLinks } = props;  // Ricevi setLinks da DocumentControl
+  const { selectedId, links, newLinks, setNewLinks, setHasDuplicates, hasDuplicates } = props;
 
-  console.log(links);
-  console.log(newLinks);
-  console.log(selectedId);
-  
   const [documents, setDocuments] = useState([]);
   const [rows, setRows] = useState([{ targetDocument: '', linkType: '' }]);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+
+  console.log(hasDuplicates);
 
   // Fetch documents on mount
   useEffect(() => {
@@ -22,7 +20,6 @@ const LinkControl = (props) => {
       try {
         const data = await API.getDocuments();
 
-        // Se selectedId è vuoto, usa tutti i documenti; altrimenti, filtra
         const filteredData = selectedId
           ? data.filter(doc => doc.id !== Number(selectedId))
           : data;
@@ -37,59 +34,88 @@ const LinkControl = (props) => {
     fetchDocuments();
   }, [selectedId]);
 
+  // Check if a link is duplicate
+  const isDuplicateLink = (targetDocument, linkType, currentIndex = -1) => {
+    const documentId = Number(targetDocument);
+
+    // Controlla duplicati nei link già esistenti
+    const existingLinks = links.some(link => link.id === documentId && link.type === linkType);
+
+    // Controlla duplicati in newLinks, escludendo il link corrente in modifica
+    const duplicateInNewLinks = newLinks.some((link, idx) => {
+      return idx !== currentIndex && link.id === documentId && link.type === linkType;
+    });
+
+    return existingLinks || duplicateInNewLinks;
+  };
 
   // Handle adding a new link
   const addRow = () => {
     const lastRow = rows[rows.length - 1];
-  
-    // Verifica che i campi della riga corrente siano compilati
+
     if (!lastRow.targetDocument || !lastRow.linkType) {
       setError('Please fill all fields in the current row before adding a new one.');
       return;
     }
-  
-    // Crea il nuovo link con il formato corretto
+
     const newLink = {
-      id: parseInt(lastRow.targetDocument, 10), // Converti l'ID in numero se necessario
+      id: parseInt(lastRow.targetDocument, 10),
       type: lastRow.linkType,
     };
-  
-    // Verifica che il nuovo link non esista già
-    const linkExists = links.some(
-      (link) => link.id === newLink.id && link.type === newLink.type
-    );
-    
-    const linkExistsNew = newLinks.some(
-      (link) => link.id === newLink.id && link.type === newLink.type
-    );
-  
-    if (linkExists || linkExistsNew) {
+
+    if (isDuplicateLink(newLink.id, newLink.type)) {
       setError('This link already exists.');
+      setHasDuplicates(true);
       return;
+    }else{
+      setHasDuplicates(false);
     }
-  
-    // Aggiungi il link allo stato `links` di DocumentControl
+
     setNewLinks([...newLinks, newLink]);
-  
-    // Visualizza un messaggio di successo
     setMessage('Link added successfully!');
-  
-    // Aggiungi una nuova riga vuota per il prossimo link
     setRows([...rows, { targetDocument: '', linkType: '' }]);
-  
-    // Reset degli errori
     setError('');
   };
-  
+
+  // Handle changes in the rows
+  const handleRowChange = (index, field, value) => {
+    const updatedRows = [...rows];
+    updatedRows[index][field] = value;
+
+    const { targetDocument, linkType } = updatedRows[index];
+
+    // Se entrambi i campi sono compilati, verifica la duplicazione
+    if (targetDocument && linkType) {
+      if (isDuplicateLink(targetDocument, linkType, index)) {
+        setError('This combination of document and link type already exists.');
+        setHasDuplicates(true);
+        return;
+      } else {
+        setHasDuplicates(false);
+        setError(''); // Nessun errore
+      }
+
+      // Aggiorna lo stato di newLinks se il link modificato esiste già in `newLinks`
+      const updatedNewLinks = [...newLinks];
+      if (index < newLinks.length) {
+        // Aggiorna un link già esistente
+        updatedNewLinks[index] = {
+          id: Number(targetDocument),
+          type: linkType,
+        };
+        setNewLinks(updatedNewLinks);
+      }
+    }
+
+    setRows(updatedRows); // Aggiorna sempre la UI delle righe
+  };
 
   return (
     <div className="mx-4 mb-4">
-
-      <CurrentLinkList links={links} className="mt-3"/>
+      <CurrentLinkList links={links} className="mt-3" />
 
       <h5 style={{ fontWeight: 'bolder' }}>Create Link to Another Document</h5>
 
-      {/*message && <Alert variant="success">{message}</Alert>*/}
       {error && <Alert variant="danger">{error}</Alert>}
 
       {rows.map((row, index) => (
@@ -100,11 +126,7 @@ const LinkControl = (props) => {
               <Form.Control
                 as="select"
                 value={row.targetDocument}
-                onChange={(e) => {
-                  const updatedRows = [...rows];
-                  updatedRows[index].targetDocument = e.target.value;
-                  setRows(updatedRows);
-                }}
+                onChange={(e) => handleRowChange(index, 'targetDocument', e.target.value)}
               >
                 <option value="">Select a document</option>
                 {documents.map((doc) => (
@@ -122,11 +144,7 @@ const LinkControl = (props) => {
               <Form.Control
                 as="select"
                 value={row.linkType}
-                onChange={(e) => {
-                  const updatedRows = [...rows];
-                  updatedRows[index].linkType = e.target.value;
-                  setRows(updatedRows);
-                }}
+                onChange={(e) => handleRowChange(index, 'linkType', e.target.value)}
               >
                 <option value="">Select link type</option>
                 <option value="Reference">Reference</option>
@@ -151,15 +169,16 @@ const LinkControl = (props) => {
 };
 
 LinkControl.propTypes = {
-  selectedId: PropTypes.object,
+  selectedId: PropTypes.string,
   links: PropTypes.array.isRequired,
   newLinks: PropTypes.array.isRequired,
-  setNewLinks: PropTypes.func.isRequired,  // Assicurati che setLinks venga passato da DocumentControl
+  setNewLinks: PropTypes.func.isRequired,
+  setHasDuplicates: PropTypes.func.isRequired,
+  hasDuplicates: PropTypes.bool.isRequired,
 };
 
-function CurrentLinkList(props){
-  console.log(props.links);
-  return(
+function CurrentLinkList(props) {
+  return (
     <>
       <h5 style={{ fontWeight: 'bolder', marginTop: '15px' }}>Current links</h5>
       <ListGroup className="mb-3">
@@ -180,26 +199,26 @@ function CurrentLinkList(props){
   );
 }
 
-LinkControl.propTypes = {
+CurrentLinkList.propTypes = {
   links: PropTypes.array.isRequired,
 };
 
-function LinkInList(props){
-  return(
-  <ListGroupItem className="document-list-item rounded custom-list-group-item mt-2">
-    <Row>
-      <Col>
-        <label>{props.linkData.title}</label>
-      </Col>
-      <Col>
-        <label>{props.linkData.type}</label>
-      </Col>
-    </Row>
-  </ListGroupItem>
+function LinkInList(props) {
+  return (
+    <ListGroupItem className="document-list-item rounded custom-list-group-item mt-2">
+      <Row>
+        <Col>
+          <label>{props.linkData.title}</label>
+        </Col>
+        <Col>
+          <label>{props.linkData.type}</label>
+        </Col>
+      </Row>
+    </ListGroupItem>
   );
 }
 
-LinkControl.propTypes = {
+LinkInList.propTypes = {
   linkData: PropTypes.object,
 };
 
