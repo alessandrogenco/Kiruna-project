@@ -129,6 +129,7 @@ function DocumentInList(props){
                       name="type"
                       value={selectedDocument.type || ""}
                       readOnly
+                      disabled
                     >
                       <option value="Technical">Text - Technical</option>
                       <option value="Agreement">Concept - Agreement</option>
@@ -149,6 +150,7 @@ function DocumentInList(props){
                       name="language"
                       value={selectedDocument.language || ""}
                       readOnly
+                      disabled
                     >
                       <option value="English">English</option>
                       <option value="Swedish">Swedish</option>
