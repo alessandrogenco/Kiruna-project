@@ -35,7 +35,7 @@ describe("addOriginalResource", () => {
         // Arrange
         const documentId = 1;
         const resource = 1;
-        const errorMessage = "Cannot read properties of undefined (reading 'path')";
+        const errorMessage = "Failed to upload file";
     
         // Mock del metodo db.run per chiamare il callback con un errore
         jest.spyOn(db, "get").mockImplementation((query, params, callback) => {
@@ -134,3 +134,46 @@ describe("addOriginalResource", () => {
               });
     });
 
+//delete file
+
+describe("deleteFile", () => {
+  test("should delete the file and resolve with a success message", async () => {
+    // Arrange
+    const documentId = 1;
+    
+    // Mock del metodo db.run per chiamare il callback senza errori e con il numero di cambiamenti
+    jest.spyOn(db, "run").mockImplementation((query, params, callback) => {
+      callback.call({ changes: 1 }, null);
+    });
+
+    // Act
+    const result = await document.deleteFile(documentId);
+
+    // Assert
+    expect(result).toEqual({ message: 'File deleted successfully from the database' });
+    expect(db.run).toHaveBeenCalledWith(
+      expect.any(String),
+      [documentId],
+      expect.any(Function)
+    );
+  } ); 
+
+  test("should reject with an error message when the query fails", async () => {
+    // Arrange
+    const documentId = 1;
+    const errorMessage = "Failed to delete file";
+
+    // Mock del metodo db.run per chiamare il callback con un errore
+    jest.spyOn(db, "run").mockImplementation((query, params, callback) => {
+      callback(new Error(errorMessage));
+    });
+
+    // Act & Assert
+    await expect(document.deleteFile(documentId)).rejects.toThrow(errorMessage);
+    expect(db.run).toHaveBeenCalledWith(
+      expect.any(String),
+      [documentId],
+      expect.any(Function)
+    );
+  });
+}  );

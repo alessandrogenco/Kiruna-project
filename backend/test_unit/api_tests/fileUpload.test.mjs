@@ -180,3 +180,35 @@ describe("GET /api/download/:resourceId", () => {
   });
   
 });
+
+//describe delete
+describe("DELETE /api/delete/:resourceId", () => {
+  test("should delete the file and return 200", async () => {
+    const documentId = 1;
+    const description = "Test file";
+
+    // Mock the deleteFile function
+    FileUploadDao.prototype.deleteFile.mockResolvedValue({ message: 'File deleted successfully from database' });
+
+    const response = await request(app)
+      .delete(`${baseURL}delete?documentId=${documentId}&description=${description}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ message: 'File deleted successfully from the database' });
+  });
+
+  test("should return 500 if there is an error deleting the file", async () => {
+    const documentId = 1;
+    const description = "Test file";
+    const errorMessage = "Internal server error";
+
+    // Mock the deleteFile function to reject with an error
+    FileUploadDao.prototype.deleteFile.mockRejectedValue(new Error(errorMessage));
+
+    const response = await request(app)
+      .delete(`${baseURL}delete?documentId=${documentId}&description=${description}`);
+
+    expect(response.status).toBe(500);
+    expect(response.body).toEqual({ message: 'Internal server error', error: errorMessage });
+  });
+});

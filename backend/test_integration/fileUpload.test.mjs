@@ -86,3 +86,15 @@ describe("GET /api/files/:resourceId", () => {
         expect(response.status).toBe(404);
     });
 } );
+
+//delete
+describe("DELETE /api/files/:resourceId", () => {
+    test("Should delete non existing file", async () => {
+        const app = (await import("../index")).app;
+        const documentId = 1;
+        const description = "Test file";
+        const response = await request(app).delete(`${baseURL}delete?documentId=${documentId}&description=${description}`);
+
+        expect(response.status).toBe(404);
+    });
+} );
