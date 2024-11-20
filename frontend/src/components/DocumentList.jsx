@@ -163,7 +163,9 @@ function DocumentInList(props){
                       >
                         {documentLinks ? (
                           documentLinks.map((link, index) => {
-                            return <Dropdown.Item key={index} className="custom-dropdown-item">{link.title + " | " + link.type}</Dropdown.Item>;
+                            return <Dropdown.Item key={index} className="custom-dropdown-item">   
+                              <span className="link-title">{link.title}</span>
+                               <span className="link-type">{link.type}</span></Dropdown.Item>;
                           })
                         ) : (
                           <Dropdown.ItemText>No connections available.</Dropdown.ItemText>
