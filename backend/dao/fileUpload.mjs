@@ -3,21 +3,37 @@ import fs from 'fs';
 
 class FileUploadDao{
 
-    addOriginalResource(documentId, resource) {
+    addOriginalResources(documentId, files) {
         return new Promise((resolve, reject) => {
-            const query = `
-                INSERT INTO OriginalResources (documentId, resourceType, fileData, description)
-                VALUES (?, ?, ?, ?);
-            `;
-            
-            const { resourceType, fileData, description } = resource;
+            const resources = [];
+        
+            files.forEach(file => {
+                const filePath = file.path;
+                // Read the file as a buffer
+                fs.readFile(filePath, (err, fileBuffer) => {
+                    if (err) {
+                        console.error('Error reading file:', err.message);
+                        return reject(new Error('Failed to read file'));
+                    }
 
-            db.run(query, [documentId, resourceType, fileData, description], function (err) {
-                if (err) {
-                    console.error('Error uploading file:', err.message);
-                    return reject(new Error('Failed to upload file'));
-                }
-                resolve({ resourceId: this.lastID });
+                    const query = `
+                        INSERT INTO OriginalResources (documentId, resourceType, description, fileData)
+                        VALUES (?, ?, ?, ?);
+                    `;
+
+                    db.run(query, [documentId, file.mimetype, file.originalname, fileBuffer], function (err) {
+                        if (err) {
+                            console.error('Error uploading file:', err.message);
+                            return reject(new Error('Failed to upload file'));
+                        }
+                        resources.push({ resourceId: this.lastID });
+                        
+                        // Resolve the promise when all files have been processed
+                        if (resources.length === files.length) {
+                            resolve({ resourcesIds: resources });
+                        }
+                    });
+                });
             });
         });
     }
