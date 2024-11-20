@@ -489,7 +489,7 @@ function DocumentControl(props) {
               />
             </Form.Group>
             <Form.Group as={Col} className="d-flex justify-content-center me-4">
-              <Button variant="outline-success" style={{marginLeft: '-260px', marginTop: "36px"}} onClick={handleMapSelection}>
+              <Button variant="outline-success" style={{marginLeft: '-220px', marginTop: "36px"}} onClick={handleMapSelection}>
               Select Location on Map
               </Button>
             </Form.Group>
