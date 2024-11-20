@@ -35,46 +35,22 @@ const LinkControl = (props) => {
   }, [selectedId]);
 
   // Check if a link is duplicate
-  const isDuplicateLink = (targetDocument, linkType, currentIndex = -1) => {
+  const isDuplicateLink = (targetDocument, linkType) => {
     const documentId = Number(targetDocument);
-
+  
     // Controlla duplicati nei link già esistenti
     const existingLinks = links.some(link => link.id === documentId && link.type === linkType);
-
-    // Controlla duplicati in newLinks, escludendo il link corrente in modifica
-    const duplicateInNewLinks = newLinks.some((link, idx) => {
-      return idx !== currentIndex && link.id === documentId && link.type === linkType;
-    });
-
+  
+    // Controlla duplicati in newLinks senza escludere il link corrente
+    const duplicateInNewLinks = newLinks.some(link => link.id === documentId && link.type === linkType);
+  
     return existingLinks || duplicateInNewLinks;
   };
 
-  // Handle adding a new link
+  // Handle adding a new empty row
   const addRow = () => {
-    const lastRow = rows[rows.length - 1];
-
-    if (!lastRow.targetDocument || !lastRow.linkType) {
-      setError('Please fill all fields in the current row before adding a new one.');
-      return;
-    }
-
-    const newLink = {
-      id: parseInt(lastRow.targetDocument, 10),
-      type: lastRow.linkType,
-    };
-
-    if (isDuplicateLink(newLink.id, newLink.type)) {
-      setError('This link already exists.');
-      setHasDuplicates(true);
-      return;
-    }else{
-      setHasDuplicates(false);
-    }
-
-    setNewLinks([...newLinks, newLink]);
-    setMessage('Link added successfully!');
+    // Aggiungi solo una nuova riga vuota
     setRows([...rows, { targetDocument: '', linkType: '' }]);
-    setError('');
   };
 
   // Handle changes in the rows
@@ -86,7 +62,7 @@ const LinkControl = (props) => {
 
     // Se entrambi i campi sono compilati, verifica la duplicazione
     if (targetDocument && linkType) {
-      if (isDuplicateLink(targetDocument, linkType, index)) {
+      if (isDuplicateLink(targetDocument, linkType)) {
         setError('This combination of document and link type already exists.');
         setHasDuplicates(true);
         return;
@@ -97,14 +73,11 @@ const LinkControl = (props) => {
 
       // Aggiorna lo stato di newLinks se il link modificato esiste già in `newLinks`
       const updatedNewLinks = [...newLinks];
-      if (index < newLinks.length) {
-        // Aggiorna un link già esistente
-        updatedNewLinks[index] = {
-          id: Number(targetDocument),
-          type: linkType,
-        };
-        setNewLinks(updatedNewLinks);
-      }
+      updatedNewLinks[index] = {
+        id: Number(targetDocument),
+        type: linkType,
+      };
+      setNewLinks(updatedNewLinks);
     }
 
     setRows(updatedRows); // Aggiorna sempre la UI delle righe
