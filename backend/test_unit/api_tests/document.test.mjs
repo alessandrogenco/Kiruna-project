@@ -19,6 +19,7 @@ afterAll(() => {
 
 describe('GET /api/documents', () => {
     test('should return a list of documents with status 200', async () => {
+        
         // Mock data reflecting the structure of the database
         const mockDocuments = [
             {

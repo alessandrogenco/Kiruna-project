@@ -67,3 +67,22 @@ describe("GET /api/files/:documentId", () => {
         expect(response.status).toBe(404);
     });
 } );
+
+//describe for getOriginalResourceById
+describe("GET /api/files/:resourceId", () => {
+    test("Should return the file of a document", async () => {
+        const app = (await import("../index")).app;
+        const resourceId = 1;
+        const response = await request(app).get(`${baseURL}files/${resourceId}`);
+
+        expect(response.status).toBe(200);
+    });
+
+    test("Should return 404 if document does not exist", async () => {
+        const app = (await import("../index")).app;
+        const resourceId = 999;
+        const response = await request(app).get(`${baseURL}files/${resourceId}`);
+
+        expect(response.status).toBe(404);
+    });
+} );

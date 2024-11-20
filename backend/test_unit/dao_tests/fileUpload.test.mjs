@@ -35,7 +35,7 @@ describe("addOriginalResource", () => {
         // Arrange
         const documentId = 1;
         const resource = 1;
-        const errorMessage = "Failed to upload file";
+        const errorMessage = "Cannot read properties of undefined (reading 'path')";
     
         // Mock del metodo db.run per chiamare il callback con un errore
         jest.spyOn(db, "get").mockImplementation((query, params, callback) => {
@@ -46,6 +46,7 @@ describe("addOriginalResource", () => {
         const result = await expect(document.addOriginalResource(documentId, resource)).rejects.toThrow(new Error(errorMessage));
         
         });
+      });
 
     describe("getFilesByDocumentId", () => {
         test("should fetch files and resolve with the files array", async () => {
@@ -91,4 +92,45 @@ describe("addOriginalResource", () => {
               });
     });
 
-});
+    describe("getOriginalResourceById", () => {
+        test("should fetch a file and resolve with the file object", async () => {
+            // Arrange
+            const resourceId = 1;
+            const row = {
+              fileData: Buffer.from("file data"),
+              description: "Test file",
+              resourceType: "image"
+            };
+        
+            // Mock del metodo db.get per chiamare il callback senza errori e con una riga
+            jest.spyOn(db, "get").mockImplementation((query, params, callback) => {
+              callback(null, row);
+            });
+        
+            // Act
+            const result = await document.getOriginalResourceById(resourceId);
+        
+            // Assert
+            expect(result).toEqual(row);
+            } );
+
+            test("should reject with an error message when the query fails", async () => {
+                // Arrange
+                const resourceId = 1;
+                const errorMessage = "Failed to fetch file";
+            
+                // Mock del metodo db.get per chiamare il callback con un errore
+                jest.spyOn(db, "get").mockImplementation((query, params, callback) => {
+                  callback(new Error(errorMessage));
+                });
+            
+                // Act & Assert
+                await expect(document.getOriginalResourceById(resourceId)).rejects.toThrow(errorMessage);
+                expect(db.get).toHaveBeenCalledWith(
+                  expect.any(String),
+                  [resourceId],
+                  expect.any(Function)
+                );
+              });
+    });
+

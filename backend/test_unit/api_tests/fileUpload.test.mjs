@@ -2,6 +2,8 @@ import { describe, test, expect, jest, afterEach, afterAll } from "@jest/globals
 import request from "supertest";
 import { app, server } from "../../index.mjs";
 import FileUploadDao from "../../dao/fileUpload.mjs";
+import fs from 'fs';
+
 
 // Mocking the instance of fileUpload
 jest.mock("../../dao/fileUpload.mjs");
@@ -115,4 +117,66 @@ describe("GET /api/files/:documentId", () => {
     expect(response.body).toEqual({ message: 'Failed to fetch files', error: errorMessage });
 
   });
+});
+
+
+describe("ensureUploadsDirectory", () => {
+  const uploadDir = 'uploads';
+
+  test("should log and create the directory if it does not exist", async () => {
+    // Mock fs.access per chiamare il callback con un errore
+    fs.access.mockImplementation((path, mode, callback) => {
+      callback(new Error("Directory does not exist"));
+    });
+
+    // Mock fs.mkdir per chiamare il callback senza errori
+    fs.mkdir.mockImplementation((path, options, callback) => {
+      callback(null);
+    });
+
+    const spy = jest.spyOn(fs, 'mkdir');
+    const spy2 = jest.spyOn(fs, 'access');
+
+    expect(fs.mkdir).toBeTruthy();
+    expect(fs.access).toBeTruthy();
+   
+  });
+});
+
+//getOriginalResourceById(resourceId)
+describe("GET /api/download/:resourceId", () => { 
+  test("should return the file for the specified resource ID", async () => {
+    const resourceId = 1;
+    const row = {
+      fileData: Buffer.from("file data"),
+      description: "Test file",
+      resourceType: "image/png"
+    };
+
+    // Mock the getOriginalResourceById function
+    FileUploadDao.prototype.getOriginalResourceById.mockResolvedValue(row);
+
+    const response = await request(app)
+      .get(`${baseURL}download/${resourceId}`);
+
+    expect(response.status).toBe(200);
+    expect(response.headers['content-disposition']).toBe(`attachment; filename="${row.description}"`);
+    expect(response.headers['content-type']).toBe(row.resourceType);
+    expect(response.body).toEqual(row.fileData);
+  });
+
+  test("should return 500 if there is an error fetching the file", async () => {
+    const resourceId = 1;
+    const errorMessage = "Internal server error";
+
+    // Mock the getOriginalResourceById function to reject with an error
+    FileUploadDao.prototype.getOriginalResourceById.mockRejectedValue(new Error(errorMessage));
+
+    const response = await request(app)
+      .get(`${baseURL}download/${resourceId}`);
+
+    expect(response.status).toBe(500);
+    expect(response.body).toEqual({ message: 'Internal server error', error: errorMessage });
+  });
+  
 });
