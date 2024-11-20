@@ -62,39 +62,39 @@ class FileUploadDao{
         });
     }
 
-    getOriginalResourceById(resourceId) {
-        return new Promise((resolve, reject) => {
-            const query = `SELECT fileData, description, resourceType FROM OriginalResources WHERE id = ?;`;
+    // getOriginalResourceById(resourceId) {
+    //     return new Promise((resolve, reject) => {
+    //         const query = `SELECT fileData, description, resourceType FROM OriginalResources WHERE id = ?;`;
     
-            db.get(query, [resourceId], (err, row) => {
-                if (err) {
-                    console.error('Error fetching file:', err.message);
-                    return reject(new Error('Failed to fetch file'));
-                }
-                resolve(row);
-            });
-        });
-    }
+    //         db.get(query, [resourceId], (err, row) => {
+    //             if (err) {
+    //                 console.error('Error fetching file:', err.message);
+    //                 return reject(new Error('Failed to fetch file'));
+    //             }
+    //             resolve(row);
+    //         });
+    //     });
+    // }
 
 
-    deleteFile(documentId) {
-        return new Promise((resolve, reject) => {
-            const query = `DELETE FROM OriginalResources WHERE documentId = ?;`;
+    // deleteFile(documentId) {
+    //     return new Promise((resolve, reject) => {
+    //         const query = `DELETE FROM OriginalResources WHERE documentId = ?;`;
     
-            db.run(query, [documentId], function (err) {
-                if (err) {
-                    console.error('Database error:', err.message);
-                    return reject(new Error('Failed to delete file from database'));
-                }
+    //         db.run(query, [documentId], function (err) {
+    //             if (err) {
+    //                 console.error('Database error:', err.message);
+    //                 return reject(new Error('Failed to delete file from database'));
+    //             }
     
-                if (this.changes === 0) {
-                    console.warn(`No file found in the database for documentId: ${documentId}`);
-                    return reject(new Error(`File not found in the database for documentId: ${documentId}`));                }
+    //             if (this.changes === 0) {
+    //                 console.warn(`No file found in the database for documentId: ${documentId}`);
+    //                 return reject(new Error(`File not found in the database for documentId: ${documentId}`));                }
     
-                resolve({ message: 'File deleted successfully from the database' });
-            });
-        });
-    }    
+    //             resolve({ message: 'File deleted successfully from the database' });
+    //         });
+    //     });
+    // }    
     
 }
 

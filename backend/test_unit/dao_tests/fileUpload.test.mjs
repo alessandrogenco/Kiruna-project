@@ -142,88 +142,88 @@ afterEach(() => {
     });
   } );  
 
-    describe("getOriginalResourceById", () => {
-        test("should fetch a file and resolve with the file object", async () => {
-            // Arrange
-            const resourceId = 1;
-            const row = {
-              fileData: Buffer.from("file data"),
-              description: "Test file",
-              resourceType: "image"
-            };
+//     describe("getOriginalResourceById", () => {
+//         test("should fetch a file and resolve with the file object", async () => {
+//             // Arrange
+//             const resourceId = 1;
+//             const row = {
+//               fileData: Buffer.from("file data"),
+//               description: "Test file",
+//               resourceType: "image"
+//             };
         
-            // Mock del metodo db.get per chiamare il callback senza errori e con una riga
-            jest.spyOn(db, "get").mockImplementation((query, params, callback) => {
-              callback(null, row);
-            });
+//             // Mock del metodo db.get per chiamare il callback senza errori e con una riga
+//             jest.spyOn(db, "get").mockImplementation((query, params, callback) => {
+//               callback(null, row);
+//             });
         
-            // Act
-            const result = await document.getOriginalResourceById(resourceId);
+//             // Act
+//             const result = await document.getOriginalResourceById(resourceId);
         
-            // Assert
-            expect(result).toEqual(row);
-            } );
+//             // Assert
+//             expect(result).toEqual(row);
+//             } );
 
-            test("should reject with an error message when the query fails", async () => {
-                // Arrange
-                const resourceId = 1;
-                const errorMessage = "Failed to fetch file";
+//             test("should reject with an error message when the query fails", async () => {
+//                 // Arrange
+//                 const resourceId = 1;
+//                 const errorMessage = "Failed to fetch file";
             
-                // Mock del metodo db.get per chiamare il callback con un errore
-                jest.spyOn(db, "get").mockImplementation((query, params, callback) => {
-                  callback(new Error(errorMessage));
-                });
+//                 // Mock del metodo db.get per chiamare il callback con un errore
+//                 jest.spyOn(db, "get").mockImplementation((query, params, callback) => {
+//                   callback(new Error(errorMessage));
+//                 });
             
-                // Act & Assert
-                await expect(document.getOriginalResourceById(resourceId)).rejects.toThrow(errorMessage);
-                expect(db.get).toHaveBeenCalledWith(
-                  expect.any(String),
-                  [resourceId],
-                  expect.any(Function)
-                );
-              });
-    });
+//                 // Act & Assert
+//                 await expect(document.getOriginalResourceById(resourceId)).rejects.toThrow(errorMessage);
+//                 expect(db.get).toHaveBeenCalledWith(
+//                   expect.any(String),
+//                   [resourceId],
+//                   expect.any(Function)
+//                 );
+//               });
+//     });
 
-//delete file
+// //delete file
 
-describe("deleteFile", () => {
-  test("should delete the file and resolve with a success message", async () => {
-    // Arrange
-    const documentId = 1;
+// describe("deleteFile", () => {
+//   test("should delete the file and resolve with a success message", async () => {
+//     // Arrange
+//     const documentId = 1;
     
-    // Mock del metodo db.run per chiamare il callback senza errori e con il numero di cambiamenti
-    jest.spyOn(db, "run").mockImplementation((query, params, callback) => {
-      callback.call({ changes: 1 }, null);
-    });
+//     // Mock del metodo db.run per chiamare il callback senza errori e con il numero di cambiamenti
+//     jest.spyOn(db, "run").mockImplementation((query, params, callback) => {
+//       callback.call({ changes: 1 }, null);
+//     });
 
-    // Act
-    const result = await document.deleteFile(documentId);
+//     // Act
+//     const result = await document.deleteFile(documentId);
 
-    // Assert
-    expect(result).toEqual({ message: 'File deleted successfully from the database' });
-    expect(db.run).toHaveBeenCalledWith(
-      expect.any(String),
-      [documentId],
-      expect.any(Function)
-    );
-  } ); 
+//     // Assert
+//     expect(result).toEqual({ message: 'File deleted successfully from the database' });
+//     expect(db.run).toHaveBeenCalledWith(
+//       expect.any(String),
+//       [documentId],
+//       expect.any(Function)
+//     );
+//   } ); 
 
-  test("should reject with an error message when the query fails", async () => {
-    // Arrange
-    const documentId = 1;
-    const errorMessage = "Failed to delete file";
+//   test("should reject with an error message when the query fails", async () => {
+//     // Arrange
+//     const documentId = 1;
+//     const errorMessage = "Failed to delete file";
 
-    // Mock del metodo db.run per chiamare il callback con un errore
-    jest.spyOn(db, "run").mockImplementation((query, params, callback) => {
-      callback(new Error(errorMessage));
-    });
+//     // Mock del metodo db.run per chiamare il callback con un errore
+//     jest.spyOn(db, "run").mockImplementation((query, params, callback) => {
+//       callback(new Error(errorMessage));
+//     });
 
-    // Act & Assert
-    await expect(document.deleteFile(documentId)).rejects.toThrow(errorMessage);
-    expect(db.run).toHaveBeenCalledWith(
-      expect.any(String),
-      [documentId],
-      expect.any(Function)
-    );
-  });
-}  );
+//     // Act & Assert
+//     await expect(document.deleteFile(documentId)).rejects.toThrow(errorMessage);
+//     expect(db.run).toHaveBeenCalledWith(
+//       expect.any(String),
+//       [documentId],
+//       expect.any(Function)
+//     );
+//   });
+// }  );
