@@ -460,7 +460,7 @@ app.post('/api/deleteDocument', async (req, res) => {
 
 
 app.use(bodyParser.raw({ type: 'application/octet-stream', limit: '100mb' }));
-
+/*
 //Upload files
 app.post('/api/upload', async (req, res) => {
     try {
@@ -490,8 +490,27 @@ app.post('/api/upload', async (req, res) => {
         console.error('Error in /api/upload:', error.message);
         res.status(500).json({ message: 'Internal server error', error: error.message });
     }
-});
+});*/
 
+app.post('/api/upload', upload.array('resourceFiles'), async (req, res) => {
+    try {
+      const { documentId } = req.query;
+      
+      if (!req.files || req.files.length === 0) {
+        return res.status(400).json({ message: 'No files uploaded' });
+      }
+
+      const result = await fileUploadDao.addOriginalResources(documentId, req.files);
+  
+      res.status(201).json({
+        message: 'Files uploaded successfully',
+        resourcesIds: result.resourcesIds,
+      });
+    } catch (error) {
+      console.error('Error in /api/upload:', error.message);
+      res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+  });
 
 ///--------------------------------------------
 

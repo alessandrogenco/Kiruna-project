@@ -223,7 +223,7 @@ function DocumentControl(props) {
           const result = await response.json();
           const newDocumentId = result.id; // Ottieni l'id del documento creato o aggiornato
           
-          if(!files) {
+          if(files && files.length > 0) {
             // Carica i file
             const formDataFiles = new FormData();
             for (let i = 0; i < files.length; i++) {
