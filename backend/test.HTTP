@@ -171,3 +171,29 @@ curl -X POST "http://localhost:3001/api/upload?documentId=10&resourceType=pdf&de
 ### get files by documentId
 GET http://localhost:3001/api/files/10 HTTP/1.1
 Content-Type: application/json
+
+
+### Download File
+GET http://localhost:3001/api/download/1
+
+
+### Delete file
+curl -X DELETE "http://localhost:3001/api/delete?documentId=10&description=SamplePDFFile"
+
+
+//-------------------
+
+#### Upload file 
+curl -X POST "http://localhost:3001/api/upload2?documentId=10&resourceType=pdf&description=Doc20" \
+  -H "Content-Type: application/octet-stream" \
+  --data-binary @C:/Users/noman/Downloads/doc_18_info.pdf
+    --data-binary @C:/Users/noman/Downloads/doc_19_info.pdf
+
+
+### Upload Multiple Files
+curl -X POST "http://localhost:3001/api/upload2?documentId=10" \
+  -F "files[]=@C:/Users/noman/Downloads/doc_19_info.pdf" \
+  -F "files[]=@C:/Users/noman/Downloads/doc_18_info.pdf" \
+  -F "resourceType=pdf" \
+  -F "description=Document files"
+
