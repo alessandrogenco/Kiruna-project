@@ -13,6 +13,8 @@ services:
      context: ./backend
     ports:
       - 3001:3001
+    volumes:
+      - backend_db:/app/db
     networks:
       - kiruna-network
 
@@ -20,3 +22,5 @@ networks:
   kiruna-network:
     driver: bridge
      
+volumes:
+  backend_db:
