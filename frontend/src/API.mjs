@@ -107,7 +107,6 @@ const linkDocument = async (id1, id2, /*linkDate,*/ linkType) => {
         }
 
         const result = await response.json();
-        alert('Documents linked successfully!');
         return result;
     } catch (error) {
         console.error('Error linking documents:', error);
