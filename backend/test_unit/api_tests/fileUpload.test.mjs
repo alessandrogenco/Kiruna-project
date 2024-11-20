@@ -34,6 +34,8 @@ jest.mock('sqlite3', () => {
 });
 
 
+
+
 //add original resources
 describe("POST /api/upload", () => {
   test("Does not upload a file", async () => {
@@ -77,6 +79,21 @@ describe("POST /api/upload", () => {
       expect(response.status).toBe(200);
       expect(response.body).toEqual(files);
 
+    });
+
+    //error 500
+    test("should return 500 if there is an error fetching the files", async () => {
+      const documentId = 1;
+      const errorMessage = "Internal server error";
+  
+      // Mock the getFilesByDocumentId function to reject with an error
+      FileUploadDao.prototype.getFilesByDocumentId.mockRejectedValue(new Error(errorMessage));
+  
+      const response = await request(app)
+        .get(`${baseURL}files/${documentId}`);
+  
+      expect(response.status).toBe(500);
+      expect(response.body).toEqual({ message: 'Failed to fetch files', error: errorMessage });
     });
 
   });
@@ -157,6 +174,9 @@ describe("GET /api/download/:resourceId", () => {
     expect(response.status).toBe(500);
     expect(response.body).toEqual({ message: 'Internal server error', error: errorMessage });
   });
+
+
+
   
 });
 
@@ -200,4 +220,8 @@ describe("DELETE /api/delete/:resourceId", () => {
     expect(response.status).toBe(500);
     expect(response.body).toEqual({ message: 'Internal server error', error: errorMessage });
   });
+
+
+
+
 });

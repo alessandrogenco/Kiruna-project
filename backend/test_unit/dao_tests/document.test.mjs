@@ -278,8 +278,28 @@ describe("Add new document and delete it", () => {
         // Clean up the mock
         mockRun.mockRestore();
     });
+
+    //delete document no id
+    test("Error when deleting a document with no ID", async () => {
+        await expect(documentDao.deleteDocumentById(null)).rejects.toThrow('ID cannot be empty.');
+    });
     
+    //delete document db error
+    test("Error when there is a database error during delete", async () => {
+        // Test data
+        const mockId = 1;
     
+        // Mocking db.run to simulate a database error
+        const mockRun = jest.spyOn(db, "run").mockImplementation((sql, params, callback) => {
+            callback(new Error('Database error during delete'), null);
+        });
+    
+        // Expect the promise to reject with a specific error message
+        await expect(documentDao.deleteDocumentById(mockId)).rejects.toThrow('Database error: Database error during delete');
+    
+        // Clean up the mock
+        mockRun.mockRestore();
+    });
 
 });
 
@@ -345,6 +365,21 @@ describe("Update document test", () => {
 
         await expect(documentDao.updateDocument(validId, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description))
             .rejects.toThrow('No document found with the provided ID.');
+
+        // Clean up mock
+        mockRun.mockRestore();
+    });
+
+    //db run error
+
+    test("Throws error if there is a database error during update", async () => {
+        // Mock db.run to simulate a database error
+        const mockRun = jest.spyOn(db, "run").mockImplementation((sql, params, callback) => {
+            callback(new Error('Database error during update'), null);
+        });
+
+        await expect(documentDao.updateDocument(validId, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description))
+            .rejects.toThrow('Database error: Database error during update');
 
         // Clean up mock
         mockRun.mockRestore();

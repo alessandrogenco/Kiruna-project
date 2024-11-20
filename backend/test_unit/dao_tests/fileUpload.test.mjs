@@ -38,6 +38,53 @@ afterEach(() => {
         // Assert
         expect(result).toEqual({ resourcesIds: lastIDs.map(id => ({ resourceId: id })) });
     });
+
+    test("should reject with an error message when reading a file fails", async () => {
+      // Arrange
+      const documentId = 1;
+      const files = [
+          { path: 'path/to/file1', mimetype: 'image/png', originalname: 'file1.png' }
+      ];
+      const errorMessage = "Failed to read file";
+
+      // Mock fs.readFile to call the callback with an error
+      jest.spyOn(fs, "readFile").mockImplementation((filePath, callback) => {
+          callback(new Error(errorMessage));
+      });
+
+      // Act & Assert
+      await expect(document.addOriginalResources(documentId, files)).rejects.toThrow(errorMessage);
+      expect(fs.readFile).toHaveBeenCalledTimes(files.length);
+    
+  });
+
+
+  //error in db run
+
+  test("should reject with an error message when the query fails", async () => {
+    // Arrange
+    const documentId = 1;
+    const files = [
+      { path: 'path/to/file1', mimetype: 'image/png', originalname: 'file1.png' }
+    ];
+    const errorMessage = "Failed to upload file";
+
+    // Mock fs.readFile to call the callback with file buffers
+    jest.spyOn(fs, "readFile").mockImplementation((filePath, callback) => {
+      callback(null, Buffer.from('file data'));
+    });
+
+    // Mock db.run to call the callback with an error
+    jest.spyOn(db, "run").mockImplementation((query, params, callback) => {
+      callback(new Error(errorMessage));
+    });
+
+    // Act & Assert
+    await expect(document.addOriginalResources(documentId, files)).rejects.toThrow(errorMessage);
+    expect(fs.readFile).toHaveBeenCalledTimes(files.length);
+    expect(db.run).toHaveBeenCalledTimes(files.length);
+  } );
+
   } );
 
   //get files by document id
@@ -69,6 +116,29 @@ afterEach(() => {
         [documentId],
         expect.any(Function)
       );
+    });
+
+
+    //test error in db all
+
+    test("should reject with an error message when the query fails", async () => {
+      // Arrange
+      const documentId = 1;
+      const errorMessage = "Failed to fetch files";
+  
+      // Mock del metodo db.all per chiamare il callback con un errore
+      jest.spyOn(db, "all").mockImplementation((query, params, callback) => {
+        callback(new Error(errorMessage));
+      });
+  
+      // Act & Assert
+      await expect(document.getFilesByDocumentId(documentId)).rejects.toThrow(errorMessage);
+      expect(db.all).toHaveBeenCalledWith(
+        expect.any(String),
+        [documentId],
+        expect.any(Function)
+      );
+
     });
   } );  
 
