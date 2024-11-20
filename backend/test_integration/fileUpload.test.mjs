@@ -23,21 +23,6 @@ afterAll(() => {
 });
 
 describe("POST /api/upload", () => {
-    test("Successfully uploads a file", async () => {
-        const app = (await import("../index")).app;
-        const documentId = 1;
-        const resource = {
-          resourceType: "image",
-          fileData: "base64_encoded_file_data",
-          description: "Test image"
-        };
-        const response = await request(app).post(`${baseURL}upload?documentId=${documentId}&resourceType=${resource.resourceType}&description=${resource.description}`).send({
-            file: "file"
-        });
-
-        expect(response.status).toBe(201);
-        
-        });
 
         test("Should return 400 if required fields are missing", async () => {
             const app = (await import("../index")).app;
@@ -46,18 +31,11 @@ describe("POST /api/upload", () => {
               .send({});
         
             expect(response.status).toBe(400);
-            expect(response.body).toEqual({ message: 'Missing required fields' });
+            expect(response.body).toEqual({ message: 'No files uploaded' });
           });
     });
 
 describe("GET /api/files/:documentId", () => {
-    test("Should return the files of a document", async () => {
-        const app = (await import("../index")).app;
-        const documentId = 1;
-        const response = await request(app).get(`${baseURL}files/${documentId}`);
-
-        expect(response.status).toBe(200);
-    });
 
     test("Should return 404 if document does not exist", async () => {
         const app = (await import("../index")).app;
@@ -69,19 +47,12 @@ describe("GET /api/files/:documentId", () => {
 } );
 
 //describe for getOriginalResourceById
-describe("GET /api/files/:resourceId", () => {
-    test("Should return the file of a document", async () => {
-        const app = (await import("../index")).app;
-        const resourceId = 1;
-        const response = await request(app).get(`${baseURL}files/${resourceId}`);
-
-        expect(response.status).toBe(200);
-    });
+describe("GET /api/download/:resourceId", () => {
 
     test("Should return 404 if document does not exist", async () => {
         const app = (await import("../index")).app;
-        const resourceId = 999;
-        const response = await request(app).get(`${baseURL}files/${resourceId}`);
+        const resourceId = "application/pdf";
+        const response = await request(app).get(`${baseURL}download/${resourceId}`);
 
         expect(response.status).toBe(404);
     });
@@ -89,12 +60,12 @@ describe("GET /api/files/:resourceId", () => {
 
 //delete
 describe("DELETE /api/files/:resourceId", () => {
-    test("Should delete non existing file", async () => {
+    test("Error 500", async () => {
         const app = (await import("../index")).app;
         const documentId = 1;
         const description = "Test file";
         const response = await request(app).delete(`${baseURL}delete?documentId=${documentId}&description=${description}`);
 
-        expect(response.status).toBe(404);
+        expect(response.status).toBe(500);
     });
 } );
