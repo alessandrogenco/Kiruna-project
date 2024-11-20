@@ -11,8 +11,6 @@ class FileUploadDao{
             `;
             
             const { resourceType, fileData, description } = resource;
-    
-            const filePath = fileData.path || fileData; // In case you store it as a file path
 
             db.run(query, [documentId, resourceType, fileData, description], function (err) {
                 if (err) {
