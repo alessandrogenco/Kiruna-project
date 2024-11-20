@@ -124,104 +124,103 @@ describe("ensureUploadsDirectory", () => {
   });
 });
 
-//getOriginalResourceById(resourceId)
-describe("GET /api/download/:resourceId", () => { 
-  test("should return the file for the specified resource ID", async () => {
-    const resourceId = 1;
-    const row = {
-      fileData: Buffer.from("file data"),
-      description: "Test file",
-      resourceType: "image/png"
-    };
+// //getOriginalResourceById(resourceId)
+// describe("GET /api/download/:resourceId", () => { 
+//   test("should return the file for the specified resource ID", async () => {
+//     const resourceId = 1;
+//     const row = {
+//       fileData: Buffer.from("file data"),
+//       description: "Test file",
+//       resourceType: "image/png"
+//     };
 
-    // Mock the getOriginalResourceById function
-    FileUploadDao.prototype.getOriginalResourceById.mockResolvedValue(row);
+//     // Mock the getOriginalResourceById function
+//     FileUploadDao.prototype.getOriginalResourceById.mockResolvedValue(row);
 
-    const response = await request(app)
-      .get(`${baseURL}download/${resourceId}`);
+//     const response = await request(app)
+//       .get(`${baseURL}download/${resourceId}`);
 
-    expect(response.status).toBe(200);
-    expect(response.headers['content-disposition']).toBe(`attachment; filename="${row.description}"`);
-    expect(response.headers['content-type']).toBe(row.resourceType);
-    expect(response.body).toEqual(row.fileData);
-  });
+//     expect(response.status).toBe(200);
+//     expect(response.headers['content-disposition']).toBe(`attachment; filename="${row.description}"`);
+//     expect(response.headers['content-type']).toBe(row.resourceType);
+//     expect(response.body).toEqual(row.fileData);
+//   });
 
 
-  //404 if resource not found
-  test("should return 404 if the resource is not found", async () => {
-    const resourceId = 1;
+//   //404 if resource not found
+//   test("should return 404 if the resource is not found", async () => {
+//     const resourceId = 1;
 
-    // Mock the getOriginalResourceById function to resolve with null
-    FileUploadDao.prototype.getOriginalResourceById.mockResolvedValue(null);
+//     // Mock the getOriginalResourceById function to resolve with null
+//     FileUploadDao.prototype.getOriginalResourceById.mockResolvedValue(null);
 
-    const response = await request(app)
-      .get(`${baseURL}download/${resourceId}`);
+//     const response = await request(app)
+//       .get(`${baseURL}download/${resourceId}`);
 
-    expect(response.status).toBe(404);
-    expect(response.body).toEqual({ message: 'File not found' });
-  });
+//     expect(response.status).toBe(404);
+//     expect(response.body).toEqual({ message: 'File not found' });
+//   });
 
-  test("should return 500 if there is an error fetching the file", async () => {
-    const resourceId = 1;
-    const errorMessage = "Internal server error";
+//   test("should return 500 if there is an error fetching the file", async () => {
+//     const resourceId = 1;
+//     const errorMessage = "Internal server error";
 
-    // Mock the getOriginalResourceById function to reject with an error
-    FileUploadDao.prototype.getOriginalResourceById.mockRejectedValue(new Error(errorMessage));
+//     // Mock the getOriginalResourceById function to reject with an error
+//     FileUploadDao.prototype.getOriginalResourceById.mockRejectedValue(new Error(errorMessage));
 
-    const response = await request(app)
-      .get(`${baseURL}download/${resourceId}`);
+//     const response = await request(app)
+//       .get(`${baseURL}download/${resourceId}`);
 
-    expect(response.status).toBe(500);
-    expect(response.body).toEqual({ message: 'Internal server error', error: errorMessage });
-  });
+//     expect(response.status).toBe(500);
+//     expect(response.body).toEqual({ message: 'Internal server error', error: errorMessage });
+//   });
 
 
 
   
-});
+// });
 
-//describe delete
-describe("DELETE /api/delete/:resourceId", () => {
-  test("should delete the file and return 200", async () => {
-    const documentId = 1;
-    const description = "Test file";
+// //describe delete
+// describe("DELETE /api/delete/:resourceId", () => {
+//   test("should delete the file and return 200", async () => {
+//     const documentId = 1;
+//     const description = "Test file";
 
-    // Mock the deleteFile function
-    FileUploadDao.prototype.deleteFile.mockResolvedValue({ message: 'File deleted successfully from database' });
+//     // Mock the deleteFile function
+//     FileUploadDao.prototype.deleteFile.mockResolvedValue({ message: 'File deleted successfully from database' });
 
-    const response = await request(app)
-      .delete(`${baseURL}delete?documentId=${documentId}&description=${description}`);
+//     const response = await request(app)
+//       .delete(`${baseURL}delete?documentId=${documentId}&description=${description}`);
 
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual({ message: 'File deleted successfully from the database' });
-  });
+//     expect(response.status).toBe(200);
+//     expect(response.body).toEqual({ message: 'File deleted successfully from the database' });
+//   });
 
-  test("should return 400 if required fields are missing", async () => {
-    const response = await request(app)
-      .delete(`${baseURL}delete`);
+//   test("should return 400 if required fields are missing", async () => {
+//     const response = await request(app)
+//       .delete(`${baseURL}delete`);
 
-    expect(response.status).toBe(400);
-    expect(response.body).toEqual({ message: "Missing documentId or description" });
-  }
+//     expect(response.status).toBe(400);
+//     expect(response.body).toEqual({ message: "Missing documentId or description" });
+//   }
   
-    );
+//     );
 
-  test("should return 500 if there is an error deleting the file", async () => {
-    const documentId = 1;
-    const description = "Test file";
-    const errorMessage = "Internal server error";
+//   test("should return 500 if there is an error deleting the file", async () => {
+//     const documentId = 1;
+//     const description = "Test file";
+//     const errorMessage = "Internal server error";
 
-    // Mock the deleteFile function to reject with an error
-    FileUploadDao.prototype.deleteFile.mockRejectedValue(new Error(errorMessage));
+//     // Mock the deleteFile function to reject with an error
+//     FileUploadDao.prototype.deleteFile.mockRejectedValue(new Error(errorMessage));
 
-    const response = await request(app)
-      .delete(`${baseURL}delete?documentId=${documentId}&description=${description}`);
+//     const response = await request(app)
+//       .delete(`${baseURL}delete?documentId=${documentId}&description=${description}`);
 
-    expect(response.status).toBe(500);
-    expect(response.body).toEqual({ message: 'Internal server error', error: errorMessage });
-  });
-
-
+//     expect(response.status).toBe(500);
+//     expect(response.body).toEqual({ message: 'Internal server error', error: errorMessage });
+//   });
 
 
-});
+
+

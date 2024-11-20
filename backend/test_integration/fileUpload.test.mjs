@@ -59,13 +59,13 @@ describe("GET /api/download/:resourceId", () => {
 } );
 
 //delete
-describe("DELETE /api/files/:resourceId", () => {
-    test("Error 500", async () => {
-        const app = (await import("../index")).app;
-        const documentId = 1;
-        const description = "Test file";
-        const response = await request(app).delete(`${baseURL}delete?documentId=${documentId}&description=${description}`);
+// describe("DELETE /api/files/:resourceId", () => {
+//     test("Error 500", async () => {
+//         const app = (await import("../index")).app;
+//         const documentId = 1;
+//         const description = "Test file";
+//         const response = await request(app).delete(`${baseURL}delete?documentId=${documentId}&description=${description}`);
 
-        expect(response.status).toBe(500);
-    });
-} );
+//         expect(response.status).toBe(500);
+//     });
+// } );

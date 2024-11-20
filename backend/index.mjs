@@ -514,118 +514,118 @@ app.post('/api/upload', upload.array('resourceFiles'), async (req, res) => {
 
 ///--------------------------------------------
 
-app.post('/api/upload2', (req, res) => {
+// app.post('/api/upload2', (req, res) => {
 
-    console.log('Request headers:', req.headers);
+//     console.log('Request headers:', req.headers);
 
-    const form = new multiparty.Form();
+//     const form = new multiparty.Form();
     
-    form.parse(req, async (err, fields, files) => {
-        if (err) {
-            return res.status(400).json({ message: 'Error parsing form data', error: err.message });
-        }
+//     form.parse(req, async (err, fields, files) => {
+//         if (err) {
+//             return res.status(400).json({ message: 'Error parsing form data', error: err.message });
+//         }
 
-        console.log('Fields:', fields); 
-        console.log('Files:', files);   
+//         console.log('Fields:', fields); 
+//         console.log('Files:', files);   
 
-        const documentId = req.query.documentId;
-        if (!documentId) {
-            return res.status(400).json({ message: 'Missing documentId' });
-        }
+//         const documentId = req.query.documentId;
+//         if (!documentId) {
+//             return res.status(400).json({ message: 'Missing documentId' });
+//         }
 
-        if (!files.files || !Array.isArray(files.files)) {
-            return res.status(400).json({ message: 'Missing or invalid files array' });
-        }
+//         if (!files.files || !Array.isArray(files.files)) {
+//             return res.status(400).json({ message: 'Missing or invalid files array' });
+//         }
 
-        const resourceType = fields.resourceType || ['default'];
+//         const resourceType = fields.resourceType || ['default'];
 
-        const results = await Promise.all(
-            files.files.map(async (file, index) => {
-                const resource = {
-                    resourceType: resourceType[index] || resourceType[0], 
-                    fileData: file[0], 
-                    description: file[0].originalFilename || `File ${Date.now()}`, 
-                };
+//         const results = await Promise.all(
+//             files.files.map(async (file, index) => {
+//                 const resource = {
+//                     resourceType: resourceType[index] || resourceType[0], 
+//                     fileData: file[0], 
+//                     description: file[0].originalFilename || `File ${Date.now()}`, 
+//                 };
 
-                try {
-                    const result = await fileUploadDao.addOriginalResource(documentId, resource);
-                    return result;
-                } catch (error) {
-                    console.error('Error saving resource:', error);
-                    throw error;
-                }
-            })
-        );
+//                 try {
+//                     const result = await fileUploadDao.addOriginalResource(documentId, resource);
+//                     return result;
+//                 } catch (error) {
+//                     console.error('Error saving resource:', error);
+//                     throw error;
+//                 }
+//             })
+//         );
 
-        res.status(201).json({
-            message: 'Files uploaded successfully',
-            resources: results.map(result => result.resourceId),
-        });
-    });
-});
+//         res.status(201).json({
+//             message: 'Files uploaded successfully',
+//             resources: results.map(result => result.resourceId),
+//         });
+//     });
+// });
 
 //------------------------------------------------------
 
 // Download file 
-app.get('/api/download/:resourceId', async (req, res) => {
-    try {
-        const { resourceId } = req.params;
+// app.get('/api/download/:resourceId', async (req, res) => {
+//     try {
+//         const { resourceId } = req.params;
 
-        if (!resourceId) {
-            return res.status(400).json({ message: 'Missing resourceId' });
-        }
+//         if (!resourceId) {
+//             return res.status(400).json({ message: 'Missing resourceId' });
+//         }
 
-        const file = await fileUploadDao.getOriginalResourceById(resourceId);
+//         const file = await fileUploadDao.getOriginalResourceById(resourceId);
 
-        if (!file) {
-            return res.status(404).json({ message: 'File not found' });
-        }
+//         if (!file) {
+//             return res.status(404).json({ message: 'File not found' });
+//         }
 
-        const { fileData, description, resourceType } = file;
+//         const { fileData, description, resourceType } = file;
 
-        if (!resourceType || !/^[a-z]+\/[a-z0-9.+-]+$/i.test(resourceType)) {
-            console.error('Invalid or missing MIME type:', resourceType);
-            return res.status(500).json({ message: 'Invalid or missing MIME type' });
-        }
+//         if (!resourceType || !/^[a-z]+\/[a-z0-9.+-]+$/i.test(resourceType)) {
+//             console.error('Invalid or missing MIME type:', resourceType);
+//             return res.status(500).json({ message: 'Invalid or missing MIME type' });
+//         }
 
-        if (!fileData) {
-            console.error('Missing file data');
-            return res.status(500).json({ message: 'Missing file data' });
-        }
+//         if (!fileData) {
+//             console.error('Missing file data');
+//             return res.status(500).json({ message: 'Missing file data' });
+//         }
 
-        res.setHeader('Content-Disposition', `attachment; filename="${description}"`);
-        res.setHeader('Content-Type', resourceType);
-        res.status(200).send(fileData); 
-    } catch (error) {
-        console.error('Error in /api/download:', error.message);
-        res.status(500).json({ message: 'Internal server error', error: error.message });
-    }
-});
+//         res.setHeader('Content-Disposition', `attachment; filename="${description}"`);
+//         res.setHeader('Content-Type', resourceType);
+//         res.status(200).send(fileData); 
+//     } catch (error) {
+//         console.error('Error in /api/download:', error.message);
+//         res.status(500).json({ message: 'Internal server error', error: error.message });
+//     }
+// });
 
 
 //Delete file
-app.delete('/api/delete', async (req, res) => {
-    const { documentId, description } = req.query;
+// app.delete('/api/delete', async (req, res) => {
+//     const { documentId, description } = req.query;
 
-    if (!documentId || !description) {
-        return res.status(400).json({ message: 'Missing documentId or description' });
-    }
+//     if (!documentId || !description) {
+//         return res.status(400).json({ message: 'Missing documentId or description' });
+//     }
 
-    try {
-        const result = await fileUploadDao.deleteFile(documentId, description);
+//     try {
+//         const result = await fileUploadDao.deleteFile(documentId, description);
 
-        if (result.message === 'File deleted successfully from database') {
-            res.status(200).json({ message: 'File deleted successfully from the database' });
-        } 
-        else 
-        {
-            res.status(404).json({ message: 'File not found in the database' });
-        }
-    } catch (error) {
-        console.error('Error in /api/delete:', error.message);
-        res.status(500).json({ message: 'Internal server error', error: error.message });
-    }
-});
+//         if (result.message === 'File deleted successfully from database') {
+//             res.status(200).json({ message: 'File deleted successfully from the database' });
+//         } 
+//         else 
+//         {
+//             res.status(404).json({ message: 'File not found in the database' });
+//         }
+//     } catch (error) {
+//         console.error('Error in /api/delete:', error.message);
+//         res.status(500).json({ message: 'Internal server error', error: error.message });
+//     }
+// });
 
 
 //Get files
