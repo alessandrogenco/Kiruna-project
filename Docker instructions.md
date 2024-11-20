@@ -1,5 +1,16 @@
 ## DOCKER instructions to run the project
 
-- 1 Download the docker image from DockerHub at this link: 
-- 2 Open terminal in the directory with the Docker image
-- 3 Run this command: docker compose up
+# Prerequisites
+
+- Docker
+- Docker compose
+
+# Instructions
+
+- 1 Run Docker on your machine;
+- 2 Clone this repository;
+- 3 On terminal move in the directory of this project;
+- 4 On terminal run: 
+    - On Windows: docker-compose up;
+    - On MacOS: docker compose up;
+- Search localhost:5173 on your browser to access the website.
