@@ -1,6 +1,8 @@
 import { describe, test, expect, jest, afterEach } from "@jest/globals";
 import { app, server } from "../../index.mjs";
 import request from "supertest";
+import passport from "passport";
+
 
 // import the dao
 import LoginDao from "../../dao/login.mjs"
@@ -18,6 +20,9 @@ afterEach(()=>{
 afterAll(() => {
     server.close();
 });
+
+
+
 
 describe("POST Register a new user", () => {
     test("Successfully registered a new user", async () => {
