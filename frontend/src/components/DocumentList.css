@@ -72,10 +72,11 @@
   .document-details1 .form-control-description {
     border-radius: 4px;
     border: 1px solid #ced4da;
-    padding: 50px 10px;
+    padding: 10px 10px;
     background-color: #fff;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
     width: 303%; /* Imposta la larghezza dei controlli al 100% del contenitore */
+    height: 7em;
     box-sizing: border-box;
     margin-left: 0px;
   }
@@ -137,12 +138,10 @@
       min-height: 60px; /* Riduci ulteriormente l'altezza minima per schermi molto piccoli */
     }
   }
-
-
   
   .custom-dropdown-item {
     color: #333; /* Colore del testo */
-    padding: 5px 55px; /* Padding personalizzato */
+    padding: 3px 8px; /* Padding personalizzato */
     border-radius: 4px; /* Angoli arrotondati */
     text-decoration: none; /* Rimuovi la sottolineatura */
     display: block; /* Assicura che l'elemento occupi tutta la larghezza disponibile */
@@ -165,7 +164,7 @@
   }
 
   .dropdown-menu {
-    max-height: 100px; /* Imposta un'altezza massima per il menu a discesa */
+    max-height: 12em; /* Imposta un'altezza massima per il menu a discesa */
     overflow-y: auto; /* Aggiungi lo scorrimento verticale */
     background-color: #f8f9fa; /* Colore di sfondo del menu a discesa */
     border-radius: 4px; /* Angoli arrotondati */
@@ -175,18 +174,8 @@
   
  
 .link-title {
-  flex-grow: 1; /* Permette al titolo di occupare tutto lo spazio disponibile */
   text-align: left;
-  padding-right: 25px; /* Aggiunge spazio a destra del titolo */
-  white-space: nowrap; /* Impedisce la rottura del testo su più righe */
-  overflow: hidden; /* Nasconde il testo che eccede la larghezza disponibile */
-  text-overflow: ellipsis; /* Aggiunge i puntini di sospensione per il testo che eccede la larghezza disponibile */
-}
-
-.link-type {
-  flex-shrink: 0; /* Impedisce al tipo di ridursi */
-  width: 150px; 
-  text-align: right;
+  padding-right: 5px; /* Aggiunge spazio a destra del titolo */
   white-space: nowrap; /* Impedisce la rottura del testo su più righe */
   overflow: hidden; /* Nasconde il testo che eccede la larghezza disponibile */
   text-overflow: ellipsis; /* Aggiunge i puntini di sospensione per il testo che eccede la larghezza disponibile */

@@ -129,6 +129,7 @@ function DocumentInList(props){
                       name="type"
                       value={selectedDocument.type || ""}
                       readOnly
+                      disabled
                     >
                       <option value="Technical">Text - Technical</option>
                       <option value="Agreement">Concept - Agreement</option>
@@ -149,6 +150,7 @@ function DocumentInList(props){
                       name="language"
                       value={selectedDocument.language || ""}
                       readOnly
+                      disabled
                     >
                       <option value="English">English</option>
                       <option value="Swedish">Swedish</option>
@@ -159,13 +161,12 @@ function DocumentInList(props){
                       <DropdownButton
                      id="dropdown-basic-button"
                      onClick={handleConnectionsClick}
-                     title="Connections"
-                      >
+                     title="Connections">
                         {documentLinks ? (
                           documentLinks.map((link, index) => {
                             return <Dropdown.Item key={index} className="custom-dropdown-item">   
-                              <span className="link-title">{link.title}</span>
-                               <span className="link-type">{link.type}</span></Dropdown.Item>;
+                                <span className="link-title">{link.type +  " - " + link.title}</span>
+                              </Dropdown.Item>;
                           })
                         ) : (
                           <Dropdown.ItemText>No connections available.</Dropdown.ItemText>

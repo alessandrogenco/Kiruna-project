@@ -26,6 +26,14 @@ function ExplorePage(props) {
   };
 
   useEffect(() => {
+    if (selectedDocument) {
+      mapContainer.current.classList.add('blurred-map');
+    } else {
+      mapContainer.current.classList.remove('blurred-map');
+    }
+  }, [selectedDocument]);
+
+  useEffect(() => {
     if (props.documents) {
       const newMarkers = props.documents.map(document => ({
         lat: document.lat,

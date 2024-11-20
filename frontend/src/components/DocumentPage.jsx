@@ -197,6 +197,9 @@ function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) 
                             style={{ width: '150px' }}
                         >
                             <option value="">All Types</option>
+                            <option value="Design">Text - Design</option>
+                            <option value="Informative">Text - Informative</option>
+                            <option value="Prescriptive">Text - Prescriptive</option>
                             <option value="Technical">Text - Technical</option>
                             <option value="Agreement">Concept - Agreement</option>
                             <option value="Conflict">Concept - Conflict</option>
