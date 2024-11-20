@@ -127,6 +127,22 @@ describe('PUT /api/addDescription', () => {
         });
     });
 
+    test('should return 400 error if title is empty', async () => {
+        const mockId = 1;
+        const mockTitle = "";
+        const mockDescription = "Description for the document";
+
+        // Send PUT request
+        const response = await request(app)
+            .put(baseURL + 'addDescription')
+            .send({ id: mockId});
+
+        // Check response status and body for 400 error
+
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({ message: 'Description cannot be empty.' });
+    });
+
     test('should return 404 error if document is not found', async () => {
         const mockId = 99;
         const mockTitle = "Nonexistent Document";
