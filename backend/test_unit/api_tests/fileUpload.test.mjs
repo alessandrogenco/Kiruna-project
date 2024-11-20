@@ -165,6 +165,21 @@ describe("GET /api/download/:resourceId", () => {
     expect(response.body).toEqual(row.fileData);
   });
 
+
+  //404 if resource not found
+  test("should return 404 if the resource is not found", async () => {
+    const resourceId = 1;
+
+    // Mock the getOriginalResourceById function to resolve with null
+    FileUploadDao.prototype.getOriginalResourceById.mockResolvedValue(null);
+
+    const response = await request(app)
+      .get(`${baseURL}download/${resourceId}`);
+
+    expect(response.status).toBe(404);
+    expect(response.body).toEqual({ message: 'File not found' });
+  });
+
   test("should return 500 if there is an error fetching the file", async () => {
     const resourceId = 1;
     const errorMessage = "Internal server error";
@@ -196,6 +211,16 @@ describe("DELETE /api/delete/:resourceId", () => {
     expect(response.status).toBe(200);
     expect(response.body).toEqual({ message: 'File deleted successfully from the database' });
   });
+
+  test("should return 400 if required fields are missing", async () => {
+    const response = await request(app)
+      .delete(`${baseURL}delete`);
+
+    expect(response.status).toBe(400);
+    expect(response.body).toEqual({ message: "Missing documentId or description" });
+  }
+  
+    );
 
   test("should return 500 if there is an error deleting the file", async () => {
     const documentId = 1;
