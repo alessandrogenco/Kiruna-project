@@ -584,40 +584,30 @@ app.get('/api/download/:resourceId', async (req, res) => {
 });
 
 
-
+//Delete file
 app.delete('/api/delete', async (req, res) => {
+    const { documentId, description } = req.query;
+
+    if (!documentId || !description) {
+        return res.status(400).json({ message: 'Missing documentId or description' });
+    }
+
     try {
-        const { documentId, description } = req.query;
-
-        if (!documentId || !description) {
-            return res.status(400).json({ message: 'Missing documentId or description' });
-        }
-
         const result = await fileUploadDao.deleteFile(documentId, description);
 
-        if (result.message === 'File deleted successfully') {
-            const filePath = path.join(__dirname, 'uploads', description);
-            console.log('File path:', filePath);
-
-            if (!fs.existsSync(filePath)) {
-                return res.status(404).json({ message: `No file found with name ${description}` });
-            }
-
-            fs.unlink(filePath, (err) => {
-                if (err) {
-                    console.error('Error deleting file from the file system:', err.message);
-                    return res.status(500).json({ message: 'Failed to delete file from file system', error: err.message });
-                }
-                return res.status(200).json({ message: 'File deleted successfully from both database and file system' });
-            });
-        } else {
-            return res.status(404).json({ message: 'File not found in the database' });
+        if (result.message === 'File deleted successfully from database') {
+            res.status(200).json({ message: 'File deleted successfully from the database' });
+        } 
+        else 
+        {
+            res.status(404).json({ message: 'File not found in the database' });
         }
     } catch (error) {
         console.error('Error in /api/delete:', error.message);
         res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 });
+
 
 //Get files
 app.get('/api/files/:documentId', async (req, res) => {

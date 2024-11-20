@@ -22,10 +22,6 @@ class FileUploadDao{
         });
     }
     
-    
-    
-    
-    
     getFilesByDocumentId(documentId) {
         return new Promise((resolve, reject) => {
             const query = `SELECT description, fileData FROM OriginalResources WHERE documentId = ?;`;
@@ -65,33 +61,24 @@ class FileUploadDao{
     }
 
 
-deleteFile(documentId, description) {
-    return new Promise((resolve, reject) => {
-        const query = `DELETE FROM OriginalResources WHERE documentId = ?;`;
-        
-        db.run(query, [documentId], function (err) {
-            if (err) {
-                console.error('Error deleting file:', err.message);
-                return reject(new Error('Failed to delete file from database'));
-            }
-
-            if (this.changes === 0) {
-                return reject(new Error('No file found to delete'));
-            }
-
-            const filePath = `path/to/files/${description}`;
-            fs.unlink(filePath, (err) => {
+    deleteFile(documentId) {
+        return new Promise((resolve, reject) => {
+            const query = `DELETE FROM OriginalResources WHERE documentId = ?;`;
+    
+            db.run(query, [documentId], function (err) {
                 if (err) {
-                    console.error('Error deleting physical file:', err.message);
-                    return reject(new Error('Failed to delete physical file'));
+                    console.error('Database error:', err.message);
+                    return reject(new Error('Failed to delete file from database'));
                 }
-
-                resolve({ message: 'File deleted successfully from both database and file system' });
+    
+                if (this.changes === 0) {
+                    console.warn(`No file found in the database for documentId: ${documentId}`);
+                    return reject(new Error(`File not found in the database for documentId: ${documentId}`));                }
+    
+                resolve({ message: 'File deleted successfully from the database' });
             });
         });
-    });
-}
-
+    }    
     
 }
 
