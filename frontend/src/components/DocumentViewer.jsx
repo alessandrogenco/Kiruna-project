@@ -37,7 +37,7 @@ const DocumentViewer = ({ documentData, onClose }) => {
           <p><strong>Issuance date:</strong> {documentData.issuanceDate}</p>
           <p><strong>Type:</strong> {documentData.type}</p>
           <p onClick={handleConnectionsClick} style={{ cursor: 'pointer', color: 'blue' }}>
-            <strong>Connections:</strong> {documentData.connections}
+            <strong>Connections:</strong> {/*documentData.connections*/}
           </p>
           {showLinks && (
             <ul className="document-links custom-document-links">
