@@ -348,6 +348,7 @@ function DocumentControl(props) {
                 <option value="LKAB">LKAB</option>
                 <option value="Kiruna kommun/Residents">Kiruna kommun/Residents</option>
                 <option value="Kiruna kommun/White Arkitekter">Kiruna kommun/White Arkitekter</option>
+                
               </Form.Control>
             </Form.Group>
           </Row>
@@ -356,13 +357,22 @@ function DocumentControl(props) {
             <Form.Group as={Col} controlId="formScale" className="me-4">
               <Form.Label className='form-label'>Scale</Form.Label>
               <Form.Control
-                placeholder="Enter scale"
-                type="text"
+                as = "select"
                 name="scale"
                 value={formData.scale}
                 onChange={handleChange}
-              />
+              >
+                <option value="">Select a scale</option> 
+                <option value="blueprints/effects">blueprints/effects</option>
+                <option value="Text">Text</option>
+                <option value="1 : 1,000">1 : 1,000</option>
+                <option value="1 : 12,000">1 : 12,000</option>
+                <option value="1 : 7,500">1 : 7,500</option>
+                <option value="1 : 8,000">1 : 8,000</option>
+
+              </Form.Control>
             </Form.Group>
+
 
             <Form.Group as={Col} controlId="formDate">
               <Row className="d-flex justify-content-end mx-3">
