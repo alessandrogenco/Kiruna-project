@@ -337,7 +337,8 @@ function DocumentControl(props) {
 
             <Form.Group as={Col} controlId="formStakeholders" className="me-4">
               <Form.Label className='form-label'>Stakeholders</Form.Label>
-              <Form.Select
+              <Form.Control
+               as="select"
                 name="stakeholders"
                 value={formData.stakeholders}
                 onChange={handleChange}
@@ -347,7 +348,7 @@ function DocumentControl(props) {
                 <option value="LKAB">LKAB</option>
                 <option value="Kiruna kommun/Residents">Kiruna kommun/Residents</option>
                 <option value="Kiruna kommun/White Arkitekter">Kiruna kommun/White Arkitekter</option>
-              </Form.Select>
+              </Form.Control>
             </Form.Group>
           </Row>
           
