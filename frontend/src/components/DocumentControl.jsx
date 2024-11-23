@@ -337,13 +337,17 @@ function DocumentControl(props) {
 
             <Form.Group as={Col} controlId="formStakeholders" className="me-4">
               <Form.Label className='form-label'>Stakeholders</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter stakeholders"
+              <Form.Select
                 name="stakeholders"
                 value={formData.stakeholders}
                 onChange={handleChange}
-              />
+              >
+                <option value="">Select a stakeholder</option> 
+                <option value="Kiruna kommun">Kiruna kommun</option>
+                <option value="LKAB">LKAB</option>
+                <option value="Kiruna kommun/Residents">Kiruna kommun/Residents</option>
+                <option value="Kiruna kommun/White Arkitekter">Kiruna kommun/White Arkitekter</option>
+              </Form.Select>
             </Form.Group>
           </Row>
           
