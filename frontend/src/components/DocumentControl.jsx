@@ -325,7 +325,9 @@ function DocumentControl(props) {
           <div className="document-section">
           <Row className="mb-3 mx-3 mt-3">
             <Form.Group as={Col} controlId="formTitle" className="me-4">
-              <Form.Label className='form-label'>Title</Form.Label>
+              <Form.Label className='form-label'>
+              Title <span className="required-asterisk" style={{ color: 'red' }}>*</span>
+              </Form.Label>
               <Form.Control className="form-control"
                 type="text"
                 placeholder="Enter title"
@@ -336,7 +338,9 @@ function DocumentControl(props) {
             </Form.Group>
 
             <Form.Group as={Col} controlId="formStakeholders" className="me-4">
-              <Form.Label className='form-label'>Stakeholders</Form.Label>
+              <Form.Label className='form-label'>
+                Stakeholders <span className="required-asterisk" style={{ color: 'red' }}>*</span>
+              </Form.Label>
               <Form.Control
                as="select"
                 name="stakeholders"
@@ -355,7 +359,9 @@ function DocumentControl(props) {
           
           <Row className="mb-4 mx-3">
             <Form.Group as={Col} controlId="formScale" className="me-4">
-              <Form.Label className='form-label'>Scale</Form.Label>
+              <Form.Label className='form-label'>
+                Scale <span className="required-asterisk" style={{ color: 'red' }}>*</span>
+              </Form.Label>
               <Form.Control
                 as = "select"
                 name="scale"
@@ -376,7 +382,9 @@ function DocumentControl(props) {
 
             <Form.Group as={Col} controlId="formDate">
               <Row className="d-flex justify-content-end mx-3">
-                <Form.Label className='form-label text-center'>Date</Form.Label>
+                <Form.Label className='form-label text-center'>
+                  Date <span className="required-asterisk" style={{ color: 'red' }}>*</span>
+                </Form.Label>
                 <Col as={Col} className="d-flex">
                   <Form.Control
                     type="number"
@@ -433,7 +441,9 @@ function DocumentControl(props) {
 
           <Row className="mb-4 mx-3">
             <Form.Group as={Col} controlId="formType" className="me-4">
-              <Form.Label className='form-label'>Type</Form.Label>
+              <Form.Label className='form-label'>
+                Type <span className="required-asterisk" style={{ color: 'red' }}>*</span>
+              </Form.Label>
               <Form.Control
                 as="select"
                 name="type"
