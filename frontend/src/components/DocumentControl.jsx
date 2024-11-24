@@ -36,6 +36,14 @@ function DocumentControl(props) {
     const [showMapModal, setShowMapModal] = useState(false);
     const [files, setFiles] = useState([]);
 
+    const [errors, setErrors] = useState({
+      title: "",
+      stakeholders: "",
+      scale: "",
+      type: "",
+      description: "",
+    });
+
     useEffect(() => {
       if (existingDocument) {
         setFormData({
@@ -168,9 +176,42 @@ function DocumentControl(props) {
         return updatedFormData;
       });
     }
+
+    const validateForm = () => {
+      let valid = true;
+      const newErrors = {};
+    
+        if (!formData.title) {
+          newErrors.title = "Title is required";
+          valid = false;
+        }
+        if (!formData.stakeholders) {
+          newErrors.stakeholders = "Stakeholders is required";
+          valid = false;
+        }
+        if (!formData.scale) {
+          newErrors.scale = "Scale is required";
+          valid = false;
+        }
+        if (!formData.issuanceDate) {
+          newErrors.issuanceDate = "Issuance Date is required";
+          valid = false;
+        }
+        if (!formData.type) {
+          newErrors.type = "Type is required";
+          valid = false;
+        }
+        if (!formData.description) {
+          newErrors.description = "Description is required";
+          valid = false;
+        }
+    
+      setErrors(newErrors);
+        return valid;
+    };
     
     // Funzione di validazione
-    function validateForm() {
+    function validateCoordinates() {
         const lat = parseFloat(formData.lat);
         const lon = parseFloat(formData.lon);
 
@@ -190,9 +231,14 @@ function DocumentControl(props) {
     // Gestore per l'invio del modulo
     const handleSubmit = async (e) => {
       e.preventDefault();
+
+      if (!validateForm()) {
+        setError("Please fill out all required fields.");
+        return;
+      }
   
       // Validazione del form
-      const validationError = validateForm();
+      const validationError = validateCoordinates();
       if (validationError) {
           setError(validationError);
           setMessage('');
@@ -334,7 +380,11 @@ function DocumentControl(props) {
                 name="title"
                 value={formData.title}
                 onChange={handleChange}
+                isInvalid={!!errors.title}
+
               />
+                {errors.title && <Form.Control.Feedback type="invalid">{errors.title}</Form.Control.Feedback>}
+
             </Form.Group>
 
             <Form.Group as={Col} controlId="formStakeholders" className="me-4">
@@ -346,6 +396,8 @@ function DocumentControl(props) {
                 name="stakeholders"
                 value={formData.stakeholders}
                 onChange={handleChange}
+                isInvalid={!!errors.stakeholders}
+
               >
                 <option value="">Select a stakeholder</option> 
                 <option value="Kiruna kommun">Kiruna kommun</option>
@@ -354,6 +406,8 @@ function DocumentControl(props) {
                 <option value="Kiruna kommun/White Arkitekter">Kiruna kommun/White Arkitekter</option>
                 
               </Form.Control>
+              {errors.stakeholders && <Form.Control.Feedback type="invalid">{errors.stakeholders}</Form.Control.Feedback>}
+
             </Form.Group>
           </Row>
           
@@ -367,6 +421,8 @@ function DocumentControl(props) {
                 name="scale"
                 value={formData.scale}
                 onChange={handleChange}
+                isInvalid={!!errors.scale}
+
               >
                 <option value="">Select a scale</option> 
                 <option value="blueprints/effects">blueprints/effects</option>
@@ -377,13 +433,15 @@ function DocumentControl(props) {
                 <option value="1 : 8,000">1 : 8,000</option>
 
               </Form.Control>
+              {errors.scale && <Form.Control.Feedback type="invalid">{errors.scale}</Form.Control.Feedback>}
+
             </Form.Group>
 
 
             <Form.Group as={Col} controlId="formDate">
               <Row className="d-flex justify-content-end mx-3">
                 <Form.Label className='form-label text-center'>
-                  Date <span className="required-asterisk" style={{ color: 'red' }}>*</span>
+                  Date 
                 </Form.Label>
                 <Col as={Col} className="d-flex">
                   <Form.Control
@@ -399,6 +457,7 @@ function DocumentControl(props) {
                         e.preventDefault();
                       }
                     }}
+
                   />
                 </Col>
                 <Col as={Col} className="d-flex">
@@ -449,6 +508,8 @@ function DocumentControl(props) {
                 name="type"
                 value={formData.type}
                 onChange={handleChange}
+                isInvalid={!!errors.type}
+
               >
                 <option value="">Select document type</option>
                 <option value="Design">Text - Design</option>
@@ -462,6 +523,8 @@ function DocumentControl(props) {
                 <option value="Paper">Concept - Paper</option>
                 <option value="Action">Action</option>
               </Form.Control>
+              {errors.type && <Form.Control.Feedback type="invalid">{errors.type}</Form.Control.Feedback>}
+
             </Form.Group>
 
             <Form.Group as={Col} controlId="formLanguage" className="me-4">
@@ -570,7 +633,11 @@ function DocumentControl(props) {
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
+                isInvalid={!!errors.description} // Show error styling if invalid
+
               />
+              {errors.description && <Form.Control.Feedback type="invalid">{errors.description}</Form.Control.Feedback>}
+
             </Form.Group>
           </Row>
           </div>
