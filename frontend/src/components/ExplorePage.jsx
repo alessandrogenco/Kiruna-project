@@ -8,6 +8,7 @@ import Supercluster from 'supercluster';
 import documentIcon from '../assets/document.png';
 import '../styles/ExplorePage.css';
 import DocumentViewer from './DocumentViewer'; // Import the DocumentViewer component
+import DocumentGraph  from './Graph';
 
 function ExplorePage(props) {
   const MAPBOX_TOKEN = "pk.eyJ1IjoiYWxlc3NhbmRyb2cwOCIsImEiOiJjbTNiZzFwbWEwdnU0MmxzYTdwNWhoY3dpIn0._52AcWROcPOQBr1Yz0toKw";
@@ -17,6 +18,7 @@ function ExplorePage(props) {
   const [currentStyle, setCurrentStyle] = useState('streets');
   const [markers, setMarkers] = useState([]);
   const [selectedDocument, setSelectedDocument] = useState(null); // State for the selected document
+  const [showGraph, setShowGraph] = useState(false); // Stato per mostrare/nascondere il grafo
   const cluster = useRef(null);
   const markersLayer = useRef(null);
   const activePopup = useRef(null);
@@ -222,14 +224,43 @@ function ExplorePage(props) {
     );
   };
 
+  useEffect(() => {
+    if (map) {
+      map.resize(); // Forza la mappa a ricalcolare le dimensioni
+    }
+  }, [showGraph]);
+
   return (
     <>
       <AppNavbar isLoggedIn={props.isLoggedIn} handleLogout={props.handleLogout} />
+      <button
+        style={{
+          position: 'fixed', // Fisso nella finestra
+          bottom: '20px', // Margine dal basso
+          right: '20px', // Margine da destra
+          padding: '10px',
+          backgroundColor: '#FCFCFC',
+          color: '#28a745',
+          border: '1px solid #28a745',
+          borderRadius: '8px',
+          cursor: 'pointer',
+          zIndex: 1000 // Priorità sopra gli altri elementi
+        }}
+        onClick={() => setShowGraph(!showGraph)}>
+        {showGraph ? 'Hide Graph' : 'Show Graph'}
+      </button>
       <Row className="vh-80 justify-content-center align-items-center">
-        <Col style={{ width: '100%', height: '92vh' }}>
+        <Col style={{ width: '100%', height: showGraph ? '55vh' : '92vh' }}>
           <div ref={mapContainer} style={{ width: '100%', height: '100%' }} />
         </Col>
       </Row>
+      {showGraph && (
+        <Row>
+          <Col>
+            <DocumentGraph />
+          </Col>
+        </Row>
+      )}
       <div style={{
         position: 'absolute', top: 90, right: 20, zIndex: 1,
         backgroundColor: '#F0F0F0', padding: '7px', borderRadius: '8px',
