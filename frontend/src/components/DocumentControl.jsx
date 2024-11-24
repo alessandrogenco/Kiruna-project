@@ -42,6 +42,8 @@ function DocumentControl(props) {
       scale: "",
       type: "",
       description: "",
+      pages: "",
+
     });
 
     useEffect(() => {
@@ -203,6 +205,10 @@ function DocumentControl(props) {
         }
         if (!formData.description) {
           newErrors.description = "Description is required";
+          valid = false;
+        }
+        if (!formData.pages || !/^\d+(-\d+)?$/.test(formData.pages)) {
+          newErrors.pages = "Pages must be a valid number or range (e.g., 1-32)";
           valid = false;
         }
     
@@ -549,7 +555,15 @@ function DocumentControl(props) {
                 name="pages"
                 value={formData.pages}
                 onChange={handleChange}
+                isInvalid={!!errors.pages}
+                onKeyDown={(e) => {
+                  if (!/[0-9-]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
+                    e.preventDefault();
+                  }
+                }}
               />
+              {errors.pages && <Form.Control.Feedback type="invalid">{errors.pages}</Form.Control.Feedback>}
+
             </Form.Group>
           </Row>
 
