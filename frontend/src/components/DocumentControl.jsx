@@ -104,7 +104,16 @@ function DocumentControl(props) {
     // Gestore per l'aggiornamento dei campi
     const handleChange = (e) => {
       const { name, value } = e.target;
-      setFormData({ ...formData, [name]: value ?? '' });
+    
+      if (name === "lat" || name === "lon") {
+        // Regex to allow only floating-point numbers
+        const floatRegex = /^-?\d*(\.\d*)?$/;
+        if (value === "" || floatRegex.test(value)) {
+          setFormData({ ...formData, [name]: value });
+        }
+      } else {
+        setFormData({ ...formData, [name]: value ?? "" });
+      }
     };
 
     const handleFileChange = (event) => {
@@ -223,6 +232,21 @@ function DocumentControl(props) {
         }
         if (!formData.pages || !/^\d+(-\d+)?$/.test(formData.pages)) {
           newErrors.pages = "Pages must be a valid number or range (e.g., 1-32)";
+          valid = false;
+        }
+        if (!formData.lat) {
+          newErrors.lat = "Latitude is required";
+          valid = false;
+        } else if (isNaN(parseFloat(formData.lat))) {
+          newErrors.lat = "Latitude must be a number";
+          valid = false;
+        }
+      
+        if (!formData.lng) {
+          newErrors.lon = "Longitude is required";
+          valid = false;
+        } else if (isNaN(parseFloat(formData.lng))) {
+          newErrors.lon = "Longitude must be a number";
           valid = false;
         }
     
