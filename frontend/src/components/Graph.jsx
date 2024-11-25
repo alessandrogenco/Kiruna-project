@@ -107,7 +107,8 @@ const createEdges = (nodes) => {
 
 const edges = createEdges(sortedNodes);
 
-const DocumentGraph = () => {
+const DocumentGraph = (props) => {
+  console.log(props.documents);
   const [nodesState, setNodes] = useNodesState(nodes);
   const [edgesState, setEdges] = useEdgesState(edges);
 

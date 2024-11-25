@@ -276,7 +276,7 @@ function ExplorePage(props) {
       {showGraph && (
         <Row>
           <Col>
-            <DocumentGraph />
+            <DocumentGraph documents={props.documents}/>
           </Col>
         </Row>
       )}
