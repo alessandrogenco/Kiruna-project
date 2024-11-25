@@ -111,15 +111,24 @@ function ExplorePage(props) {
           const clusterId = clusterPoint.id;
           const documentList = cluster.current.getLeaves(clusterId, Infinity).map(leaf => leaf.properties);
           const popup = new mapboxgl.Popup({ offset: 25, closeButton: false }).setHTML(`
-            <div style="padding-left: 0.2em; padding-right: 0.2em; margin-bottom: -1em; text-align: left;">
-               <strong>${properties.point_count_abbreviated} Documents</strong>
-               <ul style="padding-left: 1.15em; padding-top: 0.3em; padding-bottom: 0.2em;">
-                 ${documentList.map(doc => `<li data-id="${doc.data.id}" style="margin-left: 5px; cursor: pointer;">
-                   ${doc.label}
-                 </li>`).join('')}
-               </ul>
-             </div>
+            <div class="cluster-popup">
+              <div class="cluster-popup-header">
+                ${properties.point_count_abbreviated} Documents
+              </div>
+              <ul class="cluster-popup-list">
+                ${documentList
+                  .map(
+                    (doc) => `
+                      <li data-id="${doc.data.id}" class="document-item">
+                        <div class="document-title">${doc.label}</div>
+                      </li>`
+                  )
+                  .join('')}
+              </ul>
+            </div>
           `);
+          
+          
 
           const marker = new mapboxgl.Marker({
             color: 'green',
@@ -128,6 +137,16 @@ function ExplorePage(props) {
             .setLngLat(geometry.coordinates)
             .setPopup(popup)
             .addTo(map);
+            popup.on('open', () => {
+              const listItems = popup.getElement().querySelectorAll('li[data-id]');
+              listItems.forEach(item => {
+                item.addEventListener('click', () => {
+                  const docId = item.getAttribute('data-id');
+                  const docData = markers.find(marker => marker.data.id === parseInt(docId, 10)).data;
+                  setSelectedDocument(docData);
+                });
+              });
+            });
 
           markersArray.push(marker);
         } else {

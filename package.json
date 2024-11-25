@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "@types/mapbox-gl": "^3.4.1"
+  },
+  "dependencies": {
+    "react-flow-renderer": "^10.3.17"
+  }
+}

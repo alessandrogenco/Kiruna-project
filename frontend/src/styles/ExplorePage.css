@@ -50,3 +50,88 @@
     transition: filter 0.5s ease;
   }
   
+  /* Overall Popup Styling */
+.cluster-popup {
+  font-family: 'Roboto', Arial, sans-serif;
+  font-size: 0.95rem;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 12px 16px;
+  max-width: 350px;
+  line-height: 1.6;
+  text-align: left;
+  transition: transform 0.3s ease;
+}
+
+/* Header Styling */
+.cluster-popup-header {
+  font-family: 'Roboto', Arial, sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #2c3e50;
+  text-align: center;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+  letter-spacing: 0.5px;
+}
+
+/* Document List Styling */
+.cluster-popup-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #ddd #f9f9f9;
+}
+
+.cluster-popup-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.cluster-popup-list::-webkit-scrollbar-track {
+  background: #f9f9f9;
+}
+
+.cluster-popup-list::-webkit-scrollbar-thumb {
+  background-color: #ddd;
+  border-radius: 4px;
+}
+
+.cluster-popup-list::-webkit-scrollbar-thumb:hover {
+  background: #bbb;
+}
+
+/* Individual Document Item */
+.document-item {
+  background-color: #f8f9fa;
+  margin-bottom: 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.document-item:hover {
+  background-color: #e2e6ea;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Title of the Document */
+.document-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #146726;
+  text-decoration: none;
+  margin-bottom: 4px;
+}
+
+.document-title:hover {
+  text-decoration: none;
+  color: #146726;
+}
