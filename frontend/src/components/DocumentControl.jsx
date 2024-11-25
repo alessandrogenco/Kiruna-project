@@ -21,7 +21,7 @@ function DocumentControl(props) {
     const [formData, setFormData] = useState({
       id: existingDocument?.id || '',
       title: existingDocument?.title || '',
-      stakeholders: existingDocument?.stakeholders || '',
+      stakeholders: existingDocument?.stakeholders || [],
       scale: existingDocument?.scale || '',
       issuanceDate: existingDocument?.issuanceDate || '', // Assicurato valore predefinito
       type: existingDocument?.type || '',
@@ -179,6 +179,20 @@ function DocumentControl(props) {
       });
     }
 
+    const handleCheckboxChange = (e) => {
+      const { value, checked } = e.target;
+      setFormData((prevData) => {
+        const stakeholders = prevData.stakeholders || [];
+        if (checked) {
+          // Add the selected stakeholder
+          return { ...prevData, stakeholders: [...stakeholders, value] };
+        } else {
+          // Remove the unselected stakeholder
+          return { ...prevData, stakeholders: stakeholders.filter((item) => item !== value) };
+        }
+      });
+    };
+
     const validateForm = () => {
       let valid = true;
       const newErrors = {};
@@ -187,8 +201,8 @@ function DocumentControl(props) {
           newErrors.title = "Title is required";
           valid = false;
         }
-        if (!formData.stakeholders) {
-          newErrors.stakeholders = "Stakeholders is required";
+        if (formData.stakeholders.length === 0) {
+          newErrors.stakeholders = "At least one stakeholder must be selected";
           valid = false;
         }
         if (!formData.scale) {
@@ -395,26 +409,31 @@ function DocumentControl(props) {
 
             <Form.Group as={Col} controlId="formStakeholders" className="me-4">
               <Form.Label className='form-label'>
-                Stakeholders <span className="required-asterisk" style={{ color: 'red' }}>*</span>
+              Stakeholders <span className="required-asterisk" style={{ color: 'red' }}>*</span>
               </Form.Label>
-              <Form.Control
-               as="select"
-                name="stakeholders"
-                value={formData.stakeholders}
-                onChange={handleChange}
-                isInvalid={!!errors.stakeholders}
-
-              >
-                <option value="">Select a stakeholder</option> 
-                <option value="Kiruna kommun">Kiruna kommun</option>
-                <option value="LKAB">LKAB</option>
-                <option value="Kiruna kommun/Residents">Kiruna kommun/Residents</option>
-                <option value="Kiruna kommun/White Arkitekter">Kiruna kommun/White Arkitekter</option>
-                
-              </Form.Control>
-              {errors.stakeholders && <Form.Control.Feedback type="invalid">{errors.stakeholders}</Form.Control.Feedback>}
-
+             <div>
+              {/* Checkbox options */}
+                {[
+                  "Kiruna kommun",
+                  "LKAB",
+                  "Kiruna kommun/Residents",
+                  "Kiruna kommun/White Arkitekter"
+                 ].map((stakeholder) => (
+              <Form.Check
+                  key={stakeholder}
+                  type="checkbox"
+                  label={stakeholder}
+                  name="stakeholders"
+                  value={stakeholder}
+                  checked={formData.stakeholders.includes(stakeholder)}
+                  onChange={handleCheckboxChange}
+                 className="mb-2"
+              />
+               ))}
+             </div>
+              {errors.stakeholders && <div className="text-danger">{errors.stakeholders}</div>}
             </Form.Group>
+
           </Row>
           
           <Row className="mb-4 mx-3">
