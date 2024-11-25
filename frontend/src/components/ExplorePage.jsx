@@ -104,12 +104,15 @@ function ExplorePage(props) {
       }
 
       const markersArray = [];
-      clusters.forEach(clusterPoint => {
+      clusters.forEach((clusterPoint) => {
         const { geometry, properties } = clusterPoint;
-
+      
         if (properties.cluster) {
           const clusterId = clusterPoint.id;
-          const documentList = cluster.current.getLeaves(clusterId, Infinity).map(leaf => leaf.properties);
+          const documentList = cluster.current
+            .getLeaves(clusterId, Infinity)
+            .map((leaf) => leaf.properties);
+      
           const popup = new mapboxgl.Popup({ offset: 25, closeButton: false }).setHTML(`
             <div class="cluster-popup">
               <div class="cluster-popup-header">
@@ -127,9 +130,7 @@ function ExplorePage(props) {
               </ul>
             </div>
           `);
-          
-          
-
+      
           const marker = new mapboxgl.Marker({
             color: 'green',
             element: createClusterIcon(properties.point_count_abbreviated),
@@ -137,16 +138,34 @@ function ExplorePage(props) {
             .setLngLat(geometry.coordinates)
             .setPopup(popup)
             .addTo(map);
-            popup.on('open', () => {
-              const listItems = popup.getElement().querySelectorAll('li[data-id]');
-              listItems.forEach(item => {
+      
+          popup
+            .on('open', () => {
+              if (activePopup.current) {
+                activePopup.current.remove(); 
+              }
+              activePopup.current = popup; 
+      
+              
+              const listItems = popup.getElement().querySelectorAll('li.document-item');
+              listItems.forEach((item) => {
                 item.addEventListener('click', () => {
                   const docId = item.getAttribute('data-id');
-                  const docData = markers.find(marker => marker.data.id === parseInt(docId, 10)).data;
+                  const docData = markers.find(
+                    (marker) => marker.data.id === parseInt(docId, 10)
+                  ).data;
+      
+                  
+                  popup.remove();
+      
                   setSelectedDocument(docData);
                 });
               });
+            })
+            .on('close', () => {
+              activePopup.current = null; 
             });
+      
 
           markersArray.push(marker);
         } else {
