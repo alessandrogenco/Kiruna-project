@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ReactFlow, { Background, BackgroundVariant, ReactFlowProvider, Controls, useEdgesState, useNodesState, Handle } from "react-flow-renderer";
+import API from "../API.mjs";
 
 // Dati dei nodi con titolo e data
 const rawNodes = [
@@ -108,9 +109,46 @@ const createEdges = (nodes) => {
 const edges = createEdges(sortedNodes);
 
 const DocumentGraph = (props) => {
-  console.log(props.documents);
+
+  const [linkedDocuments, setLinkedDocuments] = useState([]);
   const [nodesState, setNodes] = useNodesState(nodes);
   const [edgesState, setEdges] = useEdgesState(edges);
+
+  useEffect(() => {
+    if (props.documents.length > 0) {
+      const fetchLinks = async () => {
+        try {
+          // Create a new array to store updated documents
+          const linkedDocs = await Promise.all(
+            props.documents.map(async (document) => {
+              // Fetch the links for the current document
+              const fetchedData = await API.getDocumentLinks(document.id);
+
+              // Extract the array of links from the response
+              const fetchedLinks = Array.isArray(fetchedData.links) ? fetchedData.links : [];
+
+              // Return a new object with updated graphLinks
+              return {
+                ...document,
+                graphLinks: fetchedLinks.map((link) => ({
+                  id: link.id,
+                  type: link.type,
+                  title: link.title,
+                })),
+              };
+            })
+          );
+
+          // Update the state with the new array
+          setLinkedDocuments(linkedDocs);
+        } catch (error) {
+          console.error("Error fetching links:", error);
+        }
+      };
+  
+      fetchLinks();
+    }
+  }, [props.documents]);  
 
   useEffect(() => {
     setNodes(nodes);
@@ -124,7 +162,6 @@ const DocumentGraph = (props) => {
     let updatedNodes = [...nodesState];
     
     const distanceX = node.position.x - currentNode.position.x;
-    const distanceY = node.position.y - currentNode.position.y;
 
     const threshold = 50;
 
