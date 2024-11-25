@@ -407,32 +407,41 @@ function DocumentControl(props) {
 
             </Form.Group>
 
-            <Form.Group as={Col} controlId="formStakeholders" className="me-4">
-              <Form.Label className='form-label'>
-              Stakeholders <span className="required-asterisk" style={{ color: 'red' }}>*</span>
-              </Form.Label>
-             <div>
-              {/* Checkbox options */}
-                {[
-                  "Kiruna kommun",
-                  "LKAB",
-                  "Kiruna kommun/Residents",
-                  "Kiruna kommun/White Arkitekter"
-                 ].map((stakeholder) => (
-              <Form.Check
-                  key={stakeholder}
-                  type="checkbox"
-                  label={stakeholder}
-                  name="stakeholders"
-                  value={stakeholder}
-                  checked={formData.stakeholders.includes(stakeholder)}
-                  onChange={handleCheckboxChange}
-                 className="mb-2"
-              />
-               ))}
-             </div>
-              {errors.stakeholders && <div className="text-danger">{errors.stakeholders}</div>}
-            </Form.Group>
+          <Form.Group as={Col} controlId="formStakeholders" className="me-4">
+             <Form.Label className='form-label'>
+             Stakeholders <span className="required-asterisk" style={{ color: 'red' }}>*</span>
+             </Form.Label>
+
+            <Form.Control
+              as="fieldset"
+              style={{
+              border: '1px solid #ced4da',
+              borderRadius: '5px',
+              padding: '10px',
+              backgroundColor: '#f8f9fa',
+              }}
+  >
+              {[
+                "Kiruna kommun",
+                "LKAB",
+                "Kiruna kommun/Residents",
+                "Kiruna kommun/White Arkitekter",
+               ].map((stakeholder) => (
+            <Form.Check
+              key={stakeholder}
+              type="checkbox"
+              label={stakeholder}
+              name="stakeholders"
+              value={stakeholder}
+              checked={formData.stakeholders.includes(stakeholder)}
+              onChange={handleCheckboxChange}
+              className="mb-2"
+            />
+             ))}
+            </Form.Control>
+
+            {errors.stakeholders && <div className="text-danger">{errors.stakeholders}</div>}
+          </Form.Group>
 
           </Row>
           
