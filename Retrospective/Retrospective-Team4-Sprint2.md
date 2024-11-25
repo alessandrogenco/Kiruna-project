@@ -54,9 +54,19 @@ sections:
 
 > story `#0` is for technical tasks, leave out story points (not applicable in this case)
 
-- Hours per task average, standard deviation (estimate and actual) = 
-    - Estimated: **111 min/task**
-    - Actual: **110 min/task**
+- Hours per task average including Sprint Planning
+    - Estimated: **1h 51m/task**
+    - Actual: **1h 50m/task**
+- Standard deviation including Sprint Planning
+    - Estimate = **1,606896**
+    - Actual = **1,619196**
+- Hours per task average without Sprint Planning
+    - Estimated: **1h 39m/task**
+    - Actual: **1h 38m/task**
+- Standard deviation without Sprint Planning
+    - Estimate = **0,782749**
+    - Actual = **0,804061**
+    
 
 - Total estimation error ratio: sum of total hours spent / sum of total hours effort - 1
 
