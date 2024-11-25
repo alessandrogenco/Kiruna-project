@@ -50,7 +50,8 @@
     transition: filter 0.5s ease;
   }
   
-  /* Overall Popup Styling */
+  
+  
 .cluster-popup {
   font-family: 'Roboto', Arial, sans-serif;
   font-size: 0.95rem;
@@ -58,11 +59,13 @@
   border: 1px solid #ddd;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  padding: 12px 16px;
-  max-width: 350px;
-  line-height: 1.6;
+  padding: 16px 20px !important; /* Adjust padding */
+  max-width: 450px !important; /* Force width */
+  line-height: 1.6 !important;
+  text-align: left !important;
+  transition: transform 0.3s ease !important;
   text-align: left;
-  transition: transform 0.3s ease;
+  
 }
 
 /* Header Styling */
@@ -78,12 +81,11 @@
   letter-spacing: 0.5px;
 }
 
-/* Document List Styling */
 .cluster-popup-list {
   list-style: none;
   padding: 0;
   margin: 0;
-  max-height: 200px;
+  max-height: 250px; /* Optional: Adjusted height to better fit the wider popup */
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: #ddd #f9f9f9;
