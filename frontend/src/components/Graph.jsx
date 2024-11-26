@@ -1,118 +1,127 @@
 import React, { useState, useEffect } from "react";
-import ReactFlow, { Background, BackgroundVariant, ReactFlowProvider, Controls, useEdgesState, useNodesState, Handle } from "react-flow-renderer";
+import ReactFlow, { Background, BackgroundVariant, Controls, useEdgesState, useNodesState } from "react-flow-renderer";
 import API from "../API.mjs";
 
-// Dati dei nodi con titolo e data
-const rawNodes = [
-  { id: '1', title: 'Evento A', date: '2024-11-22' },
-  { id: '2', title: 'Evento B', date: '2024-11-20' },
-  { id: '3', title: 'Evento C', date: '2024-11-21' },
-  { id: '4', title: 'Evento D', date: '2024-11-23' },
-  { id: '5', title: 'Evento E', date: '2024-11-22' }, // Data duplicata
-  { id: '6', title: 'Evento F', date: '2024-11-21' }, // Data duplicata
-  { id: '7', title: 'Evento G', date: '2024-11-20' }, // Data duplicata
-  { id: '8', title: 'Evento H', date: '2024-11-23' }  // Data duplicata
-];
+function calculateNodePosition(nodes, node) {
 
-// Ordinare i nodi in base alla data
-const sortedNodes = rawNodes.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-// Funzione per determinare la posizione dei nodi
-const calculateNodePosition = (nodes, node) => {
+  // Raggruppa i nodi per data normalizzata
   const dateGroups = nodes.reduce((acc, n) => {
-    if (!acc[n.date]) acc[n.date] = [];
-    acc[n.date].push(n);
+    const normalizedDate = normalizeDate(n.issuanceDate); // Usa issuanceDate per ogni nodo
+    if (!acc[normalizedDate]) acc[normalizedDate] = [];
+    acc[normalizedDate].push(n);
     return acc;
   }, {});
 
-  let x = 0, y = 0;
-  
-  const group = dateGroups[node.date];
-  
-  x = 330 * Object.keys(dateGroups).indexOf(node.date); 
-  x += group.indexOf(node) * 70; 
-  
-  y = 100 * group.indexOf(node); 
-  y += 20; 
+  // Trova il gruppo e calcola la posizione
+  const normalizedNodeDate = normalizeDate(node.issuanceDate);
+  const group = dateGroups[normalizedNodeDate];
 
-  return { x, y };
-};
+  // Calcola le posizioni
+  const xBase = 330 * Object.keys(dateGroups).indexOf(normalizedNodeDate); // Posizione X per i gruppi
+  const xOffset = group.indexOf(node) * 70; // Offset X per i nodi nel gruppo
+  const yBase = 100 * group.indexOf(node); // Posizione Y per i gruppi
+  const yOffset = 20; // Offset Y fisso
 
-const nodes = sortedNodes.map((node) => ({
+  return { x: xBase + xOffset, y: yBase + yOffset };
+}
+
+function computeNodes(documents) {
+  return documents.map((node) => ({
   id: node.id,
-  data: { label:  <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+  data: {label: <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                     <div style={{ fontWeight: 'bold' }}>{node.title}</div>
-                    <div style={{ fontSize: '12px', color: 'gray' }}>{node.date}</div>
-                  </div>              
-    }, 
-  position: calculateNodePosition(sortedNodes, node), 
+                    <div style={{ fontSize: '12px', color: 'gray' }}>{node.issuanceDate}</div>
+                  </div>}, 
+  position: calculateNodePosition(documents, node), 
   draggable: true, 
+  ContentVisibilityAutoStateChangeEvent: true,
   sourcePosition: 'right', 
   targetPosition: 'left', 
   style: {
-    width: 150, 
+    width: 200, 
     backgroundColor: '#d4f7d6', 
     border: '2px solid #89c79d', 
     borderRadius: '8px', 
     padding: '6px', 
-    fontSize: '13px', 
+    fontSize: '13px',
+    visibility: 'visible', 
   },
-  render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>{node.title}</div>
-      <div>{node.date}</div>
-      <Handle type="source" position="right" id="a" style={{ top: '50%' }} />
-      <Handle type="target" position="left" id="b" style={{ top: '50%' }} />
-      <Handle type="source" position="top" id="c" style={{ left: '50%' }} />
-      <Handle type="target" position="bottom" id="d" style={{ left: '50%' }} />
-    </div>
-  ),
-}));
+}))};
 
-const createEdges = (nodes) => {
+function computeEdges(nodes, documents) {
   const edges = [];
-  
-  for (let i = 0; i < nodes.length - 1; i++) {
-    const sourceNode = nodes[i];
-    const targetNode = nodes[i + 1];
-    
-    const lineType = i % 3 === 0 ? 'continuous' : i % 3 === 1 ? 'dashed' : 'dotted';
-    
-    let edgeStyle;
-    switch (lineType) {
-      case 'dashed':
-        edgeStyle = { stroke: '#000', strokeWidth: 1.8, strokeDasharray: '5,5' };
-        break;
-      case 'dotted':
-        edgeStyle = { stroke: '#000', strokeWidth: 3, strokeDasharray: '1,5' };
-        break;
-      case 'continuous':
-      default:
-        edgeStyle = { stroke: '#000', strokeWidth: 1.5, strokeDasharray: '0' };
-        break;
-    }
+  const existingEdgeIds = new Set(); // Per tracciare gli ID univoci degli edge
 
-    const edge = {
-      id: `e${sourceNode.id}-${targetNode.id}`,
-      source: sourceNode.id,
-      target: targetNode.id,
-      animated: true,
-      style: edgeStyle,
-    };
-    
-    edges.push(edge);
-  }
+  documents.forEach((document) => {
+    if (document.graphLinks && document.graphLinks.length > 0) {
+      document.graphLinks.forEach((link) => {
+        const sourceNode = nodes.find((node) => node.id === document.id);
+        const targetNode = nodes.find((node) => node.id === link.id);
+
+        if (sourceNode && targetNode) {
+          const edgeId = `e${sourceNode.id}-${targetNode.id}`;
+
+          // Controlla se l'ID dell'edge esiste già
+          if (!existingEdgeIds.has(edgeId)) {
+            let edgeStyle;
+
+            // Determina lo stile in base al tipo di collegamento
+            switch (link.type.toLowerCase()) {
+              case 'reference':
+                edgeStyle = { stroke: '#000', strokeWidth: 1.5, strokeDasharray: '0' }; // Linea continua
+                break;
+              case 'citation':
+                edgeStyle = { stroke: '#000', strokeWidth: 1.8, strokeDasharray: '5,5' }; // Linea tratteggiata
+                break;
+              case 'dependency':
+                edgeStyle = { stroke: '#ff0000', strokeWidth: 2, strokeDasharray: '10,5' }; // Linea tratteggiata rossa
+                break;
+              default:
+                edgeStyle = { stroke: '#000', strokeWidth: 1.5, strokeDasharray: '0' }; // Predefinito
+                break;
+            }
+
+            // Crea l'edge e aggiungilo alla lista
+            const edge = {
+              id: edgeId,
+              source: sourceNode.id,
+              target: targetNode.id,
+              animated: true,
+              style: edgeStyle,
+            };
+
+            edges.push(edge);
+            existingEdgeIds.add(edgeId); // Aggiungi l'ID dell'edge al Set
+          }
+        }
+      });
+    }
+  });
 
   return edges;
-};
+}
 
-const edges = createEdges(sortedNodes);
+function sortedDocumentsByDate(documents) {
+  return documents.sort((a, b) => {
+    const dateA = new Date(normalizeDate(a.issuanceDate));
+    const dateB = new Date(normalizeDate(b.issuanceDate));
+    return dateA - dateB; // Confronta le date normalizzate
+  });
+}
+
+// Normalizza le date
+const normalizeDate = (date) => {
+  const parts = date.split('-');
+  if (parts.length === 1) return `${parts[0]}-01-01`; // YYYY -> YYYY-01-01
+  if (parts.length === 2) return `${parts[0]}-${parts[1]}-01`; // YYYY-MM -> YYYY-MM-01
+  return date; // YYYY-MM-DD
+};
 
 const DocumentGraph = (props) => {
 
   const [linkedDocuments, setLinkedDocuments] = useState([]);
-  const [nodesState, setNodes] = useNodesState(nodes);
-  const [edgesState, setEdges] = useEdgesState(edges);
+  const [nodesState, setNodes] = useNodesState([]);
+  const [edgesState, setEdges] = useEdgesState([]);
 
   useEffect(() => {
     if (props.documents.length > 0) {
@@ -138,31 +147,33 @@ const DocumentGraph = (props) => {
               };
             })
           );
-
           // Update the state with the new array
-          setLinkedDocuments(linkedDocs);
+          setLinkedDocuments(sortedDocumentsByDate(linkedDocs));
+          console.log("Linked documents:", linkedDocs);
         } catch (error) {
           console.error("Error fetching links:", error);
         }
       };
-  
       fetchLinks();
     }
-  }, [props.documents]);  
-
+  }, [props.documents]); 
+  
   useEffect(() => {
-    setNodes(nodes);
-    setEdges(edges);
-  }, []);
+    if (linkedDocuments.length > 0) {
+      const nodes = computeNodes(linkedDocuments);
+      const edges = computeEdges(nodes, linkedDocuments);
+      setNodes(nodes);
+      setEdges(edges);
+      console.log(edgesState);
+
+    }
+  }, [linkedDocuments]);
 
   const onNodeDrag = (event, node) => {
     const nodeIndex = nodesState.findIndex((n) => n.id === node.id);
     const currentNode = nodesState[nodeIndex];
-    
-    let updatedNodes = [...nodesState];
-    
+    let updatedNodes = [...nodesState];  
     const distanceX = node.position.x - currentNode.position.x;
-
     const threshold = 50;
 
     const moveAdjacentNodes = (startIndex, direction, axis) => {
@@ -209,8 +220,12 @@ const DocumentGraph = (props) => {
   const onNodeClick = (event, node) => {};
 
   return (
-    <div style={{ height: '37vh' }}>
-      <ReactFlowProvider>
+    <div style={{ height: '42vh' }}>
+      {nodesState.length === 0 ? (
+        <div style={{ textAlign: 'center', marginTop: '20px' }}>
+          <span>Loading...</span>
+        </div>
+      ) : (
         <ReactFlow
           snapGrid={[10, 10]}
           nodes={nodesState}
@@ -218,15 +233,15 @@ const DocumentGraph = (props) => {
           onNodeClick={onNodeClick}
           onNodeDrag={onNodeDrag}
           snapToGrid={true}
-          minZoom={0.3} 
-          maxZoom={2}
-          fitView={true}  // Aggiungi fitView per centrare il grafo
-          style={{ background: '#fdfdfd' }}  // Imposta lo sfondo grigio chiaro
+          minZoom={0.2}
+          maxZoom={1.5}
+          fitView={true}
+          style={{ background: '#fdfdfd' }}
         >
-          <Background color="lightgray" gap={200} variant={BackgroundVariant.Lines}/>
-          <Controls showZoom={false} showInteractive={false} showFitView={true}/>
+          <Background color="lightgray" gap={200} variant={BackgroundVariant.Lines} />
+          <Controls showZoom={false} showInteractive={false} showFitView={true} />
         </ReactFlow>
-      </ReactFlowProvider>
+      )}
     </div>
   );
 };

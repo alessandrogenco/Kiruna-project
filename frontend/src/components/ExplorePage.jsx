@@ -9,6 +9,7 @@ import documentIcon from '../assets/document.png';
 import '../styles/ExplorePage.css';
 import DocumentViewer from './DocumentViewer'; // Import the DocumentViewer component
 import DocumentGraph  from './Graph';
+import { ReactFlowProvider } from 'react-flow-renderer';
 
 function ExplorePage(props) {
   const MAPBOX_TOKEN = "pk.eyJ1IjoiYWxlc3NhbmRyb2cwOCIsImEiOiJjbTNiZzFwbWEwdnU0MmxzYTdwNWhoY3dpIn0._52AcWROcPOQBr1Yz0toKw";
@@ -288,14 +289,16 @@ function ExplorePage(props) {
         {showGraph ? 'Hide Graph' : 'Show Graph'}
       </button>
       <Row className="vh-80 justify-content-center align-items-center">
-        <Col style={{ width: '100%', height: showGraph ? '55vh' : '92vh' }}>
+        <Col style={{ width: '100%', height: showGraph ? '50vh' : '92vh' }}>
           <div ref={mapContainer} style={{ width: '100%', height: '100%' }} />
         </Col>
       </Row>
       {showGraph && (
         <Row>
           <Col>
-            <DocumentGraph documents={props.documents}/>
+            <ReactFlowProvider>
+              <DocumentGraph documents={props.documents}/>
+            </ReactFlowProvider>
           </Col>
         </Row>
       )}
