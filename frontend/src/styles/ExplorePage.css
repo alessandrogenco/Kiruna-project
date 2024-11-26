@@ -49,9 +49,7 @@
     filter: blur(3px);
     transition: filter 0.5s ease;
   }
-  
-  
-  
+
 .cluster-popup {
   font-family: 'Roboto', Arial, sans-serif;
   font-size: 0.95rem;
