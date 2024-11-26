@@ -2,96 +2,139 @@ import React, { useState, useEffect } from "react";
 import ReactFlow, { Background, BackgroundVariant, Controls, useEdgesState, useNodesState } from "react-flow-renderer";
 import API from "../API.mjs";
 
-function calculateNodePosition(nodes, node) {
+// Normalizza la data in formato `YYYY-MM-DD`
+const normalizeDate = (date) => {
+  const parts = date.split("-");
+  if (parts.length === 1) return `${parts[0]}-01-01`; // Solo anno -> YYYY-01-01
+  if (parts.length === 2) return `${parts[0]}-${parts[1]}-01`; // Anno e mese -> YYYY-MM-01
+  return date; // Anno, mese e giorno -> YYYY-MM-DD
+};
 
-  // Raggruppa i nodi per data normalizzata
+// Ordina i documenti per data normalizzata
+const sortDocumentsByDate = (documents) =>
+  documents.sort(
+    (a, b) =>
+      new Date(normalizeDate(a.issuanceDate)) -
+      new Date(normalizeDate(b.issuanceDate))
+  );
+
+// Calcola la posizione dei nodi
+function calculateNodePosition(nodes, node) {
   const dateGroups = nodes.reduce((acc, n) => {
-    const normalizedDate = normalizeDate(n.issuanceDate); // Usa issuanceDate per ogni nodo
+    const normalizedDate = normalizeDate(n.issuanceDate);
     if (!acc[normalizedDate]) acc[normalizedDate] = [];
     acc[normalizedDate].push(n);
     return acc;
   }, {});
 
-  // Trova il gruppo e calcola la posizione
   const normalizedNodeDate = normalizeDate(node.issuanceDate);
   const group = dateGroups[normalizedNodeDate];
 
-  // Calcola le posizioni
-  const xBase = 330 * Object.keys(dateGroups).indexOf(normalizedNodeDate); // Posizione X per i gruppi
-  const xOffset = group.indexOf(node) * 70; // Offset X per i nodi nel gruppo
-  const yBase = 100 * group.indexOf(node); // Posizione Y per i gruppi
+  const xBase = 330 * Object.keys(dateGroups).indexOf(normalizedNodeDate); // Posizione X
+  const xOffset = group.indexOf(node) * 70; // Offset X per nodi dello stesso gruppo
+  const yBase = 100 * group.indexOf(node); // Posizione Y
   const yOffset = 20; // Offset Y fisso
 
   return { x: xBase + xOffset, y: yBase + yOffset };
 }
 
+// Trasforma i documenti in nodi
 function computeNodes(documents) {
   return documents.map((node) => ({
-  id: node.id,
-  data: {label: <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                    <div style={{ fontWeight: 'bold' }}>{node.title}</div>
-                    <div style={{ fontSize: '12px', color: 'gray' }}>{node.issuanceDate}</div>
-                  </div>}, 
-  position: calculateNodePosition(documents, node), 
-  draggable: true, 
-  sourcePosition: 'right', 
-  targetPosition: 'left', 
-  style: {
-    width: 200, 
-    backgroundColor: '#d4f7d6', 
-    border: '2px solid #89c79d', 
-    borderRadius: '8px', 
-    padding: '6px', 
-    fontSize: '13px',
-    visibility: 'visible', 
-  },
-}))};
+    id: node.id.toString(),
+    data: {
+      label: (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100%",
+          }}
+        >
+          <div style={{ fontWeight: "bold" }}>{node.title}</div>
+          <div style={{ fontSize: "12px", color: "gray" }}>
+            {node.issuanceDate}
+          </div>
+        </div>
+      ),
+    },
+    position: calculateNodePosition(documents, node),
+    draggable: true,
+    sourcePosition: "right",
+    targetPosition: "left",
+    style: {
+      width: 200,
+      backgroundColor: "#d4f7d6",
+      border: "2px solid #89c79d",
+      borderRadius: "8px",
+      padding: "6px",
+      fontSize: "13px",
+      visibility: "visible",
+    },
+  }));
+}
 
+// Trasforma i documenti in edge
 function computeEdges(nodes, documents) {
   const edges = [];
-  const existingEdgeIds = new Set(); // Per tracciare gli ID univoci degli edge
+  const existingEdgeIds = new Set();
 
   documents.forEach((document) => {
     if (document.graphLinks && document.graphLinks.length > 0) {
       document.graphLinks.forEach((link) => {
-        const sourceNode = nodes.find((node) => node.id === document.id);
-        const targetNode = nodes.find((node) => node.id === link.id);
+        const sourceNode = nodes.find((node) => node.id === document.id.toString());
+        const targetNode = nodes.find((node) => node.id === link.id.toString());
 
         if (sourceNode && targetNode) {
           const edgeId = `e${sourceNode.id}-${targetNode.id}`;
           const reverseEdgeId = `e${targetNode.id}-${sourceNode.id}`;
 
-          // Controlla se l'ID dell'edge o il suo inverso esiste già
           if (!existingEdgeIds.has(edgeId) && !existingEdgeIds.has(reverseEdgeId)) {
             let edgeStyle;
 
-            // Determina lo stile in base al tipo di collegamento
             switch (link.type.toLowerCase()) {
-              case 'reference':
-                edgeStyle = { stroke: '#000', strokeWidth: 1.5, strokeDasharray: '0' }; // Linea continua
+              case "reference":
+                edgeStyle = {
+                  stroke: "#000",
+                  strokeWidth: 1.5,
+                  strokeDasharray: "0", // Linea continua
+                };
                 break;
-              case 'citation':
-                edgeStyle = { stroke: '#000', strokeWidth: 1.8, strokeDasharray: '5,5' }; // Linea tratteggiata
+              case "citation":
+                edgeStyle = {
+                  stroke: "#000",
+                  strokeWidth: 1.8,
+                  strokeDasharray: "5,5", // Linea tratteggiata
+                };
                 break;
-              case 'dependency':
-                edgeStyle = { stroke: '#ff0000', strokeWidth: 2, strokeDasharray: '10,5' }; // Linea tratteggiata rossa
+              case "dependency":
+                edgeStyle = {
+                  stroke: "#000",
+                  strokeWidth: 2,
+                  strokeDasharray: "10,5", // Linea tratteggiata rossa
+                };
                 break;
               default:
-                edgeStyle = { stroke: '#000', strokeWidth: 1.5, strokeDasharray: '0' }; // Predefinito
+                edgeStyle = {
+                  stroke: "#000",
+                  strokeWidth: 1.5,
+                  strokeDasharray: "0", // Predefinito
+                };
                 break;
             }
 
-            // Crea l'edge e aggiungilo alla lista
             const edge = {
               id: edgeId,
-              source: sourceNode.id.toString(),
-              target: targetNode.id.toString(),
+              source: sourceNode.id,
+              target: targetNode.id,
               animated: true,
-              style: edgeStyle
+              style: edgeStyle,
             };
 
             edges.push(edge);
-            existingEdgeIds.add(edgeId); // Aggiungi l'ID dell'edge al Set
+            existingEdgeIds.add(edgeId);
           }
         }
       });
@@ -101,27 +144,19 @@ function computeEdges(nodes, documents) {
   return edges;
 }
 
-function sortedDocumentsByDate(documents) {
-  return documents.sort((a, b) => {
-    const dateA = new Date(normalizeDate(a.issuanceDate));
-    const dateB = new Date(normalizeDate(b.issuanceDate));
-    return dateA - dateB; // Confronta le date normalizzate
-  });
-}
-
-// Normalizza le date
-const normalizeDate = (date) => {
-  const parts = date.split('-');
-  if (parts.length === 1) return `${parts[0]}-01-01`; // YYYY -> YYYY-01-01
-  if (parts.length === 2) return `${parts[0]}-${parts[1]}-01`; // YYYY-MM -> YYYY-MM-01
-  return date; // YYYY-MM-DD
-};
-
 const DocumentGraph = (props) => {
 
   const [linkedDocuments, setLinkedDocuments] = useState([]);
   const [nodesState, setNodes] = useNodesState([]);
   const [edgesState, setEdges] = useEdgesState([]);
+  const [showGraph, setShowGraph] = useState(0);
+
+  let nodes = [
+];
+
+let edges = [
+  
+];
 
   useEffect(() => {
     if (props.documents.length > 0) {
@@ -148,6 +183,12 @@ const DocumentGraph = (props) => {
             })
           );
           // Update the state with the new array
+          nodes = computeNodes(linkedDocs);
+          setNodes(nodes);
+        edges = computeEdges(nodes, linkedDocs);
+        setEdges(edges);
+        setShowGraph(1);
+        console.log("nodes", nodes);
           setLinkedDocuments(sortedDocumentsByDate(linkedDocs));
         } catch (error) {
           console.error("Error fetching links:", error);
@@ -156,15 +197,8 @@ const DocumentGraph = (props) => {
       fetchLinks();
     }
   }, [props.documents]); 
-  
-  useEffect(() => {
-    if (linkedDocuments.length > 0) {
-      const nodes = computeNodes(linkedDocuments);
-      const edges = computeEdges(nodes, linkedDocuments);
-      setEdges(edges);
-      setNodes(nodes);
-    }
-  }, [linkedDocuments]);
+
+
 
   const onNodeDrag = (event, node) => {
     const nodeIndex = nodesState.findIndex((n) => n.id === node.id);
@@ -217,8 +251,8 @@ const DocumentGraph = (props) => {
   const onNodeClick = (event, node) => {};
 
   return (
-    <div style={{ height: '42vh' }}>
-      {edgesState.length === 0 ? (
+    <div style={{ width: '100vw', height: '42vh' }}>
+      {showGraph === 0 ? (
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
           <span>Loading...</span>
         </div>
