@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ReactFlow, { Background, BackgroundVariant, Controls, useEdgesState, useNodesState } from "react-flow-renderer";
 import API from "../API.mjs";
+import './Graph.css';
 
 // Normalizza la data in formato `YYYY-MM-DD`
 const normalizeDate = (date) => {
@@ -53,8 +54,8 @@ function computeNodes(documents) {
             height: "100%",
           }}
         >
-          <div style={{ fontWeight: "bold" }}>{node.title}</div>
-          <div style={{ fontSize: "12px", color: "gray" }}>
+          <div style={{ fontWeight: "bold", fontSize: '14px' }}>{node.title}</div>
+          <div style={{ fontSize: "11px", color: "gray" }}>
             {node.issuanceDate}
           </div>
         </div>
@@ -99,28 +100,28 @@ function computeEdges(nodes, documents) {
                 edgeStyle = {
                   stroke: "#000",
                   strokeWidth: 1.5,
-                  strokeDasharray: "0", // Linea continua
+                  strokeDasharray: "0" // Linea continua
                 };
                 break;
               case "citation":
                 edgeStyle = {
                   stroke: "#000",
-                  strokeWidth: 1.8,
-                  strokeDasharray: "5,5", // Linea tratteggiata
+                  strokeWidth: 1.7,
+                  strokeDasharray: "8,4" // Linea tratteggiata
                 };
                 break;
               case "dependency":
                 edgeStyle = {
                   stroke: "#000",
-                  strokeWidth: 2,
-                  strokeDasharray: "10,5", // Linea tratteggiata rossa
+                  strokeWidth: 3,
+                  strokeDasharray: "1,5" // Linea tratteggiata
                 };
                 break;
-              default:
+              default:                    // "related"
                 edgeStyle = {
-                  stroke: "#000",
-                  strokeWidth: 1.5,
-                  strokeDasharray: "0", // Predefinito
+                  stroke: "#BBBBBB",
+                  strokeWidth: 3,
+                  strokeDasharray: "0"
                 };
                 break;
             }
@@ -257,6 +258,24 @@ let edges = [
           <span>Loading...</span>
         </div>
       ) : (
+        <div
+      style={{
+        width: "100vw",
+        margin: "0 auto",
+        padding: "8px",
+        backgroundColor: "#F5F5F5",
+        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+        borderRadius: "8px",
+      }}
+    >
+      <div
+        style={{
+          height: "39vh",
+          borderRadius: "8px",
+          overflow: "hidden",
+          border: "1px solid #eee",
+        }}
+      >
         <ReactFlow
           snapGrid={[10, 10]}
           nodes={nodesState}
@@ -264,14 +283,15 @@ let edges = [
           onNodeClick={onNodeClick}
           onNodeDrag={onNodeDrag}
           snapToGrid={true}
-          minZoom={0.2}
+          minZoom={0.3}
           maxZoom={1.5}
           fitView={true}
-          style={{ background: '#fdfdfd' }}
-        >
+          style={{ background: "#FDFDFD" }}>
           <Background color="lightgray" gap={200} variant={BackgroundVariant.Lines} />
           <Controls showZoom={false} showInteractive={false} showFitView={true} />
         </ReactFlow>
+      </div>
+    </div>
       )}
 
     </div>
