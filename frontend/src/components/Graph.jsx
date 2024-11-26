@@ -34,7 +34,6 @@ function computeNodes(documents) {
                   </div>}, 
   position: calculateNodePosition(documents, node), 
   draggable: true, 
-  ContentVisibilityAutoStateChangeEvent: true,
   sourcePosition: 'right', 
   targetPosition: 'left', 
   style: {
@@ -60,9 +59,10 @@ function computeEdges(nodes, documents) {
 
         if (sourceNode && targetNode) {
           const edgeId = `e${sourceNode.id}-${targetNode.id}`;
+          const reverseEdgeId = `e${targetNode.id}-${sourceNode.id}`;
 
-          // Controlla se l'ID dell'edge esiste già
-          if (!existingEdgeIds.has(edgeId)) {
+          // Controlla se l'ID dell'edge o il suo inverso esiste già
+          if (!existingEdgeIds.has(edgeId) && !existingEdgeIds.has(reverseEdgeId)) {
             let edgeStyle;
 
             // Determina lo stile in base al tipo di collegamento
@@ -84,10 +84,10 @@ function computeEdges(nodes, documents) {
             // Crea l'edge e aggiungilo alla lista
             const edge = {
               id: edgeId,
-              source: sourceNode.id,
-              target: targetNode.id,
+              source: sourceNode.id.toString(),
+              target: targetNode.id.toString(),
               animated: true,
-              style: edgeStyle,
+              style: edgeStyle
             };
 
             edges.push(edge);
@@ -149,7 +149,6 @@ const DocumentGraph = (props) => {
           );
           // Update the state with the new array
           setLinkedDocuments(sortedDocumentsByDate(linkedDocs));
-          console.log("Linked documents:", linkedDocs);
         } catch (error) {
           console.error("Error fetching links:", error);
         }
@@ -162,10 +161,8 @@ const DocumentGraph = (props) => {
     if (linkedDocuments.length > 0) {
       const nodes = computeNodes(linkedDocuments);
       const edges = computeEdges(nodes, linkedDocuments);
-      setNodes(nodes);
       setEdges(edges);
-      console.log(edgesState);
-
+      setNodes(nodes);
     }
   }, [linkedDocuments]);
 
@@ -221,7 +218,7 @@ const DocumentGraph = (props) => {
 
   return (
     <div style={{ height: '42vh' }}>
-      {nodesState.length === 0 ? (
+      {edgesState.length === 0 ? (
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
           <span>Loading...</span>
         </div>
@@ -242,6 +239,7 @@ const DocumentGraph = (props) => {
           <Controls showZoom={false} showInteractive={false} showFitView={true} />
         </ReactFlow>
       )}
+
     </div>
   );
 };
