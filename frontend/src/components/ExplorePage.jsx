@@ -136,8 +136,9 @@ function ExplorePage(props) {
             const popupContent = document.querySelector('.mapboxgl-popup-content');
             if (popupContent) {
               popupContent.style.width = '350px'; 
-              popupContent.style.maxWidth = '350px';
-              popupContent.style.padding = '20px'; 
+              popupContent.style.maxWidth = '350px'; 
+              popupContent.style.padding = '10px'; 
+              popupContent.style.borderRadius = '10px';
             }
           });
       
