@@ -130,7 +130,16 @@ function ExplorePage(props) {
                   .join('')}
               </ul>
             </div>
-          `);
+          `)
+          .on('open', () => {
+           
+            const popupContent = document.querySelector('.mapboxgl-popup-content');
+            if (popupContent) {
+              popupContent.style.width = '350px'; 
+              popupContent.style.maxWidth = '350px';
+              popupContent.style.padding = '20px'; 
+            }
+          });
       
           const marker = new mapboxgl.Marker({
             color: 'green',
