@@ -254,7 +254,7 @@ app.post('/api/addDocument', async (req, res) => {
         // Check if area is empty and lat/lon are provided
         if(area.trim() === '' && lat && lon){
             // Check if lat and lon are valid
-            if ((lat < 67.82 || lat > 67.8800) || (lon < 20.1200 || lon > 20.400)) {
+            if ((lat < 67.3562 || lat > 69.0599) || (lon < 17.8998 || lon > 23.2867)) {
                 throw new Error("Invalid parameters");
             }
         }
@@ -417,7 +417,7 @@ app.post('/api/updateDocument', async (req, res) => {
         // Check if area is empty and lat/lon are provided
         if(area.trim() === '' && lat && lon){
             // Check if lat and lon are valid
-            if ((lat < 67.82 || lat > 67.8800) || (lon < 20.1200 || lon > 20.400)) {
+            if ((lat < 67.3562 || lat > 69.0599) || (lon < 17.8998 || lon > 23.2867)) {
                 throw new Error("Invalid parameters");
             }
         }
