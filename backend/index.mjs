@@ -402,41 +402,82 @@ app.put('/api/links', async (req, res) => {
     }
 });*/
 
+// app.post('/api/updateDocument', async (req, res) => {
+//     console.log("Data received by /api/updateDocument:", req.body); // Log dei dati ricevuti
+
+//     const { id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description } = req.body;
+//     console.log("Received document update data:", req.body);
+    
+//     // Verifica che i campi necessari siano presenti
+//     if (!id || !title) {
+//         return res.status(400).json({ message: "Missing required fields" });
+//     }
+
+//     try {
+//         // Check if area is empty and lat/lon are provided
+//         if(area.trim() === '' && lat && lon){
+//             // Check if lat and lon are valid
+//             if ((lat < 67.3562 || lat > 69.0599) || (lon < 17.8998 || lon > 23.2867)) {
+//                 throw new Error("Invalid parameters");
+//             }
+//         }
+        
+//         // Check if area is not empty and lat or lon are provided
+//         if(area.trim() !== '' && (lat || lon)){
+//             throw new Error("Invalid parameters");
+//         }
+//         if (!area && (!lat ^ !lon)) {
+//             throw new Error("Missing required fields" );
+//         }
+
+//         const result = await documentDao.updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description);
+//         res.status(200).json(result); // Risposta positiva con il documento aggiornato
+//     } catch (error) {
+//         console.error("Error in /api/updateDocument:", error); // Log dettagliato per debug
+//         res.status(400).json({ message: error.message }); // Risposta con messaggio di errore
+//     }
+// });
+
+//-------------------------------
 app.post('/api/updateDocument', async (req, res) => {
-    console.log("Data received by /api/updateDocument:", req.body); // Log dei dati ricevuti
+    console.log("Data received by /api/updateDocument:", req.body);
 
     const { id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description } = req.body;
-    console.log("Received document update data:", req.body);
-    
-    // Verifica che i campi necessari siano presenti
+
     if (!id || !title) {
         return res.status(400).json({ message: "Missing required fields" });
     }
 
     try {
-        // Check if area is empty and lat/lon are provided
-        if(area.trim() === '' && lat && lon){
-            // Check if lat and lon are valid
-            if ((lat < 67.3562 || lat > 69.0599) || (lon < 17.8998 || lon > 23.2867)) {
-                throw new Error("Invalid parameters");
-            }
+        // Check if area is a valid GeoJSON object or empty
+        if (area && typeof area === 'object' && Object.keys(area).length === 0) {
+            return res.status(400).json({ message: "Area cannot be an empty GeoJSON object" });
         }
-        
-        // Check if area is not empty and lat or lon are provided
-        if(area.trim() !== '' && (lat || lon)){
-            throw new Error("Invalid parameters");
+
+        // If area is empty, ensure lat and lon are provided
+        if (!area && (!lat || !lon)) {
+            return res.status(400).json({ message: "Latitude and Longitude are required when Area is not provided" });
         }
-        if (!area && (!lat ^ !lon)) {
-            throw new Error("Missing required fields" );
+
+        // If area is provided, lat and lon should not be present
+        if (area && (lat || lon)) {
+            return res.status(400).json({ message: "Latitude and Longitude cannot be provided when Area is present" });
+        }
+
+        if (lat && (lat < 67.3562 || lat > 69.0599) || lon && (lon < 17.8998 || lon > 23.2867)) {
+            throw new Error("Latitude or Longitude is out of bounds");
         }
 
         const result = await documentDao.updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description);
-        res.status(200).json(result); // Risposta positiva con il documento aggiornato
+        
+        res.status(200).json(result); 
     } catch (error) {
-        console.error("Error in /api/updateDocument:", error); // Log dettagliato per debug
-        res.status(400).json({ message: error.message }); // Risposta con messaggio di errore
+        console.error("Error in /api/updateDocument:", error); 
+        res.status(400).json({ message: error.message }); 
     }
 });
+
+//-------------------------------
 
 app.post('/api/deleteDocument', async (req, res) => {
     //console.log("Data received by /api/deleteDocument:", req.body); // Log dei dati ricevuti

@@ -1,20 +1,23 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Modal, Button, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
+import { Modal, Button, ToggleButtonGroup, ToggleButton, Alert } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import MapboxDraw from '@mapbox/mapbox-gl-draw';
+import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import * as turf from '@turf/turf';
 
 const MapModal = ({ show, handleClose, onLocationSelect }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const marker = useRef(null);
+  const draw = useRef(null);
   const [position, setPosition] = useState(null);
   const [mode, setMode] = useState('point');
   const [geoJsonData, setGeoJsonData] = useState(null);
-
+  const [alertMessage, setAlertMessage] = useState('');
   const MAPBOX_TOKEN = "pk.eyJ1IjoiYWxlc3NhbmRyb2cwOCIsImEiOiJjbTNiZzFwbWEwdnU0MmxzYTdwNWhoY3dpIn0._52AcWROcPOQBr1Yz0toKw";
-  
+
   useEffect(() => {
     if (show && mapContainer.current && !map.current) {
       mapboxgl.accessToken = MAPBOX_TOKEN;
@@ -22,73 +25,87 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: 'mapbox://styles/mapbox/streets-v11',
-        center: [20.25, 67.85], 
-        zoom:11,
+        center: [20.25, 67.85],
+        zoom: 11,
         maxBounds: [[17.8998, 67.3562], [23.2867, 69.0599]],
       });
 
       map.current.on('load', async () => {
         map.current.resize();
 
-        const response = await fetch('/KirunaMunicipality.geojson');
-        const geojson = await response.json();
-        setGeoJsonData(geojson); 
+        try {
+          const response = await fetch('/KirunaMunicipality.geojson');
+          if (!response.ok) throw new Error('Failed to load GeoJSON');
+          const geojson = await response.json();
+          setGeoJsonData(geojson);
 
-        // Add the GeoJSON file
-        map.current.addSource('kiruna-boundary', {
-          type: 'geojson',
-          data: geojson, 
-        });
+          map.current.addSource('kiruna-boundary', {
+            type: 'geojson',
+            data: geojson,
+          });
 
-        map.current.addLayer({
-          id: 'kiruna-boundary-border',
-          type: 'line',  
-          source: 'kiruna-boundary',  
-          paint: {
-            'line-color': '#007cbf',   
-            'line-width': 3,           
-            'line-opacity': 1,         
-          },
-        });
-        
-        map.current.on('click', (e) => {
-          if (mode === 'point') {
-            const { lng, lat } = e.lngLat;
-
-            if (geoJsonData) {
-              if (!isWithinBounds(lng, lat, geoJsonData)) {
-                alert("Selected coordinates are out of Kiruna Municipality borders!");
-                return;
-              }
-
-              setPosition([lat, lng]);
-
-              if (marker.current) {
-                marker.current.setLngLat([lng, lat]);
-              } else {
-                marker.current = new mapboxgl.Marker({ color: '#007cbf' })
-                  .setLngLat([lng, lat])
-                  .addTo(map.current);
-              }
-            }
-          } else {
-            alert("Area selection mode is under development!");
-          }
-        });
+          map.current.addLayer({
+            id: 'kiruna-boundary-border',
+            type: 'line',
+            source: 'kiruna-boundary',
+            paint: {
+              'line-color': '#007cbf',
+              'line-width': 3,
+              'line-opacity': 1,
+            },
+          });
+        } catch (error) {
+          console.error('Error loading GeoJSON:', error.message);
+          setAlertMessage('Error loading map boundaries. Please try again later.');
+        }
       });
 
-      return () => {
-        if (map.current) {
-          map.current.remove();
-          map.current = null;
-          marker.current = null;
+      // Initialize Mapbox Draw
+      draw.current = new MapboxDraw({
+        displayControlsDefault: false,
+        controls: {
+          polygon: true,
+          trash: true,
+        },
+      });
+      map.current.addControl(draw.current, 'top-right');
+
+      map.current.on('click', (e) => {
+        if (mode === 'point') {
+          const { lng, lat } = e.lngLat;
+
+          if (geoJsonData) {
+            if (!isWithinBounds(lng, lat, geoJsonData)) {
+              setAlertMessage('Selected coordinates are outside Kiruna Municipality borders.');
+              return;
+            }
+
+            setPosition([lat, lng]);
+            setAlertMessage('');
+
+            if (marker.current) {
+              marker.current.setLngLat([lng, lat]);
+            } else {
+              marker.current = new mapboxgl.Marker({ color: '#007cbf' })
+                .setLngLat([lng, lat])
+                .addTo(map.current);
+            }
+          }
         }
-      };
+      });
     }
+
+    return () => {
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
+        marker.current = null;
+      }
+    };
   }, [show, mode]);
 
   const isWithinBounds = (lon, lat, geojson) => {
-    const point = turf.point([lon, lat]);  
+    const point = turf.point([lon, lat]);
 
     const isInside = geojson.features[0].geometry.coordinates.some((polygonCoordinates) => {
       const polygon = turf.polygon(polygonCoordinates);
@@ -99,10 +116,17 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
   };
 
   const handleSave = () => {
-    if (position) {
-      onLocationSelect(position);
-      handleClose();
+    if (mode === 'point' && position) {
+      onLocationSelect({ type: 'point', coordinates: position });
+    } else if (mode === 'area') {
+      const drawnFeatures = draw.current.getAll();
+      if (drawnFeatures.features.length === 0) {
+        setAlertMessage('Please draw an area before saving.');
+        return;
+      }
+      onLocationSelect({ type: 'area', geometry: drawnFeatures });
     }
+    handleClose();
   };
 
   return (
@@ -112,10 +136,22 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
       </Modal.Header>
       <Modal.Body>
         <div style={{ position: 'relative', height: '400px', width: '100%' }}>
-          {/* Map container */}
           <div ref={mapContainer} style={{ height: '100%', width: '100%' }} />
-
-          {/* Toggle overlay */}
+          {alertMessage && (
+            <Alert
+              variant="warning"
+              onClose={() => setAlertMessage('')}
+              dismissible
+              style={{
+                position: 'absolute',
+                top: '10px',
+                left: '10px',
+                zIndex: 2,
+              }}
+            >
+              {alertMessage}
+            </Alert>
+          )}
           <div
             style={{
               position: 'absolute',
@@ -132,7 +168,12 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
               type="radio"
               name="mode"
               value={mode}
-              onChange={(value) => setMode(value)}
+              onChange={(value) => {
+                setMode(value);
+                if (value === 'point') {
+                  draw.current.deleteAll();
+                }
+              }}
             >
               <ToggleButton
                 id="point-mode"
@@ -156,14 +197,13 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
         <Button variant="danger" onClick={handleClose}>
           Cancel
         </Button>
-        <Button variant="success" onClick={handleSave} disabled={!position}>
+        <Button variant="success" onClick={handleSave}>
           Save Location
         </Button>
       </Modal.Footer>
     </Modal>
   );
 };
-
 
 MapModal.propTypes = {
   show: PropTypes.bool.isRequired,
