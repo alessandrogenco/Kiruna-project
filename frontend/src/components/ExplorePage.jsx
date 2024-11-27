@@ -136,8 +136,9 @@ function ExplorePage(props) {
             const popupContent = document.querySelector('.mapboxgl-popup-content');
             if (popupContent) {
               popupContent.style.width = '350px'; 
-              popupContent.style.maxWidth = '350px';
-              popupContent.style.padding = '20px'; 
+              popupContent.style.maxWidth = '350px'; 
+              popupContent.style.padding = '10px'; 
+              popupContent.style.borderRadius = '10px';
             }
           });
       
@@ -281,6 +282,7 @@ function ExplorePage(props) {
   return (
     <>
       <AppNavbar isLoggedIn={props.isLoggedIn} handleLogout={props.handleLogout} />
+      {props.isLoggedIn && (
       <button
         style={{
           position: 'fixed', // Fisso nella finestra
@@ -297,6 +299,7 @@ function ExplorePage(props) {
         onClick={() => setShowGraph(!showGraph)}>
         {showGraph ? 'Hide Graph' : 'Show Graph'}
       </button>
+      )}
       <Row className="vh-80 justify-content-center align-items-center">
         <Col style={{ width: '100%', height: showGraph ? '50vh' : '92vh' }}>
           <div ref={mapContainer} style={{ width: '100%', height: '100%' }} />

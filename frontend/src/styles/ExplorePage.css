@@ -57,30 +57,29 @@
   border: 1px solid #ddd;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  padding: 16px 20px !important; /* Adjust padding */
+  padding: 5px 5px !important; /* Reduced padding */
   max-width: 450px !important; /* Force width */
   line-height: 1.6 !important;
   text-align: left !important;
   transition: transform 0.3s ease !important;
-
 }
 
 /* Header Styling */
 .cluster-popup-header {
   font-family: 'Roboto', Arial, sans-serif;
-  font-size: 1.2rem;
+  font-size: 1.12rem;
   font-weight: 700;
   margin-bottom: 12px;
   color: #2c3e50;
   text-align: center;
   border-bottom: 2px solid #eee;
-  padding-bottom: 10px;
+  padding-bottom: 8px; /* Reduced padding */
   letter-spacing: 0.5px;
 }
 
 .cluster-popup-list {
   list-style: none;
-  padding: 0;
+  padding: 8px; /* Added slight padding between list and rectangle */
   margin: 0;
   max-height: 250px; /* Optional: Adjusted height to better fit the wider popup */
   overflow-y: auto;
@@ -108,8 +107,8 @@
 /* Individual Document Item */
 .document-item {
   background-color: #f8f9fa;
-  margin-bottom: 8px;
-  padding: 10px 12px;
+  margin-bottom: 6px; /* Reduced margin */
+  padding: 8px 10px; /* Reduced padding */
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
