@@ -275,15 +275,19 @@ function DocumentControl(props) {
     // Gestore per l'invio del modulo
     const handleSubmit = async (e) => {
       e.preventDefault();
+      console.log('Form Data:', formData);
 
-      if (!validateForm()) {
-        setError("Please fill out all required fields.");
-        return;
-      }
+      // if (!validateForm()) {
+        
+      //   console.log('Validation Errors:', errors);
+      //   setError("Please fill out all required fields.");
+      //   return;
+      // }
   
       // Validazione del form
       const validationError = validateCoordinates();
-      if (validationError) {
+      if (validationError) {   
+          console.log('Validation Errors:', errors);
           setError(validationError);
           setMessage('');
           return;
@@ -307,8 +311,11 @@ function DocumentControl(props) {
               body: JSON.stringify(formData), // Invia i dati del modulo
           });
   
-          if (!response.ok) throw new Error('Network response was not ok');
-  
+          if (!response.ok) {
+            const errorText = await response.text();  // Retrieve the error message from the response
+            console.error(`Error during fetch: ${response.status} - ${errorText}`);
+            throw new Error(`Network response was not ok: ${response.status}`);
+        }  
           // Ottieni il risultato della richiesta
           const result = await response.json();
           const newDocumentId = result.id; // Ottieni l'id del documento creato o aggiornato
@@ -372,8 +379,12 @@ function DocumentControl(props) {
       setShowMapModal(true);
     };
     
-    const handleLocationSelect = (position) => {
-      setFormData({ ...formData, lat: position[0], lon: position[1] });
+    const handleLocationSelect = (locationData) => {
+      if (locationData.type === 'point') {
+        setFormData({ ...formData, lat: locationData.coordinates[0], lon: locationData.coordinates[1] });
+      } else if (locationData.type === 'area') {
+        setFormData({ ...formData, area: locationData.geometry });
+      }
     };
   
     const handleCloseMapModal = () => {
