@@ -315,7 +315,7 @@ describe("POST Added a document", () => {
         const mockLanguage = "English";
         const mockPages = "1-10";
         const mockLat = 68.0001;
-        const mockLon = 22.0001;
+        const mockLon = 24.0001;
         const mockArea = "";
 
         const response = await request(app).post(baseURL + "addDocument").send({
@@ -413,7 +413,7 @@ describe('POST /api/updateDocument', () => {
                 scale: 'large',
                 issuanceDate: '2022-01-01',
                 type: 'research',
-                lat: 68.5, // Out of valid range
+                lat: 66.5, // Out of valid range
                 lon: 20.8,
                 area: ''
             });
