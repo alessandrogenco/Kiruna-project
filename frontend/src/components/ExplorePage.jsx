@@ -278,7 +278,42 @@ function ExplorePage(props) {
       const styleUrl = `mapbox://styles/mapbox/${style}-v9`;
       map.setStyle(styleUrl);
       setCurrentStyle(style);
+
+      // After the style has changed, re-add the boundary layer.
+      map.on('style.load', () => {
+        addBoundaryLayer(); 
+      });
+
     }
+  };
+
+  const addBoundaryLayer = async () => {
+    if (map.getLayer('kiruna-boundary-border')) {
+      map.removeLayer('kiruna-boundary-border');
+    }
+  
+    if (map.getSource('kiruna-boundary')) {
+      map.removeSource('kiruna-boundary');
+    }
+
+    const response = await fetch('/KirunaMunicipality.geojson');
+    const geojson = await response.json();
+
+    map.addSource('kiruna-boundary', {
+      type: 'geojson',
+      data: geojson,
+    });
+
+    map.addLayer({
+      id: 'kiruna-boundary-border',
+      type: 'line',
+      source: 'kiruna-boundary',
+      paint: {
+        'line-color': '#007cbf',
+        'line-width': 3,
+        'line-opacity': 1,
+      },
+    });
   };
 
   const MapStyleToggleButton = ({ style, label }) => {
