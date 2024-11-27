@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
-import { Col, ListGroupItem, Row, ListGroup, Form, Button, Dropdown, DropdownButton } from 'react-bootstrap';
+import { Col, ListGroupItem, Row, ListGroup, Button } from 'react-bootstrap';
 import { Link } from "react-router-dom";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './DocumentList.css';
@@ -51,7 +51,7 @@ function DocumentInList(props){
           const links = await getDocumentLinks(selectedDocument.id);
           setDocumentLinks(links.links);
           console.log('Document links:', documentLinks);
-          setShowLinks(true);
+          setShowLinks(!showLinks);
         } catch (error) {
           console.error('Error fetching document links:', error);
         }
@@ -81,122 +81,112 @@ function DocumentInList(props){
           
           {selectedDocument && (
             <div className="document-details1 mt-4">
-              <h3>{selectedDocument.title}</h3>
-              <Row className='row-det'>
-                <Col>
-                  <Form.Group className='form-group-det'>
-                    <Form.Label className='form-label-det'>Stakeholders</Form.Label>
-                    <Form.Control
-                      className='form-control-det'
-                      type="text"
-                      name="stakeholders"
-                      value={selectedDocument.stakeholders || ""}
-                      readOnly
-                    />
-                  </Form.Group>
-                </Col>
-                <Col>
-                  <Form.Group className='form-group-det'>
-                    <Form.Label className='form-label-det'>Scale</Form.Label>
-                    <Form.Control
-                      className='form-control-det'
-                      type="text"
-                      name="scale"
-                      value={selectedDocument.scale || ""}
-                      readOnly
-                    />
-                  </Form.Group>
-                </Col>
-                <Col>
-                  <Form.Group className='form-group-det'>
-                    <Form.Label className='form-label-det'>Issuance Date</Form.Label>
-                    <Form.Control
-                      className='form-control-det'
-                      name="date"
-                      value={selectedDocument.issuanceDate || ""}
-                      readOnly
-                    />
-                  </Form.Group>
-                </Col>
-              </Row>
+            <h3>{selectedDocument.title}</h3>
+            <Row>
+              <Col md={4}>
+                <div className="left-column">
+                  <div className="form-group-det">
+                    <span className="form-label-det">Stakeholders:</span>
+                    <p className="form-control-det">{selectedDocument.stakeholders || "N/A"}</p>
+                  </div>
+                  <div className="form-group-det">
+                    <span className="form-label-det">Scale:</span>
+                    <p className="form-control-det">{selectedDocument.scale || "N/A"}</p>
+                  </div>
+                  <div className="form-group-det">
+                    <span className="form-label-det">Issuance Date:</span>
+                    <p className="form-control-det">{selectedDocument.issuanceDate || "N/A"}</p>
+                  </div>
+                  <div className="form-group-det">
+                    <span className="form-label-det">Type:</span>
+                    <p className="form-control-det">
+                      {
+                        {
+                          Technical: "Text - Technical",
+                          Agreement: "Concept - Agreement",
+                          Conflict: "Concept - Conflict",
+                          Consultation: "Concept - Consultation",
+                          "Material effect": "Concept - Material effect",
+                          Paper: "Concept - Paper",
+                          Action: "Action",
+                        }[selectedDocument.type] || "N/A"
+                      }
+                    </p>
+                  </div>
+                  <div className="form-group-det">
+                    <span className="form-label-det">Language:</span>
+                    <p className="form-control-det">
+                      {selectedDocument.language === "English"
+                        ? "English"
+                        : selectedDocument.language === "Swedish"
+                        ? "Swedish"
+                        : "N/A"}
+                    </p>
+                  </div>
+                </div>
+              </Col>
+              <Col md={8}>
+                <div className="right-column">
+                  <div className="form-group-det-description">
+                    <span className="form-label-det">Description:</span>
+                    <p className="form-control-description">
+                      {selectedDocument.description || "No description available."}
+                    </p>
+                  </div>
+                </div>
+              </Col>
+            </Row>
+            <div className="mx-3 mt-3">
               <Row>
                 <Col>
-                  <Form.Group className='form-group-det'>
-                    <Form.Label className='form-label-det'>Type</Form.Label>
-                    <Form.Control
-                      className='form-control-det'
-                      as="select"
-                      name="type"
-                      value={selectedDocument.type || ""}
-                      readOnly
-                      disabled
-                    >
-                      <option value="Technical">Text - Technical</option>
-                      <option value="Agreement">Concept - Agreement</option>
-                      <option value="Conflict">Concept - Conflict</option>
-                      <option value="Consultation">Concept - Consultation</option>
-                      <option value="Material effect">Concept - Material effect</option>
-                      <option value="Paper">Concept - Paper</option>
-                      <option value="Action">Action</option>
-                    </Form.Control>
-                  </Form.Group>
+                  <Button
+                    variant="outline-success"
+                    onClick={handleConnectionsClick}
+                    className="toggle-button"
+                  >
+                    {showLinks ? "Hide Connections" : "Show Connections"}
+                  </Button>
                 </Col>
-                <Col>
-                  <Form.Group className='form-group-det'>
-                    <Form.Label className='form-label-det'>Language</Form.Label>
-                    <Form.Control
-                      className='form-control-lang'
-                      as="select"
-                      name="language"
-                      value={selectedDocument.language || ""}
-                      readOnly
-                      disabled
-                    >
-                      <option value="English">English</option>
-                      <option value="Swedish">Swedish</option>
-                    </Form.Control>
-                  </Form.Group>
-                </Col>
-                <Col>
-                      <DropdownButton
-                     id="dropdown-basic-button"
-                     onClick={handleConnectionsClick}
-                     title="Connections">
-                        {documentLinks ? (
-                          documentLinks.map((link, index) => {
-                            return <Dropdown.Item key={index} className="custom-dropdown-item">   
-                                <span className="link-title">{link.type +  " - " + link.title}</span>
-                              </Dropdown.Item>;
-                          })
-                        ) : (
-                          <Dropdown.ItemText>No connections available.</Dropdown.ItemText>
-                        )}
-                      </DropdownButton>
-                </Col>
+              </Row>
+              {showLinks && (
+                <Row className="mt-1">
+                  <Col>
+                    <ListGroup>
+                      {documentLinks && documentLinks.length > 0 ? (
+                        documentLinks.map((link, index) => (
+                          <ListGroupItem
+                            key={index}
+                            className="document-list-item rounded custom-list-group-item mt-2"
+                          >
+                            <Row>
+                              <Col>
+                                <label>{link.title}</label>
+                              </Col>
+                              <Col>
+                                <label>{link.type}</label>
+                              </Col>
+                            </Row>
+                          </ListGroupItem>
+                        ))
+                      ) : (
+                        <label className="text-muted">No connections available.</label>
+                      )}
+                    </ListGroup>
+                  </Col>
                 </Row>
-                <Row>
-                <Col>
-                  <Form.Group className='form-group-det'>
-                    <Form.Label className='form-label-det'>Description</Form.Label>
-                    <Form.Control
-                      className='form-control-description'
-                      as="textarea"
-                      name="description"
-                      value={selectedDocument.description || ""}
-                      readOnly
-                    />
-                  </Form.Group>
-                </Col>
-              </Row>
-              <Row>
-                <FileList documentId={selectedDocument.id}/>
-              </Row>
-                
-             
-              <div className="text-end">
-                <Button variant="secondary" onClick={handleCloseViewer}>Close</Button>
-              </div>
+              )}
             </div>
+            <div className='mx-3 mt-3'>
+              <Row>
+                <FileList documentId={selectedDocument.id} />
+              </Row>
+            </div>
+            <div className="text-end">
+              <Button variant="secondary" onClick={handleCloseViewer}>
+                Close
+              </Button>
+            </div>
+          </div>          
           )}
         </div>
       );

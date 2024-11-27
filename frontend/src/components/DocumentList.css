@@ -6,7 +6,7 @@
   border-radius: 8px;
   background-color: #f8f9fa;
   width: 100%; /* Imposta la larghezza del contenitore al 100% */
-  max-width: 1000px; /* Limita la larghezza massima del contenitore */
+  max-width: 1200px; /* Limita la larghezza massima del contenitore */
   margin-left: auto; /* Centra il contenitore orizzontalmente */
   margin-right: auto; /* Centra il contenitore orizzontalmente */
 }
@@ -39,52 +39,44 @@
   /* Custom styles for Form.Group */
   .document-details1 .form-group-det {
     margin-bottom: 20px;
-    max-width: 300px; /* Limita la larghezza dei form */
+    margin: 15px;
+    display: flex;
+    align-items: center; /* Allinea verticalmente al centro */
+    gap: 10px; /* Spazio tra il label e il valore */
   }
   
   .document-details1 .form-label-det {
     font-weight: bold;
     color: #333;
-    width: 100%;
-    margin-left: -11px;
+    margin: 0;
   }
   
   .document-details1 .form-control-det {
-    border-radius: 4px;
-    border: 1px solid #ced4da;
-    padding: 10px;
-    background-color: #fff;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    width: 90%; /* Imposta la larghezza dei controlli al 100% del contenitore */
-    box-sizing: border-box;
+    margin: 0;
+    
   }
 
   .document-details1 .form-control-lang {
-    border-radius: 4px;
-    border: 1px solid #ced4da;
     padding: 10px;
-    background-color: #fff;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
     width: 90%; /* Imposta la larghezza dei controlli al 100% del contenitore */
     box-sizing: border-box;
   }
 
+  .form-group-det-description {
+    margin-top: 17px;
+    display: flex;
+    flex-direction: column; /* Etichetta sopra la descrizione */
+    align-items: flex-start; /* Allinea il testo a sinistra */
+  }
+
   .document-details1 .form-control-description {
-    border-radius: 4px;
-    border: 1px solid #ced4da;
-    padding: 10px 10px;
-    background-color: #fff;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    width: 303%; /* Imposta la larghezza dei controlli al 100% del contenitore */
-    height: 7em;
-    box-sizing: border-box;
-    margin-left: 0px;
-  }
-  
-  .document-details1 .form-control-det:focus {
-    border-color: #80bdff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
-  }
+    padding: 10px; /* Mantieni il padding per una buona leggibilità */
+    width: auto; /* Adatta la larghezza al contenuto */
+    max-width: 100%; /* Evita che il contenitore superi la larghezza del genitore */
+    background-color: transparent; /* Rimuovi lo sfondo per enfatizzare il testo */
+    border: none; /* Rimuovi il bordo */
+}
   
   /* Custom styles for Row */
   .document-details1 .row-det {
@@ -92,35 +84,30 @@
     padding-left: 5px; /* Riduci il padding sinistro delle righe */
     padding-right: 5px; /* Riduci il padding destro delle righe */
   }
-  
-  #dropdown-basic-button {
-    color: #28a745; /* Colore del testo verde */
-    border: 1px solid #28a745; /* Bordo verde */
-    background-color: transparent; /* Sfondo trasparente */
-    padding: 10px 20px; /* Padding personalizzato */
-    border-radius: 4px; /* Angoli arrotondati */
-    transition: color 0.3s ease, border-color 0.3s ease; /* Transizione per il colore del testo e del bordo */
-    margin-top: 34px; /* Sposta il pulsante verso il basso */
-    width: 90%;
-  }
-  
-  #dropdown-basic-button:hover,
-  #dropdown-basic-button:focus {
-    color: #218838; /* Colore del testo al passaggio del mouse e al focus */
-    border-color: #218838; /* Colore del bordo al passaggio del mouse e al focus */
-  }
-  
-  
-  .custom-list-group-item {
-    width: 100%;
-    padding: 5px 20px; /* Riduci il padding orizzontale */
-    box-sizing: border-box; /* Include il padding e il bordo nella larghezza totale */
-    text-align: left; /* Allinea il testo a sinistra */
-  }
 
-  .custom-dropdown-item {
-    padding: 5px 110px; /* Aumenta il padding per rendere l'elemento più grande */
-
+  .toggle-button {
+    margin-bottom: 10px; /* Spazio tra il bottone e la lista */
+  }
+  
+  .connections-list {
+    margin-top: 10px;
+    padding: 0;
+    list-style-type: none;
+    max-width: 100%;
+    width: fit-content;
+    padding: 10px;
+  }
+  
+  .custom-list-item {
+    padding: 5px 10px;
+    margin: 5px 0;
+    border-radius: 4px;
+    background-color: #e9ecef;
+  }
+  
+  .custom-list-item:hover {
+    background-color: #d6d8db;
+    cursor: pointer;
   }
 
   @media (max-width: 900px) {
