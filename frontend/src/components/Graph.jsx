@@ -31,10 +31,18 @@ function calculateNodePosition(nodes, node) {
   const normalizedNodeDate = normalizeDate(node.issuanceDate);
   const group = dateGroups[normalizedNodeDate];
 
-  const xBase = 330 * Object.keys(dateGroups).indexOf(normalizedNodeDate); // Posizione X
+  const groupIndex = Object.keys(dateGroups).indexOf(normalizedNodeDate);
+
+  const xBase = 330 * groupIndex; // Posizione X
   const xOffset = group.indexOf(node) * 70; // Offset X per nodi dello stesso gruppo
-  const yBase = 100 * group.indexOf(node); // Posizione Y
-  const yOffset = 20; // Offset Y fisso
+
+  // Calcolo della posizione Y a zig-zag con target a 150
+  const yBaseAmplitude = 350; // Amplitudine massima dello zig-zag
+  const yTarget = 150; // Target centrale attorno a cui oscillare
+  const yBase = yTarget + (groupIndex % 2 === 0 ? -1 : 1) * 
+                (yBaseAmplitude - (yBaseAmplitude * (groupIndex / (Object.keys(dateGroups).length - 1)))); // Zig-zag dinamico attorno a 150
+
+  const yOffset = 100 * group.indexOf(node) + 20; // Offset Y per nodi nel gruppo
 
   return { x: xBase + xOffset, y: yBase + yOffset };
 }
