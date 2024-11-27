@@ -55,22 +55,42 @@ function ExplorePage(props) {
       const mapInstance = new mapboxgl.Map({
         container: mapContainer.current,
         style: 'mapbox://styles/mapbox/streets-v11',
-        center: [20.2253, 67.8558],
-        zoom: 9,
+        center: [20.25, 67.85], 
+        zoom:11,
         pitch: 0,
         bearing: 0,
         projection: 'mercator',
         antialias: true,
         maxZoom: 16,
         minZoom: 8,
-        maxBounds: [[20.1200, 67.82], [20.400, 67.8800]],
+        maxBounds: [[17.8998, 67.3562], [23.2867, 69.0599]],
         attributionControl: false,
         maxPitch: 0
       });
 
-      mapInstance.on('load', () => {
+      mapInstance.on('load', async () => {
         setMap(mapInstance);
         setMapLoaded(true); // Set mapLoaded to true when the map is ready
+      
+        const response = await fetch('/KirunaMunicipality.geojson');
+        const geojson = await response.json();
+
+        // Add the GeoJSON file
+       mapInstance.addSource('kiruna-boundary', {
+          type: 'geojson',
+          data: geojson, 
+        });
+
+        mapInstance.addLayer({
+          id: 'kiruna-boundary-border',
+          type: 'line',  
+          source: 'kiruna-boundary',  
+          paint: {
+            'line-color': '#007cbf',   
+            'line-width': 3,           
+            'line-opacity': 1,         
+          },
+        });
       });
     }
   }, [map]);
