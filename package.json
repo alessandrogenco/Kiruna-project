@@ -3,6 +3,7 @@
     "@types/mapbox-gl": "^3.4.1"
   },
   "dependencies": {
+    "@mapbox/mapbox-gl-draw": "^1.4.3",
     "react-flow-renderer": "^10.3.17"
   }
 }
