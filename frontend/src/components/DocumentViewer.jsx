@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { getDocumentLinks } from '../API.mjs'; // Import the function
 import './DocumentViewer.css';
+import { useNavigate } from 'react-router-dom';
 
 const DocumentViewer = ({ documentData, onClose }) => {
   const [viewDescription, setViewDescription] = useState(false);
   const [documentLinks, setDocumentLinks] = useState([]);
   const [showLinks, setShowLinks] = useState(false);
+  const navigate = useNavigate();
 
   const handleConnectionsClick = async () => {
     if (showLinks) {
@@ -20,6 +22,11 @@ const DocumentViewer = ({ documentData, onClose }) => {
       }
     }
   };
+
+  const handleEditClick = () => {
+    navigate(`/editDocument/${documentData.id}`, { state: { document: documentData, explorePage: true} });
+  };
+
 
   if (!documentData) return null;
 
@@ -47,6 +54,7 @@ const DocumentViewer = ({ documentData, onClose }) => {
             </ul>
           )}
           <div className="button-group">
+            <button className="btn btn-primary" onClick={handleEditClick}>Edit</button>
             <button onClick={() => setViewDescription(true)}>View Description</button>
           </div>
         </div>
