@@ -16,6 +16,7 @@ function DocumentControl(props) {
   const navigate = useNavigate();
 
   const existingDocument = location.state?.document;
+  const explorePage = location.state?.explorePage;
 
     // Stati per i valori dei campi del modulo
     const [formData, setFormData] = useState({
@@ -365,8 +366,8 @@ function DocumentControl(props) {
           setMessage(documentId ? 'Document updated successfully!' : 'Document added successfully!');
           setError('');
   
-          // Naviga alla pagina dei documenti
-          navigate('/documentsPage');
+          // Naviga alla pagina precedente
+          explorePage ? navigate('/explore') : navigate('/documentsPage');
       } catch (error) {
           console.error('Error during submission:', error);
           setError(`Error: ${error.message}`);
@@ -728,7 +729,7 @@ function DocumentControl(props) {
                 <Button className="me-3" variant="success" type="submit">
                   {documentId ? "Save" : "Add"}
                 </Button>
-                <Button variant="danger" onClick={() => navigate('/documentsPage')}>
+                <Button variant="danger" onClick={() => explorePage ? navigate('/explore') : navigate('/documentsPage')}>
                   Cancel
                 </Button>
             </Col>
