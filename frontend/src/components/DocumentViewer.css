@@ -83,6 +83,15 @@
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
+.button-group .btn-primary {
+    background-color: #0776ec;
+    color: white;
+}
+
+.button-group .btn-primary:hover {
+background-color: #0056b3;
+}
+
 .document-links {
     margin-top: 10px;
     padding-left: 0;
@@ -98,10 +107,10 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
-
+/*
 .button-group button:first-child:hover {
     background-color: #5a6268;
-}
+}*/
 
 .button-group button:last-child {
     background-color: #28a745;
