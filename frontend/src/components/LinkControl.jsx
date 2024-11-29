@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Row, Col, Alert, ListGroup, ListGroupItem } from "react-bootstrap";
+import Select from 'react-select';
 import PropTypes from 'prop-types';
 import API from '../API.mjs'; // Import delle funzioni API
 import '../styles/DocumentList.css';
@@ -83,6 +84,8 @@ const LinkControl = (props) => {
     setRows(updatedRows); // Aggiorna sempre la UI delle righe
   };
 
+  const options = documents.map((doc) => ({ value: doc.id, label: doc.title }));
+
   return (
     <div className="mx-4 mb-4">
       <CurrentLinkList links={links} className="mt-3" />
@@ -96,18 +99,15 @@ const LinkControl = (props) => {
           <Col className="d-flex justify-content-center">
             <Form.Group as={Col} controlId={`formTargetDocument-${index}`}>
               <Form.Label>Target Document</Form.Label>
-              <Form.Control
-                as="select"
-                value={row.targetDocument}
-                onChange={(e) => handleRowChange(index, 'targetDocument', e.target.value)}
-              >
-                <option value="">Select a document</option>
-                {documents.map((doc) => (
-                  <option key={doc.id} value={doc.id}>
-                    {doc.title}
-                  </option>
-                ))}
-              </Form.Control>
+              <Select
+                options={options}
+                value={options.find((option) => option.value === row.targetDocument)}
+                onChange={(selectedOption) =>
+                  handleRowChange(index, 'targetDocument', selectedOption?.value || '')
+                }
+                placeholder="Type to search or select a document"
+                isClearable
+              />
             </Form.Group>
           </Col>
 
