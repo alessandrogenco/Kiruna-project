@@ -410,20 +410,6 @@ function DocumentControl(props) {
             </Col>
           </Row>
 
-          {/* Banner di errore */}
-          {error && (
-            <Alert variant="danger" className="mx-3">
-              {error}
-            </Alert>
-          )}
-
-          {/* Banner di successo */}
-          {message && (
-            <Alert variant="success" className="mx-3">
-              {message}
-            </Alert>
-          )}
-
           <div className="document-section">
           <Row className="mb-3 mx-3 mt-3">
             <Form.Group as={Col} controlId="formTitle" className="me-4">
@@ -723,6 +709,20 @@ function DocumentControl(props) {
           <div className="link-section">
           <LinkControl selectedId={documentId} links={links} newLinks={newLinks} setNewLinks={setNewLinks} setHasDuplicates={setHasDuplicates} hasDuplicates={hasDuplicates}/>
           </div>
+
+          {/* Banner di errore */}
+          {error && (
+            <Alert variant="danger" className="mx-3 mt-4">
+              {error}
+            </Alert>
+          )}
+
+          {/* Banner di successo */}
+          {message && (
+            <Alert variant="success" className="mx-3 mt-4">
+              {message}
+            </Alert>
+          )}
 
           <Row className="mx-3 mt-5">
             <Col className="d-flex justify-content-center pb-5">
