@@ -688,6 +688,25 @@ app.get('/api/files/:documentId', async (req, res) => {
 });
 
 
+app.get('/api/getDocumentLocations', async (req, res) => {
+    try {
+      const locations = await new Promise((resolve, reject) => {
+        db.all(`SELECT id, title, lat, lon, area, description FROM Documents WHERE lat IS NOT NULL OR area IS NOT NULL`, (err, rows) => {
+          if (err) reject(err);
+          resolve(rows);
+        });
+      });
+      res.status(200).json(locations);
+    } catch (error) {
+      console.error('Error fetching georeferenced locations:', error.message);
+      res.status(500).json({ message: 'Failed to fetch locations' });
+    }
+  });
+  
+  
+  
+
+
 /* ACTIVATING THE SERVER */
 let server = app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

@@ -197,3 +197,13 @@ curl -X POST "http://localhost:3001/api/upload2?documentId=10" \
   -F "resourceType=pdf" \
   -F "description=Document files"
 
+
+
+
+
+
+### Test: Fetch Document Locations
+GET http://localhost:3001/api/getDocumentLocations HTTP/1.1
+Accept: application/json
+
+

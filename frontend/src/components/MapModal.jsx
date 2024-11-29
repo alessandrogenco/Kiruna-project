@@ -7,7 +7,7 @@ import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import * as turf from '@turf/turf';
 
-const MapModal = ({ show, handleClose, onLocationSelect }) => {
+const MapModal = ({ show, handleClose, onLocationSelect, existingGeoreferencingData }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const marker = useRef(null);
@@ -35,6 +35,7 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
 
         try {
           const response = await fetch('/KirunaMunicipality.geojson');
+
           if (!response.ok) throw new Error('Failed to load GeoJSON');
           const geojson = await response.json();
           setGeoJsonData(geojson);
@@ -57,6 +58,70 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
         } catch (error) {
           console.error('Error loading GeoJSON:', error.message);
           setAlertMessage('Error loading map boundaries. Please try again later.');
+        }
+
+        // try {
+        //   const documentResponse = await fetch('/api/getDocumentLocations');
+        //   if (!documentResponse.ok) 
+        //     throw new Error(`Failed to load document location: ${documentResponse.statusText}`);
+        //   const documentLocation = await documentResponse.json();
+
+        //   if (documentLocation.type === 'point') {
+        //     new mapboxgl.Marker()
+        //       .setLonLat([documentLocation.coordinates[1], documentLocation.coordinates[0]]) // [lng, lat]
+        //       .addTo(map.current);
+        //   } else if (documentLocation.type === 'area') {
+        //     const polygon = turf.polygon(documentLocation.geometry.coordinates);
+        //     map.current.addLayer({
+        //       id: 'document-boundary',
+        //       type: 'fill',
+        //       source: {
+        //         type: 'geojson',
+        //         data: polygon,
+        //       },
+        //       paint: {
+        //         'fill-color': '#ff5733',
+        //         'fill-opacity': 0.5,
+        //       },
+        //     });
+        //   }
+        // } catch (error) {
+        //   console.error('Error loading GeoJSON or document location:', error.message);
+        //   setAlertMessage('Error loading map or document location. Please try again later.');
+        // }
+
+        // Add existing georeferencing points/areas to the map
+        if (existingGeoreferencingData) {
+          existingGeoreferencingData.forEach((item) => {
+            if (item.type === 'point') {
+              new mapboxgl.Marker({ color: '#ff5733' })
+                .setLngLat([item.coordinates[1], item.coordinates[0]]) // [latitude, longitude]
+                .addTo(map.current)
+                .getElement().addEventListener('click', () => {
+                  setPosition([item.coordinates[0], item.coordinates[1]]);
+                  setAlertMessage('');
+                });
+            } else if (item.type === 'area') {
+              const polygon = turf.polygon(item.geometry.coordinates);
+              map.current.addLayer({
+                id: `area-${item.id}`,
+                type: 'fill',
+                source: {
+                  type: 'geojson',
+                  data: polygon,
+                },
+                paint: {
+                  'fill-color': '#ff5733',
+                  'fill-opacity': 0.5,
+                },
+              });
+
+              map.current.on('click', `area-${item.id}`, () => {
+                setPosition(item.geometry.coordinates);
+                setAlertMessage('');
+              });
+            }
+          });
         }
       });
 
@@ -102,7 +167,7 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
         marker.current = null;
       }
     };
-  }, [show, mode]);
+  }, [show, mode, existingGeoreferencingData]);
 
   const isWithinBounds = (lon, lat, geojson) => {
     const point = turf.point([lon, lat]);
@@ -189,6 +254,13 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
               >
                 Area
               </ToggleButton>
+              <ToggleButton
+                id="select-mode"
+                value="select"
+                variant={mode === 'select' ? 'success' : 'outline-success'}
+              >
+                Select
+              </ToggleButton>
             </ToggleButtonGroup>
           </div>
         </div>
@@ -209,6 +281,7 @@ MapModal.propTypes = {
   show: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   onLocationSelect: PropTypes.func.isRequired,
+  existingGeoreferencingData: PropTypes.array.isRequired,
 };
 
 export default MapModal;
