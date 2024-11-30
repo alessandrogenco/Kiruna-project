@@ -329,6 +329,15 @@ function DocumentControl(props) {
       e.preventDefault();
       console.log('Form Data:', formData);
 
+      const stakeholdersString = formData.stakeholders.join(' - ');
+    
+      const updatedFormData = {
+      ...formData,
+      stakeholders: stakeholdersString,
+    };
+    
+
+
       // if (!validateForm()) {
         
       //   console.log('Validation Errors:', errors);
@@ -360,7 +369,7 @@ function DocumentControl(props) {
           const response = await fetch(url, {
               method: method,
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(formData), // Invia i dati del modulo
+              body: JSON.stringify(updatedFormData), // Invia i dati del modulo
           });
   
           if (!response.ok) {
