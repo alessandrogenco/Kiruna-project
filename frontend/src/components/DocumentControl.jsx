@@ -384,7 +384,7 @@ function DocumentControl(props) {
       if (locationData.type === 'point') {
         setFormData({ ...formData, lat: locationData.coordinates[0], lon: locationData.coordinates[1] });
       } else if (locationData.type === 'area') {
-        setFormData({ ...formData, area: locationData.geometry });
+        setFormData({ ...formData, area: JSON.stringify(locationData.geometry) });
       }
     };
   
@@ -689,7 +689,9 @@ function DocumentControl(props) {
 
           <Row className="mx-3 mb-4">
             <Form.Group controlId="formDescription">
-              <Form.Label className='form-label'>Description</Form.Label>
+              <Form.Label className='form-label'>
+              Description <span className="required-asterisk" style={{ color: 'red' }}>*</span>
+              </Form.Label>
               <Form.Control
                 as="textarea"
                 rows={8}
