@@ -439,6 +439,7 @@ app.put('/api/links', async (req, res) => {
 // });
 
 //-------------------------------
+
 app.post('/api/updateDocument', async (req, res) => {
     console.log("Data received by /api/updateDocument:", req.body);
 
@@ -454,19 +455,9 @@ app.post('/api/updateDocument', async (req, res) => {
             return res.status(400).json({ message: "Area cannot be an empty GeoJSON object" });
         }
 
-        // If area is empty, ensure lat and lon are provided
         if (!area && (!lat || !lon)) {
             return res.status(400).json({ message: "Latitude and Longitude are required when Area is not provided" });
-        }
-
-        // If area is provided, lat and lon should not be present
-        if (area && (lat || lon)) {
-            return res.status(400).json({ message: "Latitude and Longitude cannot be provided when Area is present" });
-        }
-
-        if (lat && (lat < 67.3562 || lat > 69.0599) || lon && (lon < 17.8998 || lon > 23.2867)) {
-            throw new Error("Latitude or Longitude is out of bounds");
-        }
+        }    
 
         const result = await documentDao.updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description);
         
