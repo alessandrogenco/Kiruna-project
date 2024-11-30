@@ -182,17 +182,25 @@ const MapModal = ({ show, handleClose, onLocationSelect, existingGeoreferencingD
 
   const handleSave = () => {
     if (mode === 'point' && position) {
+      // Save the point as latitude and longitude
       onLocationSelect({ type: 'point', coordinates: position });
     } else if (mode === 'area') {
       const drawnFeatures = draw.current.getAll();
+  
       if (drawnFeatures.features.length === 0) {
         setAlertMessage('Please draw an area before saving.');
         return;
       }
-      onLocationSelect({ type: 'area', geometry: drawnFeatures });
+  
+      // Extract the geometry of the drawn features
+      const geometries = drawnFeatures.features.map((feature) => feature.geometry);
+  
+      onLocationSelect({ type: 'area', geometry: geometries }); 
     }
+  
     handleClose();
   };
+  
 
   return (
     <Modal show={show} onHide={handleClose} size="lg" centered>
