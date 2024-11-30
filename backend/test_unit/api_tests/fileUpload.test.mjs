@@ -48,7 +48,7 @@ describe("POST /api/upload", () => {
     const response = await request(app)
       .post(`${baseURL}upload?documentId=${documentId}`)
       .attach("-H \"Content-Type: application/octet-stream\"")
-      .attach("/home/greta/Kiruna-project/backend/test_unit/api_tests/SamplePDFFile.pdf");
+      .attach(new File("/home/greta/Kiruna-project/backend/test_unit/api_tests/SamplePDFFile.pdf"));
 
     expect(response.status).toBe(400);
     expect(response.body).toEqual({
@@ -57,6 +57,10 @@ describe("POST /api/upload", () => {
     });
 
   });
+
+  //test success
+
+
 
 
   });

@@ -14,6 +14,12 @@ function DocumentControl(props) {
   const { documentId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const [stakeholderList, setStakeholderList] = useState([]);
+  const [scaleList, setScaleList] = useState([]);
+  const [typeList, setTypeList] = useState([]);
+  const [showNewTypeInput, setShowNewTypeInput] = useState(false);
+  const [showNewScaleInput, setShowNewScaleInput] = useState(false);
+  const [showNewStakeholderInput, setShowNewStakeholderInput] = useState(false);
 
   const existingDocument = location.state?.document;
   const explorePage = location.state?.explorePage;
@@ -32,7 +38,8 @@ function DocumentControl(props) {
       lat: existingDocument?.lat || '',
       lon: existingDocument?.lon || '',
       area: existingDocument?.area || '',
-      description: existingDocument?.description || ''
+      description: existingDocument?.description || '',
+      newStakeholder: '',
     });
     const [showMapModal, setShowMapModal] = useState(false);
     const [files, setFiles] = useState([]);
@@ -46,6 +53,29 @@ function DocumentControl(props) {
       pages: "",
 
     });
+
+    useEffect(() => {
+
+    const getStakeholders = async () => {
+      const response = await axios.get('http://localhost:3001/api/documents/stakeholders');
+      setStakeholderList(response.data);
+    };
+    
+    const getScales = async () => {
+      const response = await axios.get('http://localhost:3001/api/documents/scales');
+      setScaleList(response.data);
+    };
+    
+    const getTypes = async () => {
+      const response = await axios.get('http://localhost:3001/api/documents/types');
+      setTypeList(response.data);
+    };
+
+    getStakeholders();
+    getScales();
+    getTypes();
+    }, []);
+
 
     useEffect(() => {
       if (existingDocument) {
@@ -88,6 +118,7 @@ function DocumentControl(props) {
             }));
     
             setLinks(processedLinks); // Imposta solo id e type nello stato
+
           } catch (error) {
             setError('Failed to load links');
           }
@@ -105,6 +136,26 @@ function DocumentControl(props) {
     // Gestore per l'aggiornamento dei campi
     const handleChange = (e) => {
       const { name, value } = e.target;
+      
+      if(name === 'scale' && value === 'add_new_scale') {
+        setShowNewScaleInput(true);
+      } else if (name === 'type' && value === 'add_new_type') {
+        setShowNewTypeInput(true);
+      } else if (name === 'stakeholders' && value === 'add_new_stakeholder') {
+        setShowNewStakeholderInput(true);
+      }else {
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          [name]: value,
+        }));
+        if (name === 'type') {
+          setShowNewTypeInput(false);
+        }else if (name === 'scale') {
+          setShowNewScaleInput(false);
+        }else if (name === 'stakeholders') {
+          setShowNewStakeholderInput(false);
+        }
+      }
     
       if (name === "lat" || name === "lon") {
         // Regex to allow only floating-point numbers
@@ -384,7 +435,7 @@ function DocumentControl(props) {
       if (locationData.type === 'point') {
         setFormData({ ...formData, lat: locationData.coordinates[0], lon: locationData.coordinates[1] });
       } else if (locationData.type === 'area') {
-        setFormData({ ...formData, area: locationData.geometry });
+        setFormData({ ...formData, area: JSON.stringify(locationData.geometry) });
       }
     };
   
@@ -398,6 +449,53 @@ function DocumentControl(props) {
       }
       return new Date(year, month, 0).getDate();
     }
+
+
+  const handleAddType = () => {
+    if (formData.newType.trim() !== '') {
+      setTypeList((prevList) => [
+        ...prevList,
+        { id: prevList.length + 1, name: formData.newType }
+      ]);
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        type: formData.newType,
+        newType: ''
+      }));
+      setShowNewTypeInput(false);
+    }
+  };
+
+  const handleAddScale = () => {
+    if (formData.newScale.trim() !== '') {
+      setScaleList((prevList) => [
+        ...prevList,
+        { id: prevList.length + 1, name: formData.newScale }
+      ]);
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        scale: formData.newScale,
+        newScale: ''
+      }));
+      setShowNewScaleInput(false);
+    }
+  };
+
+
+  const handleAddStakeholder = () => {
+    if (formData.newStakeholder.trim() !== '') {
+      setStakeholderList((prevList) => [
+        ...prevList,
+        { id: prevList.length + 1, name: formData.newStakeholder }
+      ]);
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        stakeholders: [...prevFormData.stakeholders.filter(s => s !== 'add_new_stakeholder'), formData.newStakeholder],
+        newStakeholder: ''
+      }));
+      setShowNewStakeholderInput(false);
+    }
+  };
 
     return (
       <>
@@ -443,23 +541,44 @@ function DocumentControl(props) {
               backgroundColor: '#f8f9fa',
               }}
   >
-              {[
-                "Kiruna kommun",
-                "LKAB",
-                "Kiruna kommun/Residents",
-                "Kiruna kommun/White Arkitekter",
-               ].map((stakeholder) => (
+              {stakeholderList.map((stakeholder) => (
             <Form.Check
-              key={stakeholder}
+              key={stakeholder.name}
               type="checkbox"
-              label={stakeholder}
+              label={stakeholder.name}
               name="stakeholders"
-              value={stakeholder}
-              checked={formData.stakeholders.includes(stakeholder)}
+              value={stakeholder.name}
+              checked={formData.stakeholders.includes(stakeholder.name)}
               onChange={handleCheckboxChange}
               className="mb-2"
             />
              ))}
+              <Form.Check
+                type="checkbox"
+                label="Add new"
+                name="stakeholders"
+                value="add_new_stakeholder"
+                checked={formData.stakeholders.includes("add_new_stakeholder")}
+                onChange={handleCheckboxChange}
+                className="mb-2"
+              />
+             {formData.stakeholders.includes("add_new_stakeholder") && (
+                <div className="d-flex align-items-center mt-2">
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter new stakeholder"
+                    name="newStakeholder"
+                    value={formData.newStakeholder}
+                    onChange={handleChange}
+                    className="me-2"
+                  />
+                  <Button variant="primary" onClick={handleAddStakeholder}>
+                    Add
+                  </Button>
+                </div>
+              )}
+
+
             </Form.Control>
 
             {errors.stakeholders && <div className="text-danger">{errors.stakeholders}</div>}
@@ -478,17 +597,30 @@ function DocumentControl(props) {
                 value={formData.scale}
                 onChange={handleChange}
                 isInvalid={!!errors.scale}
-
-              >
+                >
                 <option value="">Select a scale</option> 
-                <option value="blueprints/effects">blueprints/effects</option>
-                <option value="Text">Text</option>
-                <option value="1 : 1,000">1 : 1,000</option>
-                <option value="1 : 12,000">1 : 12,000</option>
-                <option value="1 : 7,500">1 : 7,500</option>
-                <option value="1 : 8,000">1 : 8,000</option>
-
-              </Form.Control>
+                {scaleList.map(scale => (
+                <option key={scale.name} value={scale.name}>
+                  {scale.name}
+                </option>
+              ))}          
+              <option value="add_new_scale">Add a scale</option>
+            </Form.Control>
+            {showNewScaleInput && (
+              <div className="d-flex align-items-center mt-2">
+                <Form.Control
+                  type="text"
+                  placeholder="Enter new scale"
+                  name="newScale"
+                  value={formData.newScale}
+                  onChange={handleChange}
+                  className="me-2"
+                />
+                <Button variant="primary" onClick={handleAddScale}>
+                  Add
+                </Button>
+              </div>
+            )}
               {errors.scale && <Form.Control.Feedback type="invalid">{errors.scale}</Form.Control.Feedback>}
 
             </Form.Group>
@@ -562,23 +694,35 @@ function DocumentControl(props) {
               <Form.Control
                 as="select"
                 name="type"
+                placeholder="Select a type"
                 value={formData.type}
                 onChange={handleChange}
                 isInvalid={!!errors.type}
-
               >
-                <option value="">Select document type</option>
-                <option value="Design">Text - Design</option>
-                <option value="Informative">Text - Informative</option>
-                <option value="Prescriptive">Text - Prescriptive</option>
-                <option value="Technical">Text - Technical</option>
-                <option value="Agreement">Concept - Agreement</option>
-                <option value="Conflict">Concept - Conflict</option>
-                <option value="Consultation">Concept - Consultation</option>
-                <option value="Material effect">Concept - Material effect</option>
-                <option value="Paper">Concept - Paper</option>
-                <option value="Action">Action</option>
+              <option value="">Select a type</option>
+                 {typeList.map(type => (
+                <option key={type.name} value={type.name}>
+                  {type.name}
+                </option>
+              ))}
+              <option value="add_new_type">Add a type</option>
               </Form.Control>
+              {showNewTypeInput && (
+              <div className="d-flex align-items-center mt-2">
+                <Form.Control
+                  type="text"
+                  placeholder="Enter new type"
+                  name="newType"
+                  value={formData.newType}
+                  onChange={handleChange}
+                  className="me-2"
+                />
+                <Button variant="primary" onClick={handleAddType}>
+                  Add
+                </Button>
+              </div>
+            )}
+
               {errors.type && <Form.Control.Feedback type="invalid">{errors.type}</Form.Control.Feedback>}
 
             </Form.Group>
@@ -689,7 +833,9 @@ function DocumentControl(props) {
 
           <Row className="mx-3 mb-4">
             <Form.Group controlId="formDescription">
-              <Form.Label className='form-label'>Description</Form.Label>
+              <Form.Label className='form-label'>
+              Description <span className="required-asterisk" style={{ color: 'red' }}>*</span>
+              </Form.Label>
               <Form.Control
                 as="textarea"
                 rows={8}

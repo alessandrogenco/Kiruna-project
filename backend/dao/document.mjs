@@ -51,17 +51,102 @@ class DocumentDao{
             if (!title || title.trim() === "") {
                 return reject(new Error('Title cannot be empty.'));
             }
-            
-            //const id = generateNumericId(); 
-            const addDocument = 'INSERT INTO Documents (title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            const checkAndAddStakeholders = (stakeholders) => {
+                return Promise.all(stakeholders.map(stakeholder => {
+                  return new Promise((resolve, reject) => {
+                    const checkQuery = 'SELECT name FROM Stakeholder WHERE name = ?';
+                    db.get(checkQuery, [stakeholder], (err, row) => {
+                      if (err) {
+                        console.error('Database error while checking stakeholders:', err.message);
+                        return reject(new Error('Database error: ' + err.message));
+                      }
+                      if (row) {
+                        resolve({ message: 'Stakeholder already exists.' });
+                        console.log('Stakeholder already exists.');
+                      } else {
+                        const addQuery = 'INSERT INTO Stakeholder (name) VALUES (?)';
+                        db.run(addQuery, [stakeholder], function (err) {
+                          if (err) {
+                            console.error('Database error while adding stakeholders:', err.message);
+                            return reject(new Error('Database error: ' + err.message));
+                          }
+                          resolve({ message: 'Stakeholder added successfully.' });
+                          console.log('Stakeholder added successfully.');
+                        });
+                      }
+                    });
+                  });
+                }));
+              };
+    
 
-            db.run(addDocument, [title, stakeholders, scale, date, type, connections, language, pages, lat, lon, area, description], function (err) {
+    const checkAndAddScale = (scale) => {
+        return new Promise((resolve, reject) => {
+          const checkQuery = 'SELECT name FROM Scale WHERE name = ?';
+          db.get(checkQuery, [scale], (err, row) => {
+            if (err) {
+              console.error('Database error while checking scales:', err.message);
+              return reject(new Error('Database error: ' + err.message));
+            }
+            if (row) {
+              resolve({ message: 'Scale already exists.' });
+              console.log('Scale already exists.');
+            } else {
+              const addQuery = 'INSERT INTO Scale (name) VALUES (?)';
+              db.run(addQuery, [scale], function (err) {
                 if (err) {
+                  console.error('Database error while adding scales:', err.message);
+                  return reject(new Error('Database error: ' + err.message));
+                }
+                resolve({ message: 'Scale added successfully.' });
+                console.log('Scale added successfully.');
+              });
+            }
+          });
+        });
+    };
+
+      const checkAndAddType = (type) => {
+        return new Promise((resolve, reject) => {
+          const checkQuery = 'SELECT name FROM DocumentType WHERE name = ?';
+          db.get(checkQuery, [type], (err, row) => {
+            if (err) {
+              console.error('Database error while checking types:', err.message);
+              return reject(new Error('Database error: ' + err.message));
+            }
+            if (row) {
+              resolve({ message: 'DocumentType already exists.' });
+              console.log('DocumentType already exists.');
+            } else {
+              const addQuery = 'INSERT INTO DocumentType (name) VALUES (?)';
+              db.run(addQuery, [type], function (err) {
+                if (err) {
+                  console.error('Database error while adding types:', err.message);
+                  return reject(new Error('Database error: ' + err.message));
+                }
+                resolve({ message: 'DocumentType added successfully.' });
+                console.log('DocumentType added successfully.');
+              });
+            }
+          });
+        });
+      };
+            //const id = generateNumericId(); 
+            Promise.all([
+                checkAndAddStakeholders(stakeholders),
+                checkAndAddScale(scale),
+                checkAndAddType(type)
+              ]).then(() => {
+                const addDocumentQuery = `
+                  INSERT INTO Documents (title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description)
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                `;
+                db.run(addDocumentQuery, [title, stakeholders, scale, date, type, connections, language, pages, lat, lon, area, description], function (err) {
+                  if (err) {
                     console.error('Database error while adding document:', err.message);
                     return reject(new Error('Database error: ' + err.message));
-                }
-
-                resolve({
+                  }
+                  resolve({
                     id: this.lastID,
                     title,
                     stakeholders,
@@ -77,10 +162,12 @@ class DocumentDao{
                     description,
                     message: 'Document added successfully.'
                   });
+                });
+              }).catch(reject);
             });
-        });
     }
 
+    
     addDocumentDescription(id, title, description) {
         return new Promise((resolve, reject) => {
 
@@ -250,6 +337,50 @@ class DocumentDao{
         });
     }
 
+    showStakeholders(){
+        return new Promise((resolve, reject) => {
+            const showStakeholders = 'SELECT name FROM Stakeholder';
+
+            db.all(showStakeholders, [], (err, stakeholders) => {
+                if (err) {
+                    console.error('Database error while getting all stakeholders:', err.message);
+                    return reject(new Error('Database error: ' + err.message));
+                }
+
+                resolve(stakeholders);
+            });
+        });
+    }
+
+    showScales(){
+        return new Promise((resolve, reject) => {
+            const showScales = 'SELECT name FROM Scale';
+
+            db.all(showScales, [], (err, scales) => {
+                if (err) {
+                    console.error('Database error while getting all scales:', err.message);
+                    return reject(new Error('Database error: ' + err.message));
+                }
+
+                resolve(scales);
+            });
+        });
+    }
+
+    showTypes(){
+        return new Promise((resolve, reject) => {
+            const showTypes = 'SELECT * FROM DocumentType';
+
+            db.all(showTypes, [], (err, type) => {
+                if (err) {
+                    console.error('Database error while getting all types:', err.message);
+                    return reject(new Error('Database error: ' + err.message));
+                }
+
+                resolve(type);
+            });
+        });
+    }
     /*newDocument(name, file) {
         return new Promise((resolve, reject) => {
             if (!Buffer.isBuffer(file)) {
@@ -329,44 +460,132 @@ class DocumentDao{
             if (!id) {
                 return reject(new Error('ID is required.'));
             }
-    
-            const updateDocument = `
-                UPDATE Documents
-                SET title = ?, stakeholders = ?, scale = ?, issuanceDate = ?, type = ?, 
-                    connections = ?, language = ?, pages = ?, lat = ?, lon = ?, area = ?, description = ?
-                WHERE id = ?
-            `;
 
-            db.run(updateDocument, [title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description, id], function (err) {
+            const checkAndAddStakeholders = (stakeholders) => {
+                return Promise.all(stakeholders.map(stakeholder => {
+                  return new Promise((resolve, reject) => {
+                    const checkQuery = 'SELECT name FROM Stakeholder WHERE name = ?';
+                    db.get(checkQuery, [stakeholder], (err, row) => {
+                      if (err) {
+                        console.error('Database error while checking stakeholders:', err.message);
+                        return reject(new Error('Database error: ' + err.message));
+                      }
+                      if (row) {
+                        resolve({ message: 'Stakeholder already exists.' });
+                        console.log('Stakeholder already exists.');
+                      } else {
+                        const addQuery = 'INSERT INTO Stakeholder (name) VALUES (?)';
+                        db.run(addQuery, [stakeholder], function (err) {
+                          if (err) {
+                            console.error('Database error while adding stakeholders:', err.message);
+                            return reject(new Error('Database error: ' + err.message));
+                          }
+                          resolve({ message: 'Stakeholder added successfully.' });
+                          console.log('Stakeholder added successfully.');
+                        });
+                      }
+                    });
+                  });
+                }));
+              };
+    
+
+    const checkAndAddScale = (scale) => {
+        return new Promise((resolve, reject) => {
+          const checkQuery = 'SELECT name FROM Scale WHERE name = ?';
+          db.get(checkQuery, [scale], (err, row) => {
+            if (err) {
+              console.error('Database error while checking scales:', err.message);
+              return reject(new Error('Database error: ' + err.message));
+            }
+            if (row) {
+              resolve({ message: 'Scale already exists.' });
+              console.log('Scale already exists.');
+            } else {
+              const addQuery = 'INSERT INTO Scale (name) VALUES (?)';
+              db.run(addQuery, [scale], function (err) {
                 if (err) {
-                    //console.error('Database error while updating document:', err.message);
-                    return reject(new Error('Database error: ' + err.message));
+                  console.error('Database error while adding scales:', err.message);
+                  return reject(new Error('Database error: ' + err.message));
                 }
-    
-                if (this.changes === 0) {
-                    // Se non ci sono modifiche (ad esempio se l'ID non esiste)
-                    return reject(new Error('No document found with the provided ID.'));
-                }
-    
-                resolve({
-                    id,
-                    title,
-                    stakeholders,
-                    scale,
-                    issuanceDate,
-                    type,
-                    connections,
-                    language,
-                    pages,
-                    lat,
-                    lon,
-                    area,
-                    description,
-                    message: 'Document updated successfully.'
-                });
-            });
+                resolve({ message: 'Scale added successfully.' });
+                console.log('Scale added successfully.');
+              });
+            }
+          });
         });
-    }
+    };
+
+      const checkAndAddType = (type) => {
+        return new Promise((resolve, reject) => {
+          const checkQuery = 'SELECT name FROM DocumentType WHERE name = ?';
+          db.get(checkQuery, [type], (err, row) => {
+            if (err) {
+              console.error('Database error while checking types:', err.message);
+              return reject(new Error('Database error: ' + err.message));
+            }
+            if (row) {
+              resolve({ message: 'DocumentType already exists.' });
+              console.log('DocumentType already exists.');
+            } else {
+              const addQuery = 'INSERT INTO DocumentType (name) VALUES (?)';
+              db.run(addQuery, [type], function (err) {
+                if (err) {
+                  console.error('Database error while adding types:', err.message);
+                  return reject(new Error('Database error: ' + err.message));
+                }
+                resolve({ message: 'DocumentType added successfully.' });
+                console.log('DocumentType added successfully.');
+              });
+            }
+          });
+        });
+      };  //const id = generateNumericId(); 
+      Promise.all([
+        checkAndAddStakeholders(stakeholders),
+        checkAndAddScale(scale),
+        checkAndAddType(type)
+      ]).then(() => {
+        const updateDocumentQuery = `
+          UPDATE Documents
+          SET title = ?, stakeholders = ?, scale = ?, issuanceDate = ?, type = ?, 
+              connections = ?, language = ?, pages = ?, lat = ?, lon = ?, area = ?, description = ?
+          WHERE id = ?
+        `;
+  
+        db.run(updateDocumentQuery, [title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description, id], function (err) {
+          if (err) {
+            console.error('Database error while updating document:', err.message);
+            return reject(new Error('Database error: ' + err.message));
+          }
+  
+          if (this.changes === 0) {
+            // Se non ci sono modifiche (ad esempio se l'ID non esiste)
+            return reject(new Error('No document found with the provided ID.'));
+          }
+  
+          resolve({
+            id,
+            title,
+            stakeholders,
+            scale,
+            issuanceDate,
+            type,
+            connections,
+            language,
+            pages,
+            lat,
+            lon,
+            area,
+            description,
+            message: 'Document updated successfully.'
+          });
+        });
+      }).catch((err) => {
+        return reject(err);
+      });
+    });
+}
 
     deleteDocumentById(id) {
         return new Promise((resolve, reject) => {

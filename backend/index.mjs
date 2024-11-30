@@ -210,6 +210,33 @@ app.get('/api/documents', async (req, res) => {
     }
 });
 
+app.get('/api/documents/stakeholders', async (req, res) => {
+    try {
+        const stakeholders = await documentDao.showStakeholders();
+        res.status(200).json(stakeholders);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.get('/api/documents/scales', async (req, res) => {
+    try {
+        const scales = await documentDao.showScales();
+        res.status(200).json(scales);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.get('/api/documents/types', async (req, res) => {
+    try {
+        const types = await documentDao.showTypes();
+        res.status(200).json(types);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 // Add the description
 app.put('/api/addDescription', async (req, res) => {
     const { id, title, description } = req.body;
@@ -266,6 +293,8 @@ app.post('/api/addDocument', async (req, res) => {
         if (!title || (!area && (!lat ^ !lon))) {
             throw new Error("Missing required fields" );
         }
+
+        console.log("Adding document...");
 
         const result = await documentDao.addDocument(title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description);
         res.status(200).json(result); // Risposta positiva con il documento aggiunto

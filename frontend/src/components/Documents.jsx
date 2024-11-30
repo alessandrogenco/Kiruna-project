@@ -4,6 +4,9 @@ import './Documents.css'; // Import the CSS file
 import {deleteDocument, updateDocument} from '../API.mjs'; // Import the API module
 
 function Documents({ show, handleClose, documents, setDocuments }) {
+  const [stakeholdersList, setStakeholdersList] = useState([]);
+  const [scalesList, setScalesList] = useState([]);
+  const [typesList, setTypesList] = useState([]);
   const [descriptions, setDescriptions] = useState({});
   const [selectedDocument, setSelectedDocument] = useState(null); // State for selected document
   const [showFormModal, setShowFormModal] = useState(false); // State to control the form modal
@@ -59,6 +62,33 @@ function Documents({ show, handleClose, documents, setDocuments }) {
     } catch (error) {
         console.error('Error adding document:', error);
         setMessage(error.message);
+    }
+  };
+
+  const fetchStakeholders = async () => {
+    try {
+      const response = await axios.get('/api/documents/stakeholders');
+      setStakeholdersList(response.data);
+    } catch (error) {
+      console.error('Error fetching stakeholders:', error.message);
+    }
+  };
+
+  const fetchScales = async () => {
+    try {
+      const response = await axios.get('/api/documents/scales');
+      setScalesList(response.data);
+    } catch (error) {
+      console.error('Error fetching stakeholders:', error.message);
+    }
+  };
+
+  const fetchTypes = async () => {
+    try {
+      const response = await axios.get('/api/documents/types');
+      setTypesList(response.data);
+    } catch (error) {
+      console.error('Error fetching stakeholders:', error.message);
     }
   };
 
@@ -259,22 +289,41 @@ const handleUpdateDocument = async () => {
                   onChange={handleNewDocumentChange}/>
               </Form.Group>
               <Form.Group className="mt-3" controlId="formStakeholders">
-                <Form.Label>Stakeholders</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Enter stakeholders"
-                  name="stakeholders"
-                  value={newDocument.stakeholders}
-                  onChange={handleNewDocumentChange}/>
-                 </Form.Group>
+        <Form.Label>Stakeholders</Form.Label>
+        <Form.Control
+          as="select"
+          name="stakeholders"
+          value={newDocument.stakeholders}
+          onChange={handleNewDocumentChange}
+          onClick={fetchStakeholders} // Recupera la lista degli stakeholder al click
+        >
+          <option value="">Select a stakeholder</option>
+          {stakeholdersList.map((stakeholder) => (
+            <option key={stakeholder.id} value={stakeholder.name}>
+              {stakeholder.name}
+            </option>
+          ))}
+          <option value="add_new">Add new</option>
+        </Form.Control>
+      </Form.Group>
               <Form.Group className="mt-3" controlId="formScale">
                 <Form.Label>Scale</Form.Label>
                 <Form.Control
-                  type="text"
+                  as="select"
                   placeholder="Enter scale"
                   name="scale"
                   value={newDocument.scale}
-                  onChange={handleNewDocumentChange}/>
+                  onChange={handleNewDocumentChange}
+                  onClick={fetchScales}
+                  >
+                  <option value="">Select a scale</option>
+                  {scalesList.map((scale) => (
+                    <option key={scale.name} value={scale.name}>
+                      {scale.name}
+                    </option>
+                  ))}
+                  <option value="add_new">Add new</option>
+                   </Form.Control>
               </Form.Group>
               <Form.Group className="mt-3" controlId="formDate">
                 <Form.Label>Date</Form.Label>
@@ -306,19 +355,14 @@ const handleUpdateDocument = async () => {
                   placeholder="Enter type"
                   name="type"
                   value={newDocument.type}
+                  onClick={fetchTypes}
                   onChange={handleNewDocumentChange}>
-
-                  <option value="">Select document type</option>
-                  <option value="Design">Text - Design</option>
-                  <option value="Informative">Text - Informative</option>
-                  <option value="Prescriptive">Text - Prescriptive</option>
-                  <option value="Technical">Text - Technical</option>
-                  <option value="Agreement">Concept - Agreement</option>
-                  <option value="Conflict">Concept - Conflict</option>
-                  <option value="Consultation">Concept - Consultation</option>
-                  <option value="Material effect">Concept - Material effect</option>
-                  <option value="Paper">Concept - Paper</option>
-                  <option value="Action">Action</option>
+                  <option value="">Select a scale</option>
+                  {typesList.map((type) => (
+                    <option key={type.name} value={type.name}>
+                      {type.name}
+                    </option>
+                  ))}
                   </Form.Control>
               </Form.Group>
               <Form.Group className="mt-3" controlId="formConnections">
