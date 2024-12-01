@@ -282,7 +282,7 @@ function DocumentControl(props) {
           newErrors.description = "Description is required";
           valid = false;
         }
-        if (!formData.pages && /^\d+(-\d+)?$/.test(formData.pages)) {
+        if (!formData.pages && !/^\d+(-\d+)?$/.test(formData.pages)) {
           newErrors.pages = "Pages must be a valid number or range (e.g., 1-32)";
           valid = false;
         }
