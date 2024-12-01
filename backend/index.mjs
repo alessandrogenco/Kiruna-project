@@ -290,8 +290,11 @@ app.post('/api/addDocument', async (req, res) => {
         if(area.trim() !== '' && (lat || lon)){
             throw new Error("Invalid parameters");
         }
-        if (!title || (!area && (!lat ^ !lon))) {
+        /*if (!title || (!area && (!lat ^ !lon))) {
             throw new Error("Missing required fields" );
+        }*/
+        if (!title || (area.trim() === '' && (!lat || !lon))) {
+            throw new Error("Missing required fields");
         }
 
         console.log("Adding document...");

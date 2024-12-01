@@ -186,77 +186,6 @@ describe('PUT /api/addDescription', () => {
 });
 
 describe('POST /api/addDocument', () => {
-    test('should successfully add a document', async () => {
-        const mockId = 1;
-        const mockTitle = "Sample Document";
-        const mockDescription = "Description for the document";
-        const mockStakeholders = "Sample stakeholders";
-        const mockScale = "1:10000";
-        const mockIssuanceDate = "2023-01-01";
-        const mockType = "Informative";
-        const mockConnections = 5;
-        const mockLanguage = "English";
-        const mockPages = "1-10";
-        const mockLat = '';
-        const mockLon = '';
-        const mockArea = "";
-
-        const mockDocument = { 
-            id: mockId, 
-            title: mockTitle,
-            stakeholders: "Sample stakeholders",
-            scale: "1:10000",
-            issuanceDate: "2023-01-01",
-            type: "Informative",
-            connections: 5,
-            language: "English",
-            pages: "1-10",
-            lat: '',
-            lon: '',
-            area: "",
-            description: null 
-        };
-
-        DocumentDao.prototype.addDocument.mockResolvedValue({
-            //id: mockId,
-            title: mockTitle,
-            stakeholders: mockStakeholders,
-            scale: mockScale,
-            date: mockIssuanceDate,
-            type: mockType,
-            connections: mockConnections,
-            language: mockLanguage,
-            pages: mockPages,
-            lat: mockLat,
-            lon: mockLon,
-            area: mockArea,
-            description: mockDescription,
-            message: 'Document added successfully.'
-        });
-    
-        // Send POST request to the API with mockId, mockTitle, and mockDescription
-        const response = await request(app)
-            .post(baseURL + 'addDocument')
-            .send({ id: mockId, title: mockTitle, stakeholders: mockStakeholders, scale: mockScale, date: mockIssuanceDate, type: mockType, connections: mockConnections, language: mockLanguage, pages: mockPages, lat: mockLat, lon: mockLon, area: mockArea, description: mockDescription });
-    
-        // Check that the response status is 200 and the response body matches the expected structure
-        expect(response.status).toBe(200);
-        expect(response.body).toEqual({
-            title: mockTitle,
-            stakeholders: mockStakeholders,
-            scale: mockScale,
-            date: mockIssuanceDate,
-            type: mockType,
-            connections: mockConnections,
-            language: mockLanguage,
-            pages: mockPages,
-            lat: mockLat,
-            lon: mockLon,
-            area: mockArea,
-            description: mockDescription,
-            message: 'Document added successfully.'
-        });
-    });
 
     // Test for missing required fields TITLE
     test('should return 400 error if title is empty', async () => {
@@ -408,77 +337,69 @@ describe('POST /api/addDocument', () => {
         });
     });
 
-    test('should successfully add a document with area', async () => {
-        const mockId = 1;
-        const mockTitle = "Sample Document";
-        const mockDescription = "Description for the document";
-        const mockStakeholders = "Sample stakeholders";
-        const mockScale = "1:10000";
-        const mockIssuanceDate = "2023-01-01";
-        const mockType = "Informative";
-        const mockConnections = 5;
-        const mockLanguage = "English";
-        const mockPages = "1-10";
-        const mockLat = '';
-        const mockLon = '';
-        const mockArea = "Sample area";
-
-        const mockDocument = { 
-            id: mockId, 
-            title: mockTitle,
-            stakeholders: "Sample stakeholders",
-            scale: "1:10000",
+    test("Successfully adds a document with area and no lat/lon", async () => {
+        const mockData = {
+            id: 1,
+            title: "New Document Title",
+            stakeholders: "Stakeholder1-Stakeholder2",
+            scale: "1:1000",
             issuanceDate: "2023-01-01",
-            type: "Informative",
-            connections: 5,
+            type: "report",
+            connections: ["doc1", "doc2"],
             language: "English",
-            pages: "1-10",
-            lat: '',
-            lon: '',
-            area: mockArea,
-            description: null 
+            pages: 50,
+            lat: null,        // Non forniti
+            lon: null,        // Non forniti
+            area: JSON.stringify({  // GeoJSON serializzato in stringa
+                type: "Polygon",
+                coordinates: [[[0, 0], [1, 1], [1, 0], [0, 0]]]
+            }),
+            description: "Description of the new document"
         };
-
-        DocumentDao.prototype.addDocument.mockResolvedValue({
-            //id: mockId,
-            title: mockTitle,
-            stakeholders: mockStakeholders,
-            scale: mockScale,
-            date: mockIssuanceDate,
-            type: mockType,
-            connections: mockConnections,
-            language: mockLanguage,
-            pages: mockPages,
-            lat: mockLat,
-            lon: mockLon,
-            area: mockArea,
-            description: mockDescription,
-            message: 'Document added successfully.'
+    
+        jest.spyOn(DocumentDao.prototype, 'addDocument').mockResolvedValue({
+            ...mockData,
+            message: "Document added successfully."
         });
     
-        // Send POST request to the API with mockId, mockTitle, and mockDescription
         const response = await request(app)
-            .post(baseURL + 'addDocument')
-            .send({ id: mockId, title: mockTitle, stakeholders: mockStakeholders, scale: mockScale, date: mockIssuanceDate, type: mockType, connections: mockConnections, language: mockLanguage, pages: mockPages, lat: mockLat, lon: mockLon, area: mockArea, description: mockDescription });
+            .post('/api/addDocument')
+            .send(mockData);
     
-        // Check that the response status is 200 and the response body matches the expected structure
         expect(response.status).toBe(200);
         expect(response.body).toEqual({
-            title: mockTitle,
-            stakeholders: mockStakeholders,
-            scale: mockScale,
-            date: mockIssuanceDate,
-            type: mockType,
-            connections: mockConnections,
-            language: mockLanguage,
-            pages: mockPages,
-            lat: mockLat,
-            lon: mockLon,
-            area: mockArea,
-            description: mockDescription,
-            message: 'Document added successfully.'
+            ...mockData,
+            message: "Document added successfully."
         });
     });
+
+    // Test per l'aggiunta di un documento con area vuota e lat/lon mancanti
+    test("Should return 400 if lat and lon are missing while area is empty", async () => {
+        const mockData = {
+            id: 1,
+            title: "New Document Title",
+            stakeholders: "Stakeholder1-Stakeholder2",
+            scale: "1:1000",
+            issuanceDate: "2023-01-01",
+            type: "report",
+            connections: ["doc1", "doc2"],
+            language: "English",
+            pages: 50,
+            lat: null,            // lat non fornito
+            lon: null,            // lon non fornito
+            area: "",            // area vuota
+            description: "Description of the new document"
+        };
+    
+        const response = await request(app)
+            .post('/api/addDocument')
+            .send(mockData);
+    
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({ message: "Missing required fields" });
+    });
+
+    
 
     // Test for INVALIDE LAT
     test('should return 400 error if lat invalid parameter', async () => {
@@ -546,7 +467,10 @@ describe('POST /api/addDocument', () => {
         const mockPages = "1-10";
         const mockLat = 68.0001;
         const mockLon = 22.0001;
-        const mockArea = "Sample area";
+        const mockArea = JSON.stringify({  // GeoJSON serializzato in stringa
+            type: "Polygon",
+            coordinates: [[[0, 0], [1, 1], [1, 0], [0, 0]]]
+        });
 
         // Send POST request
         const response = await request(app)
@@ -611,10 +535,10 @@ describe("POST /api/updateDocument", () => {
             pages: 50,
             lat: "",        // Non forniti
             lon: "",        // Non forniti
-            area: {         // GeoJSON valido
+            area: JSON.stringify({  // GeoJSON serializzato in stringa
                 type: "Polygon",
                 coordinates: [[[0, 0], [1, 1], [1, 0], [0, 0]]]
-            },
+            }),
             description: "Updated description"
         };
 
