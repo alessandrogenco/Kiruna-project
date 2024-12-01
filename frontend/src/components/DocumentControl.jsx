@@ -282,7 +282,7 @@ function DocumentControl(props) {
           newErrors.description = "Description is required";
           valid = false;
         }
-        if (!formData.pages || !/^\d+(-\d+)?$/.test(formData.pages)) {
+        if (!formData.pages && /^\d+(-\d+)?$/.test(formData.pages)) {
           newErrors.pages = "Pages must be a valid number or range (e.g., 1-32)";
           valid = false;
         }
@@ -294,10 +294,10 @@ function DocumentControl(props) {
           valid = false;
         }
       
-        if (!formData.lng) {
+        if (!formData.lon) {
           newErrors.lon = "Longitude is required";
           valid = false;
-        } else if (isNaN(parseFloat(formData.lng))) {
+        } else if (isNaN(parseFloat(formData.lon))) {
           newErrors.lon = "Longitude must be a number";
           valid = false;
         }
@@ -336,12 +336,12 @@ function DocumentControl(props) {
     
 
 
-      // if (!validateForm()) {
+      if (!validateForm()) {
         
-      //   console.log('Validation Errors:', errors);
-      //   setError("Please fill out all required fields.");
-      //   return;
-      // }
+        console.log('Validation Errors:', errors);
+        setError("Please fill out all required fields.");
+        return;
+      }
   
       // Validazione del form
       const validationError = validateCoordinates();
