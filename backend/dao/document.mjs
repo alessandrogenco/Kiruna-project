@@ -53,7 +53,7 @@ class DocumentDao{
             }
             const checkAndAddStakeholders = (stakeholders) => {
 
-              const stakeholdersArray = stakeholders.split('-');
+              const stakeholdersArray = stakeholders.split(' - ');
 
                 return Promise.all(stakeholdersArray.map(stakeholder => {
                   return new Promise((resolve, reject) => {
@@ -464,7 +464,8 @@ class DocumentDao{
                 return reject(new Error('ID is required.'));
             }
 
-            const stakeholdersArray = stakeholders.split('-');
+            const stakeholdersArray = stakeholders.split(' - ');
+            console.log(stakeholdersArray);
 
             const checkAndAddStakeholders = (stakeholders) => {
                 return Promise.all(stakeholdersArray.map(stakeholder => {
@@ -478,7 +479,7 @@ class DocumentDao{
                       }
                       if (row) {
                         resolve({ message: 'Stakeholder already exists.' });
-                        console.log('Stakeholder already exists.');
+                        console.log('Stakeholder already exists.' + row);
                       } else {
                         const addQuery = 'INSERT INTO Stakeholder (name) VALUES (?)';
                         db.run(addQuery, [stakeholder], function (err) {
@@ -487,7 +488,7 @@ class DocumentDao{
                             return reject(new Error('Database error: ' + err.message));
                           }
                           resolve({ message: 'Stakeholder added successfully.' });
-                          console.log('Stakeholder added successfully.');
+                          console.log('Stakeholder added successfully.' + row);
                         });
                       }
                     });

@@ -62,6 +62,7 @@ function DocumentControl(props) {
       if (typeof response.data === 'string') {
       
         setStakeholderList(response.data);
+        console.log('Stakeholders:', response.data);
       } else {
         console.error('Unexpected response format:', response.data);
       }
@@ -101,6 +102,7 @@ function DocumentControl(props) {
           description: existingDocument.description || ''
         });
       }
+      console.log('Existing Document:', existingDocument);
     }, [existingDocument]);
 
     const [links, setLinks] = useState([]);
@@ -244,16 +246,31 @@ function DocumentControl(props) {
 
     const handleCheckboxChange = (e) => {
       const { value, checked } = e.target;
-      const stakeholdersArray = formData.stakeholders ? formData.stakeholders.split(' - ') : [];
-      const updatedStakeholders = checked
-        ? [...stakeholdersArray, value]
-        : stakeholdersArray.filter((stakeholder) => stakeholder !== value);
+  
+      console.log('Checkbox value:', value);
+      console.log('Checkbox checked:', checked);
+      console.log('Stakeholders:', formData.stakeholders);
+  
+      let updatedStakeholders;
+      if (checked) {
+        // Aggiungi il valore alla stringa degli stakeholder
+        updatedStakeholders = formData.stakeholders
+          ? `${formData.stakeholders} - ${value}`
+          : value;
+      } else {
+        // Rimuovi il valore dalla stringa degli stakeholder
+        const stakeholdersArray = formData.stakeholders.split(' - ');
+        updatedStakeholders = stakeholdersArray.filter((stakeholder) => stakeholder !== value).join(' - ');
+      }
+
+      console.log('Updated stakeholders:', updatedStakeholders);
+  
       setFormData((prevFormData) => ({
         ...prevFormData,
-        stakeholders: updatedStakeholders.join(' - '),
+        stakeholders: updatedStakeholders,
       }));
     };
-
+    
     const validateForm = () => {
       let valid = true;
       const newErrors = {};
@@ -493,16 +510,18 @@ function DocumentControl(props) {
     if (formData.newStakeholder.trim() !== '') {
       // Aggiungi il nuovo stakeholder alla stringa degli stakeholder
       const updatedStakeholderList = stakeholderList
-        ? `${stakeholderList} - ${formData.newStakeholder}`
+        ? stakeholderList + ' - ' + formData.newStakeholder
         : formData.newStakeholder;
-  
+
       setStakeholderList(updatedStakeholderList);
-  
+
+      console.log('Stakeholder List:', updatedStakeholderList);
+
       // Aggiorna la stringa degli stakeholder nel formData
       const updatedStakeholders = formData.stakeholders
-        ? `${formData.stakeholders} - ${formData.newStakeholder}`
+        ? formData.stakeholders + ' - ' + formData.newStakeholder
         : formData.newStakeholder;
-  
+
       setFormData((prevFormData) => ({
         ...prevFormData,
         stakeholders: updatedStakeholders,
@@ -510,6 +529,7 @@ function DocumentControl(props) {
       }));
     }
   };
+
 
     return (
       <>
