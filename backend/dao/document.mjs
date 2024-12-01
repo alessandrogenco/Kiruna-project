@@ -464,11 +464,12 @@ class DocumentDao{
                 return reject(new Error('ID is required.'));
             }
 
-            const stakeholdersArray = stakeholders.split(' - ');
+            const stakeholdersArray = stakeholders.split('-');
 
             const checkAndAddStakeholders = (stakeholders) => {
                 return Promise.all(stakeholdersArray.map(stakeholder => {
                   return new Promise((resolve, reject) => {
+
                     const checkQuery = 'SELECT name FROM Stakeholder WHERE name = ?';
                     db.get(checkQuery, [stakeholder], (err, row) => {
                       if (err) {
