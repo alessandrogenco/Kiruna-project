@@ -19,7 +19,7 @@ function DocumentControl(props) {
   const [typeList, setTypeList] = useState([]);
   const [showNewTypeInput, setShowNewTypeInput] = useState(false);
   const [showNewScaleInput, setShowNewScaleInput] = useState(false);
-  const [showNewStakeholderInput, setShowNewStakeholderInput] = useState(false);
+
 
   const existingDocument = location.state?.document;
   const explorePage = location.state?.explorePage;
@@ -147,9 +147,7 @@ function DocumentControl(props) {
         setShowNewScaleInput(true);
       } else if (name === 'type' && value === 'add_new_type') {
         setShowNewTypeInput(true);
-      } else if (name === 'stakeholders' && value === 'add_new_stakeholder') {
-        setShowNewStakeholderInput(true);
-      }else {
+      } else {
         setFormData((prevFormData) => ({
           ...prevFormData,
           [name]: value,
@@ -158,8 +156,6 @@ function DocumentControl(props) {
           setShowNewTypeInput(false);
         }else if (name === 'scale') {
           setShowNewScaleInput(false);
-        }else if (name === 'stakeholders') {
-          setShowNewStakeholderInput(false);
         }
       }
     
@@ -332,12 +328,10 @@ function DocumentControl(props) {
     const handleSubmit = async (e) => {
       e.preventDefault();
       console.log('Form Data:', formData);
-
-      const stakeholdersString = formData.stakeholders.join('-');
-    
+ 
       const updatedFormData = {
       ...formData,
-      stakeholders: stakeholdersString,
+      stakeholders: formData.stakeholders,
     };
     
 
@@ -495,28 +489,27 @@ function DocumentControl(props) {
   };
 
 
- const handleAddStakeholder = () => {
-  if (formData.newStakeholder.trim() !== '') {
-    // Aggiungi il nuovo stakeholder alla lista degli stakeholder
-    setStakeholderList((prevList) => [
-      ...prevList,
-      { id: prevList.length + 1, name: formData.newStakeholder }
-    ]);
-
-    // Aggiorna la stringa degli stakeholder nel formData
-    const updatedStakeholders = formData.stakeholders
-      ? `${formData.stakeholders} - ${formData.newStakeholder}`
-      : formData.newStakeholder;
-
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      stakeholders: updatedStakeholders,
-      newStakeholder: ''
-    }));
-
-    setShowNewStakeholderInput(false);
-  }
-};
+  const handleAddStakeholder = () => {
+    if (formData.newStakeholder.trim() !== '') {
+      // Aggiungi il nuovo stakeholder alla stringa degli stakeholder
+      const updatedStakeholderList = stakeholderList
+        ? `${stakeholderList} - ${formData.newStakeholder}`
+        : formData.newStakeholder;
+  
+      setStakeholderList(updatedStakeholderList);
+  
+      // Aggiorna la stringa degli stakeholder nel formData
+      const updatedStakeholders = formData.stakeholders
+        ? `${formData.stakeholders} - ${formData.newStakeholder}`
+        : formData.newStakeholder;
+  
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        stakeholders: updatedStakeholders,
+        newStakeholder: ''
+      }));
+    }
+  };
 
     return (
       <>
@@ -574,16 +567,6 @@ function DocumentControl(props) {
             className="mb-2"
             />
              ))}
-              <Form.Check
-                 type="checkbox"
-                 label="Add new"
-                 name="stakeholders"
-                 value="add_new_stakeholder"
-                 checked={formData.stakeholders.split(' - ').includes("add_new_stakeholder")}
-                 onChange={handleCheckboxChange}
-                 className="mb-2"
-              />
-             {stakeholderList.split(' - ').includes("add_new_stakeholder") && (
                 <div className="d-flex align-items-center mt-2">
                   <Form.Control
                     type="text"
@@ -597,7 +580,6 @@ function DocumentControl(props) {
                     Add
                   </Button>
                 </div>
-              )}
 
 
             </Form.Control>
