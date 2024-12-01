@@ -257,7 +257,13 @@ let edges = [
     setNodes(updatedNodes);
   };
 
-  const onNodeClick = (event, node) => {};
+  const onNodeClick = (event, node) => {
+    const clickedDocument = props.documents.find((doc) => doc.id.toString() === node.id);
+    
+    if (clickedDocument) {
+      props.setSelectedDocument(clickedDocument);
+    }
+  };
 
   return (
     <div style={{ width: '100vw', height: '42vh' }}>
