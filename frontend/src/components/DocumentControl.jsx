@@ -786,7 +786,7 @@ function DocumentControl(props) {
 
           <Row className="mb-4 mx-3">
             <Form.Group as={Col} controlId="formLat" className="me-4">
-              <Form.Label className='form-label'>Latitude</Form.Label>
+              <Form.Label className='form-label'>Latitude <span className="required-asterisk" style={{ color: 'red' }}>*</span></Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter latitude"
@@ -797,7 +797,7 @@ function DocumentControl(props) {
               />
             </Form.Group>
             <Form.Group as={Col} controlId="formLon" className="me-4">
-              <Form.Label className='form-label'>Longitude</Form.Label>
+              <Form.Label className='form-label'>Longitude <span className="required-asterisk" style={{ color: 'red' }}>*</span></Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter longitude"
