@@ -10,6 +10,7 @@ import '../styles/ExplorePage.css';
 import DocumentViewer from './DocumentViewer'; // Import the DocumentViewer component
 import DocumentGraph  from './Graph';
 import { ReactFlowProvider } from 'react-flow-renderer';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 function ExplorePage(props) {
   const MAPBOX_TOKEN = "pk.eyJ1IjoiYWxlc3NhbmRyb2cwOCIsImEiOiJjbTNiZzFwbWEwdnU0MmxzYTdwNWhoY3dpIn0._52AcWROcPOQBr1Yz0toKw";
@@ -125,6 +126,16 @@ function ExplorePage(props) {
       }
 
       const markersArray = [];
+
+      // Mappa dei tipi di documenti alle icone
+      const documentTypeToIcon = {
+        Technical: 'bi bi-gear', 
+        Design: 'bi bi-pencil-square',
+        Prescriptive: 'bi bi-alarm',
+        'Material effect': 'bi bi-exclamation-circle',
+        default: 'bi bi-person-add', //added by the urban planner
+      };
+
       clusters.forEach((clusterPoint) => {
         const { geometry, properties } = clusterPoint;
       
@@ -200,14 +211,26 @@ function ExplorePage(props) {
 
           markersArray.push(marker);
         } else {
-          const iconElement = document.createElement('div');
-          iconElement.style.width = '30px';
-          iconElement.style.height = '30px';
-          iconElement.style.backgroundSize = 'cover';
-          iconElement.style.backgroundColor = '#CB1E3B';
-          iconElement.style.borderRadius = '50%';
-          iconElement.style.border = '2px solid white';
-          iconElement.style.backgroundImage = `url(${documentIcon})`;
+          
+          // Imposta l'icona in base al tipo di documento
+          //console.log(properties.data.type);
+
+          const iconClass = documentTypeToIcon[properties.data.type] || documentTypeToIcon.default; 
+          const iconElement = document.createElement('i'); 
+          iconElement.className = iconClass; 
+          iconElement.style.fontSize = '20px'; 
+          iconElement.style.color = 'white'; 
+
+          const iconContainer = document.createElement('div'); 
+          iconContainer.style.width = '30px'; 
+          iconContainer.style.height = '30px'; 
+          iconContainer.style.display = 'flex'; 
+          iconContainer.style.justifyContent = 'center'; 
+          iconContainer.style.alignItems = 'center';
+          iconContainer.style.borderRadius = '50%';
+          iconContainer.style.backgroundColor = '#CB1E3B'; 
+          iconContainer.style.border = '2px solid #CB1E3B'; 
+          iconContainer.appendChild(iconElement);
 
           const popup = new mapboxgl.Popup({
             offset: 25,
@@ -235,7 +258,7 @@ function ExplorePage(props) {
             });
 
           const marker = new mapboxgl.Marker({
-            element: iconElement,
+            element: iconContainer,
           })
             .setLngLat(geometry.coordinates)
             .setPopup(popup)
