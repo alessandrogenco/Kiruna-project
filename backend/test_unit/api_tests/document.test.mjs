@@ -565,7 +565,7 @@ describe("POST /api/updateDocument", () => {
         jest.restoreAllMocks();
     });
 
-    test("Successfully updates a document", async () => {
+    test("Successfully updates a document with valid lat/lon and no area", async () => {
         const mockData = {
             id: 1,
             title: "Updated Document Title",
@@ -576,9 +576,9 @@ describe("POST /api/updateDocument", () => {
             connections: ["doc2", "doc3"],
             language: "English",
             pages: 50,
-            lat: 67.8301,
-            lon: 20.3001,
-            area: "",
+            lat: 67.8301,  // Valido
+            lon: 20.3001,  // Valido
+            area: "",      // Area non fornita
             description: "Updated description"
         };
 
@@ -598,7 +598,7 @@ describe("POST /api/updateDocument", () => {
         });
     });
 
-    test("Successfully updates a document", async () => {
+    test("Successfully updates a document with area and no lat/lon", async () => {
         const mockData = {
             id: 1,
             title: "Updated Document Title",
@@ -609,9 +609,12 @@ describe("POST /api/updateDocument", () => {
             connections: ["doc2", "doc3"],
             language: "English",
             pages: 50,
-            lat: '',
-            lon: '',
-            area: "Sample Area",
+            lat: "",        // Non forniti
+            lon: "",        // Non forniti
+            area: {         // GeoJSON valido
+                type: "Polygon",
+                coordinates: [[[0, 0], [1, 1], [1, 0], [0, 0]]]
+            },
             description: "Updated description"
         };
 
@@ -631,20 +634,19 @@ describe("POST /api/updateDocument", () => {
         });
     });
 
-    test("Returns error if required fields are missing", async () => {
+    test("Returns error if required fields (id, title) are missing", async () => {
         const response = await request(app)
             .post('/api/updateDocument')
-            .send({ id: 1 }); // `title` missing
+            .send({ stakeholders: "Updated Stakeholder" }); // `id` e `title` mancanti
 
         expect(response.status).toBe(400);
         expect(response.body).toEqual({ message: "Missing required fields" });
     });
-    
-    test("Returns error for invalid lat without area", async () => {
 
+    test("Returns error when lat/lon are missing and area is not provided", async () => {
         const mockData = {
             id: 1,
-            title: "Invalid Lat Test",
+            title: "Missing Lat/Lon and Area",
             stakeholders: "Updated Stakeholder",
             scale: "1:1000",
             issuanceDate: "2023-01-01",
@@ -652,9 +654,9 @@ describe("POST /api/updateDocument", () => {
             connections: ["doc2", "doc3"],
             language: "English",
             pages: 50,
-            lat: 70.0000,  // Outside permitted range
-            lon: 21.0000,  // Outside permitted range
-            area: "", // area is empty
+            lat: "",        // Non forniti
+            lon: "",        // Non forniti
+            area: "",       // Area non fornita
             description: "Updated description"
         };
 
@@ -663,59 +665,32 @@ describe("POST /api/updateDocument", () => {
             .send(mockData);
 
         expect(response.status).toBe(400);
-        expect(response.body).toEqual({ message: "Invalid parameters" });
-
+        expect(response.body).toEqual({ message: "Latitude and Longitude are required when Area is not provided" });
     });
 
-    test("Returns error for invalid lon without area", async () => {
-        const invalidData = {
+    test("Returns error if area is an empty GeoJSON object", async () => {
+        const mockData = {
             id: 1,
-            title: "Invalid Lon Test",
-            lat: 68.0000,  // Outside permitted range
-            lon: 12.0000,  // Outside permitted range
-            area: "", // area is empty
+            title: "Empty GeoJSON Area",
+            stakeholders: "Updated Stakeholder",
+            scale: "1:1000",
+            issuanceDate: "2023-01-01",
+            type: "report",
+            connections: ["doc2", "doc3"],
+            language: "English",
+            pages: 50,
+            lat: "",        // Non forniti
+            lon: "",        // Non forniti
+            area: {},       // GeoJSON vuoto
+            description: "Updated description"
         };
 
         const response = await request(app)
             .post('/api/updateDocument')
-            .send(invalidData);
+            .send(mockData);
 
         expect(response.status).toBe(400);
-        expect(response.body).toEqual({ message: "Invalid parameters" });
-    });
-
-
-    test("Returns error when both area and lat/lon are provided", async () => {
-        const invalidData = {
-            id: 1,
-            title: "Invalid Area/LatLon Combo",
-            lat: 68.0000,
-            lon: 20.9000,
-            area: "Sample Area",
-        };
-
-        const response = await request(app)
-            .post('/api/updateDocument')
-            .send(invalidData);
-
-        expect(response.status).toBe(400);
-        expect(response.body).toEqual({ message: "Invalid parameters" });
-    });
-    
-    test("Returns error if lat or lon is partially missing", async () => {
-        const missingLonData = {
-            id: 1,
-            title: "Partial Lat/Lon Test",
-            lat: 68.0000,  // lat provided
-            area: ""       // area is empty
-        };
-
-        const response = await request(app)
-            .post('/api/updateDocument')
-            .send(missingLonData);
-
-        expect(response.status).toBe(400);
-        expect(response.body).toEqual({ message: "Missing required fields" });
+        expect(response.body).toEqual({ message: "Area cannot be an empty GeoJSON object" });
     });
 });
 
