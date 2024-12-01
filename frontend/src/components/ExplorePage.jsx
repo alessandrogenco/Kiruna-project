@@ -379,6 +379,7 @@ function ExplorePage(props) {
       {/* Document Viewer */}
       {selectedDocument && (
         <DocumentViewer
+          isLoggedIn={props.isLoggedIn}
           documentData={selectedDocument}
           onClose={() => setSelectedDocument(null)}
         />

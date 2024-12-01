@@ -3,7 +3,7 @@ import { getDocumentLinks } from '../API.mjs'; // Import the function
 import './DocumentViewer.css';
 import { useNavigate } from 'react-router-dom';
 
-const DocumentViewer = ({ documentData, onClose }) => {
+const DocumentViewer = ({ isLoggedIn, documentData, onClose }) => {
   const [viewDescription, setViewDescription] = useState(false);
   const [documentLinks, setDocumentLinks] = useState([]);
   const [showLinks, setShowLinks] = useState(false);
@@ -54,7 +54,9 @@ const DocumentViewer = ({ documentData, onClose }) => {
             </ul>
           )}
           <div className="button-group">
-            <button className="btn btn-primary" onClick={handleEditClick}>Edit</button>
+            {isLoggedIn && (
+              <button className="btn btn-primary" onClick={handleEditClick}>Edit</button>
+            )}
             <button onClick={() => setViewDescription(true)}>View Description</button>
           </div>
         </div>
