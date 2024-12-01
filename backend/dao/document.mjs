@@ -53,7 +53,7 @@ class DocumentDao{
             }
             const checkAndAddStakeholders = (stakeholders) => {
 
-              const stakeholdersArray = stakeholders.split(' - ');
+              const stakeholdersArray = stakeholders.split('-');
 
                 return Promise.all(stakeholdersArray.map(stakeholder => {
                   return new Promise((resolve, reject) => {
@@ -340,20 +340,20 @@ class DocumentDao{
         });
     }
 
-    showStakeholders(){
-        return new Promise((resolve, reject) => {
-            const showStakeholders = 'SELECT name FROM Stakeholder';
-
-            db.all(showStakeholders, [], (err, stakeholders) => {
-                if (err) {
-                    console.error('Database error while getting all stakeholders:', err.message);
-                    return reject(new Error('Database error: ' + err.message));
-                }
-
-                resolve(stakeholders);
-            });
-        });
-    }
+    showStakeholders() {
+      return new Promise((resolve, reject) => {
+          const showStakeholders = 'SELECT GROUP_CONCAT(name, " - ") AS stakeholders FROM Stakeholder';
+  
+          db.get(showStakeholders, [], (err, row) => {
+              if (err) {
+                  console.error('Database error while getting all stakeholders:', err.message);
+                  return reject(new Error('Database error: ' + err.message));
+              }
+  
+              resolve(row.stakeholders || '');
+          });
+      });
+  }
 
     showScales(){
         return new Promise((resolve, reject) => {

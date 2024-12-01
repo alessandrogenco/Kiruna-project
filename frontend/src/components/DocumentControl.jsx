@@ -14,7 +14,7 @@ function DocumentControl(props) {
   const { documentId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const [stakeholderList, setStakeholderList] = useState([]);
+  const [stakeholderList, setStakeholderList] = useState("");
   const [scaleList, setScaleList] = useState([]);
   const [typeList, setTypeList] = useState([]);
   const [showNewTypeInput, setShowNewTypeInput] = useState(false);
@@ -28,7 +28,7 @@ function DocumentControl(props) {
     const [formData, setFormData] = useState({
       id: existingDocument?.id || '',
       title: existingDocument?.title || '',
-      stakeholders: existingDocument?.stakeholders || [],
+      stakeholders: existingDocument?.stakeholders || '',
       scale: existingDocument?.scale || '',
       issuanceDate: existingDocument?.issuanceDate || '', // Assicurato valore predefinito
       type: existingDocument?.type || '',
@@ -58,7 +58,13 @@ function DocumentControl(props) {
 
     const getStakeholders = async () => {
       const response = await axios.get('http://localhost:3001/api/documents/stakeholders');
-      setStakeholderList(response.data);
+      
+      if (typeof response.data === 'string') {
+      
+        setStakeholderList(response.data);
+      } else {
+        console.error('Unexpected response format:', response.data);
+      }
     };
     
     const getScales = async () => {
@@ -242,16 +248,14 @@ function DocumentControl(props) {
 
     const handleCheckboxChange = (e) => {
       const { value, checked } = e.target;
-      setFormData((prevData) => {
-        const stakeholders = prevData.stakeholders || [];
-        if (checked) {
-          // Add the selected stakeholder
-          return { ...prevData, stakeholders: [...stakeholders, value] };
-        } else {
-          // Remove the unselected stakeholder
-          return { ...prevData, stakeholders: stakeholders.filter((item) => item !== value) };
-        }
-      });
+      const stakeholdersArray = formData.stakeholders ? formData.stakeholders.split(' - ') : [];
+      const updatedStakeholders = checked
+        ? [...stakeholdersArray, value]
+        : stakeholdersArray.filter((stakeholder) => stakeholder !== value);
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        stakeholders: updatedStakeholders.join(' - '),
+      }));
     };
 
     const validateForm = () => {
@@ -329,7 +333,7 @@ function DocumentControl(props) {
       e.preventDefault();
       console.log('Form Data:', formData);
 
-      const stakeholdersString = formData.stakeholders.join(' - ');
+      const stakeholdersString = formData.stakeholders.join('-');
     
       const updatedFormData = {
       ...formData,
@@ -491,20 +495,28 @@ function DocumentControl(props) {
   };
 
 
-  const handleAddStakeholder = () => {
-    if (formData.newStakeholder.trim() !== '') {
-      setStakeholderList((prevList) => [
-        ...prevList,
-        { id: prevList.length + 1, name: formData.newStakeholder }
-      ]);
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        stakeholders: [...prevFormData.stakeholders.filter(s => s !== 'add_new_stakeholder'), formData.newStakeholder],
-        newStakeholder: ''
-      }));
-      setShowNewStakeholderInput(false);
-    }
-  };
+ const handleAddStakeholder = () => {
+  if (formData.newStakeholder.trim() !== '') {
+    // Aggiungi il nuovo stakeholder alla lista degli stakeholder
+    setStakeholderList((prevList) => [
+      ...prevList,
+      { id: prevList.length + 1, name: formData.newStakeholder }
+    ]);
+
+    // Aggiorna la stringa degli stakeholder nel formData
+    const updatedStakeholders = formData.stakeholders
+      ? `${formData.stakeholders} - ${formData.newStakeholder}`
+      : formData.newStakeholder;
+
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      stakeholders: updatedStakeholders,
+      newStakeholder: ''
+    }));
+
+    setShowNewStakeholderInput(false);
+  }
+};
 
     return (
       <>
@@ -550,28 +562,28 @@ function DocumentControl(props) {
               backgroundColor: '#f8f9fa',
               }}
   >
-              {stakeholderList.map((stakeholder) => (
+              {stakeholderList.split(' - ').map((stakeholder) => (
             <Form.Check
-              key={stakeholder.name}
-              type="checkbox"
-              label={stakeholder.name}
-              name="stakeholders"
-              value={stakeholder.name}
-              checked={formData.stakeholders.includes(stakeholder.name)}
-              onChange={handleCheckboxChange}
-              className="mb-2"
+            key={stakeholder}
+            type="checkbox"
+            label={stakeholder}
+            name="stakeholders"
+            value={stakeholder}
+            checked={formData.stakeholders.split(' - ').includes(stakeholder)}
+            onChange={handleCheckboxChange}
+            className="mb-2"
             />
              ))}
               <Form.Check
-                type="checkbox"
-                label="Add new"
-                name="stakeholders"
-                value="add_new_stakeholder"
-                checked={formData.stakeholders.includes("add_new_stakeholder")}
-                onChange={handleCheckboxChange}
-                className="mb-2"
+                 type="checkbox"
+                 label="Add new"
+                 name="stakeholders"
+                 value="add_new_stakeholder"
+                 checked={formData.stakeholders.split(' - ').includes("add_new_stakeholder")}
+                 onChange={handleCheckboxChange}
+                 className="mb-2"
               />
-             {formData.stakeholders.includes("add_new_stakeholder") && (
+             {stakeholderList.split(' - ').includes("add_new_stakeholder") && (
                 <div className="d-flex align-items-center mt-2">
                   <Form.Control
                     type="text"
