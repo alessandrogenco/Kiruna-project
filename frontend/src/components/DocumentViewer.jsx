@@ -44,9 +44,9 @@ const DocumentViewer = ({ isLoggedIn, documentData, onClose }) => {
           <p><strong>Stakeholder:</strong> {documentData.stakeholders}</p>
           <p><strong>Issuance date:</strong> {documentData.issuanceDate}</p>
           <p><strong>Type:</strong> {documentData.type}</p>
-          <p onClick={handleConnectionsClick} style={{ cursor: 'pointer', color: 'blue' }}>
+          <button className='btn-as-label' onClick={handleConnectionsClick} style={{ cursor: 'pointer', color: 'blue' }}>
             <strong>Connections:</strong> {/*documentData.connections*/}
-          </p>
+          </button>
           {showLinks && (
             <ul className="document-links custom-document-links">
               {documentLinks.map((link, index) => (
