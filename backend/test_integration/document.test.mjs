@@ -486,3 +486,14 @@ describe('GET /api/documents/stakeholders', () => {
   
 });
 
+describe('GET /api/documents/scales', () => {
+    test('Should return 200 and a list of scales', async () => {
+    
+      const response = await request(app).get('/api/documents/scales');
+  
+      expect(response.status).toBe(200);
+  
+      expect(response.body).toEqual([{"name": "1:10000"}, {"name": "large"}, {"name": "small"}]);
+    });
+  
+});
