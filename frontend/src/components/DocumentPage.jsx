@@ -8,7 +8,6 @@ import { Row, Form, FormControl, Col, Button, InputGroup } from "react-bootstrap
 
 
 function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) {
-    //const [shouldRefresh, setShouldRefresh] = useState(0);
     const [selectedDocument, setSelectedDocument] = useState(null); // State for selected document
     const [searchQuery, setSearchQuery] = useState(''); // State for search query
     const [filterType, setFilterType] = useState('');
