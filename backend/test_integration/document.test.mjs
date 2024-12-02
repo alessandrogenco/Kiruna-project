@@ -471,16 +471,5 @@ describe('DELETE /api/deleteDocument', () => {
         expect(response.body).toEqual({ message: 'ID is required.' });
     });
     
-    /*    
-    test('Returns error when no document found with provided ID', async () => {
-      documentDao.prototype.deleteDocumentById.mockRejectedValue({message: "No document found with the provided ID"});
   
-      const response = await request(app)
-        .post('/api/deleteDocument')
-        .send({ id: 999 }); // Non-existent ID
-  
-      expect(response.status).toBe(400);
-      expect(response.body).toEqual({ message: "No document found with the provided ID" });
-      expect(documentDao.prototype.deleteDocumentById).toHaveBeenCalledWith(999);
-    });*/
 });
