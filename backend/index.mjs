@@ -375,58 +375,9 @@ app.put('/api/links', async (req, res) => {
     }
 });
 
-/*app.post('/api/newDocuments', upload.single('file'), async (req, res) => {
-    try {
-        const { name } = req.body;
-        const file = req.file?.buffer; // Get the buffer of the file just uploaded 
 
-        // Check the needed filds
-        if (!name || !file) {
-            return res.status(400).json({ error: 'Name and file are required' });
-        }
 
-        const result = await documentDao.newDocument(name, file);
 
-        // success response
-        res.status(201).json(result);
-    } catch (error) {
-        console.error('Error inserting document:', error.message);
-        res.status(500).json({ error: error.message });
-    }
-});*/
-
-/*app.post('/api/newDocuments', upload.single('file'), async (req, res) => {
-    try {
-        const { name } = req.body;
-        const file = req.file?.buffer; // Get the buffer of the file just uploaded 
-        const documentDetails = {
-            title: req.body.title,
-            stakeholders: req.body.stakeholders,
-            scale: req.body.scale,
-            issuanceDate: req.body.issuanceDate,
-            type: req.body.type,
-            connections: req.body.connections,
-            language: req.body.language,
-            pages: req.body.pages,
-            lat: req.body.lat,
-            lon: req.body.lon,
-            description: req.body.description,
-        };
-
-        // Check the needed filds
-        if (!name || !file || !documentDetails.title) {
-            return res.status(400).json({ error: 'Name, file, and title are required' });
-        }
-
-        const result = await documentDao.newDocument(name, file, documentDetails);
-
-        // Success response
-        res.status(201).json(result);
-    } catch (error) {
-        console.error('Error inserting document:', error.message);
-        res.status(500).json({ error: error.message });
-    }
-});*/
 
 // app.post('/api/updateDocument', async (req, res) => {
 //     console.log("Data received by /api/updateDocument:", req.body); // Log dei dati ricevuti
