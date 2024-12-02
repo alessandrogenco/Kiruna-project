@@ -473,3 +473,16 @@ describe('DELETE /api/deleteDocument', () => {
     
   
 });
+
+describe('GET /api/documents/stakeholders', () => {
+    test('Should return 200 and a list of stakeholders', async () => {
+    
+      const response = await request(app).get('/api/documents/stakeholders');
+  
+      expect(response.status).toBe(200);
+  
+      expect(response.body).toEqual('Sample stakeholders - Stakeholder A - Stakeholder B');
+    });
+  
+});
+
