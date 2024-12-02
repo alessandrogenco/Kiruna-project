@@ -255,7 +255,7 @@ function FileList(props) {
           <Col md={4}>
             <ListGroup>
               {files && files.length > 0 && files.map((file, index) => (
-              <ListGroup.Item key={index}>
+              <ListGroup.Item key={file.name + index}>
                 <span style={{ paddingTop: '2px', display: 'inline-block' }}>{file.name}</span>
                 <Button 
                   variant="success" 
