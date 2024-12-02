@@ -43,37 +43,7 @@ function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) 
         getDocuments();      
     }, []);  
     
-    const handleAddDocument = async () => {
-        const documentData = {
-        title: newDocument.title,
-        stakeholders: newDocument.stakeholders,
-        scale: newDocument.scale,
-        date: newDocument.date,
-        type: newDocument.type,
-        connections: newDocument.connections,
-        language: newDocument.language,
-        pages: newDocument.pages,
-        lat: newDocument.lat,
-        lon: newDocument.lon,
-        area: newDocument.area,
-        description: newDocument.description
-        };
-        //console.log(documentData);
-        try {
-            const response = await fetch('http://localhost:3001/api/addDocument', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(documentData),
-            });
-            if (!response.ok) throw new Error('Network response was not ok');
-            const addedDocument = await response.json();
-            setDocuments((prevDocuments) => [...prevDocuments, addedDocument]);
-            setNewDocument({ title: '', stakeholders: '', scale: '', date: '', type: '', connections: '', language: '', pages: '', lat: '', lon: '', area:'', description: '' });
-        } catch (error) {
-            console.error('Error adding document:', error);
-            console.log(documentData);
-        }
-    };
+
     
     // Funzione per eliminare un documento
     const handleDelete = async (docId) => {
@@ -85,32 +55,6 @@ function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) 
             console.error('Error deleting document:', error);
 
         }
-    };
-    
-    const handleDocumentClick = (document) => {
-        setSelectedDocument(document);
-        setNewDocument({
-        title: document.title || '',
-        stakeholders: document.stakeholders || '',
-        scale: document.scale || '',
-        date: document.date || '',
-        type: document.type || '',
-        connections: document.connections || '',
-        language: document.language || '',
-        pages: document.pages || '',
-        lat: document.lat || '',
-        lon: document.lon || '',
-        area: document.area || '',
-        description: document.description || ''
-        });
-    };
-    
-    const handleNewDocumentChange = (e) => {
-        const { name, value } = e.target;
-        setNewDocument((prevDocument) => ({
-        ...prevDocument,
-        [name]: value,
-        }));
     };
     
     const handleSearchChange = (e) => {
