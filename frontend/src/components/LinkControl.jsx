@@ -10,7 +10,6 @@ const LinkControl = (props) => {
 
   const [documents, setDocuments] = useState([]);
   const [rows, setRows] = useState([{ targetDocument: '', linkType: '' }]);
-  const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
   console.log(hasDuplicates);

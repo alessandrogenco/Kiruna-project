@@ -1,11 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import PropTypes from "prop-types";
 import AppNavbar from './Navbar';
 import { Row, Col } from 'react-bootstrap';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Supercluster from 'supercluster';
-import documentIcon from '../assets/document.png';
 import '../styles/ExplorePage.css';
 import DocumentViewer from './DocumentViewer'; // Import the DocumentViewer component
 import DocumentGraph  from './Graph';

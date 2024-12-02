@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Modal, Button, Form, FormControl } from 'react-bootstrap';
 import './Documents.css'; // Import the CSS file
 import {deleteDocument, updateDocument} from '../API.mjs'; // Import the API module

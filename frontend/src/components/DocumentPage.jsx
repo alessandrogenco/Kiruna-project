@@ -1,6 +1,6 @@
 import AppNavbar from "./Navbar";
 import PropTypes from 'prop-types';
-import API, {deleteDocument, updateDocument} from '../API.mjs';
+import API, {updateDocument} from '../API.mjs';
 import DocumentList from "./DocumentList";
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -9,11 +9,9 @@ import '../styles/DocumentPage.css';
 
 function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) {
     //const [shouldRefresh, setShouldRefresh] = useState(0);
-    const [descriptions, setDescriptions] = useState({});
     const [selectedDocument, setSelectedDocument] = useState(null); // State for selected document
     const [showFormModal, setShowFormModal] = useState(false); // State to control the form modal
     const [searchQuery, setSearchQuery] = useState(''); // State for search query
-    const [selectedArea, setSelectedArea] = useState('');
     const [filterType, setFilterType] = useState('');
     const [message, setMessage] = useState(''); // Add this line
     const [newDocument, setNewDocument] = useState({
