@@ -654,3 +654,26 @@ describe("DELETE /api/deleteDocument", () => {
         });
     });
 });
+
+describe('GET /api/documents/stakeholders', () => {
+    test('Should return 200 and a list of stakeholders', async () => {
+      const stakeholders = 'Sample stakeholders - Stakeholder A - Stakeholder B';
+      DocumentDao.prototype.showStakeholders.mockResolvedValue(stakeholders);
+
+      const response = await request(app).get('/api/documents/stakeholders');
+  
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(stakeholders);
+    });
+  
+    test('Should return 500 if there is an internal server error', async () => {
+        DocumentDao.prototype.showStakeholders.mockRejectedValue(new Error("Database error"));
+  
+        const response = await request(app).get('/api/documents/stakeholders');
+    
+        expect(response.status).toBe(500);
+        expect(response.body).toEqual({
+            message: 'Database error'
+        });      
+    });
+});
