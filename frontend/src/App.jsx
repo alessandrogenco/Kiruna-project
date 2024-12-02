@@ -6,7 +6,6 @@ import API from './API.mjs';
 import LoginForm from './components/Auth';
 import HomePage from './components/HomePage'; // Importa il componente HomePage
 import ExplorePage from './components/ExplorePage'; // Importa il componente ExplorePage
-import Documents from './components/Documents';
 import DocumentControl from './components/DocumentControl';
 import DocumentPage from './components/DocumentPage';
 
@@ -91,10 +90,10 @@ function App() {
           path="/explore"
           element={<ExplorePage isLoggedIn={loggedIn} handleLogout={handleLogout} documents={documents} setDocuments={setDocuments}/>}
         />
-        <Route
+        {/*<Route
           path="/documents"
           element={<Documents documents={documents} setDocuments={setDocuments}/>}
-        />
+        />*/}
         <Route
           path="/link-documents"
         />
