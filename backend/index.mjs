@@ -288,9 +288,7 @@ app.post('/api/addDocument', async (req, res) => {
         if(area.trim() !== '' && (lat || lon)){
             throw new Error("Invalid parameters");
         }
-        /*if (!title || (!area && (!lat ^ !lon))) {
-            throw new Error("Missing required fields" );
-        }*/
+        
         if (!title || (area.trim() === '' && (!lat || !lon))) {
             throw new Error("Missing required fields");
         }
@@ -310,9 +308,7 @@ app.post('/api/linkDocuments', async (req, res) => {
     const { id1, id2, /*linkDate,*/ linkType } = req.body;
 
     try {
-        /*if (linkDate.trim() === '') {
-            throw new Error('The link date must be a non-empty string');
-        }*/
+       
     
         if (linkType.trim() === '') {
             throw new Error('The link type must be a non-empty string');
