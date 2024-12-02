@@ -350,6 +350,11 @@ function ExplorePage(props) {
     );
   };
 
+  MapStyleToggleButton.propTypes = {
+    style: PropTypes.string,
+    label: PropTypes.string,
+  }
+
   useEffect(() => {
     if (map) {
       map.resize(); // Forza la mappa a ricalcolare le dimensioni
