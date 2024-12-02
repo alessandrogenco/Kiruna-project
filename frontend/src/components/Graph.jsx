@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import ReactFlow, { Background, BackgroundVariant, Controls, useEdgesState, useNodesState } from "react-flow-renderer";
 import API from "../API.mjs";
 import './Graph.css';
@@ -310,6 +311,14 @@ let edges = [
 
     </div>
   );
+};
+
+DocumentGraph.propTypes = {
+  nodesState: PropTypes.array,
+  edgesState: PropTypes.array,
+  onNodeClick: PropTypes.func,
+  onNodeDrag: PropTypes.func,
+  setSelectedDocument: PropTypes.func,
 };
 
 export default DocumentGraph;

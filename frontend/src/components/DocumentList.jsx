@@ -192,6 +192,11 @@ function DocumentInList(props){
       );
       }
 
+DocumentInList.propTypes = {
+ updateDocument: PropTypes.func,
+ deleteDocument: PropTypes.func,
+};
+
 function FileList(props) {
   const [files, setFiles] = useState([]);
   const [showFiles, setShowFiles] = useState(false);
