@@ -9,6 +9,7 @@ import DocumentViewer from './DocumentViewer'; // Import the DocumentViewer comp
 import DocumentGraph  from './Graph';
 import { ReactFlowProvider } from 'react-flow-renderer';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import PropTypes from 'prop-types';
 
 function ExplorePage(props) {
   const MAPBOX_TOKEN = "pk.eyJ1IjoiYWxlc3NhbmRyb2cwOCIsImEiOiJjbTNiZzFwbWEwdnU0MmxzYTdwNWhoY3dpIn0._52AcWROcPOQBr1Yz0toKw";
@@ -408,5 +409,11 @@ function ExplorePage(props) {
     </>
   );
 }
+
+ExplorePage.propTypes = {
+  documents: PropTypes.array,
+  isLoggedIn: PropTypes.bool,
+  handleLogout: PropTypes.func,
+};
 
 export default ExplorePage;

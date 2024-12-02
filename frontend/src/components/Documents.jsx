@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Modal, Button, Form, FormControl } from 'react-bootstrap';
 import './Documents.css'; // Import the CSS file
 import {deleteDocument, updateDocument} from '../API.mjs'; // Import the API module
+import PropTypes from 'prop-types';
 
-function Documents({ show, handleClose, documents, setDocuments }) {
+function Documents({ documents, setDocuments }) {
   const [stakeholdersList, setStakeholdersList] = useState([]);
   const [scalesList, setScalesList] = useState([]);
   const [typesList, setTypesList] = useState([]);
@@ -455,5 +456,11 @@ const handleUpdateDocument = async () => {
     </div>
   );
 }
+
+Documents.propTypes = {
+  documents: PropTypes.array,
+  setDocuments: PropTypes.func,
+};
+
 
 export default Documents;

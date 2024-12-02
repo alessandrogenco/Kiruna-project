@@ -226,6 +226,8 @@ function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) 
 DocumentPage.propTypes = {
     isLoggedIn: PropTypes.bool,
     handleLogout: PropTypes.func,
+    documents: PropTypes.array,
+    setDocuments: PropTypes.func
 };
 
 export default DocumentPage;

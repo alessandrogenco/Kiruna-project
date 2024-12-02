@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import API from '../API.mjs'; // Import delle funzioni API
 import '../styles/DocumentList.css';
 
+
 const LinkControl = (props) => {
   const { selectedId, links, newLinks, setNewLinks, setHasDuplicates, hasDuplicates } = props;
 

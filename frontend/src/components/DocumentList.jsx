@@ -275,4 +275,8 @@ function FileList(props) {
     </div>
   );
 }
+
+FileList.propTypes = {
+  documentId: PropTypes.number,
+};
 export default DocumentList;

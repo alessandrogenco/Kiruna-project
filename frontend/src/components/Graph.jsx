@@ -314,10 +314,7 @@ let edges = [
 };
 
 DocumentGraph.propTypes = {
-  nodesState: PropTypes.array,
-  edgesState: PropTypes.array,
-  onNodeClick: PropTypes.func,
-  onNodeDrag: PropTypes.func,
+  documents: PropTypes.array,
   setSelectedDocument: PropTypes.func,
 };
 

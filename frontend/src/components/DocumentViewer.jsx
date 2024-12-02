@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { getDocumentLinks } from '../API.mjs'; // Import the function
 import './DocumentViewer.css';
 import { useNavigate } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 const DocumentViewer = ({ isLoggedIn, documentData, onClose }) => {
   const [viewDescription, setViewDescription] = useState(false);
@@ -78,5 +79,13 @@ const DocumentViewer = ({ isLoggedIn, documentData, onClose }) => {
 
   );
 };
+
+DocumentViewer.propTypes = {
+  isLoggedIn: PropTypes.bool,
+  documentData: PropTypes.object,
+  onClose: PropTypes.func,
+};
+
+
 
 export default DocumentViewer;
