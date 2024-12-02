@@ -74,7 +74,7 @@ function DocumentInList(props){
                   to={`/editDocument/${props.documentData.id}`}
                   state={{ document: props.documentData }}
                 />
-                <i className="btn btn-danger bi bi-trash" onClick={() => props.deleteDocument(props.documentData.id)} />
+                <button className="btn btn-danger bi bi-trash" onClick={() => props.deleteDocument(props.documentData.id)} />
               </Col>
             </Row>
           </ListGroupItem>
