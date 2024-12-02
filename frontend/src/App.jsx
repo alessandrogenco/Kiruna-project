@@ -12,7 +12,6 @@ import DocumentPage from './components/DocumentPage';
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(null); // Inizializza come `null`
-  const [user, setUser] = useState(null);
   const [documents, setDocuments] = useState([]);
   const navigate = useNavigate();
 
@@ -22,15 +21,12 @@ function App() {
       .then(user => {
         if (user) {
           setLoggedIn(true);
-          setUser(user);
         } else {
           setLoggedIn(false);
-          setUser(null);
         }
       })
       .catch(e => {
         setLoggedIn(false);
-        setUser(null);
       });
   }, []);
 
@@ -60,7 +56,6 @@ function App() {
       if (!user) {
         throw new Error("Wrong credentials.");
       }
-      setUser(user);
       setLoggedIn(true);
       navigate('/explore');
     } catch (err) {
@@ -72,7 +67,6 @@ function App() {
   const handleLogout = async () => {
     await API.logout();
     setLoggedIn(false);
-    setUser(null);
     navigate('/');
   };
 
