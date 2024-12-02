@@ -62,7 +62,7 @@ function DocumentInList(props){
           <ListGroupItem className="document-list-item-det rounded custom-list-group-item">
             <Row>
               <Col>
-                <label role="button" className='mt-2' onClick={() => handleDocumentClick(props.documentData)}>{props.documentData.title}</label>
+                <button className='mt-2 btn-as-label' onClick={() => handleDocumentClick(props.documentData)}>{props.documentData.title}</button>
               </Col>
               <Col>
                 {console.log(props.documentData)}

@@ -18,6 +18,14 @@
   .document-details1 p {
     margin-bottom: 10px;
   }
+
+  .btn-as-label {
+    all: unset; /* Rimuove tutto lo stile predefinito del bottone */
+    cursor: pointer; /* Mantiene il puntatore per indicare che è cliccabile */
+    color: inherit; /* Usa il colore del testo ereditato */
+    font-size: inherit; /* Usa la dimensione del testo ereditata */
+    display: inline; /* Fa apparire il bottone come un testo inline */
+  }
   
   .document-links {
     margin-top: 20px;
