@@ -193,7 +193,6 @@ function DocumentInList(props){
       }
 
 DocumentInList.propTypes = {
- updateDocument: PropTypes.func,
  deleteDocument: PropTypes.func,
 };
 

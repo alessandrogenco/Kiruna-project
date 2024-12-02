@@ -399,9 +399,10 @@ function DocumentControl(props) {
           if(files && files.length > 0) {
             // Carica i file
             const formDataFiles = new FormData();
-            for (let i = 0; i < files.length; i++) {
-                formDataFiles.append('resourceFiles', files[i]);
+            for (const file of files) {
+              formDataFiles.append('resourceFiles', file);
             }
+          
 
             await axios.post(
                 `http://localhost:3001/api/upload?documentId=${newDocumentId}`,
