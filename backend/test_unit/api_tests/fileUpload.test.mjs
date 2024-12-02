@@ -3,7 +3,6 @@ import request from "supertest";
 import { app, server } from "../../index.mjs";
 import FileUploadDao from "../../dao/fileUpload.mjs";
 import fs from 'fs';
-import path from 'path';
 import { File } from "buffer";
 
 
@@ -106,7 +105,6 @@ describe("POST /api/upload", () => {
 
 
 describe("ensureUploadsDirectory", () => {
-  const uploadDir = 'uploads';
 
   test("should log and create the directory if it does not exist", async () => {
     // Mock fs.access per chiamare il callback con un errore
@@ -119,8 +117,6 @@ describe("ensureUploadsDirectory", () => {
       callback(null);
     });
 
-    const spy = jest.spyOn(fs, 'mkdir');
-    const spy2 = jest.spyOn(fs, 'access');
 
     expect(fs.mkdir).toBeTruthy();
     expect(fs.access).toBeTruthy();

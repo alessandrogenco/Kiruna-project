@@ -3,7 +3,7 @@ import { app, server } from "../../index.mjs";
 import request from "supertest";
 import DocumentDao from "../../dao/document.mjs";
 
-const document = new DocumentDao();
+
 const baseURL = "/api/";
 
 afterEach(() => {

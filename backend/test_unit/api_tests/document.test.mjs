@@ -278,22 +278,6 @@ describe('POST /api/addDocument', () => {
         const mockLon = 20.3001;
         const mockArea = "";
 
-        const mockDocument = { 
-            id: mockId, 
-            title: mockTitle,
-            stakeholders: "Sample stakeholders",
-            scale: "1:10000",
-            issuanceDate: "2023-01-01",
-            type: "Informative",
-            connections: 5,
-            language: "English",
-            pages: "1-10",
-            lat: mockLat,
-            lon: mockLon,
-            area: "",
-            description: null 
-        };
-
         DocumentDao.prototype.addDocument.mockResolvedValue({
             //id: mockId,
             title: mockTitle,

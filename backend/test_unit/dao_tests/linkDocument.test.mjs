@@ -38,7 +38,6 @@ describe("Link Documents", () => {
     test("Fails when link already exists", async () => {
         const id1 = 1;
         const id2 = 2;
-        const linkDate = "2024-11-05";
         const linkType = "Informative document";
 
         jest.spyOn(db, "get").mockImplementation((sql, params, callback) => {
@@ -53,7 +52,6 @@ describe("Link Documents", () => {
     test("Fails when there is a database error during link check", async () => {
         const id1 = 1;
         const id2 = 2;
-        const linkDate = "2024-11-05";
         const linkType = "Informative document";
 
         jest.spyOn(db, "get").mockImplementation((sql, params, callback) => {
@@ -68,7 +66,6 @@ describe("Link Documents", () => {
     test("Fails when there is a database error during link insertion", async () => {
         const id1 = 1;
         const id2 = 2;
-        const linkDate = "2024-11-05";
         const linkType = "Informative document";
 
         jest.spyOn(db, "get").mockImplementation((sql, params, callback) => {
@@ -87,7 +84,6 @@ describe("Link Documents", () => {
     test("Fails when there is a database error during connections update", async () => {
         const id1 = 1;
         const id2 = 2;
-        const linkDate = "2024-11-05";
         const linkType = "Informative document";
 
         jest.spyOn(db, "get").mockImplementation((sql, params, callback) => {
