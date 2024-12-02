@@ -194,6 +194,7 @@ function DocumentInList(props){
 
 DocumentInList.propTypes = {
  deleteDocument: PropTypes.func,
+ documentData: PropTypes.object,
 };
 
 function FileList(props) {
