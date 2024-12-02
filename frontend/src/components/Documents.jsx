@@ -7,7 +7,6 @@ function Documents({ show, handleClose, documents, setDocuments }) {
   const [stakeholdersList, setStakeholdersList] = useState([]);
   const [scalesList, setScalesList] = useState([]);
   const [typesList, setTypesList] = useState([]);
-  const [descriptions, setDescriptions] = useState({});
   const [selectedDocument, setSelectedDocument] = useState(null); // State for selected document
   const [showFormModal, setShowFormModal] = useState(false); // State to control the form modal
   const [searchQuery, setSearchQuery] = useState(''); // State for search query

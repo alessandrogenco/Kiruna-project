@@ -14,11 +14,11 @@ afterEach(()=>{
 
 describe("Register a new user", () => {
     test("Successfully registered a new user", async () => {
-        const spyGet = jest.spyOn(db, 'get')
+        jest.spyOn(db, 'get')
             .mockImplementation((sql, params, callback) => {
                 return callback(null, null);
             });
-        const spyRun = jest.spyOn(db, 'run')
+        jest.spyOn(db, 'run')
             .mockImplementation((sql, params, callback) => {
                 return callback(null);
             });
@@ -32,7 +32,7 @@ describe("Register a new user", () => {
     });
 
     test("Should reject if username already exists", async () => {
-        const spyGet = jest.spyOn(db, 'get')
+        jest.spyOn(db, 'get')
             .mockImplementation((sql, params, callback) => {
                 return callback(null, {username: "existingUser"});
             });
@@ -41,7 +41,7 @@ describe("Register a new user", () => {
     });
 
     test("Should reject if there is a database error while checking user", async () => {
-        const spyGet = jest.spyOn(db, 'get')
+        jest.spyOn(db, 'get')
             .mockImplementation((sql, params, callback) => {
                 return callback(Error);
             });
@@ -51,11 +51,11 @@ describe("Register a new user", () => {
 
     test("Should reject if there is a database error while inserting user", async () => {
         
-        const spyGet = jest.spyOn(db, 'get')
+        jest.spyOn(db, 'get')
             .mockImplementation((sql, params, callback) => {
                 return callback(null, null);
             });
-        const spyRun = jest.spyOn(db, 'run')
+        jest.spyOn(db, 'run')
             .mockImplementation((sql, params, callback) => {
                 return callback(Error);
             });
@@ -64,11 +64,11 @@ describe("Register a new user", () => {
     });
 
     test("Error during password hashing", async () => {
-        const spyGet = jest.spyOn(db, 'get')
+        jest.spyOn(db, 'get')
             .mockImplementation((sql, params, callback) => {
                 return callback(null, null);
             });
-        const spy = jest.spyOn(crypto, 'scrypt').mockImplementation((password, salt, keylen, callback) => {
+        jest.spyOn(crypto, 'scrypt').mockImplementation((password, salt, keylen, callback) => {
             callback(Error);
         });
 
@@ -78,7 +78,7 @@ describe("Register a new user", () => {
 
 describe("Login user", () => {
     test("User logged in successfully", async () => {
-        const spyGet = jest.spyOn(db, 'get')
+        jest.spyOn(db, 'get')
             .mockImplementation((sql, params, callback) => {
                 return callback(null, {
                     id: 1,
@@ -99,7 +99,7 @@ describe("Login user", () => {
     });
 
     test("User not found", async () => {
-        const spyGet = jest.spyOn(db, 'get')
+        jest.spyOn(db, 'get')
             .mockImplementation((sql, params, callback) => {
                 return callback(null, null);
             });
@@ -109,7 +109,7 @@ describe("Login user", () => {
     });
 
     test("Password doesn't match", async () => {
-        const spyGet = jest.spyOn(db, 'get')
+        jest.spyOn(db, 'get')
             .mockImplementation((sql, params, callback) => {
                 return callback(null, {
                     id: 1,
@@ -125,7 +125,7 @@ describe("Login user", () => {
     });
 
     test("Database error", async () => {
-        const spyGet = jest.spyOn(db, 'get')
+        jest.spyOn(db, 'get')
             .mockImplementation((sql, params, callback) => {
                 return callback(Error);
             });
@@ -134,7 +134,7 @@ describe("Login user", () => {
     });
 
     test("Error during password hashing", async () => {
-        const spyGet = jest.spyOn(db, 'get')
+        jest.spyOn(db, 'get')
             .mockImplementation((sql, params, callback) => {
                 return callback(null, {
                     id: 1,
@@ -144,7 +144,7 @@ describe("Login user", () => {
                     salt: 'randomSalt',
                     password: crypto.scryptSync(user1.password, 'randomSalt', 64).toString('hex')});
             });
-        const spy = jest.spyOn(crypto, 'scrypt').mockImplementation((password, salt, keylen, callback) => {
+        jest.spyOn(crypto, 'scrypt').mockImplementation((password, salt, keylen, callback) => {
             callback(Error);
         });
 
