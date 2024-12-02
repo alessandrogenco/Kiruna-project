@@ -700,3 +700,26 @@ describe('GET /api/documents/scales', () => {
         });      
     });
 });
+
+describe('GET /api/documents/types', () => {
+    test('Should return 200 and a list of types', async () => {
+      const types = [{"name": "Informative"}, {"name": "research"}, {"name": "summary"}];
+      DocumentDao.prototype.showTypes.mockResolvedValue(types);
+
+      const response = await request(app).get('/api/documents/types');
+  
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(types);
+    });
+  
+    test('Should return 500 if there is an internal server error', async () => {
+        DocumentDao.prototype.showTypes.mockRejectedValue(new Error("Database error"));
+  
+        const response = await request(app).get('/api/documents/types');
+    
+        expect(response.status).toBe(500);
+        expect(response.body).toEqual({
+            message: 'Database error'
+        });      
+    });
+});
