@@ -175,7 +175,6 @@ function Documents({ documents, setDocuments }) {
           ...prevDocument,
           lat: '',
         }));
-        return;
       }
   }
 
@@ -190,7 +189,6 @@ function Documents({ documents, setDocuments }) {
         ...prevDocument,
         lon: '',
       }));
-      return;
     }
 }
 
