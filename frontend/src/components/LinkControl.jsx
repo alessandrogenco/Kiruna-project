@@ -95,7 +95,7 @@ const LinkControl = (props) => {
       {error && <Alert variant="danger">{error}</Alert>}
 
       {rows.map((row, index) => (
-        <Row key={index} className="mb-3">
+        <Row key={row.targetDocument + index} className="mb-3">
           <Col className="d-flex justify-content-center">
             <Form.Group as={Col} controlId={`formTargetDocument-${index}`}>
               <Form.Label>Target Document</Form.Label>

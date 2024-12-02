@@ -50,7 +50,7 @@ const DocumentViewer = ({ isLoggedIn, documentData, onClose }) => {
           {showLinks && (
             <ul className="document-links custom-document-links">
               {documentLinks.map((link, index) => (
-                <li key={index}>{link.title + " | " + link.type}</li>
+                <li key={link.title + index}>{link.title + " | " + link.type}</li>
               ))}
             </ul>
           )}
