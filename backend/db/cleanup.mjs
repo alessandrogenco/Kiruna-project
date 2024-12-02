@@ -16,6 +16,21 @@ export async function cleanup() {
                 if (err) return reject(err);
                 resolve(true);
             });
+
+            db.run("DELETE FROM DocumentType", function(err) {
+                if (err) return reject(err);
+                resolve(true);
+            });
+
+            db.run("DELETE FROM Scale", function(err) {
+                if (err) return reject(err);
+                resolve(true);
+            });
+
+            db.run("DELETE FROM Stakeholder", function(err) {
+                if (err) return reject(err);
+                resolve(true);
+            });
         });
     });
 }
