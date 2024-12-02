@@ -10,10 +10,8 @@ import { Row, Form, FormControl, Col, Button, InputGroup } from "react-bootstrap
 function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) {
     //const [shouldRefresh, setShouldRefresh] = useState(0);
     const [selectedDocument, setSelectedDocument] = useState(null); // State for selected document
-    const [showFormModal, setShowFormModal] = useState(false); // State to control the form modal
     const [searchQuery, setSearchQuery] = useState(''); // State for search query
     const [filterType, setFilterType] = useState('');
-    const [message, setMessage] = useState(''); // Add this line
     const [newDocument, setNewDocument] = useState({
         title: '',
         stakeholders: '',
@@ -36,7 +34,7 @@ function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) 
             const data = await API.getDocuments(); // Chiamata alla funzione getDocuments in API.mjs
             setDocuments(data); // Aggiorna lo stato con i documenti ottenuti
         } catch (error) {
-            setMessage('Error fetching documents');
+            console.error('Error fetching documents:', error);
         }
     };
     
@@ -71,11 +69,9 @@ function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) 
             const addedDocument = await response.json();
             setDocuments((prevDocuments) => [...prevDocuments, addedDocument]);
             setNewDocument({ title: '', stakeholders: '', scale: '', date: '', type: '', connections: '', language: '', pages: '', lat: '', lon: '', area:'', description: '' });
-            setShowFormModal(false);
-            setMessage('Document added successfully!');
         } catch (error) {
             console.error('Error adding document:', error);
-            setMessage(error.message);
+            console.log(documentData);
         }
     };
     
@@ -84,10 +80,10 @@ function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) 
         try {
             await API.deleteDocument(docId); // Chiama l'API per eliminare il documento
             setDocuments((prevDocuments) => prevDocuments.filter((doc) => doc.id !== docId)); // Aggiorna lo stato locale
-            setMessage('Document deleted successfully!');
+
         } catch (error) {
             console.error('Error deleting document:', error);
-            setMessage('Error deleting document.');
+
         }
     };
     
@@ -107,7 +103,6 @@ function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) 
         area: document.area || '',
         description: document.description || ''
         });
-        setShowFormModal(true);
     };
     
     const handleNewDocumentChange = (e) => {
@@ -162,12 +157,11 @@ function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) 
                 doc.id === newDocument.id ? { ...doc, ...newDocument } : doc
             )
             );
-            setShowFormModal(false);
             setSelectedDocument(null);
-            setMessage('Document updated successfully!');
+
         } catch (error) {
             console.error('Error updating document:', error);
-            setMessage('Error updating document.');
+
         }
     };
 
