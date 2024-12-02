@@ -122,10 +122,10 @@ background-color: #0056b3;
 }
 
 .custom-document-links {
-    max-width: 450px; /* Set a max width */
-    margin: 0 auto; /* Center the element horizontally */
-    padding: 0; /* Remove padding */
-    list-style-type: none; /* Remove bullets */
+    max-width: 450px;
+    margin: 0 auto; 
+    padding: 0; 
+    list-style-type: none; 
 }
   
 .custom-document-links li {
@@ -135,7 +135,7 @@ background-color: #0056b3;
     border-radius: 4px;
 }
 
-/* Fade-in animation for smooth appearance */
+
 @keyframes fadeIn {
     from {
         opacity: 0;
