@@ -17,7 +17,6 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
   const [geoJsonData, setGeoJsonData] = useState(null);
   const [existingGeoreferencingData, setExistingGeoreferencingData] = useState(null);
   const [alertMessage, setAlertMessage] = useState('');
-  const MAPBOX_TOKEN = "pk.eyJ1IjoiYWxlc3NhbmRyb2cwOCIsImEiOiJjbTNiZzFwbWEwdnU0MmxzYTdwNWhoY3dpIn0._52AcWROcPOQBr1Yz0toKw";
 
   // Fetch document locations when the modal is opened
   useEffect(() => {
@@ -45,7 +44,7 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
 
   useEffect(() => {
     if (show && mapContainer.current && !map.current) {
-      mapboxgl.accessToken = MAPBOX_TOKEN;
+      mapboxgl.accessToken = process.env.MAPBOX_TOKEN;
 
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
