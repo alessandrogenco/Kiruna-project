@@ -8,8 +8,8 @@ export default defineConfig(({ mode }) => {
   return {
     define: {
       // Definisci le variabili di ambiente per l'uso nel codice
-      'process.env.REACT_APP_MAPBOX_TOKEN': JSON.stringify(env.REACT_APP_MAPBOX_TOKEN),
-      'process.env.REACT_APP_MAPBOX_TOKEN1': JSON.stringify(env.REACT_APP_MAPBOX_TOKEN1),
+      'process.env.REACT_APP_MAPBOX_TOKEN': JSON.stringify("pk.eyJ1IjoiYWxlc3NhbmRyb2cwOCIsImEiOiJjbTNiZzFwbWEwdnU0MmxzYTdwNWhoY3dpIn0._52AcWROcPOQBr1Yz0toKw"),
+      'process.env.REACT_APP_MAPBOX_TOKEN1': JSON.stringify("pk.eyJ1IjoiYWxlc3NhbmRyb2cwOCIsImEiOiJjbTNiZzFwbWEwdnU0MmxzYTdwNWhoY3dpIn0._52AcWROcPOQBr1Yz0toKw"),
     },
     plugins: [react()],
   }
