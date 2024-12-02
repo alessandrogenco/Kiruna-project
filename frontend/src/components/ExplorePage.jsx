@@ -11,8 +11,8 @@ import { ReactFlowProvider } from 'react-flow-renderer';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import PropTypes from 'prop-types';
 
+
 function ExplorePage(props) {
-  const MAPBOX_TOKEN = "pk.eyJ1IjoiYWxlc3NhbmRyb2cwOCIsImEiOiJjbTNiZzFwbWEwdnU0MmxzYTdwNWhoY3dpIn0._52AcWROcPOQBr1Yz0toKw";
   const mapContainer = useRef(null);
   const [map, setMap] = useState(null);
   const [mapLoaded, setMapLoaded] = useState(false); // Flag to track when the map is loaded
@@ -29,6 +29,8 @@ function ExplorePage(props) {
   };
 
   useEffect(() => {
+    console.log("ciao" + process.env.REACT_APP_MAPBOX_TOKEN1);
+
     if (selectedDocument) {
       mapContainer.current.classList.add('blurred-map');
     } else {
@@ -51,7 +53,7 @@ function ExplorePage(props) {
 
   useEffect(() => {
     if (!map) {
-      mapboxgl.accessToken = MAPBOX_TOKEN;
+      mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN1;
       const mapInstance = new mapboxgl.Map({
         container: mapContainer.current,
         style: 'mapbox://styles/mapbox/streets-v11',

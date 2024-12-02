@@ -7,6 +7,7 @@ import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import * as turf from '@turf/turf';
 
+
 const MapModal = ({ show, handleClose, onLocationSelect }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
@@ -44,7 +45,7 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
 
   useEffect(() => {
     if (show && mapContainer.current && !map.current) {
-      mapboxgl.accessToken = process.env.MAPBOX_TOKEN;
+      mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
