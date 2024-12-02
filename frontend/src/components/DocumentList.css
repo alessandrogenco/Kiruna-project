@@ -39,7 +39,6 @@
   /* Custom styles for Form.Group */
   .document-details1 .form-group-det {
     margin-bottom: 20px;
-    margin: 15px;
     display: flex;
     align-items: center; /* Allinea verticalmente al centro */
     gap: 10px; /* Spazio tra il label e il valore */
