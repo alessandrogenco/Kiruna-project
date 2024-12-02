@@ -86,12 +86,6 @@ class FileUploadDao{
     //                 console.error('Database error:', err.message);
     //                 return reject(new Error('Failed to delete file from database'));
     //             }
-    
-    //             if (this.changes === 0) {
-    //                 console.warn(`No file found in the database for documentId: ${documentId}`);
-    //                 return reject(new Error(`File not found in the database for documentId: ${documentId}`));                }
-    
-    //             resolve({ message: 'File deleted successfully from the database' });
     //         });
     //     });
     // }    
