@@ -210,3 +210,14 @@ Accept: application/json
 ###
 GET http://localhost:3001/api/documents/stakeholders HTTP/1.1
 Accept: application/json
+
+
+### Test Case 1: Update Georeferencing with Latitude and Longitude
+POST http://localhost:3001/api/updateDocumentGeoreference
+Content-Type: application/json
+
+{
+  "id": 14,
+  "lat": 67.123456,
+  "lon": 20.987654
+}

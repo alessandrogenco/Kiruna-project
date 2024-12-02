@@ -710,21 +710,71 @@ app.get('/api/files/:documentId', async (req, res) => {
     }
 });
 
-
-app.get('/api/getDocumentLocations', async (req, res) => {
+app.post('/api/updateDocumentGeoreference', async (req, res) => {
+    const { id, lat, lon, area } = req.body;
+  
     try {
-      const locations = await new Promise((resolve, reject) => {
-        db.all(`SELECT id, title, lat, lon, area, description FROM Documents WHERE lat IS NOT NULL OR area IS NOT NULL`, (err, rows) => {
+      if (!id) {
+        return res.status(400).json({ message: 'Document ID is required' });
+      }
+  
+      if (!lat && !lon && !area) {
+        return res.status(400).json({ message: 'Georeferencing data (lat/lon/area) is required' });
+      }
+  
+      let query;
+      let params;
+  
+      if (lat && lon) {
+
+        query = `UPDATE Documents SET lat = ?, lon = ?, area = ? WHERE id = ?`;
+        params = [lat, lon, id];
+      } else if (area) {
+        
+        query = `UPDATE Documents SET area = ?, lat = ?, lon = ? WHERE id = ?`;
+        params = [area, id];
+      }
+  
+      await new Promise((resolve, reject) => {
+        db.run(query, params, function (err) {
           if (err) reject(err);
-          resolve(rows);
+          resolve();
         });
       });
-      res.status(200).json(locations);
+  
+      res.status(200).json({ message: 'Georeferencing updated successfully' });
     } catch (error) {
-      console.error('Error fetching georeferenced locations:', error.message);
-      res.status(500).json({ message: 'Failed to fetch locations' });
+      console.error('Error updating georeferencing:', error.message);
+      res.status(500).json({ message: 'Failed to update georeferencing', error: error.message });
     }
   });
+  
+  
+
+
+  app.get('/api/getDocumentLocations', async (req, res) => {
+    try {
+      const locations = await new Promise((resolve, reject) => {
+        db.all(
+          `SELECT id, title, lat, lon, area, description FROM Documents WHERE lat IS NOT NULL OR area IS NOT NULL`,
+          (err, rows) => {
+            if (err) reject(err);
+            resolve(rows);
+          }
+        );
+      });
+  
+      if (locations.length === 0) {
+        return res.status(404).json({ message: 'No georeferenced locations found' });
+      }
+  
+      res.status(200).json(locations); 
+    } catch (error) {
+      console.error('Error fetching georeferenced locations:', error.message);
+      res.status(500).json({ message: 'Failed to fetch georeferenced locations', error: error.message });
+    }
+  });
+  
   
   
   

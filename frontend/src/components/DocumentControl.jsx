@@ -287,10 +287,10 @@ function DocumentControl(props) {
           newErrors.scale = "Scale is required";
           valid = false;
         }
-        if (!formData.issuanceDate) {
-          newErrors.issuanceDate = "Issuance Date is required";
-          valid = false;
-        }
+        // if (!formData.issuanceDate) {
+        //   newErrors.issuanceDate = "Issuance Date is required";
+        //   valid = false;
+        // }
         if (!formData.type) {
           newErrors.type = "Type is required";
           valid = false;

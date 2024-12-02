@@ -7,7 +7,7 @@ import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import * as turf from '@turf/turf';
 
-const MapModal = ({ show, handleClose, onLocationSelect, existingGeoreferencingData }) => {
+const MapModal = ({ show, handleClose, onLocationSelect }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const marker = useRef(null);
@@ -15,8 +15,33 @@ const MapModal = ({ show, handleClose, onLocationSelect, existingGeoreferencingD
   const [position, setPosition] = useState(null);
   const [mode, setMode] = useState('point');
   const [geoJsonData, setGeoJsonData] = useState(null);
+  const [existingGeoreferencingData, setExistingGeoreferencingData] = useState(null);
   const [alertMessage, setAlertMessage] = useState('');
   const MAPBOX_TOKEN = "pk.eyJ1IjoiYWxlc3NhbmRyb2cwOCIsImEiOiJjbTNiZzFwbWEwdnU0MmxzYTdwNWhoY3dpIn0._52AcWROcPOQBr1Yz0toKw";
+
+  // Fetch document locations when the modal is opened
+  useEffect(() => {
+    if (show) {
+      fetchDocumentLocations();
+    }
+  }, [show]);
+
+  const fetchDocumentLocations = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/api/getDocumentLocations');
+      console.log('Response Status:', response.status);
+      const text = await response.text();
+      
+      if (!response.ok) throw new Error('Failed to fetch document locations');
+      const data = JSON.parse(text); 
+      console.log(data); 
+
+      setExistingGeoreferencingData(data); 
+    } catch (error) {
+      console.error('Error fetching document locations:', error.message);
+      alert('Error fetching document locations: ' + error.message);
+    }
+  };
 
   useEffect(() => {
     if (show && mapContainer.current && !map.current) {
@@ -35,7 +60,6 @@ const MapModal = ({ show, handleClose, onLocationSelect, existingGeoreferencingD
 
         try {
           const response = await fetch('/KirunaMunicipality.geojson');
-
           if (!response.ok) throw new Error('Failed to load GeoJSON');
           const geojson = await response.json();
           setGeoJsonData(geojson);
@@ -60,65 +84,40 @@ const MapModal = ({ show, handleClose, onLocationSelect, existingGeoreferencingD
           setAlertMessage('Error loading map boundaries. Please try again later.');
         }
 
-        // try {
-        //   const documentResponse = await fetch('/api/getDocumentLocations');
-        //   if (!documentResponse.ok) 
-        //     throw new Error(`Failed to load document location: ${documentResponse.statusText}`);
-        //   const documentLocation = await documentResponse.json();
-
-        //   if (documentLocation.type === 'point') {
-        //     new mapboxgl.Marker()
-        //       .setLonLat([documentLocation.coordinates[1], documentLocation.coordinates[0]]) // [lng, lat]
-        //       .addTo(map.current);
-        //   } else if (documentLocation.type === 'area') {
-        //     const polygon = turf.polygon(documentLocation.geometry.coordinates);
-        //     map.current.addLayer({
-        //       id: 'document-boundary',
-        //       type: 'fill',
-        //       source: {
-        //         type: 'geojson',
-        //         data: polygon,
-        //       },
-        //       paint: {
-        //         'fill-color': '#ff5733',
-        //         'fill-opacity': 0.5,
-        //       },
-        //     });
-        //   }
-        // } catch (error) {
-        //   console.error('Error loading GeoJSON or document location:', error.message);
-        //   setAlertMessage('Error loading map or document location. Please try again later.');
-        // }
-
         // Add existing georeferencing points/areas to the map
         if (existingGeoreferencingData) {
           existingGeoreferencingData.forEach((item) => {
             if (item.type === 'point') {
-              new mapboxgl.Marker({ color: '#ff5733' })
-                .setLngLat([item.coordinates[1], item.coordinates[0]]) // [latitude, longitude]
-                .addTo(map.current)
-                .getElement().addEventListener('click', () => {
+              const existingMarker = new mapboxgl.Marker({ color: '#ff5733' })
+                .setLngLat([item.coordinates[1], item.coordinates[0]]) // [longitude, latitude]
+                .addTo(map.current);
+
+              existingMarker.getElement().addEventListener('click', () => {
+                if (mode === 'select') {
                   setPosition([item.coordinates[0], item.coordinates[1]]);
-                  setAlertMessage('');
-                });
+                  setAlertMessage('Selected an existing point.');
+                }
+              });
             } else if (item.type === 'area') {
               const polygon = turf.polygon(item.geometry.coordinates);
+              const sourceId = `area-${item.id}`;
+              map.current.addSource(sourceId, { type: 'geojson', data: polygon });
+
               map.current.addLayer({
-                id: `area-${item.id}`,
+                id: sourceId,
                 type: 'fill',
-                source: {
-                  type: 'geojson',
-                  data: polygon,
-                },
+                source: sourceId,
                 paint: {
                   'fill-color': '#ff5733',
                   'fill-opacity': 0.5,
                 },
               });
 
-              map.current.on('click', `area-${item.id}`, () => {
-                setPosition(item.geometry.coordinates);
-                setAlertMessage('');
+              map.current.on('click', sourceId, () => {
+                if (mode === 'select') {
+                  setPosition(item.geometry.coordinates);
+                  setAlertMessage('Selected an existing area.');
+                }
               });
             }
           });
@@ -182,23 +181,62 @@ const MapModal = ({ show, handleClose, onLocationSelect, existingGeoreferencingD
 
   const handleSave = () => {
     if (mode === 'point' && position) {
-      // Save the point as latitude and longitude
       onLocationSelect({ type: 'point', coordinates: position });
-    } else if (mode === 'area') {
+      updateDocumentGeoreference('someDocumentId', position[0], position[1], null); 
+    }
+     else if (mode === 'area') {
       const drawnFeatures = draw.current.getAll();
+
+      if (drawnFeatures.features.length > 0) {
+        const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: drawnFeatures.features });
+        onLocationSelect({ type: 'area', geometry: geoJsonString });
+        updateDocumentGeoreference('someDocumentId', null, null, geoJsonString); 
+
+      } else {
+        if (geoJsonData) {
+          const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: geoJsonData.features });
+          onLocationSelect({ type: 'area', geometry: geoJsonString });
+          updateDocumentGeoreference('someDocumentId', null, null, geoJsonString); 
+
+        } else {
+          setAlertMessage('Error: Default municipality boundary is unavailable.');
+          return;
+        }
+      }
+    } else if (mode === 'select' && position) {
+      onLocationSelect({ type: 'select', coordinates: position });
+      updateDocumentGeoreference('someDocumentId', position[0], position[1], null); 
+
+    }
+
+    handleClose();
+  };
+
+  const updateDocumentGeoreference = async (id, lat, lon, area) => {
   
-      if (drawnFeatures.features.length === 0) {
-        setAlertMessage('Please draw an area before saving.');
-        return;
+    try {
+      const response = await fetch('http://localhost:3001/api/updateDocumentGeoreference'
+      , {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id, lat, lon, area }),
+      });
+  
+      console.log('Response Status:', response.status);
+      const result = await response.json();
+      console.log('Response Body:', result);
+  
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to update georeferencing');
       }
   
-      // Extract the geometry of the drawn features
-      const geometries = drawnFeatures.features.map((feature) => feature.geometry);
-  
-      onLocationSelect({ type: 'area', geometry: geometries }); 
+      alert(result.message);
+    } catch (error) {
+      console.error('Error updating georeferencing:', error);
+      alert('Failed to update georeferencing');
     }
-  
-    handleClose();
   };
   
 
@@ -243,7 +281,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, existingGeoreferencingD
               value={mode}
               onChange={(value) => {
                 setMode(value);
-                if (value === 'point') {
+                if (value === 'point' || value === 'select') {
                   draw.current.deleteAll();
                 }
               }}
@@ -274,10 +312,10 @@ const MapModal = ({ show, handleClose, onLocationSelect, existingGeoreferencingD
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="danger" onClick={handleClose}>
-          Cancel
+        <Button variant="secondary" onClick={handleClose}>
+          Close
         </Button>
-        <Button variant="success" onClick={handleSave}>
+        <Button variant="primary" onClick={handleSave}>
           Save Location
         </Button>
       </Modal.Footer>
@@ -289,7 +327,6 @@ MapModal.propTypes = {
   show: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   onLocationSelect: PropTypes.func.isRequired,
-  existingGeoreferencingData: PropTypes.array.isRequired,
 };
 
 export default MapModal;
