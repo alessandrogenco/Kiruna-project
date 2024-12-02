@@ -846,7 +846,7 @@ function DocumentControl(props) {
             <Col md={4}>
               <ListGroup>
                   {files.map((file, index) => (
-                    <ListGroup.Item key={index}>
+                    <ListGroup.Item key={file.name + index}>
                       <span style={{ paddingTop: '2px', display: 'inline-block' }}>{file.name}</span>
                       <Button variant="danger" size="sm" onClick={() => handleRemoveFile(index)} style={{ float: 'right' }}>Remove</Button>
                     </ListGroup.Item>

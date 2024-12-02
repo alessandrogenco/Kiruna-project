@@ -155,7 +155,7 @@ function DocumentInList(props){
                       {documentLinks && documentLinks.length > 0 ? (
                         documentLinks.map((link, index) => (
                           <ListGroupItem
-                            key={index}
+                            key={link.title + index}
                             className="document-list-item rounded custom-list-group-item mt-2"
                           >
                             <Row>
