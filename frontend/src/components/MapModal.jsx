@@ -240,8 +240,7 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
         onLocationSelect({ type: 'area', geometry: geoJsonString });
         updateDocumentGeoreference('someDocumentId', null, null, geoJsonString); 
 
-      } else {
-        if (geoJsonData) {
+      } else if (geoJsonData) {
           const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: geoJsonData.features });
           onLocationSelect({ type: 'area', geometry: geoJsonString });
           updateDocumentGeoreference('someDocumentId', null, null, geoJsonString); 
@@ -250,7 +249,6 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
           setAlertMessage('Error: Default municipality boundary is unavailable.');
           return;
         }
-      }
     } else if (mode === 'select' && position) {
       onLocationSelect({ type: 'select', coordinates: position });
       updateDocumentGeoreference('someDocumentId', position[0], position[1], null); 
