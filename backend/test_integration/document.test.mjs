@@ -497,3 +497,15 @@ describe('GET /api/documents/scales', () => {
     });
   
 });
+
+describe('GET /api/documents/types', () => {
+    test('Should return 200 and a list of types', async () => {
+    
+      const response = await request(app).get('/api/documents/types');
+  
+      expect(response.status).toBe(200);
+  
+      expect(response.body).toEqual([{"name": "Informative"}, {"name": "research"}, {"name": "summary"}]);
+    });
+  
+});
