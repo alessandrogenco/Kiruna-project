@@ -52,8 +52,7 @@
   padding: 15px 45px;
   text-align: center;
   border: none;
-  transition: 0.5s;
-  background-size: 200% auto;        
+  transition: 0.5s;      
   font-weight: 700;
   border-radius: 30px;
   display: block; /* Assicura che il pulsante sia trattato come un blocco */

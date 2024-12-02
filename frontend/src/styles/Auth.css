@@ -106,9 +106,8 @@ input.form-control-custom {
     color: #ffffff;
     background-color: transparent;
     width: 100%; /* Ensure input width is consistent */
-}
-
-.form-control-custom {
     -webkit-appearance: none;
     appearance: none; /* Remove default browser appearance */
 }
+
+
