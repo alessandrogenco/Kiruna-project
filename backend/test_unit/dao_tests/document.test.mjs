@@ -408,3 +408,26 @@ describe('Show Stakeholders', () => {
         await expect(documentDao.showStakeholders()).rejects.toThrow('Database error: Failed to get stakeholders');
     });
 });
+
+describe('Show Scales', () => {
+    test('Successfully retrieves a list of scales', async () => {
+        const mockResult = [{name: "1:10000"}, {name: "large"}, {name: "small"}];
+        
+        const mockAll = jest.spyOn(db, "all").mockImplementation((sql, params, callback) => {
+            callback(null, mockResult);
+        });
+
+        const result = await documentDao.showScales();
+        expect(result).toEqual(mockResult);
+    });
+
+    test('Throws error if there is a database error', async () => {
+
+        const mockAll = jest.spyOn(db, "all").mockImplementation((sql, params, callback) => {
+            callback(new Error('Failed to get scales'), null);
+        });
+
+        await expect(documentDao.showScales()).rejects.toThrow('Database error: Failed to get scales');
+    });
+});
+
