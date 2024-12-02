@@ -542,7 +542,7 @@ class DocumentDao{
             }
           });
         });
-      };  //const id = generateNumericId(); 
+      };  
       Promise.all([
         checkAndAddStakeholders(stakeholders),
         checkAndAddScale(scale),
