@@ -677,3 +677,26 @@ describe('GET /api/documents/stakeholders', () => {
         });      
     });
 });
+
+describe('GET /api/documents/scales', () => {
+    test('Should return 200 and a list of scales', async () => {
+      const scales = [{"name": "1:10000"}, {"name": "large"}, {"name": "small"}];
+      DocumentDao.prototype.showScales.mockResolvedValue(scales);
+
+      const response = await request(app).get('/api/documents/scales');
+  
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(scales);
+    });
+  
+    test('Should return 500 if there is an internal server error', async () => {
+        DocumentDao.prototype.showScales.mockRejectedValue(new Error("Database error"));
+  
+        const response = await request(app).get('/api/documents/scales');
+    
+        expect(response.status).toBe(500);
+        expect(response.body).toEqual({
+            message: 'Database error'
+        });      
+    });
+});
