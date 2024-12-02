@@ -772,6 +772,37 @@ app.post('/api/updateDocumentGeoreference', async (req, res) => {
       res.status(500).json({ message: 'Failed to fetch georeferenced locations', error: error.message });
     }
   });
+
+  app.get('/api/getDocumentLocation/:id', async (req, res) => {
+    const documentId = req.params.id; 
+
+    try {
+        if (!documentId) {
+            return res.status(400).json({ message: 'Document ID is required' });
+        }
+
+        const documentLocation = await new Promise((resolve, reject) => {
+            db.get(
+                `SELECT id, title, lat, lon, area, description FROM Documents WHERE id = ? AND (lat IS NOT NULL OR area IS NOT NULL)`,
+                [documentId],
+                (err, row) => {
+                    if (err) reject(err);
+                    resolve(row);
+                }
+            );
+        });
+
+        if (!documentLocation) {
+            return res.status(404).json({ message: 'No georeferenced location found for the specified document' });
+        }
+
+        res.status(200).json(documentLocation);
+    } catch (error) {
+        console.error('Error fetching georeferenced location:', error.message);
+        res.status(500).json({ message: 'Failed to fetch georeferenced location', error: error.message });
+    }
+});
+
   
   
   

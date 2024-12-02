@@ -87,41 +87,89 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
         // Add existing georeferencing points/areas to the map
         if (existingGeoreferencingData) {
           existingGeoreferencingData.forEach((item) => {
-            if (item.type === 'point') {
-              const existingMarker = new mapboxgl.Marker({ color: '#ff5733' })
-                .setLngLat([item.coordinates[1], item.coordinates[0]]) // [longitude, latitude]
-                .addTo(map.current);
+              // Check if lat and lon are valid numbers
+              if (item.lat && item.lon && !isNaN(item.lat) && !isNaN(item.lon)) {
+                  const coordinates = [parseFloat(item.lon), parseFloat(item.lat)];
+  
+                  if (item.area) {
+                      try {
+                          const areaGeoJson = JSON.parse(item.area);
+  
+                          // Check if the GeoJSON is correctly structured
+                          if (areaGeoJson.type === 'FeatureCollection' && Array.isArray(areaGeoJson.features)) {
+                              areaGeoJson.features.forEach((feature) => {
 
-              existingMarker.getElement().addEventListener('click', () => {
-                if (mode === 'select') {
-                  setPosition([item.coordinates[0], item.coordinates[1]]);
-                  setAlertMessage('Selected an existing point.');
-                }
-              });
-            } else if (item.type === 'area') {
-              const polygon = turf.polygon(item.geometry.coordinates);
-              const sourceId = `area-${item.id}`;
-              map.current.addSource(sourceId, { type: 'geojson', data: polygon });
+                                  // Check if feature is a Polygon and has valid coordinates
+                                  if (feature.geometry && feature.geometry.type === 'Polygon') {
+                                      const polygonCoordinates = feature.geometry.coordinates;
+  
+                                      if (polygonCoordinates && Array.isArray(polygonCoordinates) && polygonCoordinates.length > 0) {
+                                          
+                                          polygonCoordinates.forEach((ring) => {
 
-              map.current.addLayer({
-                id: sourceId,
-                type: 'fill',
-                source: sourceId,
-                paint: {
-                  'fill-color': '#ff5733',
-                  'fill-opacity': 0.5,
-                },
-              });
-
-              map.current.on('click', sourceId, () => {
-                if (mode === 'select') {
-                  setPosition(item.geometry.coordinates);
-                  setAlertMessage('Selected an existing area.');
-                }
-              });
-            }
+                                            if (ring[0][0] !== ring[ring.length - 1][0] || ring[0][1] !== ring[ring.length - 1][1]) {
+                                              ring.push(ring[0]); 
+                                          }
+                                          });
+  
+                                          // Creating a turf polygon to handle the geometry properly
+                                          const polygon = turf.polygon(polygonCoordinates);
+  
+                                          // Add this polygon to the map
+                                          const sourceId = `area-${item.id}`;
+                                          if (map.current) {
+                                              map.current.addSource(sourceId, {
+                                                  type: 'geojson',
+                                                  data: polygon,
+                                              });
+  
+                                              map.current.addLayer({
+                                                  id: sourceId,
+                                                  type: 'fill',
+                                                  source: sourceId,
+                                                  paint: {
+                                                      'fill-color': '#ff5733',
+                                                      'fill-opacity': 0.5,
+                                                  },
+                                              });
+  
+                                              map.current.on('click', sourceId, () => {
+                                                  if (mode === 'select') {
+                                                      setPosition(item.geometry.coordinates);
+                                                      setAlertMessage('Selected an existing area.');
+                                                  }
+                                              });
+                                          }
+                                      } else {
+                                          console.warn(`Invalid coordinates for Polygon in document ${item.id}:`, polygonCoordinates);
+                                      }
+                                  } else {
+                                      console.warn(`Invalid geometry type for feature ${feature.id}:`, feature.geometry.type);
+                                  }
+                              });
+                          } else {
+                              console.warn(`Invalid GeoJSON format for document ${item.id}:`, areaGeoJson);
+                          }
+                      } catch (err) {
+                          console.error('Error parsing area GeoJSON for document', item.id, err);
+                      }
+                  } else {
+                      const pointMarker = new mapboxgl.Marker({ color: '#ff5733' })
+                          .setLngLat(coordinates)
+                          .addTo(map.current);
+  
+                      pointMarker.getElement().addEventListener('click', () => {
+                          if (mode === 'select') {
+                              setPosition([item.lat, item.lon]);
+                              setAlertMessage('Selected an existing point.');
+                          }
+                      });
+                  }
+              } else {
+                  console.warn(`Invalid lat/lon for document ${item.id}:`, item);
+              }
           });
-        }
+      }
       });
 
       // Initialize Mapbox Draw

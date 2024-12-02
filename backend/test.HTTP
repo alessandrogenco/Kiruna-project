@@ -221,3 +221,7 @@ Content-Type: application/json
   "lat": 67.123456,
   "lon": 20.987654
 }
+
+### Fetch georeferenced location for a valid document ID
+GET http://localhost:3001/api/getDocumentLocation/7
+Content-Type: application/json
