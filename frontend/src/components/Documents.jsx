@@ -12,7 +12,6 @@ function Documents({ documents, setDocuments }) {
   const [showFormModal, setShowFormModal] = useState(false); // State to control the form modal
   const [searchQuery, setSearchQuery] = useState(''); // State for search query
   const [selectedArea, setSelectedArea] = useState('');
-  const [message, setMessage] = useState(''); // Add this line
   const [newDocument, setNewDocument] = useState({
     title: '',
     stakeholders: '',
@@ -58,10 +57,9 @@ function Documents({ documents, setDocuments }) {
         setDocuments((prevDocuments) => [...prevDocuments, addedDocument]);
         setNewDocument({ title: '', stakeholders: '', scale: '', date: '', type: '', connections: '', language: '', pages: '', lat: '', lon: '', area:'', description: '' });
         setShowFormModal(false);
-        setMessage('Document added successfully!');
     } catch (error) {
         console.error('Error adding document:', error);
-        setMessage(error.message);
+
     }
   };
 
@@ -103,11 +101,9 @@ function Documents({ documents, setDocuments }) {
       await deleteDocument(selectedDocument.id);
       setDocuments((prevDocuments) => prevDocuments.filter((doc) => doc.id !== selectedDocument.id));
       setSelectedDocument(null);
-      setMessage('Document deleted successfully!');
       setShowFormModal(false);
     } catch (error) {
       console.error('Error deleting document:', error);
-      setMessage('Error deleting document.');
     }
   };
 
@@ -236,10 +232,8 @@ const handleUpdateDocument = async () => {
 
     setShowFormModal(false);
     setSelectedDocument(null);
-    setMessage('Document updated successfully!');
   } catch (error) {
     console.error('Error updating document:', error);
-    setMessage('Error updating document.');
   }
 };
 
