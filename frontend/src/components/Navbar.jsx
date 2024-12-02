@@ -37,13 +37,13 @@ function AppNavbar({ isLoggedIn, handleLogout }) {
             </Nav>
             <span className="navbar-text ms-auto">
               {isMobile ? (
-                <span
-                  className="login-logout-text"
+                <button
+                  className="btn-as-label"
                   onClick={handleLoginClick}
                   style={{ cursor: 'pointer', color: 'white' }}
                 >
                   {isLoggedIn ? 'Logout' : 'Login'}
-                </span>
+                </button>
               ) : (
                 <button onClick={handleLoginClick} className="btn btn-outline-light">
                   {isLoggedIn ? 'Logout' : 'Login'}
