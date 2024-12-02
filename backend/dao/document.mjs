@@ -1,11 +1,7 @@
 
 import db from '../db/db.mjs';
 
-/*function generateNumericId() {
-    const timestamp = Date.now(); // Current timestamp
-    const randomNum = Math.floor(Math.random() * 1000); // Random number between 0 and 999
-    return `${timestamp}${randomNum}`; // Combine timestamp and random number
-  }*/
+
 
 class DocumentDao{
 
@@ -133,7 +129,7 @@ class DocumentDao{
           });
         });
       };
-            //const id = generateNumericId(); 
+
             Promise.all([
                 checkAndAddStakeholders(stakeholders),
                 checkAndAddScale(scale),
@@ -603,7 +599,7 @@ class DocumentDao{
     
             db.run(deleteDocument, [id], function(err) {
                 if (err) {
-                    //console.error('Database error while deleting document:', err.message);
+                    
                     return reject(new Error('Database error: ' + err.message));
                 }
     
