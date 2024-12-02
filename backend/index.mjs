@@ -376,47 +376,6 @@ app.put('/api/links', async (req, res) => {
 });
 
 
-
-
-
-// app.post('/api/updateDocument', async (req, res) => {
-//     console.log("Data received by /api/updateDocument:", req.body); // Log dei dati ricevuti
-
-//     const { id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description } = req.body;
-//     console.log("Received document update data:", req.body);
-    
-//     // Verifica che i campi necessari siano presenti
-//     if (!id || !title) {
-//         return res.status(400).json({ message: "Missing required fields" });
-//     }
-
-//     try {
-//         // Check if area is empty and lat/lon are provided
-//         if(area.trim() === '' && lat && lon){
-//             // Check if lat and lon are valid
-//             if ((lat < 67.3562 || lat > 69.0599) || (lon < 17.8998 || lon > 23.2867)) {
-//                 throw new Error("Invalid parameters");
-//             }
-//         }
-        
-//         // Check if area is not empty and lat or lon are provided
-//         if(area.trim() !== '' && (lat || lon)){
-//             throw new Error("Invalid parameters");
-//         }
-//         if (!area && (!lat ^ !lon)) {
-//             throw new Error("Missing required fields" );
-//         }
-
-//         const result = await documentDao.updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description);
-//         res.status(200).json(result); // Risposta positiva con il documento aggiornato
-//     } catch (error) {
-//         console.error("Error in /api/updateDocument:", error); // Log dettagliato per debug
-//         res.status(400).json({ message: error.message }); // Risposta con messaggio di errore
-//     }
-// });
-
-//-------------------------------
-
 app.post('/api/updateDocument', async (req, res) => {
     console.log("Data received by /api/updateDocument:", req.body);
 
@@ -448,10 +407,10 @@ app.post('/api/updateDocument', async (req, res) => {
 //-------------------------------
 
 app.post('/api/deleteDocument', async (req, res) => {
-    //console.log("Data received by /api/deleteDocument:", req.body); // Log dei dati ricevuti
+   
 
     const { id } = req.body;
-    //console.log("Received document ID:", id);
+    
     
     if (!id) {
         return res.status(400).json({ message: "ID is required." });
@@ -469,37 +428,7 @@ app.post('/api/deleteDocument', async (req, res) => {
 
 
 app.use(bodyParser.raw({ type: 'application/octet-stream', limit: '100mb' }));
-/*
-//Upload files
-app.post('/api/upload', async (req, res) => {
-    try {
-        const { documentId, resourceType, description } = req.query;
 
-        console.log("documentId:", documentId);
-        console.log("resourceType:", resourceType);
-        console.log("description:", description);
-        console.log("fileData (body):", req.body);
-
-        if (!documentId || !resourceType || !description || !req.body) {
-            return res.status(400).json({ message: 'Missing required fields' });
-        }
-
-        const resource = {
-            resourceType,
-            fileData: req.body, 
-            description
-        };
-
-        const result = await fileUploadDao.addOriginalResource(documentId, resource);
-        res.status(201).json({
-            message: 'File uploaded successfully',
-            resourceId: result.resourceId
-        });
-    } catch (error) {
-        console.error('Error in /api/upload:', error.message);
-        res.status(500).json({ message: 'Internal server error', error: error.message });
-    }
-});*/
 
 app.post('/api/upload', upload.array('resourceFiles'), async (req, res) => {
     try {
@@ -521,120 +450,7 @@ app.post('/api/upload', upload.array('resourceFiles'), async (req, res) => {
     }
   });
 
-///--------------------------------------------
 
-// app.post('/api/upload2', (req, res) => {
-
-//     console.log('Request headers:', req.headers);
-
-//     const form = new multiparty.Form();
-    
-//     form.parse(req, async (err, fields, files) => {
-//         if (err) {
-//             return res.status(400).json({ message: 'Error parsing form data', error: err.message });
-//         }
-
-//         console.log('Fields:', fields); 
-//         console.log('Files:', files);   
-
-//         const documentId = req.query.documentId;
-//         if (!documentId) {
-//             return res.status(400).json({ message: 'Missing documentId' });
-//         }
-
-//         if (!files.files || !Array.isArray(files.files)) {
-//             return res.status(400).json({ message: 'Missing or invalid files array' });
-//         }
-
-//         const resourceType = fields.resourceType || ['default'];
-
-//         const results = await Promise.all(
-//             files.files.map(async (file, index) => {
-//                 const resource = {
-//                     resourceType: resourceType[index] || resourceType[0], 
-//                     fileData: file[0], 
-//                     description: file[0].originalFilename || `File ${Date.now()}`, 
-//                 };
-
-//                 try {
-//                     const result = await fileUploadDao.addOriginalResource(documentId, resource);
-//                     return result;
-//                 } catch (error) {
-//                     console.error('Error saving resource:', error);
-//                     throw error;
-//                 }
-//             })
-//         );
-
-//         res.status(201).json({
-//             message: 'Files uploaded successfully',
-//             resources: results.map(result => result.resourceId),
-//         });
-//     });
-// });
-
-//------------------------------------------------------
-
-// Download file 
-// app.get('/api/download/:resourceId', async (req, res) => {
-//     try {
-//         const { resourceId } = req.params;
-
-//         if (!resourceId) {
-//             return res.status(400).json({ message: 'Missing resourceId' });
-//         }
-
-//         const file = await fileUploadDao.getOriginalResourceById(resourceId);
-
-//         if (!file) {
-//             return res.status(404).json({ message: 'File not found' });
-//         }
-
-//         const { fileData, description, resourceType } = file;
-
-//         if (!resourceType || !/^[a-z]+\/[a-z0-9.+-]+$/i.test(resourceType)) {
-//             console.error('Invalid or missing MIME type:', resourceType);
-//             return res.status(500).json({ message: 'Invalid or missing MIME type' });
-//         }
-
-//         if (!fileData) {
-//             console.error('Missing file data');
-//             return res.status(500).json({ message: 'Missing file data' });
-//         }
-
-//         res.setHeader('Content-Disposition', `attachment; filename="${description}"`);
-//         res.setHeader('Content-Type', resourceType);
-//         res.status(200).send(fileData); 
-//     } catch (error) {
-//         console.error('Error in /api/download:', error.message);
-//         res.status(500).json({ message: 'Internal server error', error: error.message });
-//     }
-// });
-
-
-//Delete file
-// app.delete('/api/delete', async (req, res) => {
-//     const { documentId, description } = req.query;
-
-//     if (!documentId || !description) {
-//         return res.status(400).json({ message: 'Missing documentId or description' });
-//     }
-
-//     try {
-//         const result = await fileUploadDao.deleteFile(documentId, description);
-
-//         if (result.message === 'File deleted successfully from database') {
-//             res.status(200).json({ message: 'File deleted successfully from the database' });
-//         } 
-//         else 
-//         {
-//             res.status(404).json({ message: 'File not found in the database' });
-//         }
-//     } catch (error) {
-//         console.error('Error in /api/delete:', error.message);
-//         res.status(500).json({ message: 'Internal server error', error: error.message });
-//     }
-// });
 
 
 //Get files
