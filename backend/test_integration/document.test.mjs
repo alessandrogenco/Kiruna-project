@@ -2,9 +2,7 @@ import { describe, test, expect, jest, afterEach } from "@jest/globals";
 import { app, server } from "../index.mjs";
 import request from "supertest";
 import { cleanup } from "../db/cleanup.mjs";
-// import the dao
-import LoginDao from "../dao/login.mjs";
-import documentDao from "../dao/document.mjs";
+
 
 // define baseurl
 const baseURL = "/api/";

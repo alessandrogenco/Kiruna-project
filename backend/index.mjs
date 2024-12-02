@@ -7,7 +7,6 @@ import LoginDao from './dao/login.mjs';
 import DocumentDao from './dao/document.mjs';
 import FileUploadDao from './dao/fileUpload.mjs';
 import bodyParser from 'body-parser';
-import multiparty from 'multiparty';
 
 import path from 'path'; 
 import fs from 'fs';
@@ -63,7 +62,6 @@ const storage = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const filename = file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname);
 
         cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
     }

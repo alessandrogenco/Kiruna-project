@@ -134,8 +134,6 @@ describe('PUT /api/addDescription', () => {
 
     test('should return 400 error if title is empty', async () => {
         const mockId = 1;
-        const mockTitle = "";
-        const mockDescription = "Description for the document";
 
         // Send PUT request
         const response = await request(app)

@@ -1,9 +1,7 @@
-import { describe, test, expect, beforeEach, afterEach } from "@jest/globals";
-import { app, server } from "../index.mjs";
-import request from "supertest";
+import { describe, test, expect, afterEach } from "@jest/globals";
+import { server } from "../index.mjs";
 import DocumentDao from "../dao/document.mjs";
 import { cleanup } from "../db/cleanup.mjs";
-import db from "../db/db.mjs";
 
 const documentDao = new DocumentDao();
 

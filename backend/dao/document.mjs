@@ -1,6 +1,5 @@
 
 import db from '../db/db.mjs';
-import { v4 as uuidv4 } from 'uuid';
 
 /*function generateNumericId() {
     const timestamp = Date.now(); // Current timestamp
