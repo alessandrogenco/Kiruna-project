@@ -664,7 +664,7 @@ function DocumentControl(props) {
                     min="1800"
                     max={new Date().getFullYear()}
                     onKeyDown={(e) => {
-                      if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
+                      if (!/\d/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
                         e.preventDefault();
                       }
                     }}
@@ -682,7 +682,7 @@ function DocumentControl(props) {
                     max="12"
                     disabled={!formData.issuanceDate.split('-')[0]  || formData.issuanceDate.split('-')[0] < 1800}
                     onKeyDown={(e) => {
-                      if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
+                      if (!/\d/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
                         e.preventDefault();
                       }
                     }}
@@ -699,7 +699,7 @@ function DocumentControl(props) {
                     max={getDaysInMonth(formData.issuanceDate.split('-')[0], formData.issuanceDate.split('-')[1])}
                     disabled={!formData.issuanceDate.split('-')[1]  || formData.issuanceDate.split('-')[1] < 1}
                     onKeyDown={(e) => {
-                      if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
+                      if (!/\d/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
                         e.preventDefault();
                       }
                     }}
