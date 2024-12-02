@@ -385,3 +385,26 @@ describe("Update document test", () => {
         mockRun.mockRestore();
     });
 });
+
+describe('Show Stakeholders', () => {
+    test('Successfully retrieves a concatenated list of stakeholders', async () => {
+        const mockResult = { stakeholders: 'LKAB - Kiruna Kommun' };
+
+        const mockGet = jest.spyOn(db, "get").mockImplementation((sql, params, callback) => {
+            callback(null, mockResult);
+        });
+
+        const result = await documentDao.showStakeholders();
+        expect(result).toBe('LKAB - Kiruna Kommun');
+    });
+
+    test('Throws error if there is a database error', async () => {
+        const mockError = new Error('Failed to get stakeholders');
+
+        const mockGet = jest.spyOn(db, "get").mockImplementation((sql, params, callback) => {
+            callback(new Error('Failed to get stakeholders'), null);
+        });
+
+        await expect(documentDao.showStakeholders()).rejects.toThrow('Database error: Failed to get stakeholders');
+    });
+});
