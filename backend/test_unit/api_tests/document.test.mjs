@@ -1,6 +1,7 @@
 import { describe, test, expect, jest, afterEach, afterAll } from "@jest/globals";
 import { app, server } from "../../index.mjs";
 import request from "supertest";
+import db from "../../db/db.mjs";
 import DocumentDao from "../../dao/document.mjs";
 
 
@@ -721,5 +722,57 @@ describe('GET /api/documents/types', () => {
         expect(response.body).toEqual({
             message: 'Database error'
         });      
+    });
+});
+
+describe('POST /api/updateDocumentGeoreference', () => {
+    test('should return 400 if document ID is not provided', async () => {
+      const response = await request(app)
+        .post('/api/updateDocumentGeoreference')
+        .send({ lat: 68.0, lon: 20.0 });
+  
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe('Document ID is required');
+    });
+  
+    test('should return 400 if no georeferencing data is provided', async () => {
+      const response = await request(app)
+        .post('/api/updateDocumentGeoreference')
+        .send({ id: 1 });
+  
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe('Georeferencing data (lat/lon/area) is required');
+    });
+  
+    test('should update georeferencing with lat and lon', async () => {
+      const response = await request(app)
+        .post('/api/updateDocumentGeoreference')
+        .send({ id: 1, lat: 68.0, lon: 20.0 });
+  
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe('Georeferencing updated successfully');
+    });
+  
+    test('should update georeferencing with area', async () => {
+      const response = await request(app)
+        .post('/api/updateDocumentGeoreference')
+        .send({ id: 1, area: 'New Area' });
+  
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe('Georeferencing updated successfully');
+    });
+  
+    test('should handle database error when updating georeferencing', async () => {
+      jest.spyOn(db,'run').mockImplementationOnce((query, params, callback) => {
+        callback(new Error('Database error'));
+      });
+  
+      const response = await request(app)
+        .post('/api/updateDocumentGeoreference')
+        .send({ id: 1, lat: 68.0, lon: 20.0 });
+  
+      expect(response.status).toBe(500);
+      expect(response.body.message).toBe('Failed to update georeferencing');
+      expect(response.body.error).toBe('Database error');
     });
 });
