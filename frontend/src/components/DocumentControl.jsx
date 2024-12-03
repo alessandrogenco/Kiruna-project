@@ -713,23 +713,7 @@ function DocumentControl(props) {
               <Form.Label className='form-label'>
                 Type <span className="required-asterisk" style={{ color: 'red' }}>*</span>
               </Form.Label>
-              <Form.Control
-                as="select"
-                name="type"
-                placeholder="Select a type"
-                value={formData.type}
-                onChange={handleChange}
-                isInvalid={!!errors.type}
-              >
-              <option value="">Select a type</option>
-                 {typeList.map(type => (
-                <option key={type.name} value={type.name}>
-                  {type.name}
-                </option>
-              ))}
-              <option value="add_new_type">Add a type</option>
-              </Form.Control>
-              {showNewTypeInput && (
+
               <div className="d-flex align-items-center mt-2">
                 <Form.Control
                   type="text"
@@ -743,7 +727,23 @@ function DocumentControl(props) {
                   Add
                 </Button>
               </div>
-            )}
+
+              <Form.Control
+                as="select"
+                name="type"
+                className="mt-2"
+                placeholder="Select a type"
+                value={formData.type}
+                onChange={handleChange}
+                isInvalid={!!errors.type}
+              >
+              <option value="" disabled>Select a type</option>
+                 {typeList.map(type => (
+                <option key={type.name} value={type.name}>
+                  {type.name}
+                </option>
+              ))}
+              </Form.Control>
 
               {errors.type && <Form.Control.Feedback type="invalid">{errors.type}</Form.Control.Feedback>}
 
