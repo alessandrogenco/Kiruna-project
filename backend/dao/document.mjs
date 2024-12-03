@@ -40,42 +40,44 @@ class DocumentDao{
         });
     }
 
+    checkAndAddStakeholders(stakeholders) {
+
+      const stakeholdersArray = stakeholders.split(' - ');
+
+        return Promise.all(stakeholdersArray.map(stakeholder => {
+          return new Promise((resolve, reject) => {
+            const checkQuery = 'SELECT name FROM Stakeholder WHERE name = ?';
+            db.get(checkQuery, [stakeholder], (err, row) => {
+              if (err) {
+                console.error('Database error while checking stakeholders:', err.message);
+                return reject(new Error('Database error: ' + err.message));
+              }
+              if (row) {
+                resolve({ message: 'Stakeholder already exists.' });
+                console.log('Stakeholder already exists.');
+              } else {
+                const addQuery = 'INSERT INTO Stakeholder (name) VALUES (?)';
+                db.run(addQuery, [stakeholder], function (err) {
+                  if (err) {
+                    console.error('Database error while adding stakeholders:', err.message);
+                    return reject(new Error('Database error: ' + err.message));
+                  }
+                  resolve({ message: 'Stakeholder added successfully.' });
+                  console.log('Stakeholder added successfully.');
+                });
+              }
+            });
+          });
+        }));
+      };
+
     //add document
     addDocument(title, stakeholders, scale, date, type, connections, language, pages, lat, lon, area, description) {
         return new Promise((resolve, reject) => {
             if (!title || title.trim() === "") {
                 return reject(new Error('Title cannot be empty.'));
             }
-            const checkAndAddStakeholders = (stakeholders) => {
-
-              const stakeholdersArray = stakeholders.split(' - ');
-
-                return Promise.all(stakeholdersArray.map(stakeholder => {
-                  return new Promise((resolve, reject) => {
-                    const checkQuery = 'SELECT name FROM Stakeholder WHERE name = ?';
-                    db.get(checkQuery, [stakeholder], (err, row) => {
-                      if (err) {
-                        console.error('Database error while checking stakeholders:', err.message);
-                        return reject(new Error('Database error: ' + err.message));
-                      }
-                      if (row) {
-                        resolve({ message: 'Stakeholder already exists.' });
-                        console.log('Stakeholder already exists.');
-                      } else {
-                        const addQuery = 'INSERT INTO Stakeholder (name) VALUES (?)';
-                        db.run(addQuery, [stakeholder], function (err) {
-                          if (err) {
-                            console.error('Database error while adding stakeholders:', err.message);
-                            return reject(new Error('Database error: ' + err.message));
-                          }
-                          resolve({ message: 'Stakeholder added successfully.' });
-                          console.log('Stakeholder added successfully.');
-                        });
-                      }
-                    });
-                  });
-                }));
-              };
+            
     
 
     const checkAndAddScale = (scale) => {
