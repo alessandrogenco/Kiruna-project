@@ -836,3 +836,56 @@ describe('GET /api/getDocumentLocations', () => {
       expect(response.body.error).toBe('Database error');
     });
 });
+
+describe('GET /api/getDocumentLocation/:id', () => {
+    test('should return 404 if no georeferenced location is found for the specified document', async () => {
+      const documentId = '1';
+  
+      jest.spyOn(db,'get').mockImplementationOnce((query, params, callback) => {
+        callback(null, null);
+      });
+  
+      const response = await request(app)
+        .get(`/api/getDocumentLocation/${documentId}`);
+  
+      expect(response.status).toBe(404);
+      expect(response.body.message).toBe('No georeferenced location found for the specified document');
+    });
+  
+    test('should return 200 and document location if georeferenced location is found', async () => {
+      const documentId = '1';
+      const mockLocation = {
+        id: '1',
+        title: 'Test Document',
+        lat: 68.0,
+        lon: 20.0,
+        area: 'Test Area',
+        description: 'Test Description'
+      };
+  
+      jest.spyOn(db,'get').mockImplementationOnce((query, params, callback) => {
+        callback(null, mockLocation);
+      });
+  
+      const response = await request(app)
+        .get(`/api/getDocumentLocation/${documentId}`);
+  
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(mockLocation);
+    });
+  
+    test('should return 500 if there is a database error', async () => {
+      const documentId = '1';
+  
+      jest.spyOn(db,'get').mockImplementationOnce((query, params, callback) => {
+        callback(new Error('Database error'));
+      });
+  
+      const response = await request(app)
+        .get(`/api/getDocumentLocation/${documentId}`);
+  
+      expect(response.status).toBe(500);
+      expect(response.body.message).toBe('Failed to fetch georeferenced location');
+      expect(response.body.error).toBe('Database error');
+    });
+});
