@@ -38,17 +38,23 @@ function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) 
         }
     };
 
-    const getDocumentTypes = async () => {
+    async function getDocumentTypes() {
         try {
-            const types = await API.getDocumentTypes(); // New API call to fetch types
-            setDocumentTypes(types);
+            const response = await fetch('http://localhost:3001/api/documents/types'); 
+            if (!response.ok) {
+                throw new Error(`Failed to fetch document types: ${response.statusText}`);
+            }
+
+            const data = await response.json(); 
+            setDocumentTypes(data);
+            console.log("Fetched document types:", data); 
+            return data;
         } catch (error) {
-            console.error('Error fetching document types:', error);
+            console.error("Error fetching document types:", error);
+            throw error;
         }
-    };
-
-
-
+    }
+    
 
     useEffect(() => {
         getDocuments();
@@ -146,8 +152,8 @@ function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) 
                         >
                             <option value="">All Types</option>
                             {documentTypes.map((type, index) => (
-                                <option key={index} value={type}>
-                                    {type}
+                                <option key={type.name+index} value={type.name}>
+                                    {type.name}
                                 </option>
                             ))}
                         </Form.Select>
