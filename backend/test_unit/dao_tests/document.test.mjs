@@ -499,3 +499,51 @@ describe('Check and add Stakeholders', () => {
       });
 
 });
+
+describe('Check and add Scale', () => {
+    test('Scale already exists', async () => {
+      jest.spyOn(db,'get').mockImplementation((query, params, callback) => {
+        callback(null, { name: " 1 : 1,000" });
+      });
+      
+      const result = await documentDao.checkAndAddScale("1 : 1,000");
+      
+      expect(result).toEqual({ message: 'Scale already exists.' });
+    });
+
+    test('should return a database error while checking scales', async () => {
+        jest.spyOn(db,'get').mockImplementation((query, params, callback) => {
+          callback(new Error("Failed to access the scale table"), null);
+        });
+        
+        await expect(documentDao.checkAndAddScale("1 : 1,000")).rejects.toThrow('Database error: Failed to access the scale table');
+
+    });
+
+    test('Scale added successfully', async () => {
+        jest.spyOn(db,'get').mockImplementation((query, params, callback) => {
+          callback(null, null);
+        });
+        jest.spyOn(db,'run').mockImplementation((query, params, callback) => {
+            callback(null);
+        });
+
+        const result = await documentDao.checkAndAddScale("1 : 1,000");
+        
+        expect(result).toEqual({ message: 'Scale added successfully.' });
+      });
+  
+      test('should return a database error while adding scales', async () => {
+          jest.spyOn(db,'get').mockImplementation((query, params, callback) => {
+            callback(null, null);
+          });
+          jest.spyOn(db,'run').mockImplementation((query, params, callback) => {
+            callback(new Error("Failed to access the scale table"));
+          });
+          
+          await expect(documentDao.checkAndAddScale("1 : 1,000")).rejects.toThrow('Database error: Failed to access the scale table');
+  
+      });
+
+});
+
