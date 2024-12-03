@@ -71,16 +71,7 @@ class DocumentDao{
         }));
       };
 
-    //add document
-    addDocument(title, stakeholders, scale, date, type, connections, language, pages, lat, lon, area, description) {
-        return new Promise((resolve, reject) => {
-            if (!title || title.trim() === "") {
-                return reject(new Error('Title cannot be empty.'));
-            }
-            
-    
-
-    const checkAndAddScale = (scale) => {
+      checkAndAddScale(scale) {
         return new Promise((resolve, reject) => {
           const checkQuery = 'SELECT name FROM Scale WHERE name = ?';
           db.get(checkQuery, [scale], (err, row) => {
@@ -104,7 +95,18 @@ class DocumentDao{
             }
           });
         });
-    };
+      }
+
+    //add document
+    addDocument(title, stakeholders, scale, date, type, connections, language, pages, lat, lon, area, description) {
+        return new Promise((resolve, reject) => {
+            if (!title || title.trim() === "") {
+                return reject(new Error('Title cannot be empty.'));
+            }
+            
+    
+
+    
 
       const checkAndAddType = (type) => {
         return new Promise((resolve, reject) => {
