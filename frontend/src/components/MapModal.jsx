@@ -7,7 +7,6 @@ import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import * as turf from '@turf/turf';
 
-
 const MapModal = ({ show, handleClose, onLocationSelect }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
@@ -31,12 +30,12 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
       const response = await fetch('http://localhost:3001/api/getDocumentLocations');
       console.log('Response Status:', response.status);
       const text = await response.text();
-      
-      if (!response.ok) throw new Error('Failed to fetch document locations');
-      const data = JSON.parse(text); 
-      console.log(data); 
 
-      setExistingGeoreferencingData(data); 
+      if (!response.ok) throw new Error('Failed to fetch document locations');
+      const data = JSON.parse(text);
+      console.log(data);
+
+      setExistingGeoreferencingData(data);
     } catch (error) {
       console.error('Error fetching document locations:', error.message);
       alert('Error fetching document locations: ' + error.message);
@@ -87,119 +86,112 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
         // Add existing georeferencing points/areas to the map
         if (existingGeoreferencingData) {
           existingGeoreferencingData.forEach((item) => {
-              // Check if lat and lon are valid numbers
-              console.log(item);
-              if (item.lat && item.lon && !isNaN(item.lat) && !isNaN(item.lon)) {
-                  const coordinates = [parseFloat(item.lon), parseFloat(item.lat)];
-  
-                  if (item.area) {
-                      try {
-                          const areaGeoJson = JSON.parse(item.area);
-  
-                          // Check if the GeoJSON is correctly structured
-                          if (areaGeoJson.type === 'FeatureCollection' && Array.isArray(areaGeoJson.features)) {
-                              areaGeoJson.features.forEach((feature) => {
+            // Check if lat and lon are valid numbers
+            console.log(item);
+            if (item.lat && item.lon && !isNaN(item.lat) && !isNaN(item.lon)) {
+              const coordinates = [parseFloat(item.lon), parseFloat(item.lat)];
 
-                                  // Check if feature is a Polygon and has valid coordinates
-                                  if (feature.geometry && feature.geometry.type === 'Polygon') {
-                                      const polygonCoordinates = feature.geometry.coordinates;
-  
-                                      if (polygonCoordinates && Array.isArray(polygonCoordinates) && polygonCoordinates.length > 0) {
-                                          
-                                          polygonCoordinates.forEach((ring) => {
+              if (item.area) {
+                try {
+                  const areaGeoJson = JSON.parse(item.area);
 
-                                            if (ring[0][0] !== ring[ring.length - 1][0] || ring[0][1] !== ring[ring.length - 1][1]) {
-                                              ring.push(ring[0]); 
-                                          }
-                                          });
-  
-                                          // Creating a turf polygon to handle the geometry properly
-                                          const polygon = turf.polygon(polygonCoordinates);
-  
-                                          // Add this polygon to the map
-                                          const sourceId = `area-${item.id}`;
-                                          if (map.current) {
-                                              map.current.addSource(sourceId, {
-                                                  type: 'geojson',
-                                                  data: polygon,
-                                              });
-  
-                                              map.current.addLayer({
-                                                  id: sourceId,
-                                                  type: 'fill',
-                                                  source: sourceId,
-                                                  paint: {
-                                                      'fill-color': '#ff5733',
-                                                      'fill-opacity': 0.5,
-                                                  },
-                                              });
-  
-                                              map.current.on('click', sourceId, () => {
-                                                  if (mode === 'select') {
-                                                      setPosition(item.geometry.coordinates);
-                                                      setAlertMessage('Selected an existing area.');
-                                                  }
-                                              });
-                                          }
-                                      } else {
-                                          console.warn(`Invalid coordinates for Polygon in document ${item.id}:`, polygonCoordinates);
-                                      }
-                                  } else {
-                                      console.warn(`Invalid geometry type for feature ${feature.id}:`, feature.geometry.type);
-                                  }
-                              });
-                          } else {
-                              console.warn(`Invalid GeoJSON format for document ${item.id}:`, areaGeoJson);
+                  // Check if the GeoJSON is correctly structured
+                  if (areaGeoJson.type === 'FeatureCollection' && Array.isArray(areaGeoJson.features)) {
+                    areaGeoJson.features.forEach((feature) => {
+                      // Check if feature is a Polygon and has valid coordinates
+                      if (feature.geometry && feature.geometry.type === 'Polygon') {
+                        const polygonCoordinates = feature.geometry.coordinates;
+
+                        if (polygonCoordinates && Array.isArray(polygonCoordinates) && polygonCoordinates.length > 0) {
+                          polygonCoordinates.forEach((ring) => {
+                            if (ring[0][0] !== ring[ring.length - 1][0] || ring[0][1] !== ring[ring.length - 1][1]) {
+                              ring.push(ring[0]);
+                            }
+                          });
+
+                          // Creating a turf polygon to handle the geometry properly
+                          const polygon = turf.polygon(polygonCoordinates);
+
+                          // Add this polygon to the map
+                          const sourceId = `area-${item.id}`;
+                          if (map.current) {
+                            map.current.addSource(sourceId, {
+                              type: 'geojson',
+                              data: polygon,
+                            });
+
+                            map.current.addLayer({
+                              id: sourceId,
+                              type: 'fill',
+                              source: sourceId,
+                              paint: {
+                                'fill-color': '#ff5733',
+                                'fill-opacity': 0.5,
+                              },
+                            });
+
+                            map.current.on('click', sourceId, () => {
+                              setPosition(item.geometry.coordinates);
+                              setAlertMessage('Selected an existing area.');
+                            });
                           }
-                      } catch (err) {
-                          console.error('Error parsing area GeoJSON for document', item.id, err);
-                      }
-                  } else {
-                      const iconClass = (() => {
-                        switch (item.type) {
-                          case "Technical":
-                            return "bi bi-gear"; 
-                          case "Design":
-                            return "bi bi-pencil-square"; 
-                          case "Prescriptive":
-                            return "bi bi-alarm";
-                          case "Material effect":
-                            return "bi bi-exclamation-circle";
-                          default:
-                            return "bi bi-person-add"; 
+                        } else {
+                          console.warn(`Invalid coordinates for Polygon in document ${item.id}:`, polygonCoordinates);
                         }
-                      })();
-
-                      const el = document.createElement('div');
-                      //el.className = 'custom-marker';
-                      el.style.width = '30px';
-                      el.style.height = '30px';
-                      el.style.display = 'flex';
-                      el.style.alignItems = 'center';
-                      el.style.justifyContent = 'center';
-                      el.style.backgroundColor = '#CB1E3B';
-                      el.style.borderRadius = '50%';
-                      el.style.border = '2px solid #CB1E3B';
-                      el.style.color = 'white';
-                      el.style.fontSize = '20px';
-                      el.innerHTML = `<i class="${iconClass}"></i>`;
-
-                      const pointMarker = new mapboxgl.Marker(el)
-                      .setLngLat(coordinates)
-                      .addTo(map.current);
-  
-                      pointMarker.getElement().addEventListener('click', () => {
-                          if (mode === 'select') {
-                              setPosition([item.lat, item.lon]);
-                              setAlertMessage('Selected an existing point.');
-                          }
-                      });
+                      } else {
+                        console.warn(`Invalid geometry type for feature ${feature.id}:`, feature.geometry.type);
+                      }
+                    });
+                  } else {
+                    console.warn(`Invalid GeoJSON format for document ${item.id}:`, areaGeoJson);
                   }
+                } catch (err) {
+                  console.error('Error parsing area GeoJSON for document', item.id, err);
+                }
               } else {
-                  console.warn(`Invalid lat/lon for document ${item.id}:`, item);
+                const iconClass = (() => {
+                  switch (item.type) {
+                    case "Technical":
+                      return "bi bi-gear";
+                    case "Design":
+                      return "bi bi-pencil-square";
+                    case "Prescriptive":
+                      return "bi bi-alarm";
+                    case "Material effect":
+                      return "bi bi-exclamation-circle";
+                    default:
+                      return "bi bi-person-add";
+                  }
+                })();
+
+                const el = document.createElement('div');
+                //el.className = 'custom-marker';
+                el.style.width = '30px';
+                el.style.height = '30px';
+                el.style.display = 'flex';
+                el.style.alignItems = 'center';
+                el.style.justifyContent = 'center';
+                el.style.backgroundColor = '#CB1E3B';
+                el.style.borderRadius = '50%';
+                el.style.border = '2px solid #CB1E3B';
+                el.style.color = 'white';
+                el.style.fontSize = '20px';
+                el.innerHTML = `<i class="${iconClass}"></i>`;
+
+                const pointMarker = new mapboxgl.Marker(el)
+                  .setLngLat(coordinates)
+                  .addTo(map.current);
+
+                pointMarker.getElement().addEventListener('click', () => {
+                  setPosition([item.lat, item.lon]);
+                  setAlertMessage('Selected an existing point.');
+                });
               }
+            } else {
+              console.warn(`Invalid lat/lon for document ${item.id}:`, item);
+            }
           });
-      }
+        }
       });
 
       // Initialize Mapbox Draw
@@ -260,61 +252,51 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
   const handleSave = () => {
     if (mode === 'point' && position) {
       onLocationSelect({ type: 'point', coordinates: position });
-      updateDocumentGeoreference('someDocumentId', position[0], position[1], null); 
-    }
-     else if (mode === 'area') {
+      updateDocumentGeoreference('someDocumentId', position[0], position[1], null);
+    } else if (mode === 'area') {
       const drawnFeatures = draw.current.getAll();
 
       if (drawnFeatures.features.length > 0) {
         const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: drawnFeatures.features });
         onLocationSelect({ type: 'area', geometry: geoJsonString });
-        updateDocumentGeoreference('someDocumentId', null, null, geoJsonString); 
-
+        updateDocumentGeoreference('someDocumentId', null, null, geoJsonString);
       } else if (geoJsonData) {
-          const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: geoJsonData.features });
-          onLocationSelect({ type: 'area', geometry: geoJsonString });
-          updateDocumentGeoreference('someDocumentId', null, null, geoJsonString); 
-
-        } else {
-          setAlertMessage('Error: Default municipality boundary is unavailable.');
-          return;
-        }
-    } else if (mode === 'select' && position) {
-      onLocationSelect({ type: 'select', coordinates: position });
-      updateDocumentGeoreference('someDocumentId', position[0], position[1], null); 
-
+        const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: geoJsonData.features });
+        onLocationSelect({ type: 'area', geometry: geoJsonString });
+        updateDocumentGeoreference('someDocumentId', null, null, geoJsonString);
+      } else {
+        setAlertMessage('Error: Default municipality boundary is unavailable.');
+        return;
+      }
     }
 
     handleClose();
   };
 
   const updateDocumentGeoreference = async (id, lat, lon, area) => {
-  
     try {
-      const response = await fetch('http://localhost:3001/api/updateDocumentGeoreference'
-      , {
+      const response = await fetch('http://localhost:3001/api/updateDocumentGeoreference', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ id, lat, lon, area }),
       });
-  
+
       console.log('Response Status:', response.status);
       const result = await response.json();
       console.log('Response Body:', result);
-  
+
       if (!response.ok) {
         throw new Error(result.message || 'Failed to update georeferencing');
       }
-  
+
       alert(result.message);
     } catch (error) {
       console.error('Error updating georeferencing:', error);
       alert('Failed to update georeferencing');
     }
   };
-  
 
   return (
     <Modal show={show} onHide={handleClose} size="lg" centered>
@@ -357,7 +339,7 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
               value={mode}
               onChange={(value) => {
                 setMode(value);
-                if (value === 'point' || value === 'select') {
+                if (value === 'point') {
                   draw.current.deleteAll();
                 }
               }}
@@ -375,13 +357,6 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
                 variant={mode === 'area' ? 'success' : 'outline-success'}
               >
                 Area
-              </ToggleButton>
-              <ToggleButton
-                id="select-mode"
-                value="select"
-                variant={mode === 'select' ? 'success' : 'outline-success'}
-              >
-                Select
               </ToggleButton>
             </ToggleButtonGroup>
           </div>
