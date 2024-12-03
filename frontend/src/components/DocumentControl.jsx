@@ -571,20 +571,8 @@ function DocumentControl(props) {
               padding: '10px',
               backgroundColor: '#f8f9fa',
               }}
-  >
-              {stakeholderList.split(' - ').map((stakeholder) => (
-            <Form.Check
-            key={stakeholder}
-            type="checkbox"
-            label={stakeholder}
-            name="stakeholders"
-            value={stakeholder}
-            checked={formData.stakeholders.split(' - ').includes(stakeholder)}
-            onChange={handleCheckboxChange}
-            className="mb-2"
-            />
-             ))}
-                <div className="d-flex align-items-center mt-2">
+            >
+            <div className="d-flex align-items-center mt-2">
                   <Form.Control
                     type="text"
                     placeholder="Enter new stakeholder"
@@ -597,6 +585,19 @@ function DocumentControl(props) {
                     Add
                   </Button>
                 </div>
+              {stakeholderList.split(' - ').map((stakeholder) => (
+            <Form.Check
+            key={stakeholder}
+            type="checkbox"
+            label={stakeholder}
+            name="stakeholders"
+            value={stakeholder}
+            checked={formData.stakeholders.split(' - ').includes(stakeholder)}
+            onChange={handleCheckboxChange}
+            className="mb-2 mt-2"
+            />
+             ))}
+                
 
 
             </Form.Control>
