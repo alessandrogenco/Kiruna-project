@@ -265,6 +265,46 @@ function ExplorePage(props) {
             .setPopup(popup)
             .addTo(map);
 
+          if (properties.data.area) {
+            
+            const areaGeoJson = JSON.parse(JSON.parse(properties.data.area));
+
+            const layerId = `area-layer-${properties.data.id}`;
+            
+            const polygonSource = {
+              type: 'geojson',
+              data: {
+                type: 'FeatureCollection',
+                features: [{
+                  type: 'Feature',
+                  geometry: {
+                    type: 'Polygon',
+                    coordinates: areaGeoJson.features[0].geometry.coordinates,
+                  },
+                }],
+              },
+            };
+          
+            marker.getElement().addEventListener('mouseenter', () => {
+              map.addSource(layerId, polygonSource);
+
+              map.addLayer({
+                id: layerId,
+                type: 'fill',
+                source: layerId,
+                paint: {
+                  'fill-color': 'rgba(255, 99, 71, 0.5)',
+                  'fill-opacity': 0.5,
+                },
+              });
+            });
+
+            marker.getElement().addEventListener('mouseleave', () => {
+              map.removeLayer(layerId);
+              map.removeSource(layerId);
+            });
+          }
+
           markersArray.push(marker);
         }
       });
