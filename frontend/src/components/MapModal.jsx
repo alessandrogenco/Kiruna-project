@@ -88,6 +88,7 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
         if (existingGeoreferencingData) {
           existingGeoreferencingData.forEach((item) => {
               // Check if lat and lon are valid numbers
+              console.log(item);
               if (item.lat && item.lon && !isNaN(item.lat) && !isNaN(item.lon)) {
                   const coordinates = [parseFloat(item.lon), parseFloat(item.lat)];
   
@@ -154,9 +155,38 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
                           console.error('Error parsing area GeoJSON for document', item.id, err);
                       }
                   } else {
-                      const pointMarker = new mapboxgl.Marker({ color: '#ff5733' })
-                          .setLngLat(coordinates)
-                          .addTo(map.current);
+                      const iconClass = (() => {
+                        switch (item.type) {
+                          case "Technical":
+                            return "bi bi-gear"; 
+                          case "Design":
+                            return "bi bi-pencil-square"; 
+                          case "Prescriptive":
+                            return "bi bi-alarm";
+                          case "Material effect":
+                            return "bi bi-exclamation-circle";
+                          default:
+                            return "bi bi-person-add"; 
+                        }
+                      })();
+
+                      const el = document.createElement('div');
+                      //el.className = 'custom-marker';
+                      el.style.width = '30px';
+                      el.style.height = '30px';
+                      el.style.display = 'flex';
+                      el.style.alignItems = 'center';
+                      el.style.justifyContent = 'center';
+                      el.style.backgroundColor = '#CB1E3B';
+                      el.style.borderRadius = '50%';
+                      el.style.border = '2px solid #CB1E3B';
+                      el.style.color = 'white';
+                      el.style.fontSize = '20px';
+                      el.innerHTML = `<i class="${iconClass}"></i>`;
+
+                      const pointMarker = new mapboxgl.Marker(el)
+                      .setLngLat(coordinates)
+                      .addTo(map.current);
   
                       pointMarker.getElement().addEventListener('click', () => {
                           if (mode === 'select') {

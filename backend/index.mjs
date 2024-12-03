@@ -517,7 +517,7 @@ app.post('/api/updateDocumentGeoreference', async (req, res) => {
     try {
       const locations = await new Promise((resolve, reject) => {
         db.all(
-          `SELECT id, title, lat, lon, area, description FROM Documents WHERE lat IS NOT NULL OR area IS NOT NULL`,
+          `SELECT id, title, lat, lon, area, description, type FROM Documents WHERE lat IS NOT NULL OR area IS NOT NULL`,
           (err, rows) => {
             if (err) reject(err);
             resolve(rows);
