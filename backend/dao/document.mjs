@@ -459,94 +459,10 @@ class DocumentDao{
                 return reject(new Error('ID is required.'));
             }
 
-            const stakeholdersArray = stakeholders.split(' - ');
-            console.log(stakeholdersArray);
-
-            const checkAndAddStakeholders = (stakeholders) => {
-                return Promise.all(stakeholdersArray.map(stakeholder => {
-                  return new Promise((resolve, reject) => {
-
-                    const checkQuery = 'SELECT name FROM Stakeholder WHERE name = ?';
-                    db.get(checkQuery, [stakeholder], (err, row) => {
-                      if (err) {
-                        console.error('Database error while checking stakeholders:', err.message);
-                        return reject(new Error('Database error: ' + err.message));
-                      }
-                      if (row) {
-                        resolve({ message: 'Stakeholder already exists.' });
-                        console.log('Stakeholder already exists.' + row);
-                      } else {
-                        const addQuery = 'INSERT INTO Stakeholder (name) VALUES (?)';
-                        db.run(addQuery, [stakeholder], function (err) {
-                          if (err) {
-                            console.error('Database error while adding stakeholders:', err.message);
-                            return reject(new Error('Database error: ' + err.message));
-                          }
-                          resolve({ message: 'Stakeholder added successfully.' });
-                          console.log('Stakeholder added successfully.' + row);
-                        });
-                      }
-                    });
-                  });
-                }));
-              };
-    
-
-    const checkAndAddScale = (scale) => {
-        return new Promise((resolve, reject) => {
-          const checkQuery = 'SELECT name FROM Scale WHERE name = ?';
-          db.get(checkQuery, [scale], (err, row) => {
-            if (err) {
-              console.error('Database error while checking scales:', err.message);
-              return reject(new Error('Database error: ' + err.message));
-            }
-            if (row) {
-              resolve({ message: 'Scale already exists.' });
-              console.log('Scale already exists.');
-            } else {
-              const addQuery = 'INSERT INTO Scale (name) VALUES (?)';
-              db.run(addQuery, [scale], function (err) {
-                if (err) {
-                  console.error('Database error while adding scales:', err.message);
-                  return reject(new Error('Database error: ' + err.message));
-                }
-                resolve({ message: 'Scale added successfully.' });
-                console.log('Scale added successfully.');
-              });
-            }
-          });
-        });
-    };
-
-      const checkAndAddType = (type) => {
-        return new Promise((resolve, reject) => {
-          const checkQuery = 'SELECT name FROM DocumentType WHERE name = ?';
-          db.get(checkQuery, [type], (err, row) => {
-            if (err) {
-              console.error('Database error while checking types:', err.message);
-              return reject(new Error('Database error: ' + err.message));
-            }
-            if (row) {
-              resolve({ message: 'DocumentType already exists.' });
-              console.log('DocumentType already exists.');
-            } else {
-              const addQuery = 'INSERT INTO DocumentType (name) VALUES (?)';
-              db.run(addQuery, [type], function (err) {
-                if (err) {
-                  console.error('Database error while adding types:', err.message);
-                  return reject(new Error('Database error: ' + err.message));
-                }
-                resolve({ message: 'DocumentType added successfully.' });
-                console.log('DocumentType added successfully.');
-              });
-            }
-          });
-        });
-      };  
             Promise.all([
-        checkAndAddStakeholders(stakeholders),
-        checkAndAddScale(scale),
-        checkAndAddType(type)
+              this.checkAndAddStakeholders(stakeholders),
+              this.checkAndAddScale(scale),
+              this.checkAndAddType(type)
             ]).then(() => {
               const updateDocumentQuery = `
                 UPDATE Documents
