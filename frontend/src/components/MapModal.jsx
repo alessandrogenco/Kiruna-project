@@ -362,7 +362,7 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
             style={{
               position: 'absolute',
               top: '10px',
-              right: '10px',
+              left: '10px',
               zIndex: 1,
               background: 'white',
               padding: '5px',
