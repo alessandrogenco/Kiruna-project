@@ -12,14 +12,6 @@ const normalizeDate = (date) => {
   return date; // Anno, mese e giorno -> YYYY-MM-DD
 };
 
-// Ordina i documenti per data normalizzata
-const sortDocumentsByDate = (documents) =>
-  documents.sort(
-    (a, b) =>
-      new Date(normalizeDate(a.issuanceDate)) -
-      new Date(normalizeDate(b.issuanceDate))
-  );
-
 // Calcola la posizione dei nodi
 function calculateNodePosition(nodes, node) {
   const dateGroups = nodes.reduce((acc, n) => {
@@ -156,17 +148,13 @@ function computeEdges(nodes, documents) {
 
 const DocumentGraph = (props) => {
 
-  const [linkedDocuments, setLinkedDocuments] = useState([]);
   const [nodesState, setNodes] = useNodesState([]);
   const [edgesState, setEdges] = useEdgesState([]);
   const [showGraph, setShowGraph] = useState(0);
 
-  let nodes = [
-];
+  let nodes = [];
 
-let edges = [
-  
-];
+let edges = [];
 
   useEffect(() => {
     if (props.documents.length > 0) {
@@ -195,11 +183,9 @@ let edges = [
           // Update the state with the new array
           nodes = computeNodes(linkedDocs);
           setNodes(nodes);
-        edges = computeEdges(nodes, linkedDocs);
-        setEdges(edges);
-        setShowGraph(1);
-        console.log("nodes", nodes);
-          setLinkedDocuments(sortedDocumentsByDate(linkedDocs));
+          edges = computeEdges(nodes, linkedDocs);
+          setEdges(edges);
+          setShowGraph(1);
         } catch (error) {
           console.error("Error fetching links:", error);
         }
@@ -207,8 +193,6 @@ let edges = [
       fetchLinks();
     }
   }, [props.documents]); 
-
-
 
   const onNodeDrag = (event, node) => {
     const nodeIndex = nodesState.findIndex((n) => n.id === node.id);
