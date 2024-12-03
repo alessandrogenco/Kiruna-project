@@ -612,22 +612,7 @@ function DocumentControl(props) {
               <Form.Label className='form-label'>
                 Scale <span className="required-asterisk" style={{ color: 'red' }}>*</span>
               </Form.Label>
-              <Form.Control
-                as = "select"
-                name="scale"
-                value={formData.scale}
-                onChange={handleChange}
-                isInvalid={!!errors.scale}
-                >
-                <option value="">Select a scale</option> 
-                {scaleList.map(scale => (
-                <option key={scale.name} value={scale.name}>
-                  {scale.name}
-                </option>
-              ))}          
-              <option value="add_new_scale">Add a scale</option>
-            </Form.Control>
-            {showNewScaleInput && (
+
               <div className="d-flex align-items-center mt-2">
                 <Form.Control
                   type="text"
@@ -641,7 +626,23 @@ function DocumentControl(props) {
                   Add
                 </Button>
               </div>
-            )}
+
+              <Form.Control
+                as = "select"
+                name="scale"
+                className="mt-2"
+                value={formData.scale}
+                onChange={handleChange}
+                isInvalid={!!errors.scale}
+                >
+                <option value="" disabled>Select a scale</option> 
+                {scaleList.map(scale => (
+                <option key={scale.name} value={scale.name}>
+                  {scale.name}
+                </option>
+              ))}          
+            </Form.Control>
+              
               {errors.scale && <Form.Control.Feedback type="invalid">{errors.scale}</Form.Control.Feedback>}
 
             </Form.Group>
