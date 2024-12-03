@@ -131,9 +131,9 @@ class DocumentDao{
             }
             
             Promise.all([
-                checkAndAddStakeholders(stakeholders),
-                checkAndAddScale(scale),
-                checkAndAddType(type)
+                this.checkAndAddStakeholders(stakeholders),
+                this.checkAndAddScale(scale),
+                this.checkAndAddType(type)
               ]).then(() => {
                 const addDocumentQuery = `
                   INSERT INTO Documents (title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description)
@@ -543,51 +543,51 @@ class DocumentDao{
           });
         });
       };  
-      Promise.all([
+            Promise.all([
         checkAndAddStakeholders(stakeholders),
         checkAndAddScale(scale),
         checkAndAddType(type)
-      ]).then(() => {
-        const updateDocumentQuery = `
-          UPDATE Documents
-          SET title = ?, stakeholders = ?, scale = ?, issuanceDate = ?, type = ?, 
-              connections = ?, language = ?, pages = ?, lat = ?, lon = ?, area = ?, description = ?
-          WHERE id = ?
-        `;
-  
-        db.run(updateDocumentQuery, [title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description, id], function (err) {
-          if (err) {
-            console.error('Database error while updating document:', err.message);
-            return reject(new Error('Database error: ' + err.message));
-          }
-  
-          if (this.changes === 0) {
-            // Se non ci sono modifiche (ad esempio se l'ID non esiste)
-            return reject(new Error('No document found with the provided ID.'));
-          }
-  
-          resolve({
-            id,
-            title,
-            stakeholders,
-            scale,
-            issuanceDate,
-            type,
-            connections,
-            language,
-            pages,
-            lat,
-            lon,
-            area,
-            description,
-            message: 'Document updated successfully.'
+            ]).then(() => {
+              const updateDocumentQuery = `
+                UPDATE Documents
+                SET title = ?, stakeholders = ?, scale = ?, issuanceDate = ?, type = ?, 
+                    connections = ?, language = ?, pages = ?, lat = ?, lon = ?, area = ?, description = ?
+                WHERE id = ?
+              `;
+        
+              db.run(updateDocumentQuery, [title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description, id], function (err) {
+                if (err) {
+                  console.error('Database error while updating document:', err.message);
+                  return reject(new Error('Database error: ' + err.message));
+                }
+        
+                if (this.changes === 0) {
+                  // Se non ci sono modifiche (ad esempio se l'ID non esiste)
+                  return reject(new Error('No document found with the provided ID.'));
+                }
+        
+                resolve({
+                  id,
+                  title,
+                  stakeholders,
+                  scale,
+                  issuanceDate,
+                  type,
+                  connections,
+                  language,
+                  pages,
+                  lat,
+                  lon,
+                  area,
+                  description,
+                  message: 'Document updated successfully.'
+                });
+              });
+            }).catch((err) => {
+              return reject(err);
+            });
           });
-        });
-      }).catch((err) => {
-        return reject(err);
-      });
-    });
-}
+      }
 
     deleteDocumentById(id) {
         return new Promise((resolve, reject) => {
