@@ -69,7 +69,7 @@ class DocumentDao{
             });
           });
         }));
-      };
+      }
 
       checkAndAddScale(scale) {
         return new Promise((resolve, reject) => {
@@ -97,18 +97,7 @@ class DocumentDao{
         });
       }
 
-    //add document
-    addDocument(title, stakeholders, scale, date, type, connections, language, pages, lat, lon, area, description) {
-        return new Promise((resolve, reject) => {
-            if (!title || title.trim() === "") {
-                return reject(new Error('Title cannot be empty.'));
-            }
-            
-    
-
-    
-
-      const checkAndAddType = (type) => {
+      checkAndAddType(type) {
         return new Promise((resolve, reject) => {
           const checkQuery = 'SELECT name FROM DocumentType WHERE name = ?';
           db.get(checkQuery, [type], (err, row) => {
@@ -132,8 +121,15 @@ class DocumentDao{
             }
           });
         });
-      };
+      }
 
+    //add document
+    addDocument(title, stakeholders, scale, date, type, connections, language, pages, lat, lon, area, description) {
+        return new Promise((resolve, reject) => {
+            if (!title || title.trim() === "") {
+                return reject(new Error('Title cannot be empty.'));
+            }
+            
             Promise.all([
                 checkAndAddStakeholders(stakeholders),
                 checkAndAddScale(scale),
