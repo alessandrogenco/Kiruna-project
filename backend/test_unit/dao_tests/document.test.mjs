@@ -547,3 +547,50 @@ describe('Check and add Scale', () => {
 
 });
 
+describe('Check and add Type', () => {
+    test('DocumentType already exists', async () => {
+      jest.spyOn(db,'get').mockImplementation((query, params, callback) => {
+        callback(null, { name: "Technical" });
+      });
+      
+      const result = await documentDao.checkAndAddType("Technical");
+      
+      expect(result).toEqual({ message: 'DocumentType already exists.' });
+    });
+
+    test('should return a database error while checking types', async () => {
+        jest.spyOn(db,'get').mockImplementation((query, params, callback) => {
+          callback(new Error("Failed to access the DocumentType table"), null);
+        });
+        
+        await expect(documentDao.checkAndAddType("Technical")).rejects.toThrow('Database error: Failed to access the DocumentType table');
+
+    });
+
+    test('DocumentType added successfully', async () => {
+        jest.spyOn(db,'get').mockImplementation((query, params, callback) => {
+          callback(null, null);
+        });
+        jest.spyOn(db,'run').mockImplementation((query, params, callback) => {
+            callback(null);
+        });
+
+        const result = await documentDao.checkAndAddType("Technical");
+        
+        expect(result).toEqual({ message: 'DocumentType added successfully.' });
+      });
+  
+      test('should return a database error while adding types', async () => {
+          jest.spyOn(db,'get').mockImplementation((query, params, callback) => {
+            callback(null, null);
+          });
+          jest.spyOn(db,'run').mockImplementation((query, params, callback) => {
+            callback(new Error("Failed to access the DocumentType table"));
+          });
+          
+          await expect(documentDao.checkAndAddType("Technical")).rejects.toThrow('Database error: Failed to access the DocumentType table');
+  
+      });
+
+});
+
