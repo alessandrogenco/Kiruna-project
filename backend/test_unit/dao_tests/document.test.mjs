@@ -453,3 +453,49 @@ describe('Show Types', () => {
     });
 });
 
+describe('Check and add Stakeholders', () => {
+    test('Stakeholder already exists', async () => {
+      jest.spyOn(db,'get').mockImplementation((query, params, callback) => {
+        callback(null, { name: "LKAB" });
+      });
+      
+      const result = await documentDao.checkAndAddStakeholders("LKAB");
+      
+      expect(result).toEqual([{ message: 'Stakeholder already exists.' }]);
+    });
+
+    test('should return a database error while checking stakeholders', async () => {
+        jest.spyOn(db,'get').mockImplementation((query, params, callback) => {
+          callback(new Error("Failed to access the stakeholder table"), null);
+        });
+        
+        await expect(documentDao.checkAndAddStakeholders("LKAB")).rejects.toThrow('Database error: Failed to access the stakeholder table');
+
+    });
+
+    test('Stakeholder added successfully', async () => {
+        jest.spyOn(db,'get').mockImplementation((query, params, callback) => {
+          callback(null, null);
+        });
+        jest.spyOn(db,'run').mockImplementation((query, params, callback) => {
+            callback(null);
+        });
+
+        const result = await documentDao.checkAndAddStakeholders("LKAB");
+        
+        expect(result).toEqual([{ message: 'Stakeholder added successfully.' }]);
+      });
+  
+      test('should return a database error while adding stakeholders', async () => {
+          jest.spyOn(db,'get').mockImplementation((query, params, callback) => {
+            callback(null, null);
+          });
+          jest.spyOn(db,'run').mockImplementation((query, params, callback) => {
+            callback(new Error("Failed to access the stakeholder table"));
+          });
+          
+          await expect(documentDao.checkAndAddStakeholders("LKAB")).rejects.toThrow('Database error: Failed to access the stakeholder table');
+  
+      });
+
+});
