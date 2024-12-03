@@ -49,9 +49,9 @@ const DocumentViewer = ({ isLoggedIn, documentData, onClose }) => {
           </button>
           {showLinks && (
             <ul className="document-links custom-document-links">
-              {documentLinks.map((link, index) => (
+              {documentLinks ? documentLinks.map((link, index) => (
                 <li key={link.title + index}>{link.title + " | " + link.type}</li>
-              ))}
+              )) : <p>No connections available</p>}
             </ul>
           )}
           <div className="button-group">
