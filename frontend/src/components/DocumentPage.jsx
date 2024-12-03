@@ -11,6 +11,7 @@ function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) 
     const [selectedDocument, setSelectedDocument] = useState(null); // State for selected document
     const [searchQuery, setSearchQuery] = useState(''); // State for search query
     const [filterType, setFilterType] = useState('');
+    const [documentTypes, setDocumentTypes] = useState([]);
     const [newDocument, setNewDocument] = useState({
         title: '',
         stakeholders: '',
@@ -36,11 +37,23 @@ function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) 
             console.error('Error fetching documents:', error);
         }
     };
-    
+
+    const getDocumentTypes = async () => {
+        try {
+            const types = await API.getDocumentTypes(); // New API call to fetch types
+            setDocumentTypes(types);
+        } catch (error) {
+            console.error('Error fetching document types:', error);
+        }
+    };
+
+
+
+
     useEffect(() => {
-        console.log(documents);  
-        getDocuments();      
-    }, []);  
+        getDocuments();
+        getDocumentTypes(); 
+    }, []);
     
 
     
@@ -132,16 +145,11 @@ function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) 
                             style={{ width: '150px' }}
                         >
                             <option value="">All Types</option>
-                            <option value="Design">Text - Design</option>
-                            <option value="Informative">Text - Informative</option>
-                            <option value="Prescriptive">Text - Prescriptive</option>
-                            <option value="Technical">Text - Technical</option>
-                            <option value="Agreement">Concept - Agreement</option>
-                            <option value="Conflict">Concept - Conflict</option>
-                            <option value="Consultation">Concept - Consultation</option>
-                            <option value="Material effect">Concept - Material effect</option>
-                            <option value="Paper">Concept - Paper</option>
-                            <option value="Action">Action</option>
+                            {documentTypes.map((type, index) => (
+                                <option key={index} value={type}>
+                                    {type}
+                                </option>
+                            ))}
                         </Form.Select>
                     </Form>
                 </Col>
