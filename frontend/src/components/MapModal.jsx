@@ -17,6 +17,8 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
   const [geoJsonData, setGeoJsonData] = useState(null);
   const [existingGeoreferencingData, setExistingGeoreferencingData] = useState(null);
   const [alertMessage, setAlertMessage] = useState('');
+  const [areaCentroid, setAreaCentroid] = useState(null);
+  const [centroidMarker, setCentroidMarker] = useState(null);
 
   // Fetch document locations when the modal is opened
   useEffect(() => {
@@ -192,40 +194,61 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
             }
           });
         }
-      });
 
-      // Initialize Mapbox Draw
-      draw.current = new MapboxDraw({
-        displayControlsDefault: false,
-        controls: {
-          polygon: true,
-          trash: true,
-        },
-      });
-      map.current.addControl(draw.current, 'top-right');
+        // Initialize Mapbox Draw
+        draw.current = new MapboxDraw({
+          displayControlsDefault: false,
+          controls: {
+            polygon: true,
+            trash: true,
+          },
+        });
+        map.current.addControl(draw.current, 'top-right');
 
-      map.current.on('click', (e) => {
-        if (mode === 'point') {
-          const { lng, lat } = e.lngLat;
+        // Add event listeners for draw events
+        map.current.on('draw.create', () => {
+          const features = draw.current.getAll().features;
+          const polygon = features.find(feature => feature.geometry.type === 'Polygon');
+          if (polygon) {
+            const centroid = turf.centroid(polygon);
+            setAreaCentroid(centroid.geometry.coordinates);
+            displayCentroidMarker(centroid.geometry.coordinates);
+          }
+        });
 
-          if (geoJsonData) {
-            if (!isWithinBounds(lng, lat, geoJsonData)) {
-              setAlertMessage('Selected coordinates are outside Kiruna Municipality borders.');
-              return;
-            }
+        map.current.on('draw.update', () => {
+          const features = draw.current.getAll().features;
+          const polygon = features.find(feature => feature.geometry.type === 'Polygon');
+          if (polygon) {
+            const centroid = turf.centroid(polygon);
+            setAreaCentroid(centroid.geometry.coordinates);
+            displayCentroidMarker(centroid.geometry.coordinates);
+          }
+        });
 
-            setPosition([lat, lng]);
-            setAlertMessage('');
+        map.current.on('click', (e) => {
+          if (mode === 'point') {
+            const { lng, lat } = e.lngLat;
 
-            if (marker.current) {
-              marker.current.setLngLat([lng, lat]);
-            } else {
-              marker.current = new mapboxgl.Marker({ color: '#007cbf' })
-                .setLngLat([lng, lat])
-                .addTo(map.current);
+            if (geoJsonData) {
+              if (!isWithinBounds(lng, lat, geoJsonData)) {
+                setAlertMessage('Selected coordinates are outside Kiruna Municipality borders.');
+                return;
+              }
+
+              setPosition([lat, lng]);
+              setAlertMessage('');
+
+              if (marker.current) {
+                marker.current.setLngLat([lng, lat]);
+              } else {
+                marker.current = new mapboxgl.Marker({ color: '#007cbf' })
+                  .setLngLat([lng, lat])
+                  .addTo(map.current);
+              }
             }
           }
-        }
+        });
       });
     }
 
@@ -234,6 +257,9 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
         map.current.remove();
         map.current = null;
         marker.current = null;
+        if (centroidMarker) {
+          centroidMarker.remove();
+        }
       }
     };
   }, [show, mode, existingGeoreferencingData]);
@@ -249,6 +275,17 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
     return isInside;
   };
 
+  const displayCentroidMarker = (coordinates) => {
+    if (centroidMarker) {
+      centroidMarker.setLngLat(coordinates);
+    } else {
+      const centroidMarkerElement = new mapboxgl.Marker({ color: '#ff5733' })
+        .setLngLat(coordinates)
+        .addTo(map.current);
+      setCentroidMarker(centroidMarkerElement);
+    }
+  };
+
   const handleSave = () => {
     if (mode === 'point' && position) {
       onLocationSelect({ type: 'point', coordinates: position });
@@ -259,7 +296,7 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
       if (drawnFeatures.features.length > 0) {
         const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: drawnFeatures.features });
         onLocationSelect({ type: 'area', geometry: geoJsonString });
-        updateDocumentGeoreference('someDocumentId', null, null, geoJsonString);
+        updateDocumentGeoreference('someDocumentId', areaCentroid[1], areaCentroid[0], geoJsonString);
       } else if (geoJsonData) {
         const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: geoJsonData.features });
         onLocationSelect({ type: 'area', geometry: geoJsonString });
