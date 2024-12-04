@@ -441,8 +441,8 @@ function ExplorePage(props) {
         backgroundColor: '#F0F0F0', padding: '7px', borderRadius: '8px',
         display: 'flex', flexDirection: 'column', gap: '2px'
       }}>
-        <MapStyleToggleButton style="streets" label="Streets" />
         <MapStyleToggleButton style="satellite" label="Satellite" />
+        <MapStyleToggleButton style="streets" label="Streets" />
       </div>
 
       {/* Document Viewer */}
