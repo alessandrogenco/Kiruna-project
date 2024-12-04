@@ -13,6 +13,9 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
   const marker = useRef(null);
   const draw = useRef(null);
   const [position, setPosition] = useState(null);
+  const [pointMarker, setPointMarker] = useState(null);
+  const [markerElement, setMarkerElement] = useState(null);
+  const [el, setEl] = useState(null);
   const [mode, setMode] = useState('area');
   const [geoJsonData, setGeoJsonData] = useState(null);
   const [existingGeoreferencingData, setExistingGeoreferencingData] = useState(null);
@@ -106,6 +109,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
           filteredData.forEach((item) => {
             // Check if lat and lon are valid numbers
             //console.log(item);
+           
             if (item.lat && item.lon && !isNaN(item.lat) && !isNaN(item.lon)) {
               const coordinates = [parseFloat(item.lon), parseFloat(item.lat)];
                 const iconClass = (() => {
@@ -123,24 +127,33 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
                   }
                 })();
 
-                const el = document.createElement('div');
-                el.style.width = '30px';
-                el.style.height = '30px';
-                el.style.display = 'flex';
-                el.style.alignItems = 'center';
-                el.style.justifyContent = 'center';
-                el.style.backgroundColor = '#CB1E3B';
-                el.style.borderRadius = '50%';
-                el.style.border = '2px solid #CB1E3B';
-                el.style.color = 'white';
-                el.style.fontSize = '20px';
-                el.innerHTML = `<i class="${iconClass}"></i>`;
-
-                const pointMarker = new mapboxgl.Marker(el)
-                  .setLngLat(coordinates)
-                  .addTo(map.current);
-
-
+                if (mode === 'point' || (mode === 'area' && item.area)) {
+                  const createMarkerElement = () => {
+                    const el = document.createElement('div');
+                    el.style.width = '30px';
+                    el.style.height = '30px';
+                    el.style.display = 'flex';
+                    el.style.alignItems = 'center';
+                    el.style.justifyContent = 'center';
+                    el.style.backgroundColor = '#CB1E3B';
+                    el.style.borderRadius = '50%';
+                    el.style.border = '2px solid #CB1E3B';
+                    el.style.color = 'white';
+                    el.style.fontSize = '20px';
+                    el.innerHTML = `<i class="${iconClass}"></i>`;
+                    return el;
+                  };
+                
+                  const markerElement = createMarkerElement();
+                
+                  const pointMarker = new mapboxgl.Marker(markerElement)
+                    .setLngLat(coordinates)
+                    .addTo(map.current);
+                
+                  setMarkerElement(markerElement);
+                  setPointMarker(pointMarker);
+                }
+                
                 
                 if (mode === 'area') {
 
