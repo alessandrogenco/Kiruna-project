@@ -16,7 +16,7 @@ function ExplorePage(props) {
   const mapContainer = useRef(null);
   const [map, setMap] = useState(null);
   const [mapLoaded, setMapLoaded] = useState(false); // Flag to track when the map is loaded
-  const [currentStyle, setCurrentStyle] = useState('streets');
+  const [currentStyle, setCurrentStyle] = useState('satellite');
   const [markers, setMarkers] = useState([]);
   const [selectedDocument, setSelectedDocument] = useState(null); // State for the selected document
   const [showGraph, setShowGraph] = useState(false); // Stato per mostrare/nascondere il grafo
@@ -29,7 +29,7 @@ function ExplorePage(props) {
   };
 
   useEffect(() => {
-    console.log("ciao" + process.env.REACT_APP_MAPBOX_TOKEN1);
+    //console.log("ciao" + process.env.REACT_APP_MAPBOX_TOKEN1);
 
     if (selectedDocument) {
       mapContainer.current.classList.add('blurred-map');
@@ -56,7 +56,7 @@ function ExplorePage(props) {
       mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN1;
       const mapInstance = new mapboxgl.Map({
         container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/streets-v11',
+        style: 'mapbox://styles/mapbox/satellite-v9',
         center: [20.25, 67.85], 
         zoom:11,
         pitch: 0,
