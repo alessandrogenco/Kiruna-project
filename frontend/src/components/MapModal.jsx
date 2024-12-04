@@ -127,32 +127,22 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
                   }
                 })();
 
-                if (mode === 'point' || (mode === 'area' && item.area)) {
-                  const createMarkerElement = () => {
-                    const el = document.createElement('div');
-                    el.style.width = '30px';
-                    el.style.height = '30px';
-                    el.style.display = 'flex';
-                    el.style.alignItems = 'center';
-                    el.style.justifyContent = 'center';
-                    el.style.backgroundColor = '#CB1E3B';
-                    el.style.borderRadius = '50%';
-                    el.style.border = '2px solid #CB1E3B';
-                    el.style.color = 'white';
-                    el.style.fontSize = '20px';
-                    el.innerHTML = `<i class="${iconClass}"></i>`;
-                    return el;
-                  };
-                
-                  const markerElement = createMarkerElement();
-                
-                  const pointMarker = new mapboxgl.Marker(markerElement)
-                    .setLngLat(coordinates)
-                    .addTo(map.current);
-                
-                  setMarkerElement(markerElement);
-                  setPointMarker(pointMarker);
-                }
+                const el = document.createElement('div');
+                el.style.width = '30px';
+                el.style.height = '30px';
+                el.style.display = 'flex';
+                el.style.alignItems = 'center';
+                el.style.justifyContent = 'center';
+                el.style.backgroundColor = '#CB1E3B';
+                el.style.borderRadius = '50%';
+                el.style.border = '2px solid #CB1E3B';
+                el.style.color = 'white';
+                el.style.fontSize = '20px';
+                el.innerHTML = `<i class="${iconClass}"></i>`;
+
+                const pointMarker = new mapboxgl.Marker(el)
+                  .setLngLat(coordinates)
+                  .addTo(map.current);
                 
                 
                 if (mode === 'area') {
