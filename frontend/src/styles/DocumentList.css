@@ -4,3 +4,8 @@
     margin-bottom: 4px;
     border: none;
 }
+
+#formStakeholders:checked {
+    background-color: green;
+    border-color: darkgreen;
+  }
