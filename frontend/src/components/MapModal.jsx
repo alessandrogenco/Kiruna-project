@@ -55,6 +55,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
         center: [20.25, 67.85],
         zoom: 11,
         maxBounds: [[17.8998, 67.3562], [23.2867, 69.0599]],
+        attributionControl: false,
       });
 
       map.current.on('load', async () => {
@@ -93,77 +94,6 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
             console.log(item);
             if (item.lat && item.lon && !isNaN(item.lat) && !isNaN(item.lon)) {
               const coordinates = [parseFloat(item.lon), parseFloat(item.lat)];
-
-              /*if (item.area) {
-                try {
-                  const areaGeoJson = JSON.parse(item.area);
-                  console.log('After first parse:', areaGeoJson);  // Guarda cosa diventa dopo il primo parsing
-                  const finalGeoJson = JSON.parse(areaGeoJson);
-                  console.log('After second parse:', finalGeoJson);
-
-                  /*if (typeof areaGeoJson === 'string') {
-                      console.log("It's still a string, parsing again...");
-                      const finalGeoJson = JSON.parse(areaGeoJson);
-                      console.log('After second parse:', finalGeoJson);
-                      areaGeoJson = finalGeoJson;
-                  }*/
-
-                  // Check if the GeoJSON is correctly structured
-                  /*if (finalGeoJson.type === 'FeatureCollection' && finalGeoJson.features.length>0) {
-                    console.log("OKKKKKK");
-                    finalGeoJson.features.forEach((feature) => {
-                      // Check if feature is a Polygon and has valid coordinates
-                      if (feature.geometry && feature.geometry.type === 'Polygon') {
-                        const polygonCoordinates = feature.geometry.coordinates;
-                        console.log(polygonCoordinates);
-                        if (polygonCoordinates && Array.isArray(polygonCoordinates) && polygonCoordinates.length > 0) {
-                          polygonCoordinates.forEach((ring) => {
-                            if (ring[0][0] !== ring[ring.length - 1][0] || ring[0][1] !== ring[ring.length - 1][1]) {
-                              ring.push(ring[0]);
-                            }
-                          });
-
-                          // Creating a turf polygon to handle the geometry properly
-                          const polygon = turf.polygon(polygonCoordinates);
-
-                          // Add this polygon to the map
-                          const sourceId = `area-${item.id}`;
-                          if (map.current) {
-                            map.current.addSource(sourceId, {
-                              type: 'geojson',
-                              data: polygon,
-                            });
-
-                            map.current.addLayer({
-                              id: sourceId,
-                              type: 'fill',
-                              source: sourceId,
-                              paint: {
-                                'fill-color': '#ff5733',
-                                'fill-opacity': 0.5,
-                              },
-                            });
-
-                            map.current.on('click', sourceId, () => {
-                              setPosition(item.geometry.coordinates);
-                              setAlertMessage('Selected an existing area.');
-                            });
-                          }
-                        } else {
-                          console.warn(`Invalid coordinates for Polygon in document ${item.id}:`, polygonCoordinates);
-                        }
-                      } else {
-                        console.warn(`Invalid geometry type for feature ${feature.id}:`, feature.geometry.type);
-                      }
-                    });
-                  } else {
-                    console.warn(`Invalid GeoJSON format for document ${item.id}:`, finalGeoJson);
-                  }
-                } catch (err) {
-                  console.error('Error parsing area GeoJSON for document', item.id, err);
-                }
-              } */
-
                 const iconClass = (() => {
                   switch (item.type) {
                     case "Technical":
@@ -197,13 +127,13 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
                   .addTo(map.current);
 
                 pointMarker.getElement().addEventListener('click', () => {
-                  setPosition([item.lat, item.lon]);
-                  setAlertMessage('Selected an existing point.');
+                  if (mode === 'point'){
+                    setPosition([item.lat, item.lon]);
+                    setAlertMessage('Selected an existing point.');
+                  }
                 });
               }
-            /*} else {
-              console.warn(`Invalid lat/lon for document ${item.id}:`, item);
-            }*/
+
           });
         }
 
@@ -225,46 +155,45 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
         let centroidMarker = null; 
 
         map.current.on('draw.create', (e) => {
-          console.log('draw.create event fired', e);
-        
-          if (currentAreaId) {
-            draw.current.delete(currentAreaId);
-          }
-          if (centroidMarker) {
-            console.log('Removing existing centroid marker on create');
-            centroidMarker.remove();
-            setCentroidMarker(null);
-          }
-        
-          const features = draw.current.getAll().features;
-          const polygon = features.find(feature => feature.geometry.type === 'Polygon');
-          if (polygon) {
-
-            setCurrentAreaId(polygon.id);
-        
-            const centroid = turf.centroid(polygon);
-            setAreaCentroid(centroid.geometry.coordinates);
-        
-            displayCentroidMarker(centroid.geometry.coordinates);
+          if (mode === 'area') {
+            console.log('draw.create event fired', e);
+          
+            if (currentAreaId) {
+              draw.current.delete(currentAreaId);
+            }
+            if (centroidMarker) {
+              console.log('Removing existing centroid marker on create');
+              centroidMarker.remove();
+              setCentroidMarker(null);
+            }
+          
+            const features = draw.current.getAll().features;
+            const polygon = features.find(feature => feature.geometry.type === 'Polygon');
+            if (polygon) {
+              setCurrentAreaId(polygon.id);
+              const centroid = turf.centroid(polygon);
+              setAreaCentroid(centroid.geometry.coordinates);
+              displayCentroidMarker(centroid.geometry.coordinates);
+            }
           }
         });
         
         map.current.on('draw.update', (e) => {
           console.log('draw.update event fired', e);
-        
-          if (centroidMarker) {
-            console.log('Removing existing centroid marker on update');
-            centroidMarker.remove();
-            setCentroidMarker(null);
-          }
-        
-          const features = draw.current.getAll().features;
-          const polygon = features.find(feature => feature.geometry.type === 'Polygon');
-          if (polygon) {
-            const centroid = turf.centroid(polygon);
-            setAreaCentroid(centroid.geometry.coordinates);
-        
-            displayCentroidMarker(centroid.geometry.coordinates);
+          if (mode === 'area') {
+            if (centroidMarker) {
+              console.log('Removing existing centroid marker on update');
+              centroidMarker.remove();
+              setCentroidMarker(null);
+            }
+          
+            const features = draw.current.getAll().features;
+            const polygon = features.find(feature => feature.geometry.type === 'Polygon');
+            if (polygon) {
+              const centroid = turf.centroid(polygon);
+              setAreaCentroid(centroid.geometry.coordinates);
+              displayCentroidMarker(centroid.geometry.coordinates);
+            }
           }
         });
         
@@ -295,9 +224,6 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
         
           console.log('Centroid marker added at', coordinates);
         };
-        
-        
-        
 
         map.current.on('click', (e) => {
           if (mode === 'point') {
@@ -372,31 +298,6 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
 
     handleClose();
   };
-
-  /*const updateDocumentGeoreference = async (id, lat, lon, area) => {
-    try {
-      const response = await fetch('http://localhost:3001/api/updateDocumentGeoreference', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ id, lat, lon, area }),
-      });
-
-      console.log('Response Status:', response.status);
-      const result = await response.json();
-      console.log('Response Body:', result);
-
-      if (!response.ok) {
-        throw new Error(result.message || 'Failed to update georeferencing');
-      }
-
-      alert(result.message);
-    } catch (error) {
-      console.error('Error updating georeferencing:', error);
-      alert('Failed to update georeferencing');
-    }
-  };*/
 
   return (
     <Modal show={show} onHide={handleClose} size="lg" centered>
@@ -477,7 +378,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
         <Button variant="secondary" onClick={handleClose}>
           Close
         </Button>
-        <Button variant="primary" onClick={handleSave}>
+        <Button style={{ backgroundColor: '#28a745', border: 'none' }} onClick={handleSave}>
           Save Location
         </Button>
       </Modal.Footer>
