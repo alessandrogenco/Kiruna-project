@@ -205,10 +205,10 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
           defaultMode: mode === 'area' ? 'draw_polygon' : 'simple_select',
         });
 
-          // Add or remove the draw control based on the mode
-          if (mode === 'area') {
-            map.current.addControl(draw.current, 'top-right');
-          }
+        // Add or remove the draw control based on the mode
+        if (mode === 'area') {
+          map.current.addControl(draw.current, 'top-right');
+        }
 
         // Add event listeners for draw events
         map.current.on('draw.create', (e) => {
@@ -317,16 +317,18 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
   const displayCentroidMarker = (coordinates) => {
     console.log('Displaying centroid marker at:', coordinates);
     if (centroidMarker) {
-      console.log('Updating existing centroid marker');
-      centroidMarker.setLngLat(coordinates);
+        console.log('Updating existing centroid marker');
+        centroidMarker.setLngLat(coordinates).addTo(map.current); 
     } else {
-      console.log('Creating new centroid marker');
-      const centroidMarkerElement = new mapboxgl.Marker({ color: '#ff5733' })
-        .setLngLat(coordinates)
-        .addTo(map.current);
-      setCentroidMarker(centroidMarkerElement);
+
+        console.log('Creating new centroid marker');
+        const centroidMarkerElement = new mapboxgl.Marker({ color: '#ff5733' })
+            .setLngLat(coordinates)
+            .addTo(map.current);
+        setCentroidMarker(centroidMarkerElement);
     }
-  };
+};
+
 
   const handleSave = () => {
     if (mode === 'point' && position) {
