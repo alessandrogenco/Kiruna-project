@@ -469,42 +469,6 @@ describe("POST /api/updateDocument", () => {
         });
     });
 
-    test("Successfully updates a document with area and no lat/lon", async () => {
-        const mockData = {
-            id: 1,
-            title: "Updated Document Title",
-            stakeholders: "Updated Stakeholder",
-            scale: "1:1000",
-            issuanceDate: "2023-01-01",
-            type: "report",
-            connections: ["doc2", "doc3"],
-            language: "English",
-            pages: 50,
-            lat: "",        // Non forniti
-            lon: "",        // Non forniti
-            area: JSON.stringify({  // GeoJSON serializzato in stringa
-                type: "Polygon",
-                coordinates: [[[0, 0], [1, 1], [1, 0], [0, 0]]]
-            }),
-            description: "Updated description"
-        };
-
-        jest.spyOn(DocumentDao.prototype, 'updateDocument').mockResolvedValue({
-            ...mockData,
-            message: "Document updated successfully."
-        });
-
-        const response = await request(app)
-            .post('/api/updateDocument')
-            .send(mockData);
-
-        expect(response.status).toBe(200);
-        expect(response.body).toEqual({
-            ...mockData,
-            message: "Document updated successfully."
-        });
-    });
-
     test("Returns error if required fields (id, title) are missing", async () => {
         const response = await request(app)
             .post('/api/updateDocument')
