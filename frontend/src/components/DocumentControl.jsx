@@ -601,7 +601,7 @@ function DocumentControl(props) {
                     onChange={handleChange}
                     className="me-2"
                   />
-                  <Button variant="primary" onClick={handleAddStakeholder}>
+                  <Button variant="btn btn-success" onClick={handleAddStakeholder}>
                     Add
                   </Button>
                 </div>
@@ -642,7 +642,7 @@ function DocumentControl(props) {
                   onChange={handleChange}
                   className="me-2"
                 />
-                <Button variant="primary" onClick={handleAddScale}>
+                <Button variant="btn btn-success" onClick={handleAddScale}>
                   Add
                 </Button>
               </div>
@@ -743,7 +743,7 @@ function DocumentControl(props) {
                   onChange={handleChange}
                   className="me-2"
                 />
-                <Button variant="primary" onClick={handleAddType}>
+                <Button variant="btn btn-success" onClick={handleAddType}>
                   Add
                 </Button>
               </div>
