@@ -305,6 +305,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
           }
         });
         
+        
         map.current.on('draw.update', (e) => {
           console.log('draw.update event fired', e);
           if (mode === 'area') {
