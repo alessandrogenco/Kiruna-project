@@ -137,6 +137,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
                   if (mode === 'point') {
                     setPosition([item.lat, item.lon]);
                     setAlertMessage('Selected an existing point.');
+                    marker.current.setLngLat([item.lat, item.lon]);;
                   }
                 }, true); // Add event listener in the capture phase for higher priority
               }
