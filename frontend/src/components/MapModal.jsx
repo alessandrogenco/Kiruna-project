@@ -333,18 +333,18 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
   const handleSave = () => {
     if (mode === 'point' && position) {
       onLocationSelect({ type: 'point', coordinates: position });
-      updateDocumentGeoreference('documentId', position[0], position[1], null);
+      //updateDocumentGeoreference('documentId', position[0], position[1], null);
     } else if (mode === 'area') {
       const drawnFeatures = draw.current.getAll();
 
       if (drawnFeatures.features.length > 0) {
         const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: drawnFeatures.features });
         onLocationSelect({ type: 'area', geometry: geoJsonString });
-        updateDocumentGeoreference('documentId', areaCentroid[1], areaCentroid[0], geoJsonString);
+        //updateDocumentGeoreference('documentId', areaCentroid[1], areaCentroid[0], geoJsonString);
       } else if (geoJsonData) {
         const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: geoJsonData.features });
         onLocationSelect({ type: 'area', geometry: geoJsonString });
-        updateDocumentGeoreference('documentId', null, null, geoJsonString);
+        //updateDocumentGeoreference('documentId', null, null, geoJsonString);
       } else {
         setAlertMessage('Error: Default municipality boundary is unavailable.');
         return;
@@ -354,7 +354,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
     handleClose();
   };
 
-  const updateDocumentGeoreference = async (id, lat, lon, area) => {
+  /*const updateDocumentGeoreference = async (id, lat, lon, area) => {
     try {
       const response = await fetch('http://localhost:3001/api/updateDocumentGeoreference', {
         method: 'POST',
@@ -377,7 +377,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
       console.error('Error updating georeferencing:', error);
       alert('Failed to update georeferencing');
     }
-  };
+  };*/
 
   return (
     <Modal show={show} onHide={handleClose} size="lg" centered>
@@ -470,7 +470,7 @@ MapModal.propTypes = {
   show: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   onLocationSelect: PropTypes.func.isRequired,
-  documentId: PropTypes.string.isRequired, // Add documentId prop type
+  documentId: PropTypes.string, // Add documentId prop type
 };
 
 export default MapModal;

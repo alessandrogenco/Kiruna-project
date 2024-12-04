@@ -268,40 +268,40 @@ app.put('/api/addDescription', async (req, res) => {
     }
 });
 
-// Add a document
 app.post('/api/addDocument', async (req, res) => {
     console.log("Data received by /api/addDocument:", req.body); // Log dei dati ricevuti
 
     const { title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description } = req.body;
-    console.log("Received document data:", req.body);
 
     try {
-        // Check if area is empty and lat/lon are provided
-        if(area.trim() === '' && lat && lon){
-            // Check if lat and lon are valid
-            if ((lat < 67.3562 || lat > 69.0599) || (lon < 17.8998 || lon > 23.2867)) {
-                throw new Error("Invalid parameters");
+        // Validazione parametri
+        if (!title || (!area && (!lat || !lon))) {
+            throw new Error("Missing required fields");
+        }
+
+        if (area) {
+            try {
+                JSON.parse(area); // Controlla se area è un JSON valido
+            } catch {
+                throw new Error("Invalid JSON for area");
             }
         }
-        
-        // Check if area is not empty and lat or lon are provided
-        if(area.trim() !== '' && (lat || lon)){
-            throw new Error("Invalid parameters");
-        }
-        
-        if (!title || (area.trim() === '' && (!lat || !lon))) {
-            throw new Error("Missing required fields");
+
+        // Verifica lat/lon se area è vuoto
+        if (!area && ((lat < 67.3562 || lat > 69.0599) || (lon < 17.8998 || lon > 23.2867))) {
+            throw new Error("Invalid parameters for lat/lon");
         }
 
         console.log("Adding document...");
 
-        const result = await documentDao.addDocument(title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description);
+        const result = await documentDao.addDocument(title, stakeholders, scale, issuanceDate || null, type, connections, language, pages, lat, lon, area, description);
         res.status(200).json(result); // Risposta positiva con il documento aggiunto
     } catch (error) {
         console.error("Error in /api/addDocument:", error); // Log dettagliato per debug
         res.status(400).json({ message: error.message }); // Risposta con messaggio di errore
     }
 });
+
 
 //link documents
 app.post('/api/linkDocuments', async (req, res) => {

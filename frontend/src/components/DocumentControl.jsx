@@ -349,7 +349,9 @@ function DocumentControl(props) {
       stakeholders: formData.stakeholders,
     };
     
-
+    if (!documentId) {
+      delete updatedFormData.id;
+    }
 
       if (!validateForm()) {
         
@@ -377,7 +379,8 @@ function DocumentControl(props) {
               url = 'http://localhost:3001/api/addDocument'; // Endpoint per aggiungere
               method = 'POST'; // Metodo POST per l'add
           }
-  
+          
+          console.log(updatedFormData);
           // Esegui la richiesta per creare o aggiornare il documento
           const response = await fetch(url, {
               method: method,
