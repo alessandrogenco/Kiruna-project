@@ -54,7 +54,6 @@ class DocumentDao{
               }
               if (row) {
                 resolve({ message: 'Stakeholder already exists.' });
-                console.log('Stakeholder already exists.');
               } else {
                 const addQuery = 'INSERT INTO Stakeholder (name) VALUES (?)';
                 db.run(addQuery, [stakeholder], function (err) {
@@ -63,7 +62,6 @@ class DocumentDao{
                     return reject(new Error('Database error: ' + err.message));
                   }
                   resolve({ message: 'Stakeholder added successfully.' });
-                  console.log('Stakeholder added successfully.');
                 });
               }
             });
@@ -81,7 +79,6 @@ class DocumentDao{
             }
             if (row) {
               resolve({ message: 'Scale already exists.' });
-              console.log('Scale already exists.');
             } else {
               const addQuery = 'INSERT INTO Scale (name) VALUES (?)';
               db.run(addQuery, [scale], function (err) {
@@ -90,7 +87,6 @@ class DocumentDao{
                   return reject(new Error('Database error: ' + err.message));
                 }
                 resolve({ message: 'Scale added successfully.' });
-                console.log('Scale added successfully.');
               });
             }
           });
@@ -107,7 +103,6 @@ class DocumentDao{
             }
             if (row) {
               resolve({ message: 'DocumentType already exists.' });
-              console.log('DocumentType already exists.');
             } else {
               const addQuery = 'INSERT INTO DocumentType (name) VALUES (?)';
               db.run(addQuery, [type], function (err) {
@@ -116,7 +111,6 @@ class DocumentDao{
                   return reject(new Error('Database error: ' + err.message));
                 }
                 resolve({ message: 'DocumentType added successfully.' });
-                console.log('DocumentType added successfully.');
               });
             }
           });
