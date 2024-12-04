@@ -7,7 +7,7 @@ import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import * as turf from '@turf/turf';
 
-const MapModal = ({ show, handleClose, onLocationSelect }) => {
+const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const marker = useRef(null);
@@ -202,9 +202,13 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
             polygon: true,
             trash: true,
           },
-          defaultMode: 'draw_polygon',
+          defaultMode: mode === 'area' ? 'draw_polygon' : 'simple_select',
         });
-        map.current.addControl(draw.current, 'top-right');
+
+          // Add or remove the draw control based on the mode
+          if (mode === 'area') {
+            map.current.addControl(draw.current, 'top-right');
+          }
 
         // Add event listeners for draw events
         map.current.on('draw.create', (e) => {
@@ -327,18 +331,18 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
   const handleSave = () => {
     if (mode === 'point' && position) {
       onLocationSelect({ type: 'point', coordinates: position });
-      updateDocumentGeoreference('documentId', position[0], position[1], null);
+      updateDocumentGeoreference(documentId, position[0], position[1], null);
     } else if (mode === 'area') {
       const drawnFeatures = draw.current.getAll();
 
       if (drawnFeatures.features.length > 0) {
         const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: drawnFeatures.features });
         onLocationSelect({ type: 'area', geometry: geoJsonString });
-        updateDocumentGeoreference('documentId', areaCentroid[1], areaCentroid[0], geoJsonString);
+        updateDocumentGeoreference(documentId, areaCentroid[1], areaCentroid[0], geoJsonString);
       } else if (geoJsonData) {
         const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: geoJsonData.features });
         onLocationSelect({ type: 'area', geometry: geoJsonString });
-        updateDocumentGeoreference('documentId', null, null, geoJsonString);
+        updateDocumentGeoreference(documentId, null, null, geoJsonString);
       } else {
         setAlertMessage('Error: Default municipality boundary is unavailable.');
         return;
@@ -416,6 +420,17 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
                 setMode(value);
                 if (value === 'point') {
                   draw.current.deleteAll();
+                  draw.current.changeMode('simple_select');
+                  draw.current.set({ displayControlsDefault: false, controls: {} });
+                } else {
+                  draw.current.changeMode('draw_polygon');
+                  draw.current.set({
+                    displayControlsDefault: false,
+                    controls: {
+                      polygon: true,
+                      trash: true,
+                    },
+                  });
                 }
               }}
             >
@@ -453,6 +468,7 @@ MapModal.propTypes = {
   show: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   onLocationSelect: PropTypes.func.isRequired,
+  documentId: PropTypes.string.isRequired, // Add documentId prop type
 };
 
 export default MapModal;
