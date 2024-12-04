@@ -672,7 +672,7 @@ function DocumentControl(props) {
 
             <Form.Group as={Col} controlId="formDate">
               <Row className="d-flex justify-content-end mx-3">
-                <Form.Label className='form-label text-center'>
+                <Form.Label className='form-label text-center pb-2'>
                   Date 
                 </Form.Label>
                 <Col as={Col} className="d-flex">
@@ -772,7 +772,7 @@ function DocumentControl(props) {
             </Form.Group>
 
             <Form.Group as={Col} controlId="formLanguage" className="me-4">
-              <Form.Label className='form-label'>Language</Form.Label>
+              <Form.Label className='form-label pb-2'>Language</Form.Label>
               <Form.Control
                 as="select"
                 name="language"
@@ -786,7 +786,7 @@ function DocumentControl(props) {
             </Form.Group>
 
             <Form.Group as={Col} controlId="formPages" className="me-4">
-              <Form.Label className='form-label'>Pages</Form.Label>
+              <Form.Label className='form-label pb-2'>Pages</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter pages"
@@ -807,7 +807,7 @@ function DocumentControl(props) {
 
           <Row className="mb-4 mx-3">
             <Form.Group as={Col} controlId="formLat" className="me-4">
-              <Form.Label className='form-label'>Latitude <span className="required-asterisk" style={{ color: 'red' }}>*</span></Form.Label>
+              <Form.Label className='form-label pb-2'>Latitude <span className="required-asterisk" style={{ color: 'red' }}>*</span></Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter latitude"
@@ -818,7 +818,7 @@ function DocumentControl(props) {
               />
             </Form.Group>
             <Form.Group as={Col} controlId="formLon" className="me-4">
-              <Form.Label className='form-label'>Longitude <span className="required-asterisk" style={{ color: 'red' }}>*</span></Form.Label>
+              <Form.Label className='form-label pb-2'>Longitude <span className="required-asterisk" style={{ color: 'red' }}>*</span></Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter longitude"
@@ -842,7 +842,7 @@ function DocumentControl(props) {
           />
           
           <Row className="mb-4 mx-3">
-          <label className="form-label ms-3 mb-0">Add original resources</label>
+          <label className="form-label ms-3 mb-0 pb-2">Add original resources</label>
             <Col md={8}>
               <div className="mt-2">
                 <input 
@@ -877,7 +877,7 @@ function DocumentControl(props) {
 
           <Row className="mx-3 mb-4">
             <Form.Group controlId="formDescription">
-              <Form.Label className='form-label'>
+              <Form.Label className='form-label pb-2'>
               Description <span className="required-asterisk" style={{ color: 'red' }}>*</span>
               </Form.Label>
               <Form.Control
