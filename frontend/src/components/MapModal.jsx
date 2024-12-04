@@ -139,7 +139,13 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
                   if (mode === 'point') {
                     setPosition([item.lat, item.lon]);
                     setAlertMessage('Selected an existing point.');
-                    marker.current.setLngLat([item.lat, item.lon]);;
+                    if (marker.current) {
+                      marker.current.setLngLat([item.lon, item.lat]);
+                    } else {
+                      marker.current = new mapboxgl.Marker({ color: '#007cbf' })
+                        .setLngLat([item.lon, item.lat])
+                        .addTo(map.current);
+                    }
                   }
                 }, true); // Add event listener in the capture phase for higher priority
               }
@@ -330,7 +336,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
               style={{
                 position: 'absolute',
                 top: '10px',
-                left: '10px',
+                right: '10px',
                 zIndex: 2,
               }}
             >
@@ -341,7 +347,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
             style={{
               position: 'absolute',
               top: '10px',
-              right: '10px',
+              left: '10px',
               zIndex: 2,
               background: 'white',
               padding: '5px',
