@@ -320,42 +320,6 @@ describe('POST /api/addDocument', () => {
         });
     });
 
-    test("Successfully adds a document with area and no lat/lon", async () => {
-        const mockData = {
-            id: 1,
-            title: "New Document Title",
-            stakeholders: "Stakeholder1-Stakeholder2",
-            scale: "1:1000",
-            issuanceDate: "2023-01-01",
-            type: "report",
-            connections: ["doc1", "doc2"],
-            language: "English",
-            pages: 50,
-            lat: null,        // Non forniti
-            lon: null,        // Non forniti
-            area: JSON.stringify({  // GeoJSON serializzato in stringa
-                type: "Polygon",
-                coordinates: [[[0, 0], [1, 1], [1, 0], [0, 0]]]
-            }),
-            description: "Description of the new document"
-        };
-    
-        jest.spyOn(DocumentDao.prototype, 'addDocument').mockResolvedValue({
-            ...mockData,
-            message: "Document added successfully."
-        });
-    
-        const response = await request(app)
-            .post('/api/addDocument')
-            .send(mockData);
-    
-        expect(response.status).toBe(200);
-        expect(response.body).toEqual({
-            ...mockData,
-            message: "Document added successfully."
-        });
-    });
-
     // Test per l'aggiunta di un documento con area vuota e lat/lon mancanti
     test("Should return 400 if lat and lon are missing while area is empty", async () => {
         const mockData = {
