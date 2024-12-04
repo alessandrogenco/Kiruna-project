@@ -287,8 +287,8 @@ app.post('/api/addDocument', async (req, res) => {
             }
         }
 
-        // Verifica lat/lon se area è vuoto
-        if (!area && ((lat < 67.3562 || lat > 69.0599) || (lon < 17.8998 || lon > 23.2867))) {
+        // Verifica lat/lon
+        if ((lat < 67.3562 || lat > 69.0599) || (lon < 17.8998 || lon > 23.2867)) {
             throw new Error("Invalid parameters for lat/lon");
         }
 
@@ -394,6 +394,10 @@ app.post('/api/updateDocument', async (req, res) => {
         if (!area && (!lat || !lon)) {
             return res.status(400).json({ message: "Latitude and Longitude are required when Area is not provided" });
         }    
+
+        if ((lat < 67.3562 || lat > 69.0599) || (lon < 17.8998 || lon > 23.2867)) {
+            throw new Error("Invalid parameters for lat/lon");
+        }
 
         const result = await documentDao.updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description);
         
