@@ -33,6 +33,38 @@ jest.mock('sqlite3', () => {
 });
 
 
+
+
+//add original resources
+describe("POST /api/upload", () => {
+  test("Does not upload a file", async () => {
+    const documentId = 10;
+    const lastIDs = [123];
+
+    // Mock the addOriginalResources function
+    FileUploadDao.prototype.addOriginalResources.mockResolvedValue({ resourcesIds: lastIDs.map(id => ({ resourceId: id })) });
+
+    const response = await request(app)
+      .post(`${baseURL}upload?documentId=${documentId}`)
+      .attach("-H \"Content-Type: application/octet-stream\"")
+      .attach(new File("/home/greta/Kiruna-project/backend/test_unit/api_tests/SamplePDFFile.pdf"));
+
+    expect(response.status).toBe(400);
+    expect(response.body).toEqual({
+      message: 'No files uploaded',
+      
+    });
+
+  });
+
+  //test success
+
+
+
+
+  });
+
+
   describe("GET /api/files/:documentId", () => {
     test("should return files for the specified document ID", async () => {
       const documentId = 1;

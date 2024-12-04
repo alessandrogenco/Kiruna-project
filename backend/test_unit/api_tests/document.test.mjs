@@ -3,7 +3,6 @@ import { app, server } from "../../index.mjs";
 import request from "supertest";
 import db from "../../db/db.mjs";
 import DocumentDao from "../../dao/document.mjs";
-import { json } from "body-parser";
 
 
 // Mocking the instance of DocumentDao
@@ -682,7 +681,14 @@ describe('POST /api/updateDocumentGeoreference', () => {
       expect(response.body.message).toBe('Georeferencing updated successfully');
     });
   
-
+    test('should update georeferencing with area', async () => {
+      const response = await request(app)
+        .post('/api/updateDocumentGeoreference')
+        .send({ id: 1, area: 'New Area' });
+  
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe('Georeferencing updated successfully');
+    });
   
     test('should handle database error when updating georeferencing', async () => {
       jest.spyOn(db,'run').mockImplementationOnce((query, params, callback) => {
