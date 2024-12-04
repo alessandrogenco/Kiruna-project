@@ -465,7 +465,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
         <Button variant="secondary" onClick={handleClose}>
           Close
         </Button>
-        <Button style={{ backgroundColor: '#28a745', border: 'none' }} onClick={handleSave}>
+        <Button variant="primary" onClick={handleSave}>
           Save Location
         </Button>
       </Modal.Footer>
