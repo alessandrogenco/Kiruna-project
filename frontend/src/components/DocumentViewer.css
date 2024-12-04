@@ -38,12 +38,13 @@
     top: 0;
     background-color: #ffffff;
     z-index: 1;
-    padding: 10px 0;
+    padding: 10px 50px 10px 10px;
     text-align: center;
     font-size: 1.8rem;
     font-weight: 600;
     color: #000000;
     border-bottom: 1px solid #dee2e6;
+    word-wrap: break-word;
 }
 
 /* Scrollable content area */
