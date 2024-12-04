@@ -20,6 +20,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
   const [areaCentroid, setAreaCentroid] = useState(null);
   const [centroidMarker, setCentroidMarker] = useState(null);
   const [currentAreaId, setCurrentAreaId] = useState(null);
+  const [areaSet, setAreaSet] = useState(false);
 
   // Fetch document locations when the modal is opened
   useEffect(() => {
@@ -63,7 +64,9 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
 
         try {
           const response = await fetch('/KirunaMunicipality.geojson');
+
           if (!response.ok) throw new Error('Failed to load GeoJSON');
+
           const geojson = await response.json();
           setGeoJsonData(geojson);
 
@@ -82,6 +85,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
               'line-opacity': 1,
             },
           });
+
         } catch (error) {
           console.error('Error loading GeoJSON:', error.message);
           setAlertMessage('Error loading map boundaries. Please try again later.');
@@ -91,7 +95,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
         if (existingGeoreferencingData) {
           existingGeoreferencingData.forEach((item) => {
             // Check if lat and lon are valid numbers
-            console.log(item);
+            //console.log(item);
             if (item.lat && item.lon && !isNaN(item.lat) && !isNaN(item.lon)) {
               const coordinates = [parseFloat(item.lon), parseFloat(item.lat)];
                 const iconClass = (() => {
@@ -126,12 +130,15 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
                   .setLngLat(coordinates)
                   .addTo(map.current);
 
-                pointMarker.getElement().addEventListener('click', () => {
-                  if (mode === 'point'){
+                pointMarker.getElement().addEventListener('click', (event) => {
+                  // Prevent other click events from being executed
+                  event.stopPropagation();
+
+                  if (mode === 'point') {
                     setPosition([item.lat, item.lon]);
                     setAlertMessage('Selected an existing point.');
                   }
-                });
+                }, true); // Add event listener in the capture phase for higher priority
               }
 
           });
@@ -150,6 +157,10 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
         // Add or remove the draw control based on the mode
         if (mode === 'area') {
           map.current.addControl(draw.current, 'top-right');
+        }
+
+        if (mode === 'point' && areaSet) {
+          setAreaSet(false);
         }
 
         let centroidMarker = null; 
@@ -175,6 +186,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
               setAreaCentroid(centroid.geometry.coordinates);
               displayCentroidMarker(centroid.geometry.coordinates);
             }
+            setAreaSet(true);
           }
         });
         
