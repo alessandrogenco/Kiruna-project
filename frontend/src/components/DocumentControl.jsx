@@ -8,6 +8,8 @@ import MapModal from './MapModal';
 import axios from 'axios';
 import LinkControl from "./LinkControl";
 import API from "../API.mjs";
+import * as turf from '@turf/turf';
+
 
 function DocumentControl(props) {
 
@@ -454,11 +456,29 @@ function DocumentControl(props) {
     
     const handleLocationSelect = (locationData) => {
       if (locationData.type === 'point') {
-        setFormData({ ...formData, lat: locationData.coordinates[0], lon: locationData.coordinates[1] });
+        const [lat, lon] = locationData.coordinates;
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          lat,
+          lon,
+          area: null, 
+        }));
       } else if (locationData.type === 'area') {
-        setFormData({ ...formData, area: JSON.stringify(locationData.geometry) });
+        const areaGeoJson = JSON.parse(locationData.geometry);
+        const centroid = turf.centroid(areaGeoJson);
+        const [centroidLon, centroidLat] = centroid.geometry.coordinates;
+    
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          area: JSON.stringify(locationData.geometry),
+          lat: centroidLat, 
+          lon: centroidLon, 
+        }));
+      } else {
+        console.error('Invalid location type:', locationData.type);
       }
     };
+    
   
     const handleCloseMapModal = () => {
       setShowMapModal(false);

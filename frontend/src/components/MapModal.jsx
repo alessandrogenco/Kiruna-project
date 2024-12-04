@@ -19,6 +19,7 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
   const [alertMessage, setAlertMessage] = useState('');
   const [areaCentroid, setAreaCentroid] = useState(null);
   const [centroidMarker, setCentroidMarker] = useState(null);
+  const [currentAreaId, setCurrentAreaId] = useState(null);
 
   // Fetch document locations when the modal is opened
   useEffect(() => {
@@ -167,7 +168,6 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
                 })();
 
                 const el = document.createElement('div');
-                //el.className = 'custom-marker';
                 el.style.width = '30px';
                 el.style.height = '30px';
                 el.style.display = 'flex';
@@ -202,11 +202,43 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
             polygon: true,
             trash: true,
           },
+          defaultMode: 'draw_polygon',
         });
         map.current.addControl(draw.current, 'top-right');
 
         // Add event listeners for draw events
-        map.current.on('draw.create', () => {
+        map.current.on('draw.create', (e) => {
+          console.log('draw.create event fired', e);
+          // Remove the previous area and its centroid if it exists
+          if (currentAreaId) {
+            draw.current.delete(currentAreaId);
+          }
+          if (centroidMarker) {
+            console.log('Removing existing centroid marker on create');
+            centroidMarker.remove();
+            setCentroidMarker(null);
+          }
+
+          const features = draw.current.getAll().features;
+          const polygon = features.find(feature => feature.geometry.type === 'Polygon');
+          if (polygon) {
+            // Set the current area ID
+            setCurrentAreaId(polygon.id);
+            const centroid = turf.centroid(polygon);
+            setAreaCentroid(centroid.geometry.coordinates);
+            displayCentroidMarker(centroid.geometry.coordinates);
+          }
+        });
+
+        map.current.on('draw.update', (e) => {
+          console.log('draw.update event fired', e);
+          // Remove the previous centroid marker if it exists
+          if (centroidMarker) {
+            console.log('Removing existing centroid marker on update');
+            centroidMarker.remove();
+            setCentroidMarker(null);
+          }
+
           const features = draw.current.getAll().features;
           const polygon = features.find(feature => feature.geometry.type === 'Polygon');
           if (polygon) {
@@ -216,13 +248,16 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
           }
         });
 
-        map.current.on('draw.update', () => {
-          const features = draw.current.getAll().features;
-          const polygon = features.find(feature => feature.geometry.type === 'Polygon');
-          if (polygon) {
-            const centroid = turf.centroid(polygon);
-            setAreaCentroid(centroid.geometry.coordinates);
-            displayCentroidMarker(centroid.geometry.coordinates);
+        map.current.on('draw.delete', (e) => {
+          console.log('draw.delete event fired', e);
+          // Reset the current area ID and remove the centroid marker when an area is deleted
+          setCurrentAreaId(null);
+          if (centroidMarker) {
+            console.log('Removing centroid marker on delete');
+            centroidMarker.remove();
+            setCentroidMarker(null);
+          } else {
+            console.log('Centroid marker is already null');
           }
         });
 
@@ -276,9 +311,12 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
   };
 
   const displayCentroidMarker = (coordinates) => {
+    console.log('Displaying centroid marker at:', coordinates);
     if (centroidMarker) {
+      console.log('Updating existing centroid marker');
       centroidMarker.setLngLat(coordinates);
     } else {
+      console.log('Creating new centroid marker');
       const centroidMarkerElement = new mapboxgl.Marker({ color: '#ff5733' })
         .setLngLat(coordinates)
         .addTo(map.current);
@@ -289,18 +327,18 @@ const MapModal = ({ show, handleClose, onLocationSelect }) => {
   const handleSave = () => {
     if (mode === 'point' && position) {
       onLocationSelect({ type: 'point', coordinates: position });
-      updateDocumentGeoreference('someDocumentId', position[0], position[1], null);
+      updateDocumentGeoreference('documentId', position[0], position[1], null);
     } else if (mode === 'area') {
       const drawnFeatures = draw.current.getAll();
 
       if (drawnFeatures.features.length > 0) {
         const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: drawnFeatures.features });
         onLocationSelect({ type: 'area', geometry: geoJsonString });
-        updateDocumentGeoreference('someDocumentId', areaCentroid[1], areaCentroid[0], geoJsonString);
+        updateDocumentGeoreference('documentId', areaCentroid[1], areaCentroid[0], geoJsonString);
       } else if (geoJsonData) {
         const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: geoJsonData.features });
         onLocationSelect({ type: 'area', geometry: geoJsonString });
-        updateDocumentGeoreference('someDocumentId', null, null, geoJsonString);
+        updateDocumentGeoreference('documentId', null, null, geoJsonString);
       } else {
         setAlertMessage('Error: Default municipality boundary is unavailable.');
         return;

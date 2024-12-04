@@ -491,10 +491,13 @@ app.post('/api/updateDocumentGeoreference', async (req, res) => {
         query = `UPDATE Documents SET lat = ?, lon = ?, area = ? WHERE id = ?`;
         params = [lat, lon, id];
       } else if (area) {
+        const areaGeoJson = JSON.parse(area);
+        const centroid = turf.centroid(areaGeoJson);
+        const [centroidLon, centroidLat] = centroid.geometry.coordinates;
         
         query = `UPDATE Documents SET area = ?, lat = ?, lon = ? WHERE id = ?`;
-        params = [area, id];
-      }
+        params = [area, centroidLat, centroidLon, id];
+    }
   
       await new Promise((resolve, reject) => {
         db.run(query, params, function (err) {
