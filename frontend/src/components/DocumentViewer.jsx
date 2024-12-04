@@ -56,7 +56,7 @@ const DocumentViewer = ({ isLoggedIn, documentData, onClose }) => {
           )}
           <div className="button-group">
             {isLoggedIn && (
-              <button className="btn btn-primary" onClick={handleEditClick}>Edit</button>
+              <button className="btn-edit-style" onClick={handleEditClick}>Edit</button>
             )}
             <button onClick={() => setViewDescription(true)}>View Description</button>
           </div>
