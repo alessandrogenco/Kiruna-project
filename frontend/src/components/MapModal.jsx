@@ -330,7 +330,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
           }
         
           centroidMarker = new mapboxgl.Marker({
-            color: '#FF6347', 
+            color: '#007cbf', 
             scale: 1 
           })
             .setLngLat(coordinates)
