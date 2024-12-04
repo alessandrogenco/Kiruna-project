@@ -127,8 +127,8 @@ describe("POST Added a document", () => {
         const mockConnections = 5;
         const mockLanguage = "English";
         const mockPages = "1-10";
-        const mockLat = '';
-        const mockLon = '';
+        const mockLat =  67.8301;
+        const mockLon = 20.3001
         const mockArea = "{\"type\":\"FeatureCollection\",\"features\":[{\"id\":\"f38f71334e8447fbb141f1b1c48a286c\",\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"coordinates\":[[[20.239686143658616,67.84183826990176],[20.235568234386562,67.83264710999458],[20.279835759065435,67.83238815166152],[20.239686143658616,67.84183826990176]]],\"type\":\"Polygon\"}}]}";
 
         const response = await request(app).post(baseURL + "addDocument").send({
