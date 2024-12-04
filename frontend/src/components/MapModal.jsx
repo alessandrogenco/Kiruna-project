@@ -94,9 +94,16 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
           setAlertMessage('Error loading map boundaries. Please try again later.');
         }
 
+        
+        let filteredData = existingGeoreferencingData;
+
+        if (mode == 'area'){
+          filteredData = existingGeoreferencingData.filter(item => item.area);
+        } 
+
         // Add existing georeferencing points/areas to the map
-        if (existingGeoreferencingData) {
-          existingGeoreferencingData.forEach((item) => {
+        if (filteredData) {
+          filteredData.forEach((item) => {
             // Check if lat and lon are valid numbers
             //console.log(item);
             if (item.lat && item.lon && !isNaN(item.lat) && !isNaN(item.lon)) {
@@ -197,8 +204,10 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
                     console.log('Area data loaded for the selected point:', areaGeoJson);
 
                     // Rimuovi l'area attuale se già presente
-                    if (currentAreaId) {
-                      draw.current.delete(currentAreaId);
+                    let features = draw.current.getAll().features;
+                    if (features.length === 1) {
+                      draw.current.delete(features[0].id);  // Rimuovi la prima area se ce ne sono più di una
+                      features.remove(features[0]);
                     }
 
                     if (centroidMarker) {
@@ -259,17 +268,19 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
         map.current.on('draw.create', (e) => {
           if (mode === 'area') {
             console.log('draw.create event fired', e);
-          
-            if (currentAreaId) {
-              draw.current.delete(currentAreaId);
+
+            let features = draw.current.getAll().features;
+            if (features.length > 1) {
+              draw.current.delete(features[0].id);  // Rimuovi la prima area se ce ne sono più di una
+              features.remove(features[0]);
             }
+
             if (centroidMarker) {
               console.log('Removing existing centroid marker on create');
               centroidMarker.remove();
               setCentroidMarker(null);
             }
-          
-            const features = draw.current.getAll().features;
+
             const polygon = features.find(feature => feature.geometry.type === 'Polygon');
             if (polygon) {
               setCurrentAreaId(polygon.id);
@@ -418,7 +429,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
               style={{
                 position: 'absolute',
                 top: '10px',
-                right: '10px',
+                left: '150px',
                 zIndex: 2 }}>
               {alertMessage}
             </Alert> )}
