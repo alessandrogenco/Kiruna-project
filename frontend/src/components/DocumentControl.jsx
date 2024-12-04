@@ -22,7 +22,6 @@ function DocumentControl(props) {
   const [showNewTypeInput, setShowNewTypeInput] = useState(false);
   const [showNewScaleInput, setShowNewScaleInput] = useState(false);
 
-
   const existingDocument = location.state?.document;
   const explorePage = location.state?.explorePage;
 

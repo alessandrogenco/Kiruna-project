@@ -47,6 +47,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
   };
 
   useEffect(() => {
+    setAlertMessage('');
     if (show && mapContainer.current && !map.current) {
       mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 
@@ -132,6 +133,51 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
                   .setLngLat(coordinates)
                   .addTo(map.current);
 
+
+                
+                if (mode === 'area') {
+
+                  if (item.area) {
+            
+                    const areaGeoJson = JSON.parse(JSON.parse(item.area));
+                    const layerId = `area-layer-${item.id}`;
+                    
+                    const polygonSource = {
+                      type: 'geojson',
+                      data: {
+                        type: 'FeatureCollection',
+                        features: [{
+                          type: 'Feature',
+                          geometry: {
+                            type: 'Polygon',
+                            coordinates: areaGeoJson.features[0].geometry.coordinates,
+                          },
+                        }],
+                      },
+                    };
+                    
+                    pointMarker.getElement().addEventListener('mouseenter', () => {
+                      map.current.addSource(layerId, polygonSource);
+        
+                      map.current.addLayer({
+                        id: layerId,
+                        type: 'fill',
+                        source: layerId,
+                        paint: {
+                          'fill-color': 'rgba(255, 99, 71, 0.5)',
+                          'fill-opacity': 0.5,
+                        },
+                      });
+                    });
+        
+                    pointMarker.getElement().addEventListener('mouseleave', () => {
+                      map.current.removeLayer(layerId);
+                      map.current.removeSource(layerId);
+                    });
+                  }
+                  
+                }
+
                 pointMarker.getElement().addEventListener('click', (event) => {
                   // Prevent other click events from being executed
                   event.stopPropagation();
@@ -146,6 +192,42 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
                         .setLngLat([item.lon, item.lat])
                         .addTo(map.current);
                     }
+                  } else if (mode === 'area' && item.area){
+                    const areaGeoJson = JSON.parse(JSON.parse(item.area));
+                    console.log('Area data loaded for the selected point:', areaGeoJson);
+
+                    // Rimuovi l'area attuale se già presente
+                    if (currentAreaId) {
+                      draw.current.delete(currentAreaId);
+                    }
+
+                    if (centroidMarker) {
+                      console.log('Removing existing centroid marker');
+                      centroidMarker.remove();
+                      setCentroidMarker(null);
+                    }
+
+                    // Aggiungi l'area al Mapbox Draw
+                    const areaFeature = {
+                      type: 'Feature',
+                      geometry: {
+                        type: 'Polygon',
+                        coordinates: areaGeoJson.features[0].geometry.coordinates,
+                      },
+                    };
+
+                    // Salva l'ID dell'area attualmente visualizzata
+                    const addedArea = draw.current.add(areaFeature);
+                    setCurrentAreaId(addedArea[0]);
+
+                    // Calcola il centroid e visualizza il marcatore
+                    const centroid = turf.centroid(areaFeature);
+                    setAreaCentroid(centroid.geometry.coordinates);
+                    displayCentroidMarker(centroid.geometry.coordinates);
+
+                    // Aggiorna lo stato per indicare che un'area è stata selezionata
+                    setAreaSet(true);
+                    setAlertMessage('Selected an area associated with the point.');
                   }
                 }, true); // Add event listener in the capture phase for higher priority
               }
@@ -337,14 +419,10 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
                 position: 'absolute',
                 top: '10px',
                 right: '10px',
-                zIndex: 2,
-              }}
-            >
+                zIndex: 2 }}>
               {alertMessage}
-            </Alert>
-          )}
-          <div
-            style={{
+            </Alert> )}
+          <div style={{
               position: 'absolute',
               top: '10px',
               left: '10px',
@@ -352,9 +430,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
               background: 'white',
               padding: '5px',
               borderRadius: '5px',
-              boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
-            }}
-          >
+              boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)'}}>
             <ToggleButtonGroup
               type="radio"
               name="mode"
