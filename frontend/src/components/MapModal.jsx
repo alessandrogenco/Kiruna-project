@@ -94,17 +94,28 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
             if (item.lat && item.lon && !isNaN(item.lat) && !isNaN(item.lon)) {
               const coordinates = [parseFloat(item.lon), parseFloat(item.lat)];
 
-              if (item.area) {
+              /*if (item.area) {
                 try {
                   const areaGeoJson = JSON.parse(item.area);
+                  console.log('After first parse:', areaGeoJson);  // Guarda cosa diventa dopo il primo parsing
+                  const finalGeoJson = JSON.parse(areaGeoJson);
+                  console.log('After second parse:', finalGeoJson);
+
+                  /*if (typeof areaGeoJson === 'string') {
+                      console.log("It's still a string, parsing again...");
+                      const finalGeoJson = JSON.parse(areaGeoJson);
+                      console.log('After second parse:', finalGeoJson);
+                      areaGeoJson = finalGeoJson;
+                  }*/
 
                   // Check if the GeoJSON is correctly structured
-                  if (areaGeoJson.type === 'FeatureCollection' && Array.isArray(areaGeoJson.features)) {
-                    areaGeoJson.features.forEach((feature) => {
+                  /*if (finalGeoJson.type === 'FeatureCollection' && finalGeoJson.features.length>0) {
+                    console.log("OKKKKKK");
+                    finalGeoJson.features.forEach((feature) => {
                       // Check if feature is a Polygon and has valid coordinates
                       if (feature.geometry && feature.geometry.type === 'Polygon') {
                         const polygonCoordinates = feature.geometry.coordinates;
-
+                        console.log(polygonCoordinates);
                         if (polygonCoordinates && Array.isArray(polygonCoordinates) && polygonCoordinates.length > 0) {
                           polygonCoordinates.forEach((ring) => {
                             if (ring[0][0] !== ring[ring.length - 1][0] || ring[0][1] !== ring[ring.length - 1][1]) {
@@ -146,12 +157,13 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
                       }
                     });
                   } else {
-                    console.warn(`Invalid GeoJSON format for document ${item.id}:`, areaGeoJson);
+                    console.warn(`Invalid GeoJSON format for document ${item.id}:`, finalGeoJson);
                   }
                 } catch (err) {
                   console.error('Error parsing area GeoJSON for document', item.id, err);
                 }
-              } else {
+              } */
+
                 const iconClass = (() => {
                   switch (item.type) {
                     case "Technical":
@@ -189,9 +201,9 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
                   setAlertMessage('Selected an existing point.');
                 });
               }
-            } else {
+            /*} else {
               console.warn(`Invalid lat/lon for document ${item.id}:`, item);
-            }
+            }*/
           });
         }
 
