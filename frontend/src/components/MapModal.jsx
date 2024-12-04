@@ -57,6 +57,8 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
         zoom: 11,
         maxBounds: [[17.8998, 67.3562], [23.2867, 69.0599]],
         attributionControl: false,
+        pitch: 0,
+        maxPitch: 0
       });
 
       map.current.on('load', async () => {
@@ -339,7 +341,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
             style={{
               position: 'absolute',
               top: '10px',
-              left: '10px',
+              right: '10px',
               zIndex: 1,
               background: 'white',
               padding: '5px',
