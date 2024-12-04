@@ -210,10 +210,11 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
           map.current.addControl(draw.current, 'top-right');
         }
 
-        // Add event listeners for draw events
+        let centroidMarker = null; 
+
         map.current.on('draw.create', (e) => {
           console.log('draw.create event fired', e);
-          // Remove the previous area and its centroid if it exists
+        
           if (currentAreaId) {
             draw.current.delete(currentAreaId);
           }
@@ -222,39 +223,42 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
             centroidMarker.remove();
             setCentroidMarker(null);
           }
-
+        
           const features = draw.current.getAll().features;
           const polygon = features.find(feature => feature.geometry.type === 'Polygon');
           if (polygon) {
-            // Set the current area ID
+
             setCurrentAreaId(polygon.id);
+        
             const centroid = turf.centroid(polygon);
             setAreaCentroid(centroid.geometry.coordinates);
+        
             displayCentroidMarker(centroid.geometry.coordinates);
           }
         });
-
+        
         map.current.on('draw.update', (e) => {
           console.log('draw.update event fired', e);
-          // Remove the previous centroid marker if it exists
+        
           if (centroidMarker) {
             console.log('Removing existing centroid marker on update');
             centroidMarker.remove();
             setCentroidMarker(null);
           }
-
+        
           const features = draw.current.getAll().features;
           const polygon = features.find(feature => feature.geometry.type === 'Polygon');
           if (polygon) {
             const centroid = turf.centroid(polygon);
             setAreaCentroid(centroid.geometry.coordinates);
+        
             displayCentroidMarker(centroid.geometry.coordinates);
           }
         });
-
+        
         map.current.on('draw.delete', (e) => {
           console.log('draw.delete event fired', e);
-          // Reset the current area ID and remove the centroid marker when an area is deleted
+        
           setCurrentAreaId(null);
           if (centroidMarker) {
             console.log('Removing centroid marker on delete');
@@ -264,6 +268,24 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
             console.log('Centroid marker is already null');
           }
         });
+        
+        const displayCentroidMarker = (coordinates) => {
+          if (centroidMarker) {
+            centroidMarker.remove(); 
+          }
+        
+          centroidMarker = new mapboxgl.Marker({
+            color: '#FF6347', 
+            scale: 1 
+          })
+            .setLngLat(coordinates)
+            .addTo(map.current);
+        
+          console.log('Centroid marker added at', coordinates);
+        };
+        
+        
+        
 
         map.current.on('click', (e) => {
           if (mode === 'point') {
@@ -313,21 +335,6 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
 
     return isInside;
   };
-
-  const displayCentroidMarker = (coordinates) => {
-    console.log('Displaying centroid marker at:', coordinates);
-    if (centroidMarker) {
-        console.log('Updating existing centroid marker');
-        centroidMarker.setLngLat(coordinates).addTo(map.current); 
-    } else {
-
-        console.log('Creating new centroid marker');
-        const centroidMarkerElement = new mapboxgl.Marker({ color: '#ff5733' })
-            .setLngLat(coordinates)
-            .addTo(map.current);
-        setCentroidMarker(centroidMarkerElement);
-    }
-};
 
 
   const handleSave = () => {
