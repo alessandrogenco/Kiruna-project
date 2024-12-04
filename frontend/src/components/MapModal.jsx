@@ -333,18 +333,18 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
   const handleSave = () => {
     if (mode === 'point' && position) {
       onLocationSelect({ type: 'point', coordinates: position });
-      updateDocumentGeoreference(documentId, position[0], position[1], null);
+      updateDocumentGeoreference('documentId', position[0], position[1], null);
     } else if (mode === 'area') {
       const drawnFeatures = draw.current.getAll();
 
       if (drawnFeatures.features.length > 0) {
         const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: drawnFeatures.features });
         onLocationSelect({ type: 'area', geometry: geoJsonString });
-        updateDocumentGeoreference(documentId, areaCentroid[1], areaCentroid[0], geoJsonString);
+        updateDocumentGeoreference('documentId', areaCentroid[1], areaCentroid[0], geoJsonString);
       } else if (geoJsonData) {
         const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: geoJsonData.features });
         onLocationSelect({ type: 'area', geometry: geoJsonString });
-        updateDocumentGeoreference(documentId, null, null, geoJsonString);
+        updateDocumentGeoreference('documentId', null, null, geoJsonString);
       } else {
         setAlertMessage('Error: Default municipality boundary is unavailable.');
         return;
