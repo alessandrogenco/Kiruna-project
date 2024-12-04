@@ -396,7 +396,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
           <div ref={mapContainer} style={{ height: '100%', width: '100%' }} />
           {alertMessage && (
             <Alert
-              variant="warning"
+              variant="success"
               onClose={() => setAlertMessage('')}
               dismissible
               style={{
