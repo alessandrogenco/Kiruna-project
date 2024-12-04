@@ -13,7 +13,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
   const marker = useRef(null);
   const draw = useRef(null);
   const [position, setPosition] = useState(null);
-  const [mode, setMode] = useState('point');
+  const [mode, setMode] = useState('area');
   const [geoJsonData, setGeoJsonData] = useState(null);
   const [existingGeoreferencingData, setExistingGeoreferencingData] = useState(null);
   const [alertMessage, setAlertMessage] = useState('');
