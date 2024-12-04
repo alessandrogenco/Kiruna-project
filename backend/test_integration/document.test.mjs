@@ -394,11 +394,11 @@ describe('POST /api/updateDocument', () => {
                 type: 'research',
                 lat: 67.9,
                 lon: 20.8,
-                area: 'North Zone'
+                area: {}
             });
 
         expect(response.status).toBe(400);
-        expect(response.body).toEqual({ message: "Invalid parameters" });
+        expect(response.body).toEqual({ message: "Area cannot be an empty GeoJSON object" });
     });
 
     test('Returns 400 error for out-of-range latitude and longitude', async () => {
@@ -417,7 +417,7 @@ describe('POST /api/updateDocument', () => {
             });
 
         expect(response.status).toBe(400);
-        expect(response.body).toEqual({ message: "Invalid parameters" });
+        expect(response.body).toEqual({ message: "Invalid parameters for lat/lon" });
     });
 
     test('Returns error when no document found with provided ID', async () => {
