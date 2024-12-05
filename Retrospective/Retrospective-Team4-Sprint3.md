@@ -55,8 +55,6 @@ sections:
 
 > place technical tasks corresponding to story `#0` and leave out story points (not applicable in this case)
 
-- Hours per task (average, standard deviation)
-
 - Hours per task average including Sprint Planning
     - Estimated: **1h 47m/task**
     - Actual: **1h 46m/task**
@@ -79,7 +77,7 @@ sections:
 - Unit Testing:
   - Total hours estimated : 3h 30min
   - Total hours spent : 3h 30min
-  - Nr of automated unit test cases 34
+  - Nr of automated unit test cases : 34
   - Coverage (if available) : 98% for DAOs; 80% for API
 - E2E testing:
   - Total hours estimated : 9h
@@ -99,7 +97,7 @@ sections:
 
 - What caused your errors in estimation (if any)?
 
-We made small errors due to overestimating or underestimating some tasks
+We made some small errors due to underestimating tasks, which led to some technical problems. In other cases, we overestimated some tasks, thinking they were slightly more complex than they actually were.
 
 - What lessons did you learn (both positive and negative) in this sprint?
 
@@ -118,7 +116,9 @@ Although we increased the coordination among ourselves, we think we can still ge
 
   > Finish the critical sprint tasks at least one day in advance to have more time to check things
 
-  > Coordinate our codes to match the same practices and have a better quality of code
+  > Increase the standardization of code in the project by applying best practices
+
+  > Producing good quality code, to avoid technical debt and other problems
 
 - One thing you are proud of as a Team!!
 
