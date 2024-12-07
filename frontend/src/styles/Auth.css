@@ -95,9 +95,6 @@ body, html {
     opacity: 1;
   }
   
-  input {
-    all: unset; /* Resets all styles to remove default browser styling */
-}
 
 input.form-control-custom {
     all: unset; /* Ensure reset specifically on these inputs */
@@ -110,4 +107,14 @@ input.form-control-custom {
     appearance: none; /* Remove default browser appearance */
 }
 
-
+/* For autofill background and text color */
+input:-webkit-autofill {
+  -webkit-text-fill-color: #ffffff !important; /* Force text color to white */
+  -webkit-box-shadow: 0 0 0px 1000px rgba(0, 0, 0, 0) inset !important; /* Match your input background */
+  transition: background-color 5000s ease-in-out 0s; /* Prevent quick style changes */
+  caret-color: white; /* Make the cursor white to match the text */
+}
+input {
+  text-transform: none !important; /* Disable any text transformation */
+  color: #ffffff !important; /* Keep text color white */
+}

@@ -49,6 +49,8 @@ function LoginForm({ login, isLoggedIn, handleLogout }) {
                             onChange={(ev) => setUsername(ev.target.value)}
                             required
                             className="form-control-custom"
+                            autoCapitalize="none" 
+                            spellCheck="false"
                         />
                     </Form.Group>
                     <Form.Group className="mb-4" controlId="password">
@@ -59,6 +61,8 @@ function LoginForm({ login, isLoggedIn, handleLogout }) {
                             onChange={(ev) => setPassword(ev.target.value)}
                             required
                             className="form-control-custom"
+                            autoCapitalize="none" 
+                            spellCheck="false"
                         />
                     </Form.Group>
                     <Button
