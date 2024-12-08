@@ -155,16 +155,7 @@ function ExplorePage(props) {
               type="text"
               id="cluster-search-${clusterId}"
               placeholder="Search documents..."
-              style="
-                width: 100%;
-                padding: 8px;
-                margin-bottom: 10px;
-                border: 2px solid #28a745; /* Green border */
-                border-radius: 4px;
-                color: black; /* Black text color for visibility */
-                font-size: 1em;
-                box-sizing: border-box; /* Ensure consistent sizing */
-              "
+              class="cluster-popup-search"
             >
               <ul id="cluster-list-${clusterId}" class="cluster-popup-list">
               ${documentList

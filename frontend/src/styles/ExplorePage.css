@@ -132,3 +132,23 @@
   text-decoration: none;
   color: #146726;
 }
+
+.cluster-popup-search {
+  display: block;
+  width: 95%; 
+  height: 45px;
+  padding: 10px;
+  margin: 0 auto 10px auto; 
+  border: 1.4px solid #000000; 
+  border-radius: 4px; 
+  background-color: white; 
+  font-size: 1em; 
+  box-sizing: border-box; 
+  color: black; 
+  text-align: left;
+}
+.cluster-popup-search:focus {
+  border-color: #000000 !important; 
+  outline: none; 
+  box-shadow: none; 
+}
