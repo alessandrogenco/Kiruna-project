@@ -136,7 +136,7 @@ function ExplorePage(props) {
       );
 
       if (markersLayer.current) {
-        markersLayer.current.forEach(marker => marker.remove());
+        markersLayer.current.forEach(item => item.marker.remove());
       }
 
       const markersArray = [];
@@ -244,7 +244,7 @@ function ExplorePage(props) {
             });
       
 
-          markersArray.push(marker);
+          markersArray.push({marker: marker, data: properties.data});
         } else {
           
           // Imposta l'icona in base al tipo di documento
@@ -339,7 +339,7 @@ function ExplorePage(props) {
             });
           }
 
-          markersArray.push(marker);
+          markersArray.push({marker: marker, data: properties.data});
         }
       });
 
@@ -370,6 +370,23 @@ function ExplorePage(props) {
       updateMarkers();
     }
   }, [map, mapLoaded, markers]);
+
+   // Use the ID to search and open the corresponding popup
+   useEffect(() => {
+    if (documentIdToOpen && map) {
+      // Find the marker corresponding to the ID
+      const selectedMarker = markersLayer.current.find(
+        (item) => item.data.id === documentIdToOpen
+      );
+
+      if (selectedMarker) {
+        const popup = selectedMarker.marker.getPopup();
+        if (popup) {
+          popup.addTo(map); // Add the popup to the map
+        }
+      }
+    }
+  }, [documentIdToOpen, map]);
 
   const handleMapStyleChange = (style) => {
     if (map) {
