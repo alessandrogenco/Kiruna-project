@@ -151,14 +151,29 @@ function ExplorePage(props) {
               <div class="cluster-popup-header">
                 ${properties.point_count_abbreviated} Documents
               </div>
-              <ul class="cluster-popup-list">
-                ${documentList
-                  .map(
-                    (doc) => `
-                      <li data-id="${doc.data.id}" class="document-item">
-                        <div class="document-title">${doc.label}</div>
-                      </li>`
-                  )
+             <input
+              type="text"
+              id="cluster-search-${clusterId}"
+              placeholder="Search documents..."
+              style="
+                width: 100%;
+                padding: 8px;
+                margin-bottom: 10px;
+                border: 2px solid #28a745; /* Green border */
+                border-radius: 4px;
+                color: black; /* Black text color for visibility */
+                font-size: 1em;
+                box-sizing: border-box; /* Ensure consistent sizing */
+              "
+            >
+              <ul id="cluster-list-${clusterId}" class="cluster-popup-list">
+              ${documentList
+                .map(
+                  (doc) => `
+                    <li data-id="${doc.data.id}" class="document-item">
+                      <div class="document-title">${doc.label}</div>
+                    </li>`
+                )
                   .join('')}
               </ul>
             </div>
@@ -172,6 +187,21 @@ function ExplorePage(props) {
               popupContent.style.padding = '10px'; 
               popupContent.style.borderRadius = '10px';
             }
+            const searchInput = document.getElementById(`cluster-search-${clusterId}`);
+            const listElement = document.getElementById(`cluster-list-${clusterId}`);
+            const listItems = Array.from(listElement.querySelectorAll('li.document-item'));
+  
+            searchInput.addEventListener('input', (event) => {
+              const searchTerm = event.target.value.toLowerCase();
+              listItems.forEach((item) => {
+                const title = item.querySelector('.document-title').textContent.toLowerCase();
+                if (title.includes(searchTerm)) {
+                  item.style.display = '';
+                } else {
+                  item.style.display = 'none';
+                }
+              });
+            });
           });
       
           const marker = new mapboxgl.Marker({
