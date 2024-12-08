@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import AppNavbar from './Navbar';
 import { Row, Col } from 'react-bootstrap';
+import { useLocation } from 'react-router-dom';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Supercluster from 'supercluster';
@@ -23,6 +24,18 @@ function ExplorePage(props) {
   const cluster = useRef(null);
   const markersLayer = useRef(null);
   const activePopup = useRef(null);
+  const location = useLocation();
+
+  const [documentIdToOpen, setDocumentIdToOpen] = useState(null); // stato temporaneo per l'ID del documento da aprire
+
+  useEffect(() => {
+    const documentId = location.state?.documentId;
+    if (documentId) {
+      setDocumentIdToOpen(documentId);
+    }
+  }, [location]);
+
+
 
   const handleSetMarkers = (newMarkers) => {
     setMarkers([...newMarkers]);
