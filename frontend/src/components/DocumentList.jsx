@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { Col, ListGroupItem, Row, ListGroup, Button } from 'react-bootstrap';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './DocumentList.css';
 import { getDocumentLinks } from '../API.mjs';
@@ -35,8 +35,10 @@ function DocumentInList(props){
     const [selectedDocument, setSelectedDocument] = useState(null);
     const [documentLinks, setDocumentLinks] = useState([]);
     const [showLinks, setShowLinks] = useState(false);
-
-
+    const navigate = useNavigate();
+    const handleShowOnMap = () => {
+      navigate(`/explore`, { state: {documentId: selectedDocument.id} });
+    }
     const handleDocumentClick = (document) => {
         setSelectedDocument(document);
       };
@@ -145,6 +147,15 @@ function DocumentInList(props){
                     className="toggle-button"
                   >
                     {showLinks ? "Hide Connections" : "Show Connections"}
+                  </Button>
+                </Col>
+                <Col>
+                  <Button
+                    variant="outline-success"
+                    onClick={handleShowOnMap}
+                    className="toggle-button"
+                  >
+                    Show on Map
                   </Button>
                 </Col>
               </Row>
