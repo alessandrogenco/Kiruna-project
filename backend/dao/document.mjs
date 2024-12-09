@@ -305,10 +305,39 @@ class DocumentDao{
         });
     }
     
-    updateLink(idDocument1, idDocument2, newLinkType) {
+    updateLink(idDocument1, idDocument2, linkType, newLinkType) {
         return new Promise((resolve, reject) => {
-            const checkLinkQuery = 'SELECT COUNT(*) AS count FROM DocumentsLinks WHERE (idDocument1 = ? AND idDocument2 = ?) OR (idDocument2 = ? AND idDocument1 = ?)';
+            const checkLinkQuery = 'SELECT type FROM DocumentsLinks WHERE ((idDocument1 = ? AND idDocument2 = ?) OR (idDocument2 = ? AND idDocument1 = ?))';
             db.get(checkLinkQuery, [idDocument1, idDocument2, idDocument1, idDocument2], (err, row) => {
+                if (err) {
+                    console.error('Database error while checking link:', err.message);
+                    return reject(new Error('Database error: ' + err.message));
+                }
+                if (!row) {
+                    return reject(new Error('Link not found'));
+                }
+                if (row.type === newLinkType) {
+                    return reject(new Error('The new type is the same as the current type'));
+                }
+    
+                const updateLinkQuery = 'UPDATE DocumentsLinks SET type = ? WHERE ((idDocument1 = ? AND idDocument2 = ?) OR (idDocument2 = ? AND idDocument1 = ?)) AND type = ?';
+                db.run(updateLinkQuery, [newLinkType, idDocument1, idDocument2, idDocument1, idDocument2, linkType], (err) => {
+                    if (err) {
+                        console.error('Database error while updating link:', err.message);
+                        return reject(new Error('Database error: ' + err.message));
+                    }
+                    resolve({ id1: idDocument1, id2: idDocument2, newType: newLinkType });
+                });
+            });
+        });
+    }
+    
+
+    deleteLink(idDocument1, idDocument2, linkType) {
+        return new Promise((resolve, reject) => {
+            // Verifica se il link esiste
+            const checkLinkQuery = 'SELECT COUNT(*) AS count FROM DocumentsLinks WHERE ((idDocument1 = ? AND idDocument2 = ?) OR (idDocument2 = ? AND idDocument1 = ?)) AND type = ?';
+            db.get(checkLinkQuery, [idDocument1, idDocument2, idDocument1, idDocument2, linkType], (err, row) => {
                 if (err) {
                     console.error('Database error while checking link:', err.message);
                     return reject(new Error('Database error: ' + err.message));
@@ -316,18 +345,42 @@ class DocumentDao{
                 if (row.count === 0) {
                     return reject(new Error('Link not found'));
                 }
-
-                const updateLinkQuery = 'UPDATE DocumentsLinks SET type = ? WHERE (idDocument1 = ? AND idDocument2 = ?) OR (idDocument2 = ? AND idDocument1 = ?)';
-                db.run(updateLinkQuery, [newLinkType, idDocument1, idDocument2, idDocument1, idDocument2], (err) => {
-                    if (err) {
-                        console.error('Database error while updating link:', err.message);
-                        return reject(new Error('Database error: ' + err.message));
-                    }
-                    resolve({ id1: idDocument1, id2: idDocument2, type: newLinkType });
+    
+                // Inizia la transazione per eliminare il link e aggiornare il numero di connessioni
+                db.serialize(() => {
+                    // Elimina il link dalla tabella DocumentsLinks
+                    const deleteLinkQuery = 'DELETE FROM DocumentsLinks WHERE ((idDocument1 = ? AND idDocument2 = ?) OR (idDocument2 = ? AND idDocument1 = ?)) AND type = ?';
+                    db.run(deleteLinkQuery, [idDocument1, idDocument2, idDocument1, idDocument2, linkType], (err) => {
+                        if (err) {
+                            console.error('Database error while deleting link:', err.message);
+                            return reject(new Error('Database error: ' + err.message));
+                        }
+    
+                        // Decrementa il numero di connessioni per entrambi i documenti
+                        const updateConnectionsQuery1 = 'UPDATE Documents SET connections = connections - 1 WHERE id = ?';
+                        const updateConnectionsQuery2 = 'UPDATE Documents SET connections = connections - 1 WHERE id = ?';
+    
+                        db.run(updateConnectionsQuery1, [idDocument1], (err) => {
+                            if (err) {
+                                console.error('Error while updating connections for document 1:', err.message);
+                                return reject(new Error('Error while updating connections for document 1: ' + err.message));
+                            }
+    
+                            db.run(updateConnectionsQuery2, [idDocument2], (err) => {
+                                if (err) {
+                                    console.error('Error while updating connections for document 2:', err.message);
+                                    return reject(new Error('Error while updating connections for document 2: ' + err.message));
+                                }
+    
+                                // Restituisce il risultato dell'operazione
+                                resolve({ id1: idDocument1, id2: idDocument2, type: linkType });
+                            });
+                        });
+                    });
                 });
             });
         });
-    }
+    }    
 
     showStakeholders() {
       return new Promise((resolve, reject) => {

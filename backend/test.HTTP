@@ -57,10 +57,9 @@ POST http://localhost:3001/api/linkDocuments
 Content-Type: application/json
 
 {
-    "id1": 3,
-    "id2": 4,
-    "linkDate": "2022-09-27",
-    "linkType": "direct consequence"
+    "id1": 6,
+    "id2": 7,
+    "linkType": "Technical"
 }
 
 ########### get document links
@@ -72,9 +71,20 @@ PUT http://localhost:3001/api/updateLink
 Content-Type: application/json
 
 {
+    "idDocument1": 5,
+    "idDocument2": 4,
+    "linkType": "Direct",
+    "newLinkType": "Design"
+}
+
+### delete a link between two documents
+DELETE http://localhost:3001/api/deleteLink
+Content-Type: application/json
+
+{
     "idDocument1": 4,
     "idDocument2": 5,
-    "newLinkType": "Design"
+    "linkType": "Design"
 }
 
 ########## add document

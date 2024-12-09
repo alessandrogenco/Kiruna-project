@@ -350,25 +350,57 @@ app.get('/api/documentLinks/:id', async (req, res) => {
 });
 
 app.put('/api/updateLink', async (req, res) => {
-    const { idDocument1, idDocument2, newLinkType } = req.body;
+    const { idDocument1, idDocument2, linkType, newLinkType } = req.body;
 
     try {
-    
         if (newLinkType.trim() === '') {
             throw new Error('The new link type must be a non-empty string');
         }
 
-        const updatedLink = await documentDao.updateLink(idDocument1, idDocument2, newLinkType);
+        // Chiamata al DAO per aggiornare il link
+        const updatedLink = await documentDao.updateLink(idDocument1, idDocument2, linkType, newLinkType);
+
+        // Risposta di successo
         res.status(200).json({
             message: 'Link updated successfully',
             link: updatedLink
         });
     } catch (error) {
+        // Gestione errori
         if (error.message === 'Link not found') {
             res.status(404).json({ message: error.message });
-        } else {
+        } else if (error.message === 'The new type is the same as the current type') {
             res.status(400).json({ message: error.message });
+        } else {
+            res.status(500).json({ message: 'Internal server error', error: error.message });
         }
+    }
+});
+
+
+/**
+ * API to delete a link between two docs
+ */
+app.delete('/api/deleteLink', async (req, res) => {
+    const { idDocument1, idDocument2, linkType } = req.body;
+
+    // Validazione dei parametri
+    if (!idDocument1 || !idDocument2 || !linkType) {
+        return res.status(400).json({ error: 'idDocument1, idDocument2 e linkType sono obbligatori' });
+    }
+
+    try {
+        const result = await documentDao.deleteLink(idDocument1, idDocument2, linkType);
+        return res.status(200).json({
+            message: 'Link eliminato con successo',
+            data: result
+        });
+    } catch (error) {
+        if (error.message === 'Link not found') {
+            return res.status(404).json({ error: 'Il link specificato non esiste' });
+        }
+        console.error('Errore durante l\'eliminazione del link:', error.message);
+        return res.status(500).json({ error: 'Errore interno del server' });
     }
 });
 
