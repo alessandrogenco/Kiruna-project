@@ -68,14 +68,13 @@ GET http://localhost:3001/api/documentLinks/10
 Accept: application/json
 
 ########### update document links
-PUT http://localhost:3001/api/links
+PUT http://localhost:3001/api/updateLink
 Content-Type: application/json
 
 {
-    "idDocument1": 1,
-    "idDocument2": 2,
-    "newLinkDate": "2023-02-16",
-    "newLinkType": "collateral consequence"
+    "idDocument1": 4,
+    "idDocument2": 5,
+    "newLinkType": "Design"
 }
 
 ########## add document

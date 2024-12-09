@@ -305,7 +305,7 @@ app.post('/api/addDocument', async (req, res) => {
 
 //link documents
 app.post('/api/linkDocuments', async (req, res) => {
-    const { id1, id2, /*linkDate,*/ linkType } = req.body;
+    const { id1, id2, linkType } = req.body;
 
     try {
        
@@ -314,7 +314,7 @@ app.post('/api/linkDocuments', async (req, res) => {
             throw new Error('The link type must be a non-empty string');
         }
 
-        const result = await documentDao.linkDocuments(id1, id2, /*linkDate,*/ linkType);
+        const result = await documentDao.linkDocuments(id1, id2, linkType);
         res.status(200).json({
             message: 'Documents linked successfully',
             link: result
@@ -349,19 +349,16 @@ app.get('/api/documentLinks/:id', async (req, res) => {
     }
 });
 
-app.put('/api/links', async (req, res) => {
-    const { idDocument1, idDocument2, newLinkDate, newLinkType } = req.body;
+app.put('/api/updateLink', async (req, res) => {
+    const { idDocument1, idDocument2, newLinkType } = req.body;
 
     try {
-        if (newLinkDate.trim() === '') {
-            throw new Error('The new link date must be a non-empty string');
-        }
     
         if (newLinkType.trim() === '') {
             throw new Error('The new link type must be a non-empty string');
         }
 
-        const updatedLink = await documentDao.updateLink(idDocument1, idDocument2, newLinkDate, newLinkType);
+        const updatedLink = await documentDao.updateLink(idDocument1, idDocument2, newLinkType);
         res.status(200).json({
             message: 'Link updated successfully',
             link: updatedLink
