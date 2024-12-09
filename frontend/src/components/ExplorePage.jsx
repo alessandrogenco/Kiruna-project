@@ -376,13 +376,60 @@ function ExplorePage(props) {
     if (documentIdToOpen && map) {
       // Find the marker corresponding to the ID
       const selectedMarker = markersLayer.current.find(
-        (item) => item.data.id === documentIdToOpen
+        (item) => item.data ? item.data.id === documentIdToOpen : false
       );
-
       if (selectedMarker) {
         const popup = selectedMarker.marker.getPopup();
         if (popup) {
           popup.addTo(map); // Add the popup to the map
+        }        
+      } else {
+       // If the document is inside a cluster, find the cluster and zoom in on it
+        const clusters = cluster.current.getClusters(
+          [map.getBounds().getWest(), map.getBounds().getSouth(), map.getBounds().getEast(), map.getBounds().getNorth()],
+          map.getZoom()
+        );
+        const clusterWithDocument = clusters.find(clusterPoint => {        
+          if (!clusterPoint.properties.cluster) {
+            return false;
+          }
+          const documentList = cluster.current
+          .getLeaves(clusterPoint.id, Infinity)
+          .map((leaf) => leaf.properties);
+
+          return documentList.find(d => 
+            d.data.id === documentIdToOpen
+          );
+        });
+
+        if (clusterWithDocument) {
+          const documentList = cluster.current
+          .getLeaves(clusterWithDocument.id, Infinity)
+
+          const docInCluster = documentList.find(d => d.properties.data.id === documentIdToOpen);
+          if (docInCluster) {
+            map.flyTo({
+              center: docInCluster.geometry.coordinates,
+              zoom: 14,
+              speed: 1,
+              curve: 1,
+              easing: (t) => t,
+            });
+
+            map.once('moveend', () => {
+              const selectedMarker = markersLayer.current.find(
+                (item) => item.data ? item.data.id === documentIdToOpen : false
+              );
+              if(selectedMarker){
+                const popup = selectedMarker.marker.getPopup();
+                if (popup) {
+                  popup.addTo(map); // Add the popup to the map
+                }
+              }
+            });
+          }
+        } else {
+          console.error("No cluster found containing the specified document.");
         }
       }
     }
