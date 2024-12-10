@@ -163,6 +163,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
                         }],
                       },
                     };
+                    
 
                     pointMarker.getElement().addEventListener('mouseenter', () => {
                       map.current.addSource(layerId, polygonSource);
@@ -208,7 +209,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
                     let features = draw.current.getAll().features;
                     if (features.length === 1) {
                       draw.current.delete(features[0].id);  // Rimuovi la prima area se ce ne sono più di una
-                      features.remove(features[0]);
+                      features.splice(0, 1); // Remove the first feature
                     }
 
                     if (centroidMarker) {
@@ -456,11 +457,11 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
                 if (draw.current) {
                   try {
                   // Check if deleteAll exists before calling it
-                  if (typeof draw.current.deleteAll === 'function') {
-                    draw.current.deleteAll();
-                      } else {
-                        console.error('deleteAll method is not available on draw.current');
-                      }
+                  // if (typeof draw.current.deleteAll === 'function') {
+                  //   draw.current.deleteAll();
+                  //     } else {
+                  //       console.error('deleteAll method is not available on draw.current');
+                  //     }
                       if (value === 'point') {
                         draw.current.set({
                           type: 'FeatureCollection',
