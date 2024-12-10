@@ -57,7 +57,7 @@ function ExplorePage(props) {
         lat: document.lat,
         lng: document.lon,
         label: document.title,
-        data: document, // Attach full document data for use in DocumentViewer
+        data: { ...document, description: document.description || '' },// Attach full document data for use in DocumentViewer
       }));
 
       handleSetMarkers(newMarkers);
@@ -174,7 +174,8 @@ function ExplorePage(props) {
               ${documentList
                 .map(
                   (doc) => `
-                    <li data-id="${doc.data.id}" class="document-item">
+                    <li data-id="${doc.data.id}" data-description="${doc.data.description.replace(/"/g, '&quot;')}"
+                      class="document-item">
                       <div class="document-title">${doc.label}</div>
                     </li>`
                 )
@@ -195,17 +196,24 @@ function ExplorePage(props) {
             const listElement = document.getElementById(`cluster-list-${clusterId}`);
             const listItems = Array.from(listElement.querySelectorAll('li.document-item'));
   
+
+
+
             searchInput.addEventListener('input', (event) => {
-              const searchTerm = event.target.value.toLowerCase();
+              const searchTerm = event.target.value.toLowerCase(); // no sanitization, just lowercase
               listItems.forEach((item) => {
                 const title = item.querySelector('.document-title').textContent.toLowerCase();
-                if (title.includes(searchTerm)) {
+                const description = (item.getAttribute('data-description') || '').toLowerCase();
+            
+                // Check if the search term is in either the title or the description
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
                   item.style.display = '';
                 } else {
                   item.style.display = 'none';
                 }
               });
             });
+            
           });
       
           const marker = new mapboxgl.Marker({
