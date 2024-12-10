@@ -97,19 +97,18 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
           setAlertMessage('Error loading map boundaries. Please try again later.');
         }
 
-        
         let filteredData = existingGeoreferencingData;
 
         if (mode == 'area'){
           filteredData = existingGeoreferencingData.filter(item => item.area);
-        } 
+        }
 
         // Add existing georeferencing points/areas to the map
         if (filteredData) {
           filteredData.forEach((item) => {
             // Check if lat and lon are valid numbers
             //console.log(item);
-           
+
             if (item.lat && item.lon && !isNaN(item.lat) && !isNaN(item.lon)) {
               const coordinates = [parseFloat(item.lon), parseFloat(item.lat)];
                 const iconClass = (() => {
@@ -143,15 +142,14 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
                 const pointMarker = new mapboxgl.Marker(el)
                   .setLngLat(coordinates)
                   .addTo(map.current);
-                
-                
+
                 if (mode === 'area') {
 
                   if (item.area) {
-            
+
                     const areaGeoJson = JSON.parse(JSON.parse(item.area));
                     const layerId = `area-layer-${item.id}`;
-                    
+
                     const polygonSource = {
                       type: 'geojson',
                       data: {
@@ -165,10 +163,10 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
                         }],
                       },
                     };
-                    
+
                     pointMarker.getElement().addEventListener('mouseenter', () => {
                       map.current.addSource(layerId, polygonSource);
-        
+
                       map.current.addLayer({
                         id: layerId,
                         type: 'fill',
@@ -179,13 +177,13 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
                         },
                       });
                     });
-        
+
                     pointMarker.getElement().addEventListener('mouseleave', () => {
                       map.current.removeLayer(layerId);
                       map.current.removeSource(layerId);
                     });
                   }
-                  
+
                 }
 
                 pointMarker.getElement().addEventListener('click', (event) => {
@@ -248,6 +246,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
         }
 
         // Initialize Mapbox Draw
+
         draw.current = new MapboxDraw({
           displayControlsDefault: false,
           controls: {
@@ -266,7 +265,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
           setAreaSet(false);
         }
 
-        let centroidMarker = null; 
+        let centroidMarker = null;
 
         map.current.on('draw.create', (e) => {
           if (mode === 'area') {
@@ -294,8 +293,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
             setAreaSet(true);
           }
         });
-        
-        
+
         map.current.on('draw.update', (e) => {
           console.log('draw.update event fired', e);
           if (mode === 'area') {
@@ -304,7 +302,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
               centroidMarker.remove();
               setCentroidMarker(null);
             }
-          
+
             const features = draw.current.getAll().features;
             const polygon = features.find(feature => feature.geometry.type === 'Polygon');
             if (polygon) {
@@ -314,10 +312,10 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
             }
           }
         });
-        
+
         map.current.on('draw.delete', (e) => {
           console.log('draw.delete event fired', e);
-        
+
           setCurrentAreaId(null);
           if (centroidMarker) {
             console.log('Removing centroid marker on delete');
@@ -327,19 +325,19 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
             console.log('Centroid marker is already null');
           }
         });
-        
+
         const displayCentroidMarker = (coordinates) => {
           if (centroidMarker) {
-            centroidMarker.remove(); 
+            centroidMarker.remove();
           }
-        
+
           centroidMarker = new mapboxgl.Marker({
-            color: '#007cbf', 
-            scale: 1 
+            color: '#007cbf',
+            scale: 1
           })
             .setLngLat(coordinates)
             .addTo(map.current);
-        
+
           console.log('Centroid marker added at', coordinates);
         };
 
@@ -381,6 +379,8 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
     };
   }, [show, mode, existingGeoreferencingData]);
 
+  
+
   const isWithinBounds = (lon, lat, geojson) => {
     const point = turf.point([lon, lat]);
 
@@ -391,7 +391,6 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
 
     return isInside;
   };
-
 
   const handleSave = () => {
     if (mode === 'point' && position) {
@@ -446,28 +445,58 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
               padding: '5px',
               borderRadius: '5px',
               boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)'}}>
-            <ToggleButtonGroup
-              type="radio"
-              name="mode"
-              value={mode}
-              onChange={(value) => {
-                setMode(value);
-                if (value === 'point') {
-                  draw.current.deleteAll();
-                  draw.current.changeMode('simple_select');
-                  draw.current.set({ displayControlsDefault: false, controls: {} });
-                } else {
-                  draw.current.changeMode('draw_polygon');
-                  draw.current.set({
-                    displayControlsDefault: false,
-                    controls: {
-                      polygon: true,
-                      trash: true,
-                    },
-                  });
-                }
-              }}
-            >
+
+              <ToggleButtonGroup
+                type="radio"
+                name="mode"
+                value={mode}
+                onChange={(value) => {
+                 setMode(value);
+
+                if (draw.current) {
+                  try {
+                  // Check if deleteAll exists before calling it
+                  if (typeof draw.current.deleteAll === 'function') {
+                    draw.current.deleteAll();
+                      } else {
+                        console.error('deleteAll method is not available on draw.current');
+                      }
+                      if (value === 'point') {
+                        draw.current.set({
+                          type: 'FeatureCollection',
+                          features: [] // Ensure valid GeoJSON structure
+                          });
+                          
+                      if (typeof draw.current.changeMode === 'function') {
+                        draw.current.changeMode('simple_select', {
+                          displayControlsDefault: false,
+                          controls: {}
+                         });
+                        } else {
+                          console.error('changeMode method is not available on draw.current');
+                         }
+                        } else if (value === 'polygon') {
+                           if (typeof draw.current.changeMode === 'function') {
+                             draw.current.changeMode('draw_polygon', {
+                                    displayControlsDefault: false,
+                                    controls: {
+                                    polygon: true,
+                                    trash: true
+                                  }
+                                });
+                              } else {
+                                console.error('changeMode method is not available on draw.current');
+                              }
+                            }
+                          } catch (error) {
+                            console.error('Error setting draw mode:', error);
+                          }
+                        } else {
+                          console.error('draw.current is not initialized');
+                        }
+                      }}
+              >
+
               <ToggleButton
                 id="point-mode"
                 value="point"
