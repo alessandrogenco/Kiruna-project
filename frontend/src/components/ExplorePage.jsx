@@ -29,6 +29,12 @@ function ExplorePage(props) {
 
   const [documentIdToOpen, setDocumentIdToOpen] = useState(null); // stato temporaneo per l'ID del documento da aprire
 
+  // Global hover popup
+  const globalHoverPopup = useRef(null);
+  
+  // Track if mouse is currently inside a marker
+  let mouseInsideMarker = false;
+
   useEffect(() => {
     const documentId = location.state?.documentId;
     if (documentId) {
@@ -151,6 +157,34 @@ function ExplorePage(props) {
         default: 'bi bi-person-add', //added by the urban planner
       };
 
+      // Initialize the global hover popup if not done
+      if (!globalHoverPopup.current) {
+        globalHoverPopup.current = new mapboxgl.Popup({
+          closeButton: false,
+          closeOnClick: false
+        });
+
+        // Remove popup on map movements/zooms
+        map.on('movestart', () => {
+          globalHoverPopup.current.remove();
+        });
+        map.on('zoomstart', () => {
+          globalHoverPopup.current.remove();
+        });
+
+        // Also remove popup after movement/zoom ends if not hovering a marker
+        map.on('moveend', () => {
+          if (!mouseInsideMarker) {
+            globalHoverPopup.current.remove();
+          }
+        });
+        map.on('zoomend', () => {
+          if (!mouseInsideMarker) {
+            globalHoverPopup.current.remove();
+          }
+        });
+      }
+
       clusters.forEach((clusterPoint) => {
         const { geometry, properties } = clusterPoint;
       
@@ -236,6 +270,7 @@ function ExplorePage(props) {
               const listItems = popup.getElement().querySelectorAll('li.document-item');
               listItems.forEach((item) => {
                 item.addEventListener('click', () => {
+                  globalHoverPopup.current.remove();
                   const docId = item.getAttribute('data-id');
                   const docData = markers.find(
                     (marker) => marker.data.id === parseInt(docId, 10)
@@ -254,6 +289,28 @@ function ExplorePage(props) {
       
 
           markersArray.push({marker: marker, data: properties.data});
+          const markerEl = marker.getElement();
+
+          markerEl.addEventListener('mouseenter', () => {
+            mouseInsideMarker = true;
+            if (!activePopup.current) {
+              globalHoverPopup.current
+                .setLngLat(geometry.coordinates)
+                .setHTML(`<div style="max-height: 100px; overflow:auto;">${documentList.map(d => `<div>${d.label}</div>`).join('')}</div>`)
+                .addTo(map);
+            }
+          });
+
+          markerEl.addEventListener('mouseleave', () => {
+            mouseInsideMarker = false;
+            if (!activePopup.current) {
+              globalHoverPopup.current.remove();
+            }
+          });
+
+          markerEl.addEventListener('click', () => {
+            globalHoverPopup.current.remove();
+          });
         } else {
           
           // Imposta l'icona in base al tipo di documento
@@ -293,6 +350,7 @@ function ExplorePage(props) {
                 if (activePopup.current) {
                   activePopup.current.remove(); // Close the currently active popup
                 }
+                globalHoverPopup.current.remove();
                 setSelectedDocument(properties.data); // Pass data to DocumentViewer
               });
               activePopup.current = popup; // Set the current popup
@@ -307,6 +365,32 @@ function ExplorePage(props) {
             .setLngLat(geometry.coordinates)
             .setPopup(popup)
             .addTo(map);
+
+            markersArray.push({ marker: marker, data: properties.data });
+
+            const singleMarkerEl = marker.getElement();
+            if (properties.data.lat && properties.data.lon) {
+              singleMarkerEl.addEventListener('mouseenter', () => {
+                mouseInsideMarker = true;
+                if (!activePopup.current) {
+                  globalHoverPopup.current
+                    .setLngLat([properties.data.lon, properties.data.lat])
+                    .setHTML(`<div>${properties.label}</div>`)
+                    .addTo(map);
+                }
+              });
+  
+              singleMarkerEl.addEventListener('mouseleave', () => {
+                mouseInsideMarker = false;
+                if (!activePopup.current) {
+                  globalHoverPopup.current.remove();
+                }
+              });
+  
+              singleMarkerEl.addEventListener('click', () => {
+                globalHoverPopup.current.remove();
+              });
+            }
 
           if (properties.data.area) {
             
