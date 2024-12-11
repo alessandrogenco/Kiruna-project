@@ -32,6 +32,9 @@ function AppNavbar({ isLoggedIn, handleLogout }) {
                   <Nav.Link onClick={() => navigate('/documentsPage')} style={{color: 'lightgray'}}>
                     Manage Documents
                   </Nav.Link>
+                  <Nav.Link onClick={() => navigate('/graph')} style={{color: 'lightgray'}}>
+                    Graph
+                  </Nav.Link>
                 </>
               )}
             </Nav>
