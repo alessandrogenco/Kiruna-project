@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import ReactFlow, { Background, BackgroundVariant, Controls, useEdgesState, useNodesState } from "react-flow-renderer";
 import API from "../API.mjs";
 import './Graph.css';
+import axios from "axios";
 
 // Normalizza la data in formato `YYYY-MM-DD`
 const normalizeDate = (date) => {
@@ -40,42 +41,101 @@ function calculateNodePosition(nodes, node) {
   return { x: xBase + xOffset, y: yBase + yOffset };
 }
 
+// Funzione per scurire un colore esadecimale
+function darkenColor(color, percent = 20) {
+  // Rimuove il simbolo "#" se presente
+  if (color.startsWith("#")) {
+    color = color.slice(1);
+  }
+
+  // Converte il colore esadecimale in RGB
+  let r = parseInt(color.substring(0, 2), 16);
+  let g = parseInt(color.substring(2, 4), 16);
+  let b = parseInt(color.substring(4, 6), 16);
+
+  // Riduce i valori RGB in base alla percentuale
+  r = Math.max(0, r - (r * percent) / 100);
+  g = Math.max(0, g - (g * percent) / 100);
+  b = Math.max(0, b - (b * percent) / 100);
+
+  // Converte di nuovo in formato esadecimale
+  r = Math.round(r).toString(16).padStart(2, '0');
+  g = Math.round(g).toString(16).padStart(2, '0');
+  b = Math.round(b).toString(16).padStart(2, '0');
+
+  return `#${r}${g}${b}`;
+}
+
+
 // Trasforma i documenti in nodi
-function computeNodes(documents) {
-  return documents.map((node) => ({
-    id: node.id.toString(),
-    data: {
-      label: (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100%",
-          }}
-        >
-          <div style={{ fontWeight: "bold", fontSize: '14px' }}>{node.title}</div>
-          <div style={{ fontSize: "11px", color: "gray" }}>
-            {node.issuanceDate}
+function computeNodes(documents, types) {
+
+  let color_type = {};
+
+  // Genera i colori direttamente in sequenza
+  const colors = [
+    "#FFE6CC", // Arancione chiaro
+    "#CCE5FF", // Blu chiaro
+    "#FFCCCC", // Rosso chiaro
+    "#E6FFCC", // Verde chiaro
+    "#FFFFCC", // Giallo chiaro
+    "#D9CCFF", // Viola chiaro
+    "#CCFFFF", // Azzurro chiaro
+    "#FFD9E6", // Rosa chiaro
+    "#D6FFD6", // Verde pastello
+    "#FFF2CC", // Beige chiaro
+    "#CCE0FF", // Blu pastello
+    "#FFC6C6", // Rosa pesca
+    "#E2FFCC", // Verde lime
+    "#FFEDCC", // Giallo albicocca
+    "#CCF2FF", // Azzurro cielo
+  ];
+
+  types.forEach((type) => {
+    color_type[type.toLowerCase()] = colors[Object.keys(color_type).length % colors.length];
+  });
+
+  return documents.map((node) => {
+    // Determina il colore in base al tipo
+    const nodeType = node.type?.toLowerCase() || "default";
+    const backgroundColor = color_type[nodeType] || "#F0F0F0";
+    // Scurisci il colore di sfondo per il bordo
+    const borderColor = darkenColor(backgroundColor, 30); // 20% più scuro
+
+
+    return {
+      id: node.id.toString(),
+      data: {
+        label: (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
+            }}
+          >
+            <div style={{ fontWeight: "bold", fontSize: "14px" }}>{node.title}</div>
+            <div style={{ fontSize: "11px", color: "gray" }}>{node.issuanceDate}</div>
           </div>
-        </div>
-      ),
-    },
-    position: calculateNodePosition(documents, node),
-    draggable: true,
-    sourcePosition: "right",
-    targetPosition: "left",
-    style: {
-      width: 200,
-      backgroundColor: "#d4f7d6",
-      border: "2px solid #89c79d",
-      borderRadius: "8px",
-      padding: "6px",
-      fontSize: "13px",
-      visibility: "visible",
-    },
-  }));
+        ),
+      },
+      position: calculateNodePosition(documents, node),
+      draggable: true,
+      sourcePosition: "right",
+      targetPosition: "left",
+      style: {
+        width: 200,
+        backgroundColor: backgroundColor,
+        border: `2px solid ${borderColor}`,
+        borderRadius: "8px",
+        padding: "6px",
+        fontSize: "13px",
+        visibility: "visible",
+      },
+    };
+  });
 }
 
 // Trasforma i documenti in edge
@@ -151,17 +211,49 @@ const DocumentGraph = (props) => {
   const [nodesState, setNodes] = useNodesState([]);
   const [edgesState, setEdges] = useEdgesState([]);
   const [showGraph, setShowGraph] = useState(0);
+  const [types, setTypes] = useState([]);
 
   let nodes = [];
+  let edges = [];
 
-let edges = [];
+  const getTypes = async () => {
+    const response = await axios.get('http://localhost:3001/api/documents/types');
+    return response.data;
+  };
 
   useEffect(() => {
-    if (props.documents.length > 0) {
+    getTypes()
+    .then((response) => {
+      console.log(response);
+      const types = response.map((type) => {
+        return type.name;
+      });
+      setTypes(types);
+    })
+    .catch((error) => {
+      console.error("Error fetching types:", error);
+    });
+  }, []);
+
+
+  // Funzione per normalizzare e ordinare le date parziali
+  function parseDate(dateStr) {
+    const parts = dateStr.split("-");
+    const year = parseInt(parts[0], 10);
+    const month = parts[1] ? parseInt(parts[1], 10) - 1 : 0; // Default: gennaio
+    const day = parts[2] ? parseInt(parts[2], 10) : 1; // Default: primo giorno del mese
+    return new Date(year, month, day);
+  }
+
+  useEffect(() => {
+    if (props.documents.length > 0 && types.length > 0) {
+      // Orders documents by increasing issuance date
+      let linkedDocs = props.documents.sort((a, b) => parseDate(a.issuanceDate) - parseDate(b.issuanceDate));
+
       const fetchLinks = async () => {
         try {
           // Create a new array to store updated documents
-          const linkedDocs = await Promise.all(
+          linkedDocs = await Promise.all(
             props.documents.map(async (document) => {
               // Fetch the links for the current document
               const fetchedData = await API.getDocumentLinks(document.id);
@@ -181,7 +273,7 @@ let edges = [];
             })
           );
           // Update the state with the new array
-          nodes = computeNodes(linkedDocs);
+          nodes = computeNodes(linkedDocs, types);
           setNodes(nodes);
           edges = computeEdges(nodes, linkedDocs);
           setEdges(edges);
@@ -192,7 +284,7 @@ let edges = [];
       };
       fetchLinks();
     }
-  }, [props.documents]); 
+  }, [props.documents, types]); 
 
   const onNodeDrag = (event, node) => {
     const nodeIndex = nodesState.findIndex((n) => n.id === node.id);
