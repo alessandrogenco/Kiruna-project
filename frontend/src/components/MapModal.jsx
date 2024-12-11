@@ -275,7 +275,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
             let features = draw.current.getAll().features;
             if (features.length > 1) {
               draw.current.delete(features[0].id);  // Rimuovi la prima area se ce ne sono più di una
-              features.remove(features[0]);
+              features = features.slice(1); 
             }
 
             if (centroidMarker) {
