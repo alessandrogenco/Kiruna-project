@@ -4,6 +4,7 @@ import ReactFlow, { Background, BackgroundVariant, Controls, useEdgesState, useN
 import API from "../API.mjs";
 import './Graph.css';
 import axios from "axios";
+import AppNavbar from './Navbar';
 
 // Normalizza la data in formato `YYYY-MM-DD`
 const normalizeDate = (date) => {
@@ -337,61 +338,64 @@ const DocumentGraph = (props) => {
   const onNodeClick = (event, node) => {
     const clickedDocument = props.documents.find((doc) => doc.id.toString() === node.id);
     
-    if (clickedDocument) {
+    if (clickedDocument && props.graphSize < 70) { // click disabilitato su grafo a pagina completa
       props.setSelectedDocument(clickedDocument);
     }
   };
 
   return (
-    <div style={{ width: '100vw', height: '42vh' }}>
-      {showGraph === 0 ? (
-        <div style={{ textAlign: 'center', marginTop: '20px' }}>
-          <span>Loading...</span>
-        </div>
-      ) : (
-        <div
-      style={{
-        width: "100vw",
-        margin: "0 auto",
-        padding: "8px",
-        backgroundColor: "#F5F5F5",
-        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-        borderRadius: "8px",
-      }}
-    >
-      <div
+    <>
+      {props.graphSize > 70 && (<AppNavbar isLoggedIn={props.isLoggedIn} handleLogout={props.handleLogout} />)}
+      <div style={{ width: '100vw', height: `100vh` }}>
+        {showGraph === 0 ? (
+          <div style={{ textAlign: 'center', marginTop: '20px' }}>
+            <span>Loading...</span>
+          </div>
+        ) : (
+          <div
         style={{
-          height: "39vh",
+          width: "100vw",
+          margin: "0 auto",
+          padding: "8px",
+          backgroundColor: "#F5F5F5",
+          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
           borderRadius: "8px",
-          overflow: "hidden",
-          border: "1px solid #eee",
         }}
       >
-        <ReactFlow
-          snapGrid={[10, 10]}
-          nodes={nodesState}
-          edges={edgesState}
-          onNodeClick={onNodeClick}
-          onNodeDrag={onNodeDrag}
-          snapToGrid={true}
-          minZoom={0.3}
-          maxZoom={1.5}
-          fitView={true}
-          style={{ background: "#FDFDFD" }}>
-          <Background color="lightgray" gap={200} variant={BackgroundVariant.Lines} />
-          <Controls showZoom={false} showInteractive={false} showFitView={true} />
-        </ReactFlow>
+        <div
+          style={{
+            height: `${props.graphSize}vh`,
+            borderRadius: "8px",
+            overflow: "hidden",
+            border: "1px solid #eee",
+          }}
+        >
+          <ReactFlow
+            snapGrid={[10, 10]}
+            nodes={nodesState}
+            edges={edgesState}
+            onNodeClick={onNodeClick}
+            onNodeDrag={onNodeDrag}
+            snapToGrid={true}
+            minZoom={0.3}
+            maxZoom={1.5}
+            fitView={true}
+            style={{ background: "#FDFDFD" }}>
+            <Background color="lightgray" gap={200} variant={BackgroundVariant.Lines} />
+            <Controls showZoom={false} showInteractive={false} showFitView={true} />
+          </ReactFlow>
+        </div>
       </div>
-    </div>
-      )}
-
-    </div>
+        )}
+      </div>
+    </>
   );
 };
 
 DocumentGraph.propTypes = {
   documents: PropTypes.array,
   setSelectedDocument: PropTypes.func,
+  graphSize: PropTypes.number
 };
 
 export default DocumentGraph;

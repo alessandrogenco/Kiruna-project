@@ -25,6 +25,7 @@ function ExplorePage(props) {
   const markersLayer = useRef(null);
   const activePopup = useRef(null);
   const location = useLocation();
+  const graphSize = 43;
 
   const [documentIdToOpen, setDocumentIdToOpen] = useState(null); // stato temporaneo per l'ID del documento da aprire
 
@@ -528,16 +529,18 @@ function ExplorePage(props) {
         onClick={() => setShowGraph(!showGraph)}>
         {showGraph ? 'Hide Graph' : 'Show Graph'}
       </button>
+
       <Row className="vh-80 justify-content-center align-items-center">
-        <Col style={{ width: '100%', height: showGraph ? '50vh' : '92vh' }}>
+        <Col style={{ width: '100%', height: showGraph ? '50vh' : '93vh' }}>
           <div ref={mapContainer} style={{ width: '100%', height: '100%' }} />
         </Col>
       </Row>
+      
       {showGraph && (
         <Row>
           <Col>
             <ReactFlowProvider>
-              <DocumentGraph documents={props.documents} setSelectedDocument={setSelectedDocument}/>
+              <DocumentGraph documents={props.documents} setSelectedDocument={setSelectedDocument} graphSize={graphSize}/>
             </ReactFlowProvider>
           </Col>
         </Row>

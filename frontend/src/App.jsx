@@ -8,11 +8,13 @@ import HomePage from './components/HomePage'; // Importa il componente HomePage
 import ExplorePage from './components/ExplorePage'; // Importa il componente ExplorePage
 import DocumentControl from './components/DocumentControl';
 import DocumentPage from './components/DocumentPage';
+import DocumentGraph from './components/Graph';
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(null); // Inizializza come `null`
   const [documents, setDocuments] = useState([]);
   const navigate = useNavigate();
+  const fullGraphSize = 93;
 
   // Login check
   useEffect(() => {
@@ -90,10 +92,10 @@ function App() {
           path="/explore"
           element={<ExplorePage isLoggedIn={loggedIn} handleLogout={handleLogout} documents={documents} setDocuments={setDocuments}/>}
         />
-        {/*<Route
-          path="/documents"
-          element={<Documents documents={documents} setDocuments={setDocuments}/>}
-        />*/}
+        <Route
+          path="/graph"
+          element={<DocumentGraph isLoggedIn={loggedIn} handleLogout={handleLogout} documents={documents} setDocuments={setDocuments} graphSize={fullGraphSize}/>}
+        />
         <Route
           path="/link-documents"
         />
