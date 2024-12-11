@@ -83,10 +83,13 @@ function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) 
         setFilterType(e.target.value); // Update filter type
     };
 
-    const filteredDocuments = documents.filter((document) =>
-        document.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
-        (filterType === '' || document.type === filterType)
-    );
+    const searchTerm = searchQuery.toLowerCase();
+    const filteredDocuments = documents.filter((doc) => {
+    const titleMatch = doc.title.toLowerCase().includes(searchTerm);
+    const descriptionMatch = doc.description?.toLowerCase().includes(searchTerm) || false;
+    const typeMatch = filterType === '' || doc.type === filterType;
+    return (titleMatch || descriptionMatch) && typeMatch;
+});
     
     const handleUpdateDocument = async () => {
         if (!newDocument.lat ^ !newDocument.lon) {
