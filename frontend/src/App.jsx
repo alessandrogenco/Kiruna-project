@@ -96,10 +96,6 @@ function App() {
           path="/graph"
           element={<DocumentGraph isLoggedIn={loggedIn} handleLogout={handleLogout} documents={documents} setDocuments={setDocuments} graphSize={fullGraphSize}/>}
         />
-        {/*<Route
-          path="/documents"
-          element={<Documents documents={documents} setDocuments={setDocuments}/>}
-        />*/}
         <Route
           path="/link-documents"
         />
