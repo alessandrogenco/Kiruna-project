@@ -306,10 +306,19 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
 
             const features = draw.current.getAll().features;
             const polygon = features.find(feature => feature.geometry.type === 'Polygon');
-            if (polygon) {
+            
+            if (polygon && polygon.geometry && Array.isArray(polygon.geometry.coordinates)) {
+              try {
+
               const centroid = turf.centroid(polygon);
               setAreaCentroid(centroid.geometry.coordinates);
               displayCentroidMarker(centroid.geometry.coordinates);
+              } catch (error) {
+                console.error('Error calculating centroid:', error.message);
+              }
+            } else {
+              console.warn('Invalid polygon or missing coordinates:', polygon);
+    
             }
           }
         });
