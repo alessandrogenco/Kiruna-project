@@ -113,6 +113,16 @@ function ExplorePage(props) {
             'line-opacity': 1,         
           },
         });
+        
+        mapInstance.on('click', () => {
+        if (globalHoverPopup.current) {
+          globalHoverPopup.current.remove();
+        }
+        if (activePopup.current) {
+          activePopup.current.remove();
+          activePopup.current = null;
+        }
+      });
       });
     }
   }, [map]);
@@ -460,6 +470,7 @@ function ExplorePage(props) {
     if (map && mapLoaded) {
       cluster.current = createCluster(markers);
       map.on('move', updateMarkers);
+      map.on('zoom', updateMarkers); 
       updateMarkers();
     }
   }, [map, mapLoaded, markers]);
@@ -510,6 +521,7 @@ function ExplorePage(props) {
             });
 
             map.once('moveend', () => {
+              updateMarkers();
               const selectedMarker = markersLayer.current.find(
                 (item) => item.data ? item.data.id === documentIdToOpen : false
               );
