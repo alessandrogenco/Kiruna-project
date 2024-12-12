@@ -103,7 +103,6 @@ function computeNodes(documents, types) {
     // Scurisci il colore di sfondo per il bordo
     const borderColor = darkenColor(backgroundColor, 30); // 20% più scuro
 
-
     return {
       id: node.id.toString(),
       data: {
@@ -303,6 +302,7 @@ const DocumentGraph = (props) => {
 
     // update position with post API with node.position.x, node.position.y and node.id
 
+
     setNodes(updatedNodes);
   };
 
@@ -366,7 +366,9 @@ const DocumentGraph = (props) => {
 DocumentGraph.propTypes = {
   documents: PropTypes.array,
   setSelectedDocument: PropTypes.func,
-  graphSize: PropTypes.number
+  graphSize: PropTypes.number,
+  isLoggedIn: PropTypes.bool,
+  handleLogout: PropTypes.func,
 };
 
 export default DocumentGraph;

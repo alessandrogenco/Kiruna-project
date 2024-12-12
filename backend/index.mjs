@@ -609,7 +609,7 @@ app.post('/api/updateDocumentGeoreference', async (req, res) => {
 
 
 /* ACTIVATING THE SERVER */
-let server = app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
