@@ -3,8 +3,6 @@ import request from "supertest";
 import { app, server } from "../../index.mjs";
 import FileUploadDao from "../../dao/fileUpload.mjs";
 import fs from 'fs';
-import { File } from "buffer";
-
 
 // Mocking the instance of fileUpload
 jest.mock("../../dao/fileUpload.mjs");
