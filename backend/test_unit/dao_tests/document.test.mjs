@@ -388,23 +388,11 @@ describe("Update document test", () => {
 
 describe('Show Stakeholders', () => {
     test('Successfully retrieves a concatenated list of stakeholders', async () => {
-        const mockResult = { stakeholders: 'LKAB - Kiruna Kommun' };
-
-        const mockGet = jest.spyOn(db, "get").mockImplementation((sql, params, callback) => {
-            callback(null, mockResult);
-        });
-
         const result = await documentDao.showStakeholders();
         expect(result).toBe('LKAB - Kiruna Kommun');
     });
 
     test('Throws error if there is a database error', async () => {
-        const mockError = new Error('Failed to get stakeholders');
-
-        const mockGet = jest.spyOn(db, "get").mockImplementation((sql, params, callback) => {
-            callback(new Error('Failed to get stakeholders'), null);
-        });
-
         await expect(documentDao.showStakeholders()).rejects.toThrow('Database error: Failed to get stakeholders');
     });
 });
@@ -412,20 +400,12 @@ describe('Show Stakeholders', () => {
 describe('Show Scales', () => {
     test('Successfully retrieves a list of scales', async () => {
         const mockResult = [{name: "1:10000"}, {name: "large"}, {name: "small"}];
-        
-        const mockAll = jest.spyOn(db, "all").mockImplementation((sql, params, callback) => {
-            callback(null, mockResult);
-        });
 
         const result = await documentDao.showScales();
         expect(result).toEqual(mockResult);
     });
 
     test('Throws error if there is a database error', async () => {
-
-        const mockAll = jest.spyOn(db, "all").mockImplementation((sql, params, callback) => {
-            callback(new Error('Failed to get scales'), null);
-        });
 
         await expect(documentDao.showScales()).rejects.toThrow('Database error: Failed to get scales');
     });
