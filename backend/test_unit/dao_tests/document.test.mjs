@@ -414,21 +414,12 @@ describe('Show Scales', () => {
 describe('Show Types', () => {
     test('Successfully retrieves a list of types', async () => {
         const mockResult = [{"name": "Informative"}, {"name": "research"}, {"name": "summary"}];
-        
-        const mockAll = jest.spyOn(db, "all").mockImplementation((sql, params, callback) => {
-            callback(null, mockResult);
-        });
 
         const result = await documentDao.showTypes();
         expect(result).toEqual(mockResult);
     });
 
     test('Throws error if there is a database error', async () => {
-
-        const mockAll = jest.spyOn(db, "all").mockImplementation((sql, params, callback) => {
-            callback(new Error('Failed to get types'), null);
-        });
-
         await expect(documentDao.showTypes()).rejects.toThrow('Database error: Failed to get types');
     });
 });
