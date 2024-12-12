@@ -198,6 +198,23 @@ app.post('/api/logout', (req, res) => {
     }
 });
 
+
+//fetch a single document by ID
+app.get('/api/documents/:id', async (req, res) => {
+    const documentId = req.params.id;
+    try {
+        const document = await documentDao.getDocumentById(documentId);
+        if (!document) {
+            return res.status(404).json({ message: `Document with ID ${documentId} not found` });
+        }
+        res.status(200).json(document); 
+    } catch (error) {
+        console.error('Error fetching document by ID:', error.message);
+        res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+});
+
+
 // Get all documents
 app.get('/api/documents', async (req, res) => {
     try {
@@ -234,6 +251,10 @@ app.get('/api/documents/types', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+
+
+
+
 
 // Add the description
 app.put('/api/addDescription', async (req, res) => {

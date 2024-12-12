@@ -92,6 +92,31 @@ const getDocuments = async () => {
     }
   };
 
+  export const getDocumentById = async (documentId) => {
+    try {
+        const response = await fetch(`${SERVER_URL}/documents/${documentId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            if (response.status === 404) {
+                throw new Error(`Document with ID ${documentId} not found`);
+            }
+            throw new Error(`Failed to fetch document with ID ${documentId}`);
+        }
+
+        const documentData = await response.json();
+        return documentData;
+    } catch (error) {
+        console.error('Error fetching document by ID:', error.message);
+        throw error;
+    }
+};
+
+
 const linkDocument = async (id1, id2, /*linkDate,*/ linkType) => {
     try {
         const response = await fetch(SERVER_URL + '/linkDocuments', {
@@ -164,6 +189,9 @@ const updateLink = async (idDocument1, idDocument2, newLinkDate, newLinkType) =>
         throw error;
     }
 }
+
+
+
 
 // API.mjs
 export const deleteDocument = async (id) => {

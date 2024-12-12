@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { getDocumentLinks } from '../API.mjs'; // Import the function
+import { getDocumentLinks, getDocumentById } from '../API.mjs'; // Import the function
 import './DocumentViewer.css';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
@@ -8,6 +8,7 @@ const DocumentViewer = ({ isLoggedIn, documentData, onClose }) => {
   const [viewDescription, setViewDescription] = useState(false);
   const [documentLinks, setDocumentLinks] = useState([]);
   const [showLinks, setShowLinks] = useState(false);
+  const [selectedLinkedDocument, setSelectedLinkedDocument] = useState(null);
   const navigate = useNavigate();
 
   const handleConnectionsClick = async () => {
@@ -28,6 +29,15 @@ const DocumentViewer = ({ isLoggedIn, documentData, onClose }) => {
     navigate(`/editDocument/${documentData.id}`, { state: { document: documentData, explorePage: true} });
   };
 
+  const handleLinkClick = async (link) => {
+    try {
+        const linkedDocData = await getDocumentById(link.id); 
+        setSelectedLinkedDocument(linkedDocData); 
+    } catch (error) {
+        console.error('Error fetching linked document:', error.message);
+        alert(error.message); 
+    }
+};
 
   if (!documentData) return null;
 
@@ -44,14 +54,27 @@ const DocumentViewer = ({ isLoggedIn, documentData, onClose }) => {
           <p><strong>Stakeholder:</strong> {documentData.stakeholders}</p>
           <p><strong>Issuance date:</strong> {documentData.issuanceDate}</p>
           <p><strong>Type:</strong> {documentData.type}</p>
-          <button className='btn-as-label' onClick={handleConnectionsClick} style={{ cursor: 'pointer', color: 'blue' }}>
-            <strong>Connections:</strong> {/*documentData.connections*/}
-          </button>
+          <button 
+                className='btn-as-label' 
+                onClick={handleConnectionsClick} 
+                style={{ cursor: 'pointer', color: 'blue' }}>
+                <strong>Connections:</strong>
+              </button>
           {showLinks && (
             <ul className="document-links custom-document-links">
-              {documentLinks ? documentLinks.map((link, index) => (
-                <li key={link.title + index}>{link.title + " | " + link.type}</li>
-              )) : <p>No connections available</p>}
+              {documentLinks && documentLinks.length > 0 ? (
+                    documentLinks.map((link, index) => (
+                      <li 
+                        key={link.title + index} 
+                        onClick={() => handleLinkClick(link)} 
+                        style={{cursor: 'pointer', textDecoration: 'none',}}
+                      >
+                        {link.title + " | " + link.type}
+                      </li>
+                    ))
+                  ) : (
+                    <p>No connections available</p>
+                  )}
             </ul>
           )}
           <div className="button-group">
@@ -73,6 +96,28 @@ const DocumentViewer = ({ isLoggedIn, documentData, onClose }) => {
       </div>
     )}
   </div>
+  {/* Nested DocumentViewer for the linked document */}
+  {selectedLinkedDocument && (
+        <div className="my-document-viewer-wrapper nested-popup">
+          <div className="document-viewer">
+            <div className="fixed-header">
+              <h3>{selectedLinkedDocument.title}</h3>
+              <button className="close-button" onClick={() => setSelectedLinkedDocument(null)}>&times;</button>
+            </div>
+            <div className="document-details">
+              <div className="scrollable-content">
+                <p><strong>Stakeholder:</strong> {selectedLinkedDocument.stakeholders}</p>
+                <p><strong>Issuance date:</strong> {selectedLinkedDocument.issuanceDate}</p>
+                <p><strong>Type:</strong> {selectedLinkedDocument.type}</p>
+                <p><strong>Description:</strong> {selectedLinkedDocument.description}</p>
+                <div className="button-group">
+                  <button onClick={() => setSelectedLinkedDocument(null)}>Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 </div>
 
 
