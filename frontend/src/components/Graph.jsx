@@ -291,31 +291,6 @@ const DocumentGraph = (props) => {
     const nodeIndex = nodesState.findIndex((n) => n.id === node.id);
     const currentNode = nodesState[nodeIndex];
     let updatedNodes = [...nodesState];  
-    const distanceX = node.position.x - currentNode.position.x;
-    const threshold = 50;
-
-    const moveAdjacentNodes = (startIndex, direction, axis) => {
-      if (axis !== 'x') return; 
-
-      let currentPosition = updatedNodes[startIndex].position[axis];
-
-      for (let i = startIndex + direction; i >= 0 && i < updatedNodes.length; i += direction) {
-        const adjacentNode = updatedNodes[i];
-
-        if (Math.abs(adjacentNode.position[axis] - currentPosition) < threshold && adjacentNode.date === currentNode.date) {
-          updatedNodes[i] = {
-            ...adjacentNode,
-            position: {
-              ...adjacentNode.position,
-              [axis]: adjacentNode.position[axis] + distanceX, 
-            },
-          };
-          currentPosition = adjacentNode.position[axis];
-        } else {
-          break;
-        }
-      }
-    };
 
     updatedNodes[nodeIndex] = { 
       ...currentNode, 
@@ -325,12 +300,6 @@ const DocumentGraph = (props) => {
         y: node.position.y 
       } 
     };
-
-    moveAdjacentNodes(nodeIndex, 1, 'x');
-    moveAdjacentNodes(nodeIndex, 1, 'y');
-    
-    moveAdjacentNodes(nodeIndex, -1, 'x');
-    moveAdjacentNodes(nodeIndex, -1, 'y');
 
     setNodes(updatedNodes);
   };
