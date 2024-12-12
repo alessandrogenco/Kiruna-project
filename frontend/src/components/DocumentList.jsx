@@ -118,11 +118,7 @@ function DocumentInList(props){
                   <div className="form-group-det">
                     <span className="form-label-det">Language:</span>
                     <p className="form-control-det">
-                      {selectedDocument.language === "English"
-                        ? "English"
-                        : selectedDocument.language === "Swedish"
-                        ? "Swedish"
-                        : "N/A"}
+                      {selectedDocument.language === "English" || selectedDocument.language === "Swedish" ? selectedDocument.language : "N/A"}
                     </p>
                   </div>
                 </div>
@@ -180,7 +176,7 @@ function DocumentInList(props){
                           </ListGroupItem>
                         ))
                       ) : (
-                        <label className="text-muted">No connections available.</label>
+                        <p className="text-muted mx-2">No connections available.</p>
                       )}
                     </ListGroup>
                   </Col>
