@@ -122,7 +122,7 @@ function computeNodes(documents, types) {
           </div>
         ),
       },
-      position: calculateNodePosition(documents, node),
+      position: node.x || node.y ? { x: node.x, y: node.y } : calculateNodePosition(documents, node),
       draggable: true,
       sourcePosition: "right",
       targetPosition: "left",
@@ -290,7 +290,7 @@ const DocumentGraph = (props) => {
   const onNodeDrag = (event, node) => {
     const nodeIndex = nodesState.findIndex((n) => n.id === node.id);
     const currentNode = nodesState[nodeIndex];
-    let updatedNodes = [...nodesState];  
+    let updatedNodes = [...nodesState];
 
     updatedNodes[nodeIndex] = { 
       ...currentNode, 
@@ -300,6 +300,8 @@ const DocumentGraph = (props) => {
         y: node.position.y 
       } 
     };
+
+    // update position with post API with node.position.x, node.position.y and node.id
 
     setNodes(updatedNodes);
   };
