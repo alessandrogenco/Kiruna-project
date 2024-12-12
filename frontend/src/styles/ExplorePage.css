@@ -44,10 +44,7 @@
     box-shadow: 0 0 10px rgba(20, 103, 38, 0.6);
   }
 
-  .blurred-map {
-    filter: blur(3px);
-    transition: filter 0.5s ease;
-  }
+
 
 .cluster-popup {
   font-family: 'Roboto', Arial, sans-serif;

@@ -48,15 +48,7 @@ function ExplorePage(props) {
     setMarkers([...newMarkers]);
   };
 
-  useEffect(() => {
-    //console.log("ciao" + process.env.REACT_APP_MAPBOX_TOKEN1);
-
-    if (selectedDocument) {
-      mapContainer.current.classList.add('blurred-map');
-    } else {
-      mapContainer.current.classList.remove('blurred-map');
-    }
-  }, [selectedDocument]);
+  
 
   useEffect(() => {
     if (props.documents) {
