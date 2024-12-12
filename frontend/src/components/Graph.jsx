@@ -301,7 +301,13 @@ const DocumentGraph = (props) => {
     };
 
     // update position with post API with node.position.x, node.position.y and node.id
-
+    /*API.updateDocumentPosition(node.id, node.position.x, node.position.y)
+      .then((response) => {
+        console.log("Position updated:", response);
+      })
+      .catch((error) => {
+        console.error("Error updating position:", error);
+      }); */
 
     setNodes(updatedNodes);
   };
