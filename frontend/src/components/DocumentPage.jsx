@@ -12,7 +12,7 @@ function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) 
     const [searchQuery, setSearchQuery] = useState(''); // State for search query
     const [filterType, setFilterType] = useState('');
     const [documentTypes, setDocumentTypes] = useState([]);
-    let newDocument = {
+    const [newDocument, setNewDocument] = useState({
         title: '',
         stakeholders: '',
         scale: '',
@@ -25,7 +25,7 @@ function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) 
         lon: '',
         area: '',
         description: ''
-    };
+    });
 
     const navigate = useNavigate();
 
@@ -54,19 +54,24 @@ function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) 
             throw error;
         }
     }
+    
 
     useEffect(() => {
         getDocuments();
         getDocumentTypes(); 
     }, []);
     
+
+    
     // Funzione per eliminare un documento
     const handleDelete = async (docId) => {
         try {
             await API.deleteDocument(docId); // Chiama l'API per eliminare il documento
             setDocuments((prevDocuments) => prevDocuments.filter((doc) => doc.id !== docId)); // Aggiorna lo stato locale
+
         } catch (error) {
             console.error('Error deleting document:', error);
+
         }
     };
     
@@ -97,7 +102,7 @@ function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) 
         }
         newDocument.id = selectedDocument.id;
         try {
-            await updateDocument(
+            const result = await updateDocument(
             newDocument.id,
             newDocument.title,
             newDocument.stakeholders,
