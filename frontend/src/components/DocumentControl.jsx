@@ -842,7 +842,7 @@ function DocumentControl(props) {
           />
           
           <Row className="mb-4 mx-3">
-          <p className="form-label ms-3 mb-0 pb-2">Add original resources</p>
+          <label className="form-label ms-3 mb-0 pb-2">Add original resources</label>
             <Col md={8}>
               <div className="mt-2">
                 <input 
