@@ -69,7 +69,7 @@ function darkenColor(color, percent = 20) {
 
 
 // Trasforma i documenti in nodi
-function computeNodes(documents, types) {
+function computeNodes(documents, types, setTooltip) {
 
   let color_type = {};
 
@@ -115,6 +115,15 @@ function computeNodes(documents, types) {
               alignItems: "center",
               height: "100%",
             }}
+            onMouseEnter={(e) => {
+              setTooltip({
+                visible: true,
+                content: node.title,
+                x: e.clientX,
+                y: e.clientY,
+              });
+            }}
+            onMouseLeave={() => setTooltip({ visible: false, content: "", x: 0, y: 0 })}
           >
             <div style={{ fontWeight: "bold", fontSize: "14px" }}>{node.title}</div>
             <div style={{ fontSize: "11px", color: "gray" }}>{node.issuanceDate}</div>
@@ -212,6 +221,7 @@ const DocumentGraph = (props) => {
   const [edgesState, setEdges] = useEdgesState([]);
   const [showGraph, setShowGraph] = useState(0);
   const [types, setTypes] = useState([]);
+  const [tooltip, setTooltip] = useState({ visible: false, content: "", x: 0, y: 0 });
 
   let nodes = [];
   let edges = [];
@@ -273,7 +283,7 @@ const DocumentGraph = (props) => {
             })
           );
           // Update the state with the new array
-          nodes = computeNodes(linkedDocs, types);
+          nodes = computeNodes(linkedDocs, types, setTooltip);
           setNodes(nodes);
           edges = computeEdges(nodes, linkedDocs);
           setEdges(edges);
@@ -363,8 +373,27 @@ const DocumentGraph = (props) => {
           </ReactFlow>
         </div>
       </div>
+      
         )}
-      </div>
+      {tooltip.visible && (
+        <div
+          style={{
+            position: "absolute",
+            top: tooltip.y + 10,
+            left: tooltip.x + 10,
+            backgroundColor: "rgba(0, 0, 0, 0.75)",
+            color: "white",
+            padding: "8px",
+            borderRadius: "4px",
+            fontSize: "12px",
+            zIndex: 1000,
+            pointerEvents: "none",
+          }}
+        >
+          {tooltip.content}
+        </div>
+      )}
+    </div>
     </>
   );
 };
