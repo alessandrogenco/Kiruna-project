@@ -148,7 +148,7 @@ function computeNodes(documents, types, setTooltip) {
 }
 
 // Trasforma i documenti in edge
-function computeEdges(nodes, documents) {
+function computeEdges(nodes, documents, setTooltip) {
   const edges = [];
   const existingEdgeIds = new Set();
 
@@ -202,6 +202,18 @@ function computeEdges(nodes, documents) {
               target: targetNode.id,
               animated: true,
               style: edgeStyle,
+              data: { type: link.type },
+              onMouseEnter: (e) => {
+                setTooltip({
+                  visible: true,
+                  content: `Connection Type: ${link.type}`,
+                  x: e.clientX,
+                  y: e.clientY,
+                });
+              },
+              onMouseLeave: () => {
+                setTooltip({ visible: false, content: "", x: 0, y: 0 });
+              },
             };
 
             edges.push(edge);
@@ -285,7 +297,7 @@ const DocumentGraph = (props) => {
           // Update the state with the new array
           nodes = computeNodes(linkedDocs, types, setTooltip);
           setNodes(nodes);
-          edges = computeEdges(nodes, linkedDocs);
+          edges = computeEdges(nodes, linkedDocs, setTooltip);
           setEdges(edges);
           setShowGraph(1);
         } catch (error) {
@@ -363,6 +375,17 @@ const DocumentGraph = (props) => {
             edges={edgesState}
             onNodeClick={onNodeClick}
             onNodeDrag={onNodeDrag}
+            onEdgeMouseEnter={(event, edge) => {
+              setTooltip({
+                visible: true,
+                content: `Connection Type: ${edge.data?.type || "Unknown"}`,
+                x: event.clientX,
+                y: event.clientY,
+              });
+            }}
+            onEdgeMouseLeave={() => {
+              setTooltip({ visible: false, content: "", x: 0, y: 0 });
+            }}
             snapToGrid={true}
             minZoom={0.3}
             maxZoom={1.5}
