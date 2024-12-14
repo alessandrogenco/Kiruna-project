@@ -348,6 +348,9 @@ function ExplorePage(props) {
               </div>
             `)
             .on('open', () => {
+              console.log(properties.data);
+              iconContainer.style.backgroundColor = '#FFD700';
+              iconContainer.style.border = '2px solid #FFD700';
               document.getElementById(`view-details-${properties.data.id}`).addEventListener('click', () => {
                 if (activePopup.current) {
                   activePopup.current.remove(); // Close the currently active popup
@@ -358,6 +361,8 @@ function ExplorePage(props) {
               activePopup.current = popup; // Set the current popup
             })
             .on('close', () => {
+              iconContainer.style.backgroundColor = '#CB1E3B';
+              iconContainer.style.border = '2px solid #CB1E3B';
               activePopup.current = null; // Clear the reference when popup closes
             });
 
