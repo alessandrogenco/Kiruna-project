@@ -415,22 +415,30 @@ function ExplorePage(props) {
             };
           
             marker.getElement().addEventListener('mouseenter', () => {
-              map.addSource(layerId, polygonSource);
-
-              map.addLayer({
-                id: layerId,
-                type: 'fill',
-                source: layerId,
-                paint: {
-                  'fill-color': 'rgba(255, 99, 71, 0.5)',
-                  'fill-opacity': 0.5,
-                },
-              });
+              if (!map.getSource(layerId)) {
+                map.addSource(layerId, polygonSource);
+              }
+              
+              if (!map.getLayer(layerId)) {
+                map.addLayer({
+                  id: layerId,
+                  type: 'fill',
+                  source: layerId,
+                  paint: {
+                    'fill-color': 'rgba(255, 99, 71, 0.5)',
+                    'fill-opacity': 0.5,
+                  },
+                });
+              }
             });
-
+            
             marker.getElement().addEventListener('mouseleave', () => {
-              map.removeLayer(layerId);
-              map.removeSource(layerId);
+              if (map.getLayer(layerId)) {
+                map.removeLayer(layerId);
+              }
+              if (map.getSource(layerId)) {
+                map.removeSource(layerId);
+              }
             });
           }
 
