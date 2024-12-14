@@ -499,58 +499,60 @@ class DocumentDao{
         });
     }*/
 
-    updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description) {
-        return new Promise((resolve, reject) => {
-            // Verifica che l'ID sia valido
-            if (!id) {
-                return reject(new Error('ID is required.'));
-            }
+updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, areaName, description) {
+    return new Promise((resolve, reject) => {
+        // Verify that the ID is valid
+        if (!id) {
+            return reject(new Error('ID is required.'));
+        }
 
-            Promise.all([
-              this.checkAndAddStakeholders(stakeholders),
-              this.checkAndAddScale(scale),
-              this.checkAndAddType(type)
-            ]).then(() => {
-              const updateDocumentQuery = `
+        Promise.all([
+            this.checkAndAddStakeholders(stakeholders),
+            this.checkAndAddScale(scale),
+            this.checkAndAddType(type)
+        ]).then(() => {
+            const updateDocumentQuery = `
                 UPDATE Documents
-                SET title = ?, stakeholders = ?, scale = ?, issuanceDate = ?, type = ?, 
-                    connections = ?, language = ?, pages = ?, lat = ?, lon = ?, area = ?, description = ?
+                SET title = ?, stakeholders = ?, scale = ?, issuanceDate = ?, type = ?,
+                    connections = ?, language = ?, pages = ?, lat = ?, lon = ?, area = ?, areaName = ?, description = ?
                 WHERE id = ?
-              `;
-        
-              db.run(updateDocumentQuery, [title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description, id], function (err) {
+            `;
+
+            db.run(updateDocumentQuery, [title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description, id], function (err) {
                 if (err) {
-                  console.error('Database error while updating document:', err.message);
-                  return reject(new Error('Database error: ' + err.message));
+                    console.error('Database error while updating document:', err.message);
+                    return reject(new Error('Database error: ' + err.message));
                 }
-        
+
                 if (this.changes === 0) {
-                  // Se non ci sono modifiche (ad esempio se l'ID non esiste)
-                  return reject(new Error('No document found with the provided ID.'));
+                    // If no changes (e.g., if the ID does not exist)
+                    return reject(new Error('No document found with the provided ID.'));
                 }
-        
+
                 resolve({
-                  id,
-                  title,
-                  stakeholders,
-                  scale,
-                  issuanceDate,
-                  type,
-                  connections,
-                  language,
-                  pages,
-                  lat,
-                  lon,
-                  area,
-                  description,
-                  message: 'Document updated successfully.'
+                    id,
+                    title,
+                    stakeholders,
+                    scale,
+                    issuanceDate,
+                    type,
+                    connections,
+                    language,
+                    pages,
+                    lat,
+                    lon,
+                    area,
+                    areaName,
+                    description,
+                    message: 'Document updated successfully.'
                 });
-              });
-            }).catch((err) => {
-              return reject(err);
             });
-          });
-      }
+        }).catch((err) => {
+            return reject(err);
+        });
+    });
+}
+
 
     deleteDocumentById(id) {
         return new Promise((resolve, reject) => {

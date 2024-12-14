@@ -234,3 +234,7 @@ Content-Type: application/json
 ### Fetch georeferenced location for a valid document ID
 GET http://localhost:3001/api/getDocumentLocation/7
 Content-Type: application/json
+
+### Fetch Area Names
+GET http://localhost:3001/api/getAreaNames
+Content-Type: application/json

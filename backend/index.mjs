@@ -590,7 +590,7 @@ app.post('/api/updateDocumentGeoreference', async (req, res) => {
 
         const documentLocation = await new Promise((resolve, reject) => {
             db.get(
-                `SELECT id, title, lat, lon, area, description FROM Documents WHERE id = ? AND (lat IS NOT NULL OR area IS NOT NULL)`,
+                `SELECT id, title, lat, lon, area, areaName, description FROM Documents WHERE id = ? AND (lat IS NOT NULL OR area IS NOT NULL)`,
                 [documentId],
                 (err, row) => {
                     if (err) reject(err);
@@ -625,6 +625,23 @@ app.get('/api/documents/:id', async (req, res) => {
         res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 });
+
+// Fetch all area names
+app.get('/api/getAreaNames', (req, res) => {
+    db.all('SELECT DISTINCT areaName FROM Areas', [], (err, rows) => {
+      if (err) {
+        console.error('Error fetching area names:', err.message);
+        return res.status(500).json({ message: 'Internal server error', error: err.message });
+      }
+      if (rows.length === 0) {
+        return res.status(404).json({ message: 'No areas found' });
+      }
+      res.status(200).json({ areas: rows });
+    });
+  });
+  
+  
+  
   
   
 
