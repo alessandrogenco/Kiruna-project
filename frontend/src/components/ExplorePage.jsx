@@ -106,7 +106,7 @@ function ExplorePage(props) {
           },
         });
         
-        mapInstance.on('click', () => {
+        map.on('click', () => {
         if (globalHoverPopup.current) {
           globalHoverPopup.current.remove();
         }
