@@ -585,7 +585,7 @@ updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, 
                 return reject(new Error('ID is required.'));
             }
             const adjustDocumentPositionQuery = 'UPDATE Documents SET x = ?, y = ? WHERE id = ?';
-            db.run(adjustDocumentPositionQuery, [id, x, y], function (err) {
+            db.run(adjustDocumentPositionQuery, [x, y, id], function (err) {
                 if (err) {
                     db.close();
                     return reject(new Error(`Database error while updating document: ${err.message}`));
@@ -607,7 +607,7 @@ updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, 
             if (!id) {
                 return reject(new Error('ID is required.'));
             }
-            const getDocumentPositionQuery = 'SELECT x, y FROM Documents WHERE id = ?';
+            const getDocumentPositionQuery = 'SELECT * FROM Documents WHERE id = ?';
             db.get(getDocumentPositionQuery, [id], (err, row) => {
                 if (err) {
                     db.close();
@@ -619,10 +619,12 @@ updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, 
                     return reject(new Error('No document found with the provided ID.'));
                 }
     
-                resolve({ x: row.x, y: row.y });
+                // Restituisce tutti i campi della riga trovata
+                resolve(row);
             });
         });
     }
+    
     
 
 }
