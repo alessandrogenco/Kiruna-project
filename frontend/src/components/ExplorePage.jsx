@@ -316,7 +316,7 @@ function ExplorePage(props) {
         } else {
           
           // Imposta l'icona in base al tipo di documento
-          //console.log(properties.data.type);
+          //console.log(properties.data.id);
 
           const iconClass = documentTypeToIcon[properties.data.type] || documentTypeToIcon.default; 
           const iconElement = document.createElement('i'); 
@@ -355,6 +355,8 @@ function ExplorePage(props) {
                 if (activePopup.current) {
                   activePopup.current.remove(); // Close the currently active popup
                 }
+                iconContainer.style.backgroundColor = '#FFD700';
+                iconContainer.style.border = '2px solid #FFD700';
                 globalHoverPopup.current.remove();
                 setSelectedDocument(properties.data); // Pass data to DocumentViewer
               });
@@ -661,7 +663,7 @@ function ExplorePage(props) {
         <DocumentViewer
           isLoggedIn={props.isLoggedIn}
           documentData={selectedDocument}
-          onClose={() => setSelectedDocument(null)}
+          onClose={() => {setSelectedDocument(null); updateMarkers();}}
         />
       )}
     </>
