@@ -646,6 +646,10 @@ function ExplorePage(props) {
     });
   };
 
+  const handleShowArea = () => {
+
+  }
+
   const handleSelectToggle = () => {
     setSelectMode((prev) => !prev);
   };
@@ -716,8 +720,8 @@ function ExplorePage(props) {
             zIndex: 1001,
           }}
         >
-          <strong>Selected Documents</strong>
-          <ul>
+          <span className="lead d-flex justify-content-center mb-2"><strong>Selected Documents</strong></span>
+          
             {selectedDocuments.map((doc) => (
               <li key={doc.id} 
                 className="d-flex justify-content-between align-items-center mt-1" 
@@ -729,7 +733,12 @@ function ExplorePage(props) {
                   />
               </li>
             ))}
-          </ul>
+
+          <div className="d-flex justify-content-center mt-3">
+            <button className="btn btn-success" onClick={() => handleShowArea()}>
+              <span>Show Area</span>
+            </button>
+          </div>
         </div>
       )}
       
