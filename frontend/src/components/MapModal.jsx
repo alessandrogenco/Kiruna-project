@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Modal, Button, ToggleButtonGroup, ToggleButton, Alert } from 'react-bootstrap';
+import { Modal, Button, ToggleButtonGroup, ToggleButton, Alert, Form } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -24,11 +24,14 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
   const [centroidMarker, setCentroidMarker] = useState(null);
   const [currentAreaId, setCurrentAreaId] = useState(null);
   const [areaSet, setAreaSet] = useState(false);
+  const [selectedAreaName, setSelectedAreaName] = useState('');
+  const [areaNames, setAreaNames] = useState([]);
+  const [selectedAreaId, setSelectedAreaId] = useState(null);
 
-  // Fetch document locations when the modal is opened
   useEffect(() => {
     if (show) {
       fetchDocumentLocations();
+      fetchAreaNames();
     }
   }, [show]);
 
@@ -46,6 +49,26 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
     } catch (error) {
       console.error('Error fetching document locations:', error.message);
       alert('Error fetching document locations: ' + error.message);
+    }
+  };
+
+  const fetchAreaNames = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/api/getAreaNames');
+      const text = await response.text();
+      if (!response.ok) throw new Error('Failed to fetch area names');
+      const data = JSON.parse(text);
+      console.log('Fetched area names:', data); // Inspect the data
+
+      // Adjust the data structure
+      if (data.areas && Array.isArray(data.areas)) {
+        setAreaNames(data.areas);
+      } else {
+        console.error('Unexpected data structure for area names:', data);
+      }
+    } catch (error) {
+      console.error('Error fetching area names:', error.message);
+      alert('Error fetching area names: ' + error.message);
     }
   };
 
@@ -67,20 +90,16 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
 
       map.current.on('load', async () => {
         map.current.resize();
-
         try {
           const response = await fetch('/KirunaMunicipality.geojson');
-
           if (!response.ok) throw new Error('Failed to load GeoJSON');
-
           const geojson = await response.json();
+          console.log('Loaded GeoJSON:', geojson); // Inspect the GeoJSON data
           setGeoJsonData(geojson);
-
           map.current.addSource('kiruna-boundary', {
             type: 'geojson',
             data: geojson,
           });
-
           map.current.addLayer({
             id: 'kiruna-boundary-border',
             type: 'line',
@@ -91,65 +110,59 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
               'line-opacity': 1,
             },
           });
-
         } catch (error) {
           console.error('Error loading GeoJSON:', error.message);
           setAlertMessage('Error loading map boundaries. Please try again later.');
         }
 
         let filteredData = existingGeoreferencingData;
-
-        if (mode == 'area'){
+        if (mode === 'area') {
           filteredData = existingGeoreferencingData.filter(item => item.area);
         }
 
         // Add existing georeferencing points/areas to the map
         if (filteredData) {
           filteredData.forEach((item) => {
-            // Check if lat and lon are valid numbers
-            //console.log(item);
-
             if (item.lat && item.lon && !isNaN(item.lat) && !isNaN(item.lon)) {
               const coordinates = [parseFloat(item.lon), parseFloat(item.lat)];
-                const iconClass = (() => {
-                  switch (item.type) {
-                    case "Technical":
-                      return "bi bi-gear";
-                    case "Design":
-                      return "bi bi-pencil-square";
-                    case "Prescriptive":
-                      return "bi bi-alarm";
-                    case "Material effect":
-                      return "bi bi-exclamation-circle";
-                    default:
-                      return "bi bi-person-add";
-                  }
-                })();
 
-                const el = document.createElement('div');
-                el.style.width = '30px';
-                el.style.height = '30px';
-                el.style.display = 'flex';
-                el.style.alignItems = 'center';
-                el.style.justifyContent = 'center';
-                el.style.backgroundColor = '#CB1E3B';
-                el.style.borderRadius = '50%';
-                el.style.border = '2px solid #CB1E3B';
-                el.style.color = 'white';
-                el.style.fontSize = '20px';
-                el.innerHTML = `<i class="${iconClass}"></i>`;
+              const iconClass = (() => {
+                switch (item.type) {
+                  case "Technical":
+                    return "bi bi-gear";
+                  case "Design":
+                    return "bi bi-pencil-square";
+                  case "Prescriptive":
+                    return "bi bi-alarm";
+                  case "Material effect":
+                    return "bi bi-exclamation-circle";
+                  default:
+                    return "bi bi-person-add";
+                }
+              })();
 
-                const pointMarker = new mapboxgl.Marker(el)
-                  .setLngLat(coordinates)
-                  .addTo(map.current);
+              const el = document.createElement('div');
+              el.style.width = '30px';
+              el.style.height = '30px';
+              el.style.display = 'flex';
+              el.style.alignItems = 'center';
+              el.style.justifyContent = 'center';
+              el.style.backgroundColor = '#CB1E3B';
+              el.style.borderRadius = '50%';
+              el.style.border = '2px solid #CB1E3B';
+              el.style.color = 'white';
+              el.style.fontSize = '20px';
+              el.innerHTML = `<i class="bi bi-geo-alt"></i>`;
 
-                if (mode === 'area') {
+              const pointMarker = new mapboxgl.Marker(el)
+                .setLngLat(coordinates)
+                .addTo(map.current);
 
-                  if (item.area) {
-
-                    const areaGeoJson = JSON.parse(JSON.parse(item.area));
+              if (mode === 'area') {
+                if (item.area) {
+                  const areaGeoJson = JSON.parse(item.area);
+                  if (areaGeoJson.features && areaGeoJson.features.length > 0) {
                     const layerId = `area-layer-${item.id}`;
-
                     const polygonSource = {
                       type: 'geojson',
                       data: {
@@ -160,14 +173,15 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
                             type: 'Polygon',
                             coordinates: areaGeoJson.features[0].geometry.coordinates,
                           },
+                          properties: {
+                            name: item.areaName
+                          }
                         }],
                       },
                     };
-                    
 
                     pointMarker.getElement().addEventListener('mouseenter', () => {
                       map.current.addSource(layerId, polygonSource);
-
                       map.current.addLayer({
                         id: layerId,
                         type: 'fill',
@@ -184,31 +198,32 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
                       map.current.removeSource(layerId);
                     });
                   }
-
                 }
+              }
 
-                pointMarker.getElement().addEventListener('click', (event) => {
-                  // Prevent other click events from being executed
-                  event.stopPropagation();
+              pointMarker.getElement().addEventListener('click', (event) => {
+                // Prevent other click events from being executed
+                event.stopPropagation();
 
-                  if (mode === 'point') {
-                    setPosition([item.lat, item.lon]);
-                    setAlertMessage('Selected an existing point.');
-                    if (marker.current) {
-                      marker.current.setLngLat([item.lon, item.lat]);
-                    } else {
-                      marker.current = new mapboxgl.Marker({ color: '#007cbf' })
-                        .setLngLat([item.lon, item.lat])
-                        .addTo(map.current);
-                    }
-                  } else if (mode === 'area' && item.area){
-                    const areaGeoJson = JSON.parse(JSON.parse(item.area));
+                if (mode === 'point') {
+                  setPosition([item.lat, item.lon]);
+                  setAlertMessage('Selected an existing point.');
+                  if (marker.current) {
+                    marker.current.setLngLat([item.lon, item.lat]);
+                  } else {
+                    marker.current = new mapboxgl.Marker({ color: '#007cbf' })
+                      .setLngLat([item.lon, item.lat])
+                      .addTo(map.current);
+                  }
+                } else if (mode === 'area' && item.area) {
+                  const areaGeoJson = JSON.parse(item.area);
+                  if (areaGeoJson.features && areaGeoJson.features.length > 0) {
                     console.log('Area data loaded for the selected point:', areaGeoJson);
 
                     // Rimuovi l'area attuale se già presente
                     let features = draw.current.getAll().features;
                     if (features.length === 1) {
-                      draw.current.delete(features[0].id);  // Rimuovi la prima area se ce ne sono più di una
+                      draw.current.delete(features[0].id); // Rimuovi la prima area se ce ne sono più di una
                       features.splice(0, 1); // Remove the first feature
                     }
 
@@ -225,6 +240,9 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
                         type: 'Polygon',
                         coordinates: areaGeoJson.features[0].geometry.coordinates,
                       },
+                      properties: {
+                        name: item.areaName
+                      }
                     };
 
                     // Salva l'ID dell'area attualmente visualizzata
@@ -238,16 +256,16 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
 
                     // Aggiorna lo stato per indicare che un'area è stata selezionata
                     setAreaSet(true);
+                    setSelectedAreaName(item.areaName); // Set the selected area name
                     setAlertMessage('Selected an area associated with the point.');
                   }
-                }, true); // Add event listener in the capture phase for higher priority
-              }
-
+                }
+              }, true); // Add event listener in the capture phase for higher priority
+            }
           });
         }
 
         // Initialize Mapbox Draw
-
         draw.current = new MapboxDraw({
           displayControlsDefault: false,
           controls: {
@@ -271,11 +289,10 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
         map.current.on('draw.create', (e) => {
           if (mode === 'area') {
             console.log('draw.create event fired', e);
-
             let features = draw.current.getAll().features;
             if (features.length > 1) {
               draw.current.delete(features[0].id);  // Rimuovi la prima area se ce ne sono più di una
-              features = features.slice(1); 
+              features = features.slice(1);
             }
 
             if (centroidMarker) {
@@ -306,26 +323,23 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
 
             const features = draw.current.getAll().features;
             const polygon = features.find(feature => feature.geometry.type === 'Polygon');
-            
+
             if (polygon && polygon.geometry && Array.isArray(polygon.geometry.coordinates)) {
               try {
-
-              const centroid = turf.centroid(polygon);
-              setAreaCentroid(centroid.geometry.coordinates);
-              displayCentroidMarker(centroid.geometry.coordinates);
+                const centroid = turf.centroid(polygon);
+                setAreaCentroid(centroid.geometry.coordinates);
+                displayCentroidMarker(centroid.geometry.coordinates);
               } catch (error) {
                 console.error('Error calculating centroid:', error.message);
               }
             } else {
               console.warn('Invalid polygon or missing coordinates:', polygon);
-    
             }
           }
         });
 
         map.current.on('draw.delete', (e) => {
           console.log('draw.delete event fired', e);
-
           setCurrentAreaId(null);
           if (centroidMarker) {
             console.log('Removing centroid marker on delete');
@@ -354,7 +368,6 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
         map.current.on('click', (e) => {
           if (mode === 'point') {
             const { lng, lat } = e.lngLat;
-
             if (geoJsonData) {
               if (!isWithinBounds(lng, lat, geoJsonData)) {
                 setAlertMessage('Selected coordinates are outside Kiruna Municipality borders.');
@@ -389,40 +402,36 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
     };
   }, [show, mode, existingGeoreferencingData]);
 
-  
-
   const isWithinBounds = (lon, lat, geojson) => {
-    const point = turf.point([lon, lat]);
+    if (!geojson || !geojson.features || geojson.features.length === 0) {
+      console.error('GeoJSON is undefined or empty:', geojson);
+      return false;
+    }
 
+    const point = turf.point([lon, lat]);
     const isInside = geojson.features[0].geometry.coordinates.some((polygonCoordinates) => {
       const polygon = turf.polygon(polygonCoordinates);
       return turf.booleanPointInPolygon(point, polygon);
     });
-
     return isInside;
   };
 
   const handleSave = () => {
     if (mode === 'point' && position) {
       onLocationSelect({ type: 'point', coordinates: position });
-      //updateDocumentGeoreference('documentId', position[0], position[1], null);
     } else if (mode === 'area') {
       const drawnFeatures = draw.current.getAll();
-
       if (drawnFeatures.features.length > 0) {
         const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: drawnFeatures.features });
-        onLocationSelect({ type: 'area', geometry: geoJsonString });
-        //updateDocumentGeoreference('documentId', areaCentroid[1], areaCentroid[0], geoJsonString);
+        onLocationSelect({ type: 'area', geometry: geoJsonString, name: selectedAreaName });
       } else if (geoJsonData) {
         const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: geoJsonData.features });
-        onLocationSelect({ type: 'area', geometry: geoJsonString });
-        //updateDocumentGeoreference('documentId', null, null, geoJsonString);
+        onLocationSelect({ type: 'area', geometry: geoJsonString, name: selectedAreaName });
       } else {
         setAlertMessage('Error: Default municipality boundary is unavailable.');
         return;
       }
     }
-
     handleClose();
   };
 
@@ -443,9 +452,11 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
                 position: 'absolute',
                 top: '10px',
                 left: '150px',
-                zIndex: 2 }}>
+                zIndex: 2 }}
+            >
               {alertMessage}
-            </Alert> )}
+            </Alert>
+          )}
           <div style={{
               position: 'absolute',
               top: '10px',
@@ -455,58 +466,49 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
               padding: '5px',
               borderRadius: '5px',
               boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)'}}>
-
-              <ToggleButtonGroup
-                type="radio"
-                name="mode"
-                value={mode}
-                onChange={(value) => {
-                 setMode(value);
-
+            <ToggleButtonGroup
+              type="radio"
+              name="mode"
+              value={mode}
+              onChange={(value) => {
+                console.log('ToggleButtonGroup onChange:', value); // Debugging information
+                setMode(value);
                 if (draw.current) {
                   try {
-                  // Check if deleteAll exists before calling it
-                  // if (typeof draw.current.deleteAll === 'function') {
-                  //   draw.current.deleteAll();
-                  //     } else {
-                  //       console.error('deleteAll method is not available on draw.current');
-                  //     }
-                      if (value === 'point') {
-                        draw.current.set({
-                          type: 'FeatureCollection',
-                          features: [] // Ensure valid GeoJSON structure
-                          });
-                          
+                    if (value === 'point') {
+                      draw.current.set({
+                        type: 'FeatureCollection',
+                        features: [] // Ensure valid GeoJSON structure
+                      });
                       if (typeof draw.current.changeMode === 'function') {
                         draw.current.changeMode('simple_select', {
                           displayControlsDefault: false,
                           controls: {}
-                         });
-                        } else {
-                          console.error('changeMode method is not available on draw.current');
-                         }
-                        } else if (value === 'polygon') {
-                           if (typeof draw.current.changeMode === 'function') {
-                             draw.current.changeMode('draw_polygon', {
-                                    displayControlsDefault: false,
-                                    controls: {
-                                    polygon: true,
-                                    trash: true
-                                  }
-                                });
-                              } else {
-                                console.error('changeMode method is not available on draw.current');
-                              }
-                            }
-                          } catch (error) {
-                            console.error('Error setting draw mode:', error);
+                        });
+                      } else {
+                        console.error('changeMode method is not available on draw.current');
+                      }
+                    } else if (value === 'polygon') {
+                      if (typeof draw.current.changeMode === 'function') {
+                        draw.current.changeMode('draw_polygon', {
+                          displayControlsDefault: false,
+                          controls: {
+                            polygon: true,
+                            trash: true
                           }
-                        } else {
-                          console.error('draw.current is not initialized');
-                        }
-                      }}
-              >
-
+                        });
+                      } else {
+                        console.error('changeMode method is not available on draw.current');
+                      }
+                    }
+                  } catch (error) {
+                    console.error('Error setting draw mode:', error);
+                  }
+                } else {
+                  console.error('draw.current is not initialized');
+                }
+              }}
+            >
               <ToggleButton
                 id="point-mode"
                 value="point"
@@ -523,6 +525,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
               </ToggleButton>
             </ToggleButtonGroup>
           </div>
+
         </div>
       </Modal.Body>
       <Modal.Footer>
@@ -541,7 +544,7 @@ MapModal.propTypes = {
   show: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   onLocationSelect: PropTypes.func.isRequired,
-  documentId: PropTypes.string, // Add documentId prop type
+  documentId: PropTypes.string,
 };
 
 export default MapModal;
