@@ -639,6 +639,58 @@ app.get('/api/getAreaNames', (req, res) => {
       res.status(200).json({ areas: rows });
     });
   });
+
+//API to get document position (x,y)
+app.get('/api/documents/:id/position', async (req, res) => {
+    const { id } = req.params;
+
+    // Validazione dell'ID (puoi aggiungere ulteriori controlli se necessario)
+    if (!id || isNaN(parseInt(id, 10))) {
+        return res.status(400).json({ error: 'Invalid or missing document ID.' });
+    }
+
+    try {
+        const position = await documentDao.getDocumentPosition(id);
+        return res.status(200).json({
+            id,
+            position
+        });
+    } catch (error) {
+        if (error.message.includes('No document found')) {
+            return res.status(404).json({ error: error.message });
+        }
+        return res.status(500).json({ error: 'An internal server error occurred.' });
+    }
+});
+
+//API to update document position (x,y)
+app.put('/api/documents/:id/adjustPosition', async (req, res) => {
+    const { id } = req.params;
+    const { x, y } = req.body;
+
+    // Validazione dei parametri
+    if (!id) {
+        return res.status(400).json({ error: 'Missing document ID.' });
+    }
+
+    if (x === undefined || y === undefined || !Number.isInteger(x) || !Number.isInteger(y)) {
+        return res.status(400).json({ error: 'x and y values must be integers.' });
+    }
+
+    if (x < 0 || y < 0) {
+        return res.status(400).json({ error: 'x and y values cannot be negative.' });
+    }
+
+    try {
+        const message = await documentDao.adjustDocumentPosition(id, x, y);
+        return res.status(200).json({ message });
+    } catch (error) {
+        if (error.message.includes('No document found')) {
+            return res.status(404).json({ error: error.message });
+        }
+        return res.status(500).json({ error: 'An internal server error occurred.' });
+    }
+});
   
   
   

@@ -564,7 +564,6 @@ updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, 
     
             db.run(deleteDocument, [id], function(err) {
                 if (err) {
-                    
                     return reject(new Error('Database error: ' + err.message));
                 }
     
@@ -579,7 +578,53 @@ updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, 
             });
         });
     }
-        
+
+    adjustDocumentPosition(id, x, y) {
+        return new Promise((resolve, reject) => {
+            if (!id) {
+                return reject(new Error('ID is required.'));
+            }
+            const adjustDocumentPositionQuery = 'UPDATE Documents SET x = ?, y = ? WHERE id = ?';
+            db.run(adjustDocumentPositionQuery, [id, x, y], function (err) {
+                if (err) {
+                    db.close();
+                    return reject(new Error(`Database error while updating document: ${err.message}`));
+                }
+
+                // Controlla se il documento è stato effettivamente aggiornato
+                if (this.changes === 0) {
+                    db.close();
+                    return reject(new Error('No document found with the provided ID.'));
+                }
+
+                resolve(`Document with ID ${id} updated successfully: x=${x}, y=${y}`);
+            });
+        });
+    }
+
+    getDocumentPosition(id) {
+        return new Promise((resolve, reject) => {
+            if (!id) {
+                return reject(new Error('ID is required.'));
+            }
+            const getDocumentPositionQuery = 'SELECT x, y FROM Documents WHERE id = ?';
+            db.get(getDocumentPositionQuery, [id], (err, row) => {
+                if (err) {
+                    db.close();
+                    return reject(new Error(`Database error while fetching document position: ${err.message}`));
+                }
+    
+                if (!row) {
+                    db.close();
+                    return reject(new Error('No document found with the provided ID.'));
+                }
+    
+                resolve({ x: row.x, y: row.y });
+            });
+        });
+    }
+    
+
 }
 
 export default DocumentDao;

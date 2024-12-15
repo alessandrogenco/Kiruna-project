@@ -238,3 +238,16 @@ Content-Type: application/json
 ### Fetch Area Names
 GET http://localhost:3001/api/getAreaNames
 Content-Type: application/json
+
+### Update document position
+GET http://localhost:3001/api/documents/1/position
+Content-Type: application/json
+
+### Update document position
+PUT http://localhost:3001/api/documents/1/adjustPosition
+Content-Type: application/json
+
+{
+    "x": 1,
+    "y": 2
+}
