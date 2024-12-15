@@ -259,9 +259,13 @@ function ExplorePage(props) {
             color: 'green',
             element: createClusterIcon(properties.point_count_abbreviated),
           })
-            .setLngLat(geometry.coordinates)
-            .setPopup(popup)
-            .addTo(map);
+            .setLngLat(geometry.coordinates);
+
+            if (!selectMode && popup) {
+              marker.setPopup(popup);
+            }
+              
+            marker.addTo(map);
       
           popup
             .on('open', () => {
