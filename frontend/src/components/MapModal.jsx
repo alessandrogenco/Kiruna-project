@@ -416,6 +416,95 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
     return isInside;
   };
 
+  const validateCoordinates = (coordinates) => {
+    return coordinates.every(coord => 
+      coord[0] >= 17.8998 && coord[0] <= 23.2867 && 
+      coord[1] >= 67.3562 && coord[1] <= 69.0599    
+    );
+  };
+
+  const highlightArea = (areaId) => {
+    console.log('Looking for areaId:', areaId);
+
+    // Find the selected area by areaName (make sure the areaId matches the name correctly)
+    const selectedArea = areaNames.find(area => area.areaName === areaId);
+    console.log('Selected Area:', selectedArea);
+
+    if (selectedArea && selectedArea.coordinates) {
+        try {
+            // Parse the coordinates string into a valid object
+            const parsedCoordinates = JSON.parse(selectedArea.coordinates);
+            console.log('Parsed Coordinates:', parsedCoordinates);
+
+            // Check if the coordinates are in the correct format (Polygon)
+            if (!parsedCoordinates || parsedCoordinates.type !== "Polygon" || !parsedCoordinates.coordinates[0]) {
+                console.error('Invalid coordinates format for area:', areaId);
+                return;
+            }
+
+            // Create GeoJSON object for the selected area
+            const areaGeoJson = {
+                type: 'FeatureCollection',
+                features: [
+                    {
+                        type: 'Feature',
+                        geometry: {
+                            type: 'Polygon',
+                            coordinates: parsedCoordinates.coordinates,
+                        },
+                        properties: {
+                            name: selectedArea.areaName,
+                        },
+                    },
+                ],
+            };
+
+            console.log('Valid Area GeoJSON:', areaGeoJson);
+
+            // Create a unique layer ID based on the areaName to avoid conflicts
+            const layerId = `highlight-area-${selectedArea.areaName}`;
+
+            // Remove any existing highlighted area layers and sources
+            const existingLayers = map.current.getStyle().layers;
+            existingLayers.forEach(layer => {
+                if (layer.id.startsWith('highlight-area-')) {
+                    console.log(`Removing existing layer: ${layer.id}`);
+                    map.current.removeLayer(layer.id);   // Remove the previous layer
+                    map.current.removeSource(layer.id);  // Remove the source associated with the previous layer
+                }
+            });
+
+            // Add the new GeoJSON source for the selected area
+            map.current.addSource(layerId, {
+                type: 'geojson',
+                data: areaGeoJson,
+            });
+
+            // Add the new layer to the map
+            map.current.addLayer({
+                id: layerId,
+                type: 'fill',
+                source: layerId,
+                paint: {
+                    'fill-color': 'rgba(255, 99, 71, 0.5)', 
+                    'fill-opacity': 0.5, 
+                },
+            });
+
+            // Fit the map bounds to the selected area
+            const bounds = turf.bbox(areaGeoJson); 
+            map.current.fitBounds(bounds, { padding: 20 });
+
+            console.log(`Successfully highlighted area: ${selectedArea.areaName}`);
+        } catch (error) {
+            console.error('Error processing coordinates or GeoJSON:', error);
+        }
+    } else {
+        console.error('Selected area or coordinates are undefined:', selectedArea);
+    }
+};
+
+
   const handleSave = () => {
     if (mode === 'point' && position) {
       onLocationSelect({ type: 'point', coordinates: position });
@@ -471,14 +560,14 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
               name="mode"
               value={mode}
               onChange={(value) => {
-                console.log('ToggleButtonGroup onChange:', value); // Debugging information
+                console.log('ToggleButtonGroup onChange:', value); 
                 setMode(value);
                 if (draw.current) {
                   try {
                     if (value === 'point') {
                       draw.current.set({
                         type: 'FeatureCollection',
-                        features: [] // Ensure valid GeoJSON structure
+                        features: [] 
                       });
                       if (typeof draw.current.changeMode === 'function') {
                         draw.current.changeMode('simple_select', {
@@ -525,7 +614,6 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
               </ToggleButton>
             </ToggleButtonGroup>
           </div>
-
         </div>
       </Modal.Body>
       <Modal.Footer>
