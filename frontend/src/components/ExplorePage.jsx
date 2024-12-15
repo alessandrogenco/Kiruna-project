@@ -639,6 +639,13 @@ function ExplorePage(props) {
     });
   };
 
+  const handleDeleteDocument = (docId) => {
+    // Delete a document
+    setSelectedDocuments((prevSelected) => {
+      return [...prevSelected.filter((doc) => doc.id !== docId)];
+    });
+  };
+
   const handleSelectToggle = () => {
     setSelectMode((prev) => !prev);
   };
@@ -712,7 +719,15 @@ function ExplorePage(props) {
           <strong>Selected Documents</strong>
           <ul>
             {selectedDocuments.map((doc) => (
-              <li key={doc.id}>{doc.title}</li>
+              <li key={doc.id} 
+                className="d-flex justify-content-between align-items-center mt-1" 
+                >
+                <span>{doc.title}</span>
+                <button className="btn btn-outline-danger bi bi-trash" 
+                  onClick={() => handleDeleteDocument(doc.id)}
+                  style={{ marginLeft: '10px' }}
+                  />
+              </li>
             ))}
           </ul>
         </div>
