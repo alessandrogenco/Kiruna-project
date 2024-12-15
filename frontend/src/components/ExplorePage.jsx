@@ -22,6 +22,7 @@ function ExplorePage(props) {
   const [selectedDocument, setSelectedDocument] = useState(null); // State for the selected document
   const [showGraph, setShowGraph] = useState(false); // Stato per mostrare/nascondere il grafo
   const [selectMode, setSelectMode] = useState(false);
+  const [selectedDocuments, setSelectedDocuments] = useState([]); // State for the selected documents
   const cluster = useRef(null);
   const markersLayer = useRef(null);
   const activePopup = useRef(null);
@@ -398,6 +399,9 @@ function ExplorePage(props) {
               });
   
               singleMarkerEl.addEventListener('click', () => {
+                if (selectMode) {
+                  handleMarkerClick(properties.data);
+                }
                 globalHoverPopup.current.remove();
               });
             }
@@ -481,7 +485,7 @@ function ExplorePage(props) {
       map.on('zoom', updateMarkers); 
       updateMarkers();
     }
-  }, [map, mapLoaded, markers]);
+  }, [map, mapLoaded, markers, selectMode]);
 
    // Use the ID to search and open the corresponding popup
    useEffect(() => {
@@ -614,10 +618,28 @@ function ExplorePage(props) {
     }
   }, [showGraph]);
 
+  const handleMarkerClick = (docData) => {
+    // Add the selected document
+    setSelectedDocuments((prevSelected) => {
+      if (prevSelected.some((doc) => doc.id === docData.id)) {
+        return [...prevSelected];
+      } else {
+        return [...prevSelected, docData];
+      }
+    });
+  };
 
   const handleSelectToggle = () => {
     setSelectMode((prev) => !prev);
   };
+
+  useEffect(() => {
+    console.log("Select Mode: ", selectMode);
+  },[selectMode]);
+
+  useEffect(() => {
+    console.log("The selected documents are: ", selectedDocuments);
+  },[selectedDocuments]);
 
   return (
     <>
