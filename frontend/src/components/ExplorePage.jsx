@@ -373,9 +373,13 @@ function ExplorePage(props) {
           const marker = new mapboxgl.Marker({
             element: iconContainer,
           })
-            .setLngLat(geometry.coordinates)
-            .setPopup(popup)
-            .addTo(map);
+            .setLngLat(geometry.coordinates);
+
+          if (!selectMode && popup) {
+            marker.setPopup(popup);
+          }
+            
+          marker.addTo(map);
 
             markersArray.push({ marker: marker, data: properties.data });
 
