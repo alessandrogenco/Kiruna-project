@@ -21,6 +21,7 @@ function ExplorePage(props) {
   const [markers, setMarkers] = useState([]);
   const [selectedDocument, setSelectedDocument] = useState(null); // State for the selected document
   const [showGraph, setShowGraph] = useState(false); // Stato per mostrare/nascondere il grafo
+  const [selectMode, setSelectMode] = useState(false);
   const cluster = useRef(null);
   const markersLayer = useRef(null);
   const activePopup = useRef(null);
@@ -613,9 +614,33 @@ function ExplorePage(props) {
     }
   }, [showGraph]);
 
+
+  const handleSelectToggle = () => {
+    setSelectMode((prev) => !prev);
+  };
+
   return (
     <>
       <AppNavbar isLoggedIn={props.isLoggedIn} handleLogout={props.handleLogout} />
+      <button
+        style={{
+          position: 'absolute',
+          top: '90px',
+          left: '20px',
+          padding: '10px',
+          backgroundColor: selectMode ? '#ff0000' : '#28a745',
+          color: '#fff',
+          border: '1px solid #fff',
+          borderRadius: '8px',
+          cursor: 'pointer',
+          zIndex: 1000,
+        }}
+        onClick={() => handleSelectToggle()}
+      >
+        {selectMode ? 'Exit Select Mode' : 'Select Documents'}
+      </button>
+      
+      
       <button
         style={{
           position: 'fixed', // Fisso nella finestra
