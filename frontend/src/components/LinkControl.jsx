@@ -90,7 +90,7 @@ const LinkControl = (props) => {
     <div className="mx-4 mb-4">
       <CurrentLinkList links={links} className="mt-3" />
 
-      <h5 style={{ fontWeight: 'bolder' }}>Create Link to Another Document</h5>
+      <h5 style={{ fontWeight: 'bolder' }}>Create Connection to Another Document</h5>
 
       {error && <Alert variant="danger">{error}</Alert>}
 
@@ -113,13 +113,13 @@ const LinkControl = (props) => {
 
           <Col className="d-flex justify-content-center">
             <Form.Group as={Col} controlId={`formLinkType-${index}`}>
-              <Form.Label>Link Type</Form.Label>
+              <Form.Label>Connection Type</Form.Label>
               <Form.Control
                 as="select"
                 value={row.linkType}
                 onChange={(e) => handleRowChange(index, 'linkType', e.target.value)}
               >
-                <option value="">Select link type</option>
+                <option value="">Select connection type</option>
                 <option value="Reference">Reference</option>
                 <option value="Citation">Citation</option>
                 <option value="Dependency">Dependency</option>
@@ -133,7 +133,7 @@ const LinkControl = (props) => {
       <Row className="d-flex justify-content-between">
         <Col className="d-flex justify-content-center" style={{ height: '40px' }}>
           <Button className="me-3" variant="outline-success" onClick={addRow}>
-            New Link
+            New Connection
           </Button>
         </Col>
       </Row>
@@ -153,7 +153,7 @@ LinkControl.propTypes = {
 function CurrentLinkList(props) {
   return (
     <>
-      <h5 style={{ fontWeight: 'bolder', marginTop: '15px' }}>Current links</h5>
+      <h5 style={{ fontWeight: 'bolder', marginTop: '15px' }}>Current connections</h5>
       <ListGroup className="mb-3">
         {props.links.length > 0 ? (
           props.links.map((link) => (
@@ -164,7 +164,7 @@ function CurrentLinkList(props) {
           ))
         ) : (
           <label className="text-muted">
-            No links currently
+            No connections currently
           </label>
         )}
       </ListGroup>
