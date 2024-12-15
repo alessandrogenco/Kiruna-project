@@ -695,6 +695,28 @@ function ExplorePage(props) {
         {selectMode ? 'Exit Select Mode' : 'Select Documents'}
       </button>
       
+      {/* Show the selected documents */}
+      {selectedDocuments.length > 0 && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '150px',
+            left: '20px',
+            backgroundColor: '#FCFCFC',
+            padding: '10px',
+            border: '1px solid #28a745',
+            borderRadius: '8px',
+            zIndex: 1001,
+          }}
+        >
+          <strong>Selected Documents</strong>
+          <ul>
+            {selectedDocuments.map((doc) => (
+              <li key={doc.id}>{doc.title}</li>
+            ))}
+          </ul>
+        </div>
+      )}
       
       <button
         style={{
