@@ -322,7 +322,8 @@ function ExplorePage(props) {
         } else {
           
           // Imposta l'icona in base al tipo di documento
-          //console.log(properties.data.id);
+          /*console.log(properties.data.id);
+          console.log(selectedDocument);*/
 
           const iconClass = documentTypeToIcon[properties.data.type] || documentTypeToIcon.default; 
           const iconElement = document.createElement('i'); 
@@ -337,7 +338,7 @@ function ExplorePage(props) {
           iconContainer.style.justifyContent = 'center'; 
           iconContainer.style.alignItems = 'center';
           iconContainer.style.borderRadius = '50%';
-          iconContainer.style.backgroundColor = '#CB1E3B'; 
+          iconContainer.style.backgroundColor = (selectedDocument && properties.data.id==selectedDocument.id) ? '#ffd404' : '#CB1E3B'; 
           iconContainer.style.border = '2px solid #CB1E3B'; 
           iconContainer.appendChild(iconElement);
 
@@ -355,14 +356,14 @@ function ExplorePage(props) {
             `)
             .on('open', () => {
               console.log(properties.data);
-              iconContainer.style.backgroundColor = '#FFD700';
-              iconContainer.style.border = '2px solid #FFD700';
+              //iconContainer.style.backgroundColor = '#FFD700';
+              //iconContainer.style.border = '2px solid #FFD700';
               document.getElementById(`view-details-${properties.data.id}`).addEventListener('click', () => {
                 if (activePopup.current) {
                   activePopup.current.remove(); // Close the currently active popup
                 }
-                iconContainer.style.backgroundColor = '#FFD700';
-                iconContainer.style.border = '2px solid #FFD700';
+                iconContainer.style.backgroundColor = '#ffd404';
+                iconContainer.style.border = '2px solid #ffd404';
                 globalHoverPopup.current.remove();
                 setSelectedDocument(properties.data); // Pass data to DocumentViewer
               });
@@ -372,6 +373,7 @@ function ExplorePage(props) {
               iconContainer.style.backgroundColor = '#CB1E3B';
               iconContainer.style.border = '2px solid #CB1E3B';
               activePopup.current = null; // Clear the reference when popup closes
+              setSelectedDocument(null);
             });
 
           const marker = new mapboxgl.Marker({
@@ -651,6 +653,27 @@ function ExplorePage(props) {
     console.log("The selected documents are: ", selectedDocuments);
   },[selectedDocuments]);
 
+  useEffect(() => {
+    if (selectedDocument) {
+      // Trova il marker corrispondente e applica l'evidenziazione
+      markersLayer.current.forEach((markerData) => {
+        //console.log(markerData);
+        if(markerData.data){
+          //console.log(markerData.data);
+          //console.log(selectedDocument);
+          if (markerData.data.id === selectedDocument.id) {
+            markerData.marker.getElement().style.backgroundColor = "#ffd404"; // Evidenziato
+            markerData.marker.getElement().style.border = '2px solid #ffd404';
+            //console.log(markerData.marker);
+          } else {
+            markerData.marker.getElement().style.backgroundColor = "#CB1E3B"; // Colore di default
+            markerData.marker.getElement().style.border = '2px solid #CB1E3B';
+          }
+        }
+      });
+    }
+  }, [selectedDocument]);
+
   return (
     <>
       <AppNavbar isLoggedIn={props.isLoggedIn} handleLogout={props.handleLogout} />
@@ -701,7 +724,7 @@ function ExplorePage(props) {
         <Row>
           <Col>
             <ReactFlowProvider>
-              <DocumentGraph documents={props.documents} setSelectedDocument={setSelectedDocument} graphSize={graphSize}/>
+              <DocumentGraph documents={props.documents} selectedDocument={selectedDocument} setSelectedDocument={setSelectedDocument} graphSize={graphSize}/>
             </ReactFlowProvider>
           </Col>
         </Row>

@@ -229,6 +229,8 @@ function computeEdges(nodes, documents, setTooltip) {
 
 const DocumentGraph = (props) => {
 
+  console.log(props.selectedDocument);
+
   const [nodesState, setNodes] = useNodesState([]);
   const [edgesState, setEdges] = useEdgesState([]);
   const [showGraph, setShowGraph] = useState(0);
@@ -307,6 +309,34 @@ const DocumentGraph = (props) => {
       fetchLinks();
     }
   }, [props.documents, types]); 
+
+  useEffect(() => {
+    if (props.selectedDocument) {
+      //  Evidenzia il nodo selezionato
+      setNodes((prevNodes) => 
+        prevNodes.map((node) => ({
+          ...node,
+          style: {
+            ...node.style,
+            border: node.id === props.selectedDocument.id.toString() ? "2px solid #ffd404" : "1px solid #ddd",
+            background: node.id === props.selectedDocument.id.toString() ? "#ffd404" : node.style.backgroundColor,
+          },
+        }))
+      );
+    } else {
+      // Ripristina lo stile originale di tutti i nodi
+      setNodes((prevNodes) =>
+        prevNodes.map((node) => ({
+          ...node,
+          style: {
+            ...node.style,
+            border: "1px solid #ddd", // Stile predefinito del bordo
+            background: node.style?.originalBackgroundColor || node.style.backgroundColor, // Usa un colore di sfondo originale se disponibile
+          },
+        }))
+      );
+    }
+  }, [props.selectedDocument]);
 
   const onNodeDrag = (event, node) => {
     const nodeIndex = nodesState.findIndex((n) => n.id === node.id);
@@ -423,6 +453,7 @@ const DocumentGraph = (props) => {
 
 DocumentGraph.propTypes = {
   documents: PropTypes.array,
+  selectedDocument: PropTypes.object,
   setSelectedDocument: PropTypes.func,
   graphSize: PropTypes.number,
   isLoggedIn: PropTypes.bool,
