@@ -642,6 +642,8 @@ function ExplorePage(props) {
   };
 
   useEffect(() => {
+    if(!selectMode)
+      setSelectedDocuments([]);   // Reset the selected documents 
     console.log("Select Mode: ", selectMode);
   },[selectMode]);
 
