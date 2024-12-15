@@ -614,6 +614,55 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
               </ToggleButton>
             </ToggleButtonGroup>
           </div>
+
+          
+          {mode === 'area' && (
+            <div style={{
+              position: 'absolute',
+              top: '60px',
+              left: '10px',
+              zIndex: 2,
+              background: 'white',
+              padding: '5px',
+              borderRadius: '5px',
+              boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)'}}>
+              <Form.Group controlId="areaSelect">
+                <Form.Label>Select Area</Form.Label>
+                <Form.Select
+                  value={selectedAreaId}
+                  onChange={(e) => {
+                    const selectedId = e.target.value;
+                    const selectedArea = areaNames.find(area => area.id === selectedId);
+                    console.log('Selected Area:', selectedArea); 
+                    setSelectedAreaId(selectedId);
+                    setSelectedAreaName(selectedArea ? selectedArea.areaName : '');
+                    highlightArea(selectedId); 
+                  }}
+                >
+                  <option value="">Select an area</option>
+                  {Array.isArray(areaNames) && areaNames.map(area => (
+                    <option key={area.id} value={area.id}>
+                      {area.areaName}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+            </div>
+          )}
+          {selectedAreaName && (
+            <div style={{
+              position: 'absolute',
+              top: '120px',
+              left: '10px',
+              zIndex: 2,
+              background: 'white',
+              padding: '5px',
+              borderRadius: '5px',
+              boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)'}}>
+              <strong>Selected Area:</strong> {selectedAreaName}
+            </div>
+          )}
+
         </div>
       </Modal.Body>
       <Modal.Footer>
