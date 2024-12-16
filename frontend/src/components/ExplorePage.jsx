@@ -236,23 +236,34 @@ function ExplorePage(props) {
             const listItems = Array.from(listElement.querySelectorAll('li.document-item'));
   
 
+            // Extract the search term from the input event
+            const getSearchTerm = (event) => {
+              return event.target.value.toLowerCase();
+            };
+
+              // Retrieve title and description of an item
+            const getItemDetails = (item) => {
+            const title = item.querySelector('.document-title')?.textContent.toLowerCase() || '';
+            const description = item.getAttribute('data-description')?.toLowerCase() || '';
+            return { title, description };
+            };
+
+              // Update visibility of a list item based on the search term
+            const updateItemVisibility = (item, searchTerm) => {
+            const { title, description } = getItemDetails(item);
+            item.style.display = title.includes(searchTerm) || description.includes(searchTerm) ? '' : 'none';
+            };
+
+              // Function to handle the input event for filtering list items
+            const handleInputEvent = (event, listItems) => {
+            const searchTerm = getSearchTerm(event);
+            listItems.forEach((item) => updateItemVisibility(item, searchTerm));
+            };
 
 
             searchInput.addEventListener('input', (event) => {
-              const searchTerm = event.target.value.toLowerCase(); // no sanitization, just lowercase
-              listItems.forEach((item) => {
-                const title = item.querySelector('.document-title').textContent.toLowerCase();
-                const description = (item.getAttribute('data-description') || '').toLowerCase();
-            
-                // Check if the search term is in either the title or the description
-                if (title.includes(searchTerm) || description.includes(searchTerm)) {
-                  item.style.display = '';
-                } else {
-                  item.style.display = 'none';
-                }
-              });
+            handleInputEvent(event, listItems);
             });
-            
           });
       
           const marker = new mapboxgl.Marker({
