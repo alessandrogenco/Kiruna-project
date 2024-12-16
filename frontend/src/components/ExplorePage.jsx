@@ -718,10 +718,16 @@ function ExplorePage(props) {
             border: '1px solid #28a745',
             borderRadius: '8px',
             zIndex: 1001,
+            maxWidth: '400px',
           }}
         >
           <span className="lead d-flex justify-content-center mb-2"><strong>Selected Documents</strong></span>
-          
+          <div
+            style={{
+              maxHeight: '200px',
+              overflowY: 'auto',
+              marginLeft: '12px'
+            }}>
             {selectedDocuments.map((doc) => (
               <li key={doc.id} 
                 className="d-flex justify-content-between align-items-center mt-1" 
@@ -729,11 +735,11 @@ function ExplorePage(props) {
                 <span>{doc.title}</span>
                 <button className="btn btn-outline-danger bi bi-trash" 
                   onClick={() => handleDeleteDocument(doc.id)}
-                  style={{ marginLeft: '10px' }}
+                  style={{ marginLeft: '10px', marginRight: '15px' }}
                   />
               </li>
             ))}
-
+          </div> 
           <div className="d-flex justify-content-center mt-3">
             <button className="btn btn-success" onClick={() => handleShowArea()}>
               <span>Show Area</span>
