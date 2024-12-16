@@ -322,9 +322,6 @@ function ExplorePage(props) {
           });
         } else {
           
-          // Imposta l'icona in base al tipo di documento
-          /*console.log(properties.data.id);
-          console.log(selectedDocument);*/
 
           const iconClass = documentTypeToIcon[properties.data.type] || documentTypeToIcon.default; 
           const iconElement = document.createElement('i'); 
@@ -357,8 +354,6 @@ function ExplorePage(props) {
             `)
             .on('open', () => {
               console.log(properties.data);
-              //iconContainer.style.backgroundColor = '#FFD700';
-              //iconContainer.style.border = '2px solid #FFD700';
               document.getElementById(`view-details-${properties.data.id}`).addEventListener('click', () => {
                 if (activePopup.current) {
                   activePopup.current.remove(); // Close the currently active popup
