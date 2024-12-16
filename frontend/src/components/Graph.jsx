@@ -107,13 +107,18 @@ function computeNodes(documents, types, setTooltip) {
       id: node.id.toString(),
       data: {
         label: (
-          <div
+          <button
             style={{
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
               alignItems: "center",
               height: "100%",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: 0,
+              textAlign: "center",
             }}
             onMouseEnter={(e) => {
               setTooltip({
@@ -123,11 +128,14 @@ function computeNodes(documents, types, setTooltip) {
                 y: e.clientY,
               });
             }}
-            onMouseLeave={() => setTooltip({ visible: false, content: "", x: 0, y: 0 })}
+            onMouseLeave={() =>
+              setTooltip({ visible: false, content: "", x: 0, y: 0 })
+            }
           >
             <div style={{ fontWeight: "bold", fontSize: "14px" }}>{node.title}</div>
             <div style={{ fontSize: "11px", color: "gray" }}>{node.issuanceDate}</div>
-          </div>
+          </button>
+
         ),
       },
       position: node.x || node.y ? { x: node.x, y: node.y } : calculateNodePosition(documents, node),
