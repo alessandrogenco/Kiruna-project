@@ -259,13 +259,9 @@ function ExplorePage(props) {
             color: 'green',
             element: createClusterIcon(properties.point_count_abbreviated),
           })
-            .setLngLat(geometry.coordinates);
-
-            if (!selectMode && popup) {
-              marker.setPopup(popup);
-            }
-              
-            marker.addTo(map);
+            .setLngLat(geometry.coordinates)
+            .setPopup(popup)
+            .addTo(map);
       
           popup
             .on('open', () => {
@@ -284,10 +280,15 @@ function ExplorePage(props) {
                     (marker) => marker.data.id === parseInt(docId, 10)
                   ).data;
       
-                  
+                  if (selectMode) {
+                    handleMarkerClick(docData);
+                  }
+
                   popup.remove();
-      
-                  setSelectedDocument(docData);
+                  
+                  if(!selectMode) {
+                    setSelectedDocument(docData);
+                  }
                 });
               });
             })
