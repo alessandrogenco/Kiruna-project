@@ -64,21 +64,21 @@ const DocumentViewer = ({ isLoggedIn, documentData, onClose }) => {
             <ul className="document-links custom-document-links">
               {documentLinks && documentLinks.length > 0 ? (
                     documentLinks.map((link, index) => (
-                      <li
-    key={link.title + index}
-    role="button"
-    tabIndex={0} // Makes the element focusable
-    onClick={() => handleLinkClick(link)}
-    onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') handleLinkClick(link); // Handle Enter/Space keys
-    }}
-    style={{
-        cursor: 'pointer',
-        textDecoration: 'none',
-    }}
->
-    {link.title + " | " + link.type}
-</li>
+                      <button
+                      key={link.title + index}
+                      onClick={() => handleLinkClick(link)}
+                      style={{
+                          cursor: 'pointer',
+                          textDecoration: 'none',
+                          background: 'none',
+                          border: 'none',
+                          textAlign: 'left',
+                          color: 'inherit',
+                      }}
+                    >
+                      {link.title + " | " + link.type}
+                    </button>
+                    
 
                     ))
                   ) : (
