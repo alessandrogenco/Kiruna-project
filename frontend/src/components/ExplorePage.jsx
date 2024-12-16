@@ -302,13 +302,26 @@ function ExplorePage(props) {
 
           markerEl.addEventListener('mouseenter', () => {
             mouseInsideMarker = true;
+          
             if (!activePopup.current) {
+              // Generate the content for the popup
+              const documentListHTML = documentList
+                .map(d => `<div>${d.label}</div>`)
+                .join('');
+          
+              const popupContent = `
+                <div style="max-height: 100px; overflow: auto;">
+                  ${documentListHTML}
+                </div>
+              `;
+          
               globalHoverPopup.current
                 .setLngLat(geometry.coordinates)
-                .setHTML(`<div style="max-height: 100px; overflow:auto;">${documentList.map(d => `<div>${d.label}</div>`).join('')}</div>`)
+                .setHTML(popupContent)
                 .addTo(map);
             }
           });
+          
 
           markerEl.addEventListener('mouseleave', () => {
             mouseInsideMarker = false;
