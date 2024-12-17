@@ -237,8 +237,6 @@ function computeEdges(nodes, documents, setTooltip) {
 
 const DocumentGraph = (props) => {
 
-  console.log(props.selectedDocument);
-
   const [nodesState, setNodes] = useNodesState([]);
   const [edgesState, setEdges] = useEdgesState([]);
   const [showGraph, setShowGraph] = useState(0);
@@ -256,7 +254,6 @@ const DocumentGraph = (props) => {
   useEffect(() => {
     getTypes()
     .then((response) => {
-      console.log(response);
       const types = response.map((type) => {
         return type.name;
       });
@@ -359,17 +356,27 @@ const DocumentGraph = (props) => {
         y: node.position.y 
       } 
     };
+    
+    setNodes(updatedNodes);
+  };
+
+  const onNodeDragStop = (event, node) => {
 
     // update position with post API with node.position.x, node.position.y and node.id
-    /*API.updateDocumentPosition(node.id, node.position.x, node.position.y)
+    API.adjustPosition(node.id, node.position.x, node.position.y)
       .then((response) => {
-        console.log("Position updated:", response);
+          let updatedDocuments = [...props.documents];
+          let doc = updatedDocuments.find((doc) => doc.id.toString() === node.id);
+
+          doc.x = node.position.x;
+          doc.y = node.position.y;
+          
+          props.setDocuments(updatedDocuments);
       })
       .catch((error) => {
         console.error("Error updating position:", error);
-      }); */
+      });
 
-    setNodes(updatedNodes);
   };
 
   const onNodeClick = (event, node) => {
@@ -413,6 +420,7 @@ const DocumentGraph = (props) => {
             edges={edgesState}
             onNodeClick={onNodeClick}
             onNodeDrag={onNodeDrag}
+            onNodeDragStop={onNodeDragStop}
             onEdgeMouseEnter={(event, edge) => {
               setTooltip({
                 visible: true,
@@ -461,6 +469,7 @@ const DocumentGraph = (props) => {
 
 DocumentGraph.propTypes = {
   documents: PropTypes.array,
+  setDocuments: PropTypes.func,
   selectedDocument: PropTypes.object,
   setSelectedDocument: PropTypes.func,
   graphSize: PropTypes.number,

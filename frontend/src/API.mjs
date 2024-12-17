@@ -253,6 +253,27 @@ export const updateDocument = async (id, title, stakeholders, scale, issuanceDat
     }
   };
 
+  export const adjustPosition = async (id, x, y) => {
+    try {
+      const response = await fetch(`http://localhost:3001/api/documents/${id}/adjustPosition`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          "x": x, 
+          "y": y 
+        }),
+      });
+  
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Error adjusting position:', error);
+      throw error;
+    }
+  }; 
+
   async function deleteLink(idDocument1, idDocument2, linkType) {
     try {
       const response = await fetch('http://localhost:3001/api/deleteLink', {
@@ -282,5 +303,5 @@ export const updateDocument = async (id, title, stakeholders, scale, issuanceDat
   }
 
 
-const API = { login, logout, checkLogin, getDocuments, linkDocument, getDocumentLinks, updateLink, deleteDocument, updateDocument, deleteLink};
+const API = { login, logout, checkLogin, getDocuments, linkDocument, getDocumentLinks, updateLink, deleteDocument, updateDocument, adjustPosition, deleteLink};
 export default API;
