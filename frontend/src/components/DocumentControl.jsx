@@ -328,10 +328,10 @@ function DocumentControl(props) {
         if(hasDuplicates){
           return "Duplicate links detected. Please remove duplicates.";
         }
-        if (lat < 67.82 || lat > 67.8800) {
+        if (lat < 67.3562 || lat > 69.0599) {
             return "Latitude is out of Kiruna Municipality borders!";
         }
-        if (lon < 20.1200 || lon > 20.4000) {
+        if (lon < 17.8998 || lon > 23.2867) {
             return "Longitude is out of Kiruna Municipality borders!";
         }
         return '';

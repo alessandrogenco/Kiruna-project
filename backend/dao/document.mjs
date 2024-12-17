@@ -416,7 +416,7 @@ updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, 
                 WHERE id = ?
             `;
 
-            db.run(updateDocumentQuery, [title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description, id], function (err) {
+            db.run(updateDocumentQuery, [title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, areaName, description, id], function (err) {
                 if (err) {
                     console.error('Database error while updating document:', err.message);
                     return reject(new Error('Database error: ' + err.message));

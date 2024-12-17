@@ -160,6 +160,7 @@ Content-Type: application/json
     "pages": 10,
     "lat": 67.9128,
     "lon": 20.8060,
+    "areaName": "North Kiruna",
     "description": "Updated description of the document!!"
 }
 

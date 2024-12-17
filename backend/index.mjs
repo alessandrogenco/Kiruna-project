@@ -416,7 +416,7 @@ app.delete('/api/deleteLink', async (req, res) => {
 app.post('/api/updateDocument', async (req, res) => {
     console.log("Data received by /api/updateDocument:", req.body);
 
-    const { id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description } = req.body;
+    const { id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, areaName, description } = req.body;
 
     if (!id || !title) {
         return res.status(400).json({ message: "Missing required fields" });
@@ -436,7 +436,7 @@ app.post('/api/updateDocument', async (req, res) => {
             throw new Error("Invalid parameters for lat/lon");
         }
 
-        const result = await documentDao.updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description);
+        const result = await documentDao.updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, areaName, description);
         
         res.status(200).json(result); 
     } catch (error) {
