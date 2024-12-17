@@ -781,3 +781,287 @@ describe('GET /api/getDocumentLocation/:id', () => {
       expect(response.body.error).toBe('Database error');
     });
 });
+
+describe('PUT /api/documents/:id/adjustPosition', () => {
+    test('Successfully updates the document position', async () => {
+      const id = 1;
+      const x = 100;
+      const y = 200;
+
+    
+  
+      // Configura il mock del database per restituire un aggiornamento riuscito
+      const spyOn = jest.spyOn(DocumentDao.prototype, "adjustDocumentPosition").mockResolvedValue((sql, params, callback) => {
+        callback(null, { changes: 1 });
+      });
+  
+      const response = await request(app)
+        .put(`/api/documents/${id}/adjustPosition`)
+        .send({ x, y });
+  
+      expect(response.status).toBe(200);
+  
+      // Ripristina il mock del database
+      spyOn.mockRestore();
+    });
+
+    test('Should return 400 if x or y are missing', async () => {
+        const id = 1;
+        const x = 100;
+        const y = null;
+    
+        const response = await request(app)
+          .put(`/api/documents/${id}/adjustPosition`)
+          .send({ x, y });
+    
+        expect(response.status).toBe(400);
+      });
+
+      //500 error
+        test('Should return 500 if there is a database error', async () => {
+            const id = 1;
+            const x = 100;
+            const y = 200;
+        
+            // Configura il mock del database per restituire un errore
+            const spyOn = jest.spyOn(DocumentDao.prototype, "adjustDocumentPosition").mockRejectedValue(new Error("Database error"));
+        
+            const response = await request(app)
+            .put(`/api/documents/${id}/adjustPosition`)
+            .send({ x, y });
+        
+            expect(response.status).toBe(500);
+        
+            // Ripristina il mock del database
+            spyOn.mockRestore();
+        });               
+});
+
+describe('GET /api/documents/:id/position', () => {
+    test('Successfully retrieves the document position', async () => {
+      const id = 1;
+      const mockPosition = { x: 100, y: 200 };
+  
+      // Configura il mock del database per restituire la posizione del documento
+      const spyOn = jest.spyOn(DocumentDao.prototype, "getDocumentPosition").mockResolvedValue(mockPosition);
+  
+      const response = await request(app)
+        .get(`/api/documents/${id}/position`);
+  
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        id: id.toString(),
+        position: mockPosition
+      });
+  
+      // Ripristina il mock del database
+      spyOn.mockRestore();
+    });
+
+    //test 500
+    test('Should return 500 if there is a database error', async () => {
+        const id = 1;
+    
+        // Configura il mock del database per restituire un errore
+        const spyOn = jest.spyOn(DocumentDao.prototype, "getDocumentPosition").mockRejectedValue(new Error("Database error"));
+    
+        const response = await request(app)
+          .get(`/api/documents/${id}/position`);
+    
+        expect(response.status).toBe(500);
+    
+        // Ripristina il mock del database
+        spyOn.mockRestore();
+      });
+
+      test('Returns 400 if ID is invalid or missing', async () => {
+        const response = await request(app)
+          .get('/api/documents/invalid-id/position');
+    
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe('Invalid or missing document ID.');
+      });
+});
+
+describe('GET /api/getAreaNames', () => {
+    test('Successfully retrieves area names', async () => {
+      const mockAreas = [
+        { areaName: 'Area 1', coordinates: 'Coord 1' },
+        { areaName: 'Area 2', coordinates: 'Coord 2' }
+      ];
+  
+      // Configura il mock del database per restituire le aree
+      const spyOn = jest.spyOn(db, 'all').mockImplementation((sql, params, callback) => {
+        callback(null, mockAreas);
+      });
+  
+      const response = await request(app)
+        .get('/api/getAreaNames');
+  
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({ areas: mockAreas });
+  
+      // Ripristina il mock del database
+      spyOn.mockRestore();
+    });
+
+    test('Returns 404 if no areas are found', async () => {
+        // Configura il mock del database per restituire nessuna area
+        const spyOn = jest.spyOn(db, 'all').mockImplementation((sql, params, callback) => {
+          callback(null, []);
+        });
+    
+        const response = await request(app)
+          .get('/api/getAreaNames');
+    
+        expect(response.status).toBe(404);
+        expect(response.body.message).toBe('No areas found');
+    
+        // Ripristina il mock del database
+        spyOn.mockRestore();
+      });
+
+      test('Should return 500 if there is a database error', async () => {
+        // Configura il mock del database per restituire un errore
+        const spyOn = jest.spyOn(db, 'all').mockImplementation((sql, params, callback) => {
+          callback(new Error('Database error'), null);
+        });
+    
+        const response = await request(app)
+          .get('/api/getAreaNames');
+    
+        expect(response.status).toBe(500);
+        expect(response.body.message).toBe('Internal server error');
+        expect(response.body.error).toBe('Database error');
+    
+        // Ripristina il mock del database
+        spyOn.mockRestore();
+      });
+});
+
+describe('GET /api/documents/:id', () => {
+    test('Successfully retrieves the document by ID', async () => {
+      const documentId = 1;
+      const mockDocument = { id: documentId, title: 'Sample Document', description: 'Sample description' };
+  
+      // Configura il mock del database per restituire il documento
+      const spyOn = jest.spyOn(DocumentDao.prototype, "getDocumentById").mockResolvedValue(mockDocument);
+  
+      const response = await request(app)
+        .get(`/api/documents/${documentId}`);
+  
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(mockDocument);
+  
+      // Ripristina il mock del database
+      spyOn.mockRestore();
+    });
+
+    test('Returns 404 if no document is found with the provided ID', async () => {
+        const documentId = 1;
+    
+        // Configura il mock del database per restituire nessun documento trovato
+        const spyOn = jest.spyOn(DocumentDao.prototype, "getDocumentById").mockResolvedValue(null);
+    
+        const response = await request(app)
+          .get(`/api/documents/${documentId}`);
+    
+        expect(response.status).toBe(404);
+        expect(response.body.message).toBe(`Document with ID ${documentId} not found`);
+    
+        // Ripristina il mock del database
+        spyOn.mockRestore();
+      });
+
+      test('Should return 500 if there is a database error', async () => {
+        const documentId = 1;
+    
+        // Configura il mock del database per restituire un errore
+        const spyOn = jest.spyOn(DocumentDao.prototype, "getDocumentById").mockRejectedValue(new Error('Database error'));
+    
+        const response = await request(app)
+          .get(`/api/documents/${documentId}`);
+    
+        expect(response.status).toBe(500);
+        expect(response.body.message).toBe('Internal server error');
+        expect(response.body.error).toBe('Database error');
+    
+        // Ripristina il mock del database
+        spyOn.mockRestore();
+      });
+});
+
+describe('DELETE /api/deleteLink', () => {
+    test('Successfully deletes a link', async () => {
+      const mockLink = {
+        idDocument1: 1,
+        idDocument2: 2,
+        linkType: 'related'
+      };
+  
+      // Configura il mock del database per restituire il link eliminato
+      const spyOn = jest.spyOn(DocumentDao.prototype, 'deleteLink').mockResolvedValue(mockLink);
+  
+      const response = await request(app)
+        .delete('/api/deleteLink')
+        .send(mockLink);
+  
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        message: 'Link eliminato con successo',
+        data: mockLink
+      });
+  
+      // Ripristina il mock del database
+      spyOn.mockRestore();
+    });
+
+    test('Returns 400 if required parameters are missing', async () => {
+        const response = await request(app)
+          .delete('/api/deleteLink')
+          .send({ idDocument1: 1, idDocument2: 2 });
+    
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe('idDocument1, idDocument2 e linkType sono obbligatori');
+      });
+   
+      test('Returns 404 if the link does not exist', async () => {
+        const mockLink = {
+          idDocument1: 1,
+          idDocument2: 2,
+          linkType: 'related'
+        };
+    
+        // Configura il mock del database per restituire un errore di link non trovato
+        const spyOn = jest.spyOn(DocumentDao.prototype, 'deleteLink').mockRejectedValue(new Error('Link not found'));
+    
+        const response = await request(app)
+          .delete('/api/deleteLink')
+          .send(mockLink);
+    
+        expect(response.status).toBe(404);
+    
+        // Ripristina il mock del database
+        spyOn.mockRestore();
+      });
+
+      test('Should return 500 if there is a database error', async () => {
+        const mockLink = {
+          idDocument1: 1,
+          idDocument2: 2,
+          linkType: 'related'
+        };
+    
+        // Configura il mock del database per restituire un errore
+        const spyOn = jest.spyOn(DocumentDao.prototype, 'deleteLink').mockRejectedValue(new Error('Database error'));
+    
+        const response = await request(app)
+          .delete('/api/deleteLink')
+          .send(mockLink);
+    
+        expect(response.status).toBe(500);
+
+        // Ripristina il mock del database
+        spyOn.mockRestore();
+      });
+});  

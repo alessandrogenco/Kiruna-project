@@ -376,6 +376,49 @@ describe("Update document test", () => {
         // Clean up mock
         mockRun.mockRestore();
     });
+
+
+    test('Throws error if there is an error in checkAndAdd functions', async () => {
+        const mockDocument = {
+          id: 1,
+          title: 'Updated Title',
+          stakeholders: 'Stakeholder1, Stakeholder2',
+          scale: '1:1000',
+          issuanceDate: '2024-11-06',
+          type: 'Report',
+          connections: 'Connection1, Connection2',
+          language: 'English',
+          pages: 20,
+          lat: 68.0001,
+          lon: 21.0001,
+          area: null,
+          areaName: 'Area Name',
+          description: 'This is an updated document description.'
+        };
+    
+        // Configura il mock del database per restituire un errore in una delle funzioni checkAndAdd
+        jest.spyOn(documentDao, 'checkAndAddStakeholders').mockRejectedValue(new Error('Error in checkAndAddStakeholders'));
+    
+        await expect(documentDao.updateDocument(
+            mockDocument.id,
+            mockDocument.title,
+            mockDocument.stakeholders,
+            mockDocument.scale,
+            mockDocument.issuanceDate,
+            mockDocument.type,
+            mockDocument.connections,
+            mockDocument.language,
+            mockDocument.pages,
+            mockDocument.lat,
+            mockDocument.lon,
+            mockDocument.area,
+            mockDocument.areaName,
+            mockDocument.description
+          )).rejects.toThrow('Error in checkAndAddStakeholders');
+      
+          // Ripristina il mock del database
+          documentDao.checkAndAddStakeholders.mockRestore();
+        });
 });
 
 describe('Show Stakeholders', () => {
@@ -583,3 +626,231 @@ describe('Check and add Type', () => {
 
 });
 
+
+describe('deleteLink', () => {
+    test('Successfully deletes a link', async () => {
+      const idDocument1 = 1;
+      const idDocument2 = 2;
+      const linkType = 'related';
+  
+      // Configura il mock del database per restituire che il link esiste
+      jest.spyOn(db, 'get').mockImplementation((sql, params, callback) => {
+        callback(null, { count: 1 });
+      });
+  
+      // Configura il mock del database per eliminare il link
+      jest.spyOn(db, 'run').mockImplementation((sql, params, callback) => {
+        callback(null);
+      });
+  
+      const result = await documentDao.deleteLink(idDocument1, idDocument2, linkType);
+      expect(result).toEqual({ id1: idDocument1, id2: idDocument2, type: linkType });
+  
+      // Ripristina il mock del database
+      db.get.mockRestore();
+      db.run.mockRestore();
+    });
+
+    test('Throws error if the link does not exist', async () => {
+        const idDocument1 = 1;
+        const idDocument2 = 2;
+        const linkType = 'related';
+    
+        // Configura il mock del database per restituire che il link non esiste
+        jest.spyOn(db, 'get').mockImplementation((sql, params, callback) => {
+          callback(null, { count: 0 });
+        });
+    
+        await expect(documentDao.deleteLink(idDocument1, idDocument2, linkType))
+          .rejects.toThrow('Link not found');
+    
+        // Ripristina il mock del database
+        db.get.mockRestore();
+      });
+
+      test('Throws error if there is a database error while checking the link', async () => {
+        const idDocument1 = 1;
+        const idDocument2 = 2;
+        const linkType = 'related';
+    
+        // Configura il mock del database per restituire un errore
+        jest.spyOn(db, 'get').mockImplementation((sql, params, callback) => {
+          callback(new Error('Database error'), null);
+        });
+    
+        await expect(documentDao.deleteLink(idDocument1, idDocument2, linkType))
+          .rejects.toThrow('Database error: Database error');
+    
+        // Ripristina il mock del database
+        db.get.mockRestore();
+      });
+   
+      test('Throws error if there is a database error while deleting the link', async () => {
+        const idDocument1 = 1;
+        const idDocument2 = 2;
+        const linkType = 'related';
+    
+        // Configura il mock del database per restituire che il link esiste
+        jest.spyOn(db, 'get').mockImplementation((sql, params, callback) => {
+          callback(null, { count: 1 });
+        });
+    
+        // Configura il mock del database per restituire un errore durante l'eliminazione del link
+        jest.spyOn(db, 'run').mockImplementation((sql, params, callback) => {
+          callback(new Error('Database error'), null);
+        });
+    
+        await expect(documentDao.deleteLink(idDocument1, idDocument2, linkType))
+          .rejects.toThrow('Database error: Database error');
+    
+        // Ripristina il mock del database
+        db.get.mockRestore();
+        db.run.mockRestore();
+      });
+
+      test('Throws error if there is a database error while updating connections for document 1', async () => {
+        const idDocument1 = 1;
+        const idDocument2 = 2;
+        const linkType = 'related';
+    
+        // Configura il mock del database per restituire che il link esiste
+        jest.spyOn(db, 'get').mockImplementation((sql, params, callback) => {
+          callback(null, { count: 1 });
+        });
+    
+        // Configura il mock del database per eliminare il link
+        jest.spyOn(db, 'run').mockImplementationOnce((sql, params, callback) => {
+          callback(null);
+        });
+    
+        // Configura il mock del database per restituire un errore durante l'aggiornamento delle connessioni per il documento 1
+        jest.spyOn(db, 'run').mockImplementationOnce((sql, params, callback) => {
+          callback(new Error('Error while updating connections for document 1'), null);
+        });
+    
+        await expect(documentDao.deleteLink(idDocument1, idDocument2, linkType))
+          .rejects.toThrow('Error while updating connections for document 1: Error while updating connections for document 1');
+    
+        // Ripristina il mock del database
+        db.get.mockRestore();
+        db.run.mockRestore();
+      });
+
+      test('Throws error if there is a database error while updating connections for document 2', async () => {
+        const idDocument1 = 1;
+        const idDocument2 = 2;
+        const linkType = 'related';
+    
+        // Configura il mock del database per restituire che il link esiste
+        jest.spyOn(db, 'get').mockImplementation((sql, params, callback) => {
+          callback(null, { count: 1 });
+        });
+    
+        // Configura il mock del database per eliminare il link
+        jest.spyOn(db, 'run').mockImplementationOnce((sql, params, callback) => {
+          callback(null);
+        });
+    
+        // Configura il mock del database per aggiornare le connessioni per il documento 1
+        jest.spyOn(db, 'run').mockImplementationOnce((sql, params, callback) => {
+          callback(null);
+        });
+    
+        // Configura il mock del database per restituire un errore durante l'aggiornamento delle connessioni per il documento 2
+        jest.spyOn(db, 'run').mockImplementationOnce((sql, params, callback) => {
+          callback(new Error('Error while updating connections for document 2'), null);
+        });
+    
+        await expect(documentDao.deleteLink(idDocument1, idDocument2, linkType))
+          .rejects.toThrow('Error while updating connections for document 2: Error while updating connections for document 2');
+    
+        // Ripristina il mock del database
+        db.get.mockRestore();
+        db.run.mockRestore();
+      });
+});
+
+describe('getDocumentPosition', () => {
+    test('Successfully retrieves the document position', async () => {
+      const id = 1;
+      const mockRow = { id, x: 100, y: 200 };
+  
+      // Configura il mock del database per restituire la posizione del documento
+      jest.spyOn(db, 'get').mockImplementation((sql, params, callback) => {
+        callback(null, mockRow);
+      });
+  
+      const result = await documentDao.getDocumentPosition(id);
+      expect(result).toEqual(mockRow);
+  
+      // Ripristina il mock del database
+      db.get.mockRestore();
+    });
+
+    test('Throws error if ID is not provided', async () => {
+        await expect(documentDao.getDocumentPosition(null))
+          .rejects.toThrow('documentDao is not defined');
+      });
+    
+      test('Throws error if there is a database error', async () => {
+        const id = 1;
+    
+        // Configura il mock del database per restituire un errore
+        jest.spyOn(db, 'get').mockImplementation((sql, params, callback) => {
+          callback(new Error('Database error'), null);
+        });
+    
+        await expect(documentDao.getDocumentPosition(id))
+          .rejects.toThrow('Database error while fetching document position: Database error');
+    
+        // Ripristina il mock del database
+        db.get.mockRestore();
+      });
+
+      
+    
+});
+
+
+describe('adjustDocumentPosition', () => {
+    test('Throws error if ID is not provided', async () => {
+        const x = 100;
+        const y = 200;
+    
+        await expect(documentDao.adjustDocumentPosition(null, x, y))
+          .rejects.toThrow('ID is required.');
+      });     
+    });
+
+    describe('showTypes', () => {
+        test('Successfully retrieves all document types', async () => {
+          const mockTypes = [
+            { id: 1, name: 'Technical' },
+            { id: 2, name: 'Research' }
+          ];
+      
+          // Configura il mock del database per restituire i tipi di documento
+          jest.spyOn(db, 'all').mockImplementation((sql, params, callback) => {
+            callback(null, mockTypes);
+          });
+      
+          const result = await documentDao.showTypes();
+          expect(result).toEqual(mockTypes);
+      
+          // Ripristina il mock del database
+          db.all.mockRestore();
+        });
+
+        test('Throws error if there is a database error', async () => {
+            // Configura il mock del database per restituire un errore
+            jest.spyOn(db, 'all').mockImplementation((sql, params, callback) => {
+              callback(new Error('Database error'), null);
+            });
+        
+            await expect(documentDao.showTypes())
+              .rejects.toThrow('Database error: Database error');
+        
+            // Ripristina il mock del database
+            db.all.mockRestore();
+          });
+    });      

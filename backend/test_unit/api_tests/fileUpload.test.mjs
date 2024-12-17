@@ -50,6 +50,21 @@ jest.mock('sqlite3', () => {
 
     });
 
+    test('Returns 404 if no files are found for the specified document ID', async () => {
+      const documentId = 1;
+  
+      // Configura il mock del database per restituire nessun file trovato
+      FileUploadDao.prototype.getFilesByDocumentId.mockResolvedValue([]);
+  
+      const response = await request(app)
+        .get(`/api/files/${documentId}`);
+  
+      expect(response.status).toBe(404);
+      expect(response.body.message).toBe('No files found for the specified document ID');
+  
+      
+    });
+
     //error 500
     test("should return 500 if there is an error fetching the files", async () => {
       const documentId = 1;

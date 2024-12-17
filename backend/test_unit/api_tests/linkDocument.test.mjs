@@ -208,4 +208,30 @@ describe("PUT links", () => {
 
         expect(response.status).toBe(404);
     });
+
+
+  test('Should return 500 if there is a database error', async () => {
+    const mockLink = {
+      idDocument1: 1,
+      idDocument2: 2,
+      linkType: 'related',
+      newLinkType: 'updated'
+    };
+
+    // Configura il mock del database per restituire un errore
+    const spyOn = jest.spyOn(DocumentDao.prototype, 'updateLink').mockRejectedValue(new Error('Database error'));
+
+    const response = await request(app)
+      .put('/api/updateLink')
+      .send(mockLink);
+
+    expect(response.status).toBe(500);
+    expect(response.body.message).toBe('Internal server error');
+    expect(response.body.error).toBe('Database error');
+
+    // Ripristina il mock del database
+    spyOn.mockRestore();
+  });
 });
+
+
