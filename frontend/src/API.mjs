@@ -253,7 +253,34 @@ export const updateDocument = async (id, title, stakeholders, scale, issuanceDat
     }
   };
 
+  async function deleteLink(idDocument1, idDocument2, linkType) {
+    try {
+      const response = await fetch('http://localhost:3001/api/deleteLink', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ idDocument1, idDocument2, linkType }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Errore durante l\'eliminazione del link');
+      }
+  
+      // Gestisci le risposte vuote
+      const result = await response.text();
+      if (result) {
+        return JSON.parse(result);
+      } else {
+        return { message: 'Link eliminato con successo' };
+      }
+    } catch (error) {
+      console.error('Errore:', error.message);
+      throw error;
+    }
+  }
 
 
-const API = { login, logout, checkLogin, getDocuments, linkDocument, getDocumentLinks, updateLink, deleteDocument, updateDocument};
+const API = { login, logout, checkLogin, getDocuments, linkDocument, getDocumentLinks, updateLink, deleteDocument, updateDocument, deleteLink};
 export default API;
