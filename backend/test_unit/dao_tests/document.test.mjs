@@ -789,7 +789,7 @@ describe('getDocumentPosition', () => {
 
     test('Throws error if ID is not provided', async () => {
         await expect(documentDao.getDocumentPosition(null))
-          .rejects.toThrow('documentDao is not defined');
+          .rejects.toThrow('ID is required.');
       });
     
       test('Throws error if there is a database error', async () => {
