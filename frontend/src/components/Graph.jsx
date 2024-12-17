@@ -5,6 +5,7 @@ import API from "../API.mjs";
 import './Graph.css';
 import axios from "axios";
 import AppNavbar from './Navbar';
+import DocumentViewer from "./DocumentViewer";
 
 // Normalizza la data in formato `YYYY-MM-DD`
 const normalizeDate = (date) => {
@@ -242,7 +243,8 @@ const DocumentGraph = (props) => {
   const [showGraph, setShowGraph] = useState(0);
   const [types, setTypes] = useState([]);
   const [tooltip, setTooltip] = useState({ visible: false, content: "", x: 0, y: 0 });
-
+  const [selectedDocument, setSelectedDocument] = useState(null); // State for the selected document
+  
   let nodes = [];
   let edges = [];
 
@@ -382,8 +384,12 @@ const DocumentGraph = (props) => {
   const onNodeClick = (event, node) => {
     const clickedDocument = props.documents.find((doc) => doc.id.toString() === node.id);
     
-    if (clickedDocument && props.graphSize < 70) { // click disabilitato su grafo a pagina completa
-      props.setSelectedDocument(clickedDocument);
+    if (clickedDocument) { // click disabilitato su grafo a pagina completa
+      if (props.graphSize < 70) {
+        props.setSelectedDocument(clickedDocument);
+      } else {
+        setSelectedDocument(clickedDocument);
+      }
     }
   };
 
@@ -463,6 +469,14 @@ const DocumentGraph = (props) => {
         </div>
       )}
     </div>
+    {/* Document Viewer */}
+    {selectedDocument && (
+      <DocumentViewer
+        isLoggedIn={props.isLoggedIn}
+        documentData={selectedDocument}
+        onClose={() => {setSelectedDocument(null);}}
+      />
+    )}
     </>
   );
 };
