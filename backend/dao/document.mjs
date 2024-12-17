@@ -203,38 +203,7 @@ class DocumentDao{
         });
     }
 
-    //link documents
-    /*linkDocuments(id1, id2, /*linkDate,*/ /*linkType){
-        return new Promise((resolve, reject) => {
-            const checkLinkQuery = 'SELECT COUNT(*) AS count FROM DocumentsLinks WHERE (idDocument1 = ? AND idDocument2 = ?) OR (idDocument2 = ? AND idDocument1 = ?)';
-            db.get(checkLinkQuery, [id1, id2, id1, id2], (err, row) => {
-                if (err) {
-                    console.error('Database error while checking link:', err.message);
-                    return reject(new Error('Database error: ' + err.message));
-                }
-                if (row.count > 0) {
-                    return reject(new Error('Link already exists'));
-                }
-
-                const linkDocuments = 'INSERT INTO DocumentsLinks (idDocument1, idDocument2, type) VALUES (?, ?, ?)'; //const linkDocuments = 'INSERT INTO DocumentsLinks (idDocument1, idDocument2, date, type) VALUES (?, ?, ?, ?)';
-                db.run(linkDocuments, [id1, id2, /*linkDate,*/ /*linkType], (err) => {
-                    if (err) {
-                        console.error('Database error while linking documents:', err.message);
-                        return reject(new Error('Database error: ' + err.message));
-                    }
-                    
-                    const updateConnections = 'UPDATE Documents SET connections = connections + 1 WHERE id IN (?, ?)';
-                    db.run(updateConnections, [id1, id2], (err) => {
-                        if (err) {
-                            console.error('Database error while updating connections:', err.message);
-                            return reject(new Error('Database error: ' + err.message));
-                        }
-                        resolve({ idDocument1: id1, idDocument2: id2, /*date: linkDate,*/ /*type: linkType });
-                    });
-                });
-            });
-        })
-    }*/
+    
 
     //alternativa per collegare gli stessi documenti con tipo di link diverso
     linkDocuments(id1, id2, linkType){
@@ -426,78 +395,7 @@ class DocumentDao{
             });
         });
     }
-    /*newDocument(name, file) {
-        return new Promise((resolve, reject) => {
-            if (!Buffer.isBuffer(file)) {
-                return reject(new Error("The 'file' field must be a Buffer object."));
-            }
-            const query = 'INSERT INTO Files (name, file) VALUES (?, ?)';
-            db.run(query, [name, file], function(err) {
-                if (err) {
-                    console.error('Database error while inserting the new document:', err.message);
-                    return reject(new Error('Database error: ' + err.message));
-                }
-                resolve({
-                    message: 'Document created successfully',
-                    documentId: this.lastID
-                });
-            });
-        });
-    }*/
-
-    /*newDocument(name, file, documentDetails) {
-        return new Promise((resolve, reject) => {
-            if (!Buffer.isBuffer(file)) {
-                return reject(new Error("The 'file' field must be a Buffer object."));
-            }
-
-            //Insert in Files table the new document
-            const insertFileQuery = 'INSERT INTO Files (name, file) VALUES (?, ?)';
-            db.run(insertFileQuery, [name, file], (err) => {
-                if (err) {
-                    console.error('Database error while inserting the new document:', err.message);
-                    return reject(new Error('Database error: ' + err.message));
-                }
-                const fileId = this.lastID; 
-
-                //Update Documents table (i can use addDocument method)
-                const insertDocumentQuery = 'INSERT INTO Documents (title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-                db.run(insertDocumentQuery, [
-                    documentDetails.title,
-                    documentDetails.stakeholders,
-                    documentDetails.scale,
-                    documentDetails.issuanceDate,
-                    documentDetails.type,
-                    documentDetails.connections,
-                    documentDetails.language,
-                    documentDetails.pages,
-                    documentDetails.lat,
-                    documentDetails.lon,
-                    documentDetails.description
-                ], (err) => {
-                    if (err) {
-                        console.error('Database error while inserting into Documents:', err.message);
-                        return reject(new Error('Database error: ' + err.message));
-                    }
-                    const documentId = this.lastID; 
     
-                    //Update DocumentsFiles table
-                    const insertDocumentsFilesQuery = 'INSERT INTO DocumentsFiles (idDocument, idFile) VALUES (?, ?)';
-                    db.run(insertDocumentsFilesQuery, [documentId, fileId], function(err) {
-                        if (err) {
-                            console.error('Database error while associating Files with Documents:', err.message);
-                            return reject(new Error('Database error: ' + err.message));
-                        }
-                        resolve({
-                            message: 'Document created successfully',
-                            documentId: documentId,
-                            fileId: fileId
-                        });
-                    });
-                });
-            });
-        });
-    }*/
 
 updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, areaName, description) {
     return new Promise((resolve, reject) => {
@@ -523,11 +421,6 @@ updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, 
                     console.error('Database error while updating document:', err.message);
                     return reject(new Error('Database error: ' + err.message));
                 }
-
-                // if (this.changes === 0) {
-                //     // If no changes (e.g., if the ID does not exist)
-                //     return reject(new Error('No document found with the provided ID.'));
-                // }
 
                 resolve({
                     id,
@@ -604,7 +497,7 @@ updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, 
 
     getDocumentPosition(id) {
         return new Promise((resolve, reject) => {
-            if (!id) {
+            if (!id) {documentDao
                 return reject(new Error('ID is required.'));
             }
             const getDocumentPositionQuery = 'SELECT * FROM Documents WHERE id = ?';
