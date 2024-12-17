@@ -111,7 +111,11 @@ const DocumentViewer = ({ isLoggedIn, documentData, onClose }) => {
           <div className="document-viewer">
             <div className="fixed-header">
               <h3>{selectedLinkedDocument.title}</h3>
-              <button className="close-button" onClick={() => setSelectedLinkedDocument(null)}>&times;</button>
+              <button className="close-button"   onClick={() => {
+              setSelectedLinkedDocument(null);
+              onClose(); 
+               }}
+              >&times;</button>
             </div>
             <div className="document-details">
               <div className="scrollable-content">
@@ -119,9 +123,6 @@ const DocumentViewer = ({ isLoggedIn, documentData, onClose }) => {
                 <p><strong>Issuance date:</strong> {selectedLinkedDocument.issuanceDate}</p>
                 <p><strong>Type:</strong> {selectedLinkedDocument.type}</p>
                 <p><strong>Description:</strong> {selectedLinkedDocument.description}</p>
-                <div className="button-group">
-                  <button onClick={() => setSelectedLinkedDocument(null)}>Close</button>
-                </div>
               </div>
             </div>
           </div>
