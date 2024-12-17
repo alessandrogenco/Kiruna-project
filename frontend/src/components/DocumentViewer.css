@@ -154,8 +154,7 @@ background-color: #0056b3;
     cursor: pointer !important;
     
   }
-.document-description p,
-.document-details p {
+.document-description p {
   text-align: justify;
 }
 
