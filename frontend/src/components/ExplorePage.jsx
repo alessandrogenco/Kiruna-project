@@ -204,155 +204,192 @@ function ExplorePage(props) {
         ? selectedDocuments.some(doc => isPointerInsideArea(geometry.coordinates, doc))
         : true; // If showArea is disabled, show all markers
 
-        if (properties.cluster && isClusterInsideSelectedArea) {
+        if (properties.cluster) {
           const clusterId = clusterPoint.id;
           const documentList = cluster.current
             .getLeaves(clusterId, Infinity)
             .map((leaf) => leaf.properties);
       
-          const popup = new mapboxgl.Popup({ offset: 25, closeButton: false }).setHTML(`
-            <div class="cluster-popup">
-              <div class="cluster-popup-header">
-                ${properties.point_count_abbreviated} Documents
-              </div>
-             <input
-              type="text"
-              id="cluster-search-${clusterId}"
-              placeholder="Search documents..."
-              class="cluster-popup-search"
-            >
-              <ul id="cluster-list-${clusterId}" class="cluster-popup-list">
-              ${documentList
-                .map(
-                  (doc) => `
-                    <li data-id="${doc.data.id}" data-description="${doc.data.description.replace(/"/g, '&quot;')}"
-                      class="document-item">
-                      <div class="document-title">${doc.label}</div>
-                    </li>`
-                )
-                  .join('')}
-              </ul>
-            </div>
-          `)
-          .on('open', () => {
-
-            // Extract the search term from the input event
-            const getSearchTerm = (event) => event.target.value.toLowerCase();
-
-            // Retrieve title and description of an item
-            const getItemDetails = (item) => {
-              const title = item.querySelector('.document-title')?.textContent.toLowerCase() || '';
-              const description = item.getAttribute('data-description')?.toLowerCase() || '';
-              return { title, description };
-            };
-
-            // Update the visibility of a single item based on the search term
-            const updateItemVisibility = (item, searchTerm) => {
-              const { title, description } = getItemDetails(item);
-              item.style.display = title.includes(searchTerm) || description.includes(searchTerm) ? '' : 'none';
-            };
-
-            // Filter and update the visibility of list items
-            const filterListItems = (event, listItems) => {
-              const searchTerm = getSearchTerm(event);
-              listItems.forEach((item) => updateItemVisibility(item, searchTerm));
-            };
-
-           
-            const popupContent = document.querySelector('.mapboxgl-popup-content');
-            if (popupContent) {
-              popupContent.style.width = '350px'; 
-              popupContent.style.maxWidth = '350px'; 
-              popupContent.style.padding = '10px'; 
-              popupContent.style.borderRadius = '10px';
-            }
-            const searchInput = document.getElementById(`cluster-search-${clusterId}`);
-            const listElement = document.getElementById(`cluster-list-${clusterId}`);
-            const listItems = Array.from(listElement.querySelectorAll('li.document-item'));
-  
-            searchInput.addEventListener('input', (event) => {
-              filterListItems(event, listItems);
-            });
-          });
-      
-          const marker = new mapboxgl.Marker({
-            color: 'green',
-            element: createClusterIcon(properties.point_count_abbreviated),
-          })
-            .setLngLat(geometry.coordinates)
-            .setPopup(popup)
-            .addTo(map);
-      
-          popup
-            .on('open', () => {
-              if (activePopup.current) {
-                activePopup.current.remove(); 
-              }
-              activePopup.current = popup; 
-      
-              
-              const listItems = popup.getElement().querySelectorAll('li.document-item');
-              listItems.forEach((item) => {
-                item.addEventListener('click', () => {
-                  globalHoverPopup.current.remove();
-                  const docId = item.getAttribute('data-id');
-                  const docData = markers.find(
-                    (marker) => marker.data.id === parseInt(docId, 10)
-                  ).data;
-      
-                  if (selectMode && !showArea) {
-                    handleMarkerClick(docData);
-                  }
-
-                  popup.remove();
-                  
-                  if(!selectMode) {
-                    setSelectedDocument(docData);
-                  }
-                });
-              });
-            })
-            .on('close', () => {
-              activePopup.current = null; 
-            });
-      
-
-          markersArray.push({marker: marker, data: properties.data});
-          const markerEl = marker.getElement();
-
-          markerEl.addEventListener('mouseenter', () => {
-            mouseInsideMarker = true;
+          // Filter documents that are in the selected documents
+          const selectedDocsInCluster = documentList.filter(doc => 
+          selectedDocuments.some(selectedDoc => selectedDoc.id === doc.data.id));
           
-            if (!activePopup.current) {
-              // Generate the content for the popup
-              const documentListHTML = documentList
-                .map(d => `<div>${d.label}</div>`)
-                .join('');
-          
-              const popupContent = `
-                <div style="max-height: 100px; overflow: auto;">
-                  ${documentListHTML}
+          if(isClusterInsideSelectedArea || selectedDocsInCluster) {
+            const popup = new mapboxgl.Popup({ offset: 25, closeButton: false }).setHTML(`
+              <div class="cluster-popup">
+                <div class="cluster-popup-header">
+                  ${properties.point_count_abbreviated} Documents
                 </div>
-              `;
-          
-              globalHoverPopup.current
-                .setLngLat(geometry.coordinates)
-                .setHTML(popupContent)
-                .addTo(map);
-            }
-          });
-          
+              <input
+                type="text"
+                id="cluster-search-${clusterId}"
+                placeholder="Search documents..."
+                class="cluster-popup-search"
+              >
+                <ul id="cluster-list-${clusterId}" class="cluster-popup-list">
+                ${documentList
+                  .map(
+                    (doc) => `
+                      <li data-id="${doc.data.id}" data-description="${doc.data.description.replace(/"/g, '&quot;')}"
+                        class="document-item">
+                        <div class="document-title">${doc.label}</div>
+                      </li>`
+                  )
+                    .join('')}
+                </ul>
+              </div>
+            `)
+            .on('open', () => {
 
-          markerEl.addEventListener('mouseleave', () => {
-            mouseInsideMarker = false;
-            if (!activePopup.current) {
+              // Extract the search term from the input event
+              const getSearchTerm = (event) => event.target.value.toLowerCase();
+
+              // Retrieve title and description of an item
+              const getItemDetails = (item) => {
+                const title = item.querySelector('.document-title')?.textContent.toLowerCase() || '';
+                const description = item.getAttribute('data-description')?.toLowerCase() || '';
+                return { title, description };
+              };
+
+              // Update the visibility of a single item based on the search term
+              const updateItemVisibility = (item, searchTerm) => {
+                const { title, description } = getItemDetails(item);
+                item.style.display = title.includes(searchTerm) || description.includes(searchTerm) ? '' : 'none';
+              };
+
+              // Filter and update the visibility of list items
+              const filterListItems = (event, listItems) => {
+                const searchTerm = getSearchTerm(event);
+                listItems.forEach((item) => updateItemVisibility(item, searchTerm));
+              };
+
+            
+              const popupContent = document.querySelector('.mapboxgl-popup-content');
+              if (popupContent) {
+                popupContent.style.width = '350px'; 
+                popupContent.style.maxWidth = '350px'; 
+                popupContent.style.padding = '10px'; 
+                popupContent.style.borderRadius = '10px';
+              }
+              const searchInput = document.getElementById(`cluster-search-${clusterId}`);
+              const listElement = document.getElementById(`cluster-list-${clusterId}`);
+              const listItems = Array.from(listElement.querySelectorAll('li.document-item'));
+    
+              searchInput.addEventListener('input', (event) => {
+                filterListItems(event, listItems);
+              });
+            });
+            
+            let markerElement = null;
+
+            if(showArea && selectedDocsInCluster.length === 1) {
+              const iconClass = documentTypeToIcon[selectedDocsInCluster[0].data.type] || documentTypeToIcon.default; 
+              const iconElement = document.createElement('i'); 
+              iconElement.className = iconClass; 
+              iconElement.style.fontSize = '20px'; 
+              iconElement.style.color = 'white'; 
+
+              const iconContainer = document.createElement('div'); 
+              iconContainer.style.width = '30px'; 
+              iconContainer.style.height = '30px'; 
+              iconContainer.style.display = 'flex'; 
+              iconContainer.style.justifyContent = 'center'; 
+              iconContainer.style.alignItems = 'center';
+              iconContainer.style.borderRadius = '50%';
+              iconContainer.style.backgroundColor = (selectedDocument && selectedDocsInCluster[0].data.id==selectedDocument.id) ? '#ffd404' : '#CB1E3B'; 
+              iconContainer.style.border = '2px solid #CB1E3B'; 
+              iconContainer.appendChild(iconElement);
+              markerElement = iconContainer;
+              console.log(selectedDocsInCluster);
+            }
+
+
+            if (!markerElement){
+              const clusterIconCount = showArea ? selectedDocsInCluster.length : properties.point_count_abbreviated;
+              markerElement = createClusterIcon(clusterIconCount);
+            }
+
+            const marker = new mapboxgl.Marker({
+              color: 'green',
+              element: markerElement,
+            })
+              .setLngLat(showArea && selectedDocsInCluster.length === 1 ? [selectedDocsInCluster[0].data.lon, selectedDocsInCluster[0].data.lat] : geometry.coordinates);
+              if(!showArea) {
+                marker.setPopup(popup);
+              }
+              marker.addTo(map);
+        
+            popup
+              .on('open', () => {
+                if (activePopup.current) {
+                  activePopup.current.remove(); 
+                }
+                activePopup.current = popup; 
+        
+                
+                const listItems = popup.getElement().querySelectorAll('li.document-item');
+                listItems.forEach((item) => {
+                  item.addEventListener('click', () => {
+                    globalHoverPopup.current.remove();
+                    const docId = item.getAttribute('data-id');
+                    const docData = markers.find(
+                      (marker) => marker.data.id === parseInt(docId, 10)
+                    ).data;
+        
+                    if (selectMode && !showArea) {
+                      handleMarkerClick(docData);
+                    }
+
+                    popup.remove();
+                    
+                    if(!selectMode) {
+                      setSelectedDocument(docData);
+                    }
+                  });
+                });
+              })
+              .on('close', () => {
+                activePopup.current = null; 
+              });
+        
+
+            markersArray.push({marker: marker, data: properties.data});
+            const markerEl = marker.getElement();
+
+            markerEl.addEventListener('mouseenter', () => {
+              mouseInsideMarker = true;
+            
+              if (!activePopup.current) {
+                // Generate the content for the popup
+                const documentListHTML = documentList
+                  .map(d => `<div>${d.label}</div>`)
+                  .join('');
+            
+                const popupContent = `
+                  <div style="max-height: 100px; overflow: auto;">
+                    ${documentListHTML}
+                  </div>
+                `;
+            
+                globalHoverPopup.current
+                  .setLngLat(geometry.coordinates)
+                  .setHTML(popupContent)
+                  .addTo(map);
+              }
+            });
+            
+
+            markerEl.addEventListener('mouseleave', () => {
+              mouseInsideMarker = false;
+              if (!activePopup.current) {
+                globalHoverPopup.current.remove();
+              }
+            });
+
+            markerEl.addEventListener('click', () => {
               globalHoverPopup.current.remove();
-            }
-          });
-
-          markerEl.addEventListener('click', () => {
-            globalHoverPopup.current.remove();
-          });
+            });
+          }
         } else if(isPointerInsideSelectedArea) {
           
 
