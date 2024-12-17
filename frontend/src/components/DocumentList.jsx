@@ -49,16 +49,7 @@ function DocumentInList(props){
         setShowLinks(false);
       };
 
-      const handleDeleteLink = async (idDocument1, idDocument2, linkType) => {
-        try {
-          console.log('Deleting link:', idDocument1, idDocument2, linkType);
-          const result = await API.deleteLink(idDocument1, idDocument2, linkType);
-          setDocumentLinks(documentLinks.filter(link => !(link.idDocument1 === idDocument1 && link.idDocument2 === idDocument2 && link.type === linkType)));
-          alert("Link deleted successfully");
-        } catch (error) {
-          console.error('Error deleting link:', error);
-        }
-      };
+     
     
       
       const handleConnectionsClick = async () => {
@@ -180,12 +171,7 @@ function DocumentInList(props){
                               <Col>
                                 <label>{link.type}</label>
                               </Col>
-                              <Col>
-                        <Button
-                          className="btn btn-danger bi bi-trash"onClick={() => handleDeleteLink(props.documentData.id, link.id, link.type)}
-                        >
-                        </Button>
-                      </Col>
+                             
                             </Row>
                           </ListGroupItem>
                         ))

@@ -15,6 +15,8 @@ const LinkControl = (props) => {
 
   console.log(hasDuplicates);
 
+
+
   // Fetch documents on mount
   useEffect(() => {
     const fetchDocuments = async () => {
@@ -88,7 +90,7 @@ const LinkControl = (props) => {
 
   return (
     <div className="mx-4 mb-4">
-      <CurrentLinkList links={links} className="mt-3" />
+      <CurrentLinkList selectedId={selectedId} links={links} className="mt-3" />
 
       <h5 style={{ fontWeight: 'bolder' }}>Create Connection to Another Document</h5>
 
@@ -158,8 +160,9 @@ function CurrentLinkList(props) {
         {props.links.length > 0 ? (
           props.links.map((link) => (
             <LinkInList
-              key={link.id + "_" + link.type}
+              key={props.selectedId + link.id + "_" + link.type}
               linkData={link}
+              selectedId={props.selectedId}
             />
           ))
         ) : (
@@ -173,7 +176,18 @@ function CurrentLinkList(props) {
 }
 
 CurrentLinkList.propTypes = {
+  selectedId: PropTypes.string,
   links: PropTypes.array.isRequired,
+};
+
+const handleDeleteLink = async (idDocument1, idDocument2, linkType) => {
+  try {
+    console.log('Deleting link:', idDocument1, idDocument2, linkType);
+    const result = await API.deleteLink(idDocument1, idDocument2, linkType);
+    alert("Link deleted successfully");
+  } catch (error) {
+    console.error('Error deleting link:', error);
+  }
 };
 
 function LinkInList(props) {
@@ -186,6 +200,13 @@ function LinkInList(props) {
         <Col>
           <label>{props.linkData.type}</label>
         </Col>
+        <Col>
+            <Button
+              className="btn btn-danger bi bi-trash"
+              onClick={() => handleDeleteLink(props.selectedId, props.linkData.id, props.linkData.type)}
+            >
+            </Button>
+          </Col>
       </Row>
     </ListGroupItem>
   );
