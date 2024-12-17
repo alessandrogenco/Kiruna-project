@@ -524,10 +524,10 @@ updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, 
                     return reject(new Error('Database error: ' + err.message));
                 }
 
-                if (this.changes === 0) {
-                    // If no changes (e.g., if the ID does not exist)
-                    return reject(new Error('No document found with the provided ID.'));
-                }
+                // if (this.changes === 0) {
+                //     // If no changes (e.g., if the ID does not exist)
+                //     return reject(new Error('No document found with the provided ID.'));
+                // }
 
                 resolve({
                     id,
