@@ -10,6 +10,7 @@ import DocumentViewer from './DocumentViewer'; // Import the DocumentViewer comp
 import DocumentGraph  from './Graph';
 import { ReactFlowProvider } from 'react-flow-renderer';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import * as turf from '@turf/turf';
 import PropTypes from 'prop-types';
 
 
@@ -23,6 +24,7 @@ function ExplorePage(props) {
   const [showGraph, setShowGraph] = useState(false); // Stato per mostrare/nascondere il grafo
   const [selectMode, setSelectMode] = useState(false);
   const [selectedDocuments, setSelectedDocuments] = useState([]); // State for the selected documents
+  const [showArea, setShowArea] = useState(false);
   const cluster = useRef(null);
   const markersLayer = useRef(null);
   const activePopup = useRef(null);
@@ -191,8 +193,18 @@ function ExplorePage(props) {
 
       clusters.forEach((clusterPoint) => {
         const { geometry, properties } = clusterPoint;
-      
-        if (properties.cluster) {
+
+        // If the cluster is within one of the selected document areas
+        const isClusterInsideSelectedArea = showArea 
+        ? selectedDocuments.some(doc => isClusterInsideArea(geometry.coordinates, doc))
+        : true; // If showArea is disabled, show all clusters
+
+        // If the marker is within one of the selected document areas
+        const isPointerInsideSelectedArea = showArea
+        ? selectedDocuments.some(doc => isPointerInsideArea(geometry.coordinates, doc))
+        : true; // If showArea is disabled, show all markers
+
+        if (properties.cluster && isClusterInsideSelectedArea) {
           const clusterId = clusterPoint.id;
           const documentList = cluster.current
             .getLeaves(clusterId, Infinity)
@@ -288,7 +300,7 @@ function ExplorePage(props) {
                     (marker) => marker.data.id === parseInt(docId, 10)
                   ).data;
       
-                  if (selectMode) {
+                  if (selectMode && !showArea) {
                     handleMarkerClick(docData);
                   }
 
@@ -341,7 +353,7 @@ function ExplorePage(props) {
           markerEl.addEventListener('click', () => {
             globalHoverPopup.current.remove();
           });
-        } else {
+        } else if(isPointerInsideSelectedArea) {
           
 
           const iconClass = documentTypeToIcon[properties.data.type] || documentTypeToIcon.default; 
@@ -426,7 +438,7 @@ function ExplorePage(props) {
               });
   
               singleMarkerEl.addEventListener('click', () => {
-                if (selectMode) {
+                if (selectMode && !showArea) {
                   handleMarkerClick(properties.data);
                 }
                 globalHoverPopup.current.remove();
@@ -453,7 +465,7 @@ function ExplorePage(props) {
               },
             };
           
-            marker.getElement().addEventListener('mouseenter', () => {
+            if(showArea) {
               if (!map.getSource(layerId)) {
                 map.addSource(layerId, polygonSource);
               }
@@ -469,16 +481,40 @@ function ExplorePage(props) {
                   },
                 });
               }
-            });
-            
-            marker.getElement().addEventListener('mouseleave', () => {
+            } else {
               if (map.getLayer(layerId)) {
                 map.removeLayer(layerId);
               }
               if (map.getSource(layerId)) {
                 map.removeSource(layerId);
               }
-            });
+              marker.getElement().addEventListener('mouseenter', () => {
+                if (!map.getSource(layerId)) {
+                  map.addSource(layerId, polygonSource);
+                }
+                
+                if (!map.getLayer(layerId)) {
+                  map.addLayer({
+                    id: layerId,
+                    type: 'fill',
+                    source: layerId,
+                    paint: {
+                      'fill-color': 'rgba(255, 99, 71, 0.5)',
+                      'fill-opacity': 0.5,
+                    },
+                  });
+                }
+              });
+              
+              marker.getElement().addEventListener('mouseleave', () => {
+                if (map.getLayer(layerId)) {
+                  map.removeLayer(layerId);
+                }
+                if (map.getSource(layerId)) {
+                  map.removeSource(layerId);
+                }
+              });
+            }
           }
 
           markersArray.push({marker: marker, data: properties.data});
@@ -487,6 +523,34 @@ function ExplorePage(props) {
 
       markersLayer.current = markersArray;
     }
+  };
+
+  // Function to check if the cluster is within the area of ​​a selected document
+  const isClusterInsideArea = (coordinates, doc) => {
+    if(doc.area) {
+      const areaGeoJson = doc.area;
+      const point = turf.point(coordinates);
+      const polygon = turf.polygon(JSON.parse(JSON.parse(areaGeoJson)).features[0].geometry.coordinates);
+
+      return turf.booleanPointInPolygon(point, polygon);
+    }
+    return false;
+  };
+
+  // Function to check if the marker is within the area of ​​a selected document
+  const isPointerInsideArea = (coordinates, doc) => {
+    if(doc.area) {
+      const areaGeoJson = doc.area;
+      const point = turf.point(coordinates);
+      const polygon = turf.polygon(JSON.parse(JSON.parse(areaGeoJson)).features[0].geometry.coordinates);
+  
+      return turf.booleanPointInPolygon(point, polygon);
+    } else {
+      if(coordinates[0] === doc.lon && coordinates[1] === doc.lat)
+        return true;
+      return false;
+    }
+    
   };
 
   const createClusterIcon = (count) => {
@@ -512,7 +576,7 @@ function ExplorePage(props) {
       map.on('zoom', updateMarkers); 
       updateMarkers();
     }
-  }, [map, mapLoaded, markers, selectMode]);
+  }, [map, mapLoaded, markers, selectMode, showArea]);
 
    // Use the ID to search and open the corresponding popup
    useEffect(() => {
@@ -663,12 +727,9 @@ function ExplorePage(props) {
     });
   };
 
-  const handleShowArea = () => {
-
-  }
-
   const handleSelectToggle = () => {
     setSelectMode((prev) => !prev);
+    setShowArea(false);
   };
 
   useEffect(() => {
@@ -724,7 +785,7 @@ function ExplorePage(props) {
       </button>
       
       {/* Show the selected documents */}
-      {selectedDocuments.length > 0 && (
+      {selectedDocuments.length > 0 && !showArea && (
         <div
           style={{
             position: 'absolute',
@@ -758,7 +819,7 @@ function ExplorePage(props) {
             ))}
           </div> 
           <div className="d-flex justify-content-center mt-3">
-            <button className="btn btn-success" onClick={() => handleShowArea()}>
+            <button className="btn btn-success" onClick={() => setShowArea(true)}>
               <span>Show Area</span>
             </button>
           </div>
