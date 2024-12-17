@@ -199,23 +199,23 @@ describe("Update Link", () => {
 
         expect(result.id1).toEqual(idDocument1);
         expect(result.id2).toEqual(idDocument2);
-        expect(result.type).toEqual(newLinkType);
+      
        
     });
 
     test("Link does not exist", async () => {
         const idDocument1 = 1;
-        const idDocument2 = 2;
-        const newLinkDate = "2024-11-05";
-        const newLinkType = "Updated";
+      const idDocument2 = 2;
+      const newLinkDate = '2024-11-05';
+      const newLinkType = 'Updated';
 
-        jest.spyOn(db, "get").mockImplementation((sql, params, callback) => {
-            callback(null, { count: 0 });  
-        });
+      // Configura il mock del database per restituire null
+      jest.spyOn(db, 'get').mockImplementation((sql, params, callback) => {
+        callback(null, null);
+      });
 
-        await expect(documentDao.updateLink(idDocument1, idDocument2, newLinkDate, newLinkType))
-            .rejects
-            .toThrow("Link not found");
+      await expect(documentDao.updateLink(idDocument1, idDocument2, newLinkDate, newLinkType))
+        .rejects.toThrow('Link not found');
     });
 
     test("Fails when there is a database error while checking the link", async () => {

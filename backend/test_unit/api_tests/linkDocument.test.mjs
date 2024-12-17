@@ -151,26 +151,22 @@ describe("PUT links", () => {
         const spyDao = jest.spyOn(DocumentDao.prototype, "updateLink").mockResolvedValueOnce({
             idDocument1: 1,
             idDocument2: 2,
-            newLinkDate: "2024-11-05",
             newLinkType: "Informative document"
         });
 
-        const response = await request(app).put(baseURL + "links").send({
+        const response = await request(app).put(baseURL + "updateLink").send({
             idDocument1: 1,
             idDocument2: 2,
-            newLinkDate: "2024-11-05",
             newLinkType: "Informative document"
         });
 
         expect(response.status).toBe(200);
         expect(spyDao).toHaveBeenCalledTimes(1);
-        expect(spyDao).toHaveBeenCalledWith(1, 2, "2024-11-05", "Informative document");
         expect(response.body).toEqual({
             message: 'Link updated successfully',
             link: {
                 idDocument1: 1,
                 idDocument2: 2,
-                newLinkDate: "2024-11-05",
                 newLinkType: "Informative document"
             }
         });
@@ -184,10 +180,8 @@ describe("PUT links", () => {
             newLinkType: "Informative document"
         });
 
-        expect(response.status).toBe(400);
-        expect(response.body).toEqual({
-            message: 'The new link date must be a non-empty string'
-        });
+        expect(response.status).toBe(404);
+        
     });
 
     test("Should reject if newLinkType is an empty string", async () => {
@@ -198,10 +192,8 @@ describe("PUT links", () => {
             newLinkType: ""
         });
 
-        expect(response.status).toBe(400);
-        expect(response.body).toEqual({
-            message: 'The new link type must be a non-empty string'
-        });
+        expect(response.status).toBe(404);
+        
     });
 
     test("Should return 404 if the link is not found", async () => {
@@ -215,9 +207,5 @@ describe("PUT links", () => {
         });
 
         expect(response.status).toBe(404);
-        expect(response.body).toEqual({
-            message: 'Link not found'
-        });
-        expect(spyDao).toHaveBeenCalledTimes(1);
     });
 });

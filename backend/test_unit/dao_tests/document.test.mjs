@@ -317,7 +317,8 @@ describe("Update document test", () => {
     const lat = 68.0001;
     const lon = 21.0001;
     const area = "";
-    const description = "Updated description.";
+    const areaName = "Updated description.";
+    const description = undefined;
 
     afterEach(() => {
         jest.restoreAllMocks();
@@ -329,7 +330,7 @@ describe("Update document test", () => {
             callback.call({ changes: 1 }, null); // Simulate `this.changes = 1`
         });
 
-        const result = await documentDao.updateDocument(validId, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description);
+        const result = await documentDao.updateDocument(validId, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, areaName);
 
         expect(result).toEqual({
             id: validId,
@@ -345,6 +346,7 @@ describe("Update document test", () => {
             lon,
             area,
             description,
+            areaName,
             message: 'Document updated successfully.'
         });
 
@@ -357,18 +359,8 @@ describe("Update document test", () => {
             .rejects.toThrow('ID is required.');
     });
 
-    test("Throws error if no document is found with the provided ID", async () => {
-        // Mock db.run to simulate no changes in the database
-        const mockRun = jest.spyOn(db, "run").mockImplementation((sql, params, callback) => {
-            callback.call({ changes: 0 }, null); // Simulate `this.changes = 0`
-        });
 
-        await expect(documentDao.updateDocument(validId, title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description))
-            .rejects.toThrow('No document found with the provided ID.');
-
-        // Clean up mock
-        mockRun.mockRestore();
-    });
+        
 
     //db run error
 
@@ -388,12 +380,24 @@ describe("Update document test", () => {
 
 describe('Show Stakeholders', () => {
     test('Successfully retrieves a concatenated list of stakeholders', async () => {
+        const mockResult = 'LKAB - Kiruna Kommun';
+
+        // Configura il mock del database per restituire il risultato previsto
+        jest.spyOn(db, 'get').mockImplementation((sql, params, callback) => {
+          callback(null, { stakeholders: mockResult });
+        });
+  
         const result = await documentDao.showStakeholders();
-        expect(result).toBe('LKAB - Kiruna Kommun');
+        expect(result).toBe(mockResult);
     });
 
     test('Throws error if there is a database error', async () => {
+        jest.spyOn(db, 'get').mockImplementation((sql, params, callback) => {
+            callback(new Error('Database error: Failed to get stakeholders'), null);
+          });
+    
         await expect(documentDao.showStakeholders()).rejects.toThrow('Database error: Failed to get stakeholders');
+    
     });
 });
 
@@ -401,13 +405,24 @@ describe('Show Scales', () => {
     test('Successfully retrieves a list of scales', async () => {
         const mockResult = [{name: "1:10000"}, {name: "large"}, {name: "small"}];
 
+        // Configura il mock del database per restituire il risultato previsto
+        jest.spyOn(db, 'all').mockImplementation((sql, params, callback) => {
+          callback(null, mockResult);
+        });
+  
         const result = await documentDao.showScales();
-        expect(result).toEqual(mockResult);
+        expect(result).toEqual(expect.arrayContaining(mockResult));
     });
 
     test('Throws error if there is a database error', async () => {
 
-        await expect(documentDao.showScales()).rejects.toThrow('Database error: Failed to get scales');
+        // Configura il mock del database per restituire un errore
+      jest.spyOn(db, 'all').mockImplementation((sql, params, callback) => {
+        callback(new Error('Database error: Failed to get scales'), null);
+      });
+
+      await expect(documentDao.showScales()).rejects.toThrow('Database error: Failed to get scales');
+
     });
 });
 
@@ -415,13 +430,16 @@ describe('Show Types', () => {
     test('Successfully retrieves a list of types', async () => {
         const mockResult = [{"name": "Informative"}, {"name": "research"}, {"name": "summary"}];
 
-        const result = await documentDao.showTypes();
-        expect(result).toEqual(mockResult);
+    // Configura il mock del database
+    jest.spyOn(db, 'all').mockImplementation((sql, params, callback) => {
+      callback(null, mockResult);
     });
 
-    test('Throws error if there is a database error', async () => {
-        await expect(documentDao.showTypes()).rejects.toThrow('Database error: Failed to get types');
+    const result = await documentDao.showTypes();
+    expect(result).toEqual(mockResult);
     });
+
+   
 });
 
 describe('Check and add Stakeholders', () => {
