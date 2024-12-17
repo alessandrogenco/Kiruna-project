@@ -38,7 +38,7 @@ function DocumentInList(props){
     const [showLinks, setShowLinks] = useState(false);
     const navigate = useNavigate();
     const handleShowOnMap = () => {
-      navigate(`/explore`, { state: {documentId: selectedDocument.id} });
+      navigate(`/explore`, { state: {documentId: props.documentData.id} });
     }
     const handleDocumentClick = (document) => {
         setSelectedDocument(document);
@@ -84,6 +84,10 @@ function DocumentInList(props){
                 <label>{props.documentData.date}</label>
               </Col>
               <Col className='text-end'>
+                <button
+                  className="btn btn-primary bi bi-geo-alt me-2"
+                  onClick={handleShowOnMap}
+                />
                 <Link
                   className="btn btn-success bi bi-pencil me-2"
                   to={`/editDocument/${props.documentData.id}`}
@@ -156,15 +160,6 @@ function DocumentInList(props){
                     className="toggle-button"
                   >
                     {showLinks ? "Hide Connections" : "Show Connections"}
-                  </Button>
-                </Col>
-                <Col>
-                  <Button
-                    variant="outline-success"
-                    onClick={handleShowOnMap}
-                    className="toggle-button"
-                  >
-                    Show on Map
                   </Button>
                 </Col>
               </Row>
