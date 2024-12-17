@@ -497,7 +497,7 @@ updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, 
 
     getDocumentPosition(id) {
         return new Promise((resolve, reject) => {
-            if (!id) {documentDao
+            if (!id) {
                 return reject(new Error('ID is required.'));
             }
             const getDocumentPositionQuery = 'SELECT * FROM Documents WHERE id = ?';
