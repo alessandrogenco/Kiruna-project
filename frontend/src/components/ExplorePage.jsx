@@ -793,7 +793,7 @@ function ExplorePage(props) {
         <Row>
           <Col>
             <ReactFlowProvider>
-              <DocumentGraph documents={props.documents} selectedDocument={selectedDocument} setSelectedDocument={setSelectedDocument} graphSize={graphSize}/>
+              <DocumentGraph documents={props.documents} setDocuments={props.setDocuments} selectedDocument={selectedDocument} setSelectedDocument={setSelectedDocument} graphSize={graphSize}/>
             </ReactFlowProvider>
           </Col>
         </Row>
@@ -821,6 +821,7 @@ function ExplorePage(props) {
 
 ExplorePage.propTypes = {
   documents: PropTypes.array,
+  setDocuments: PropTypes.func,
   isLoggedIn: PropTypes.bool,
   handleLogout: PropTypes.func,
 };

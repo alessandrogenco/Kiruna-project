@@ -252,8 +252,33 @@ export const updateDocument = async (id, title, stakeholders, scale, issuanceDat
       throw error;
     }
   };
+  
+export const adjustPosition = async (id, x, y) => {
+    try {
+        const response = await fetch(`http://localhost:3001/api/documents/${id}/adjustPosition`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                "x": x,
+                "y": y
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update graph position');
+        }
+
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error('Error updating graph position:', error);
+        throw error;
+    }
+}
 
 
 
-const API = { login, logout, checkLogin, getDocuments, linkDocument, getDocumentLinks, updateLink, deleteDocument, updateDocument};
+const API = { login, logout, checkLogin, getDocuments, linkDocument, getDocumentLinks, updateLink, deleteDocument, updateDocument, adjustPosition};
 export default API;

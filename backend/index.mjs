@@ -677,10 +677,6 @@ app.put('/api/documents/:id/adjustPosition', async (req, res) => {
         return res.status(400).json({ error: 'x and y values must be integers.' });
     }
 
-    if (x < 0 || y < 0) {
-        return res.status(400).json({ error: 'x and y values cannot be negative.' });
-    }
-
     try {
         const message = await documentDao.adjustDocumentPosition(id, x, y);
         return res.status(200).json({ message });
