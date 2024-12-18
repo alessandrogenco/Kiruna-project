@@ -21,6 +21,8 @@ function DocumentControl(props) {
   const [typeList, setTypeList] = useState([]);
   const [showNewTypeInput, setShowNewTypeInput] = useState(false);
   const [showNewScaleInput, setShowNewScaleInput] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+
 
   const existingDocument = location.state?.document;
   const explorePage = location.state?.explorePage;
@@ -609,6 +611,15 @@ function DocumentControl(props) {
                     Add
                   </Button>
                 </div>
+                {/* Search Field */}
+                <div className="mt-3">
+                <Form.Control
+                  type="text"
+                  placeholder="Search stakeholders"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
                 <div
                     style={{
                       maxHeight: '150px', 
@@ -616,7 +627,12 @@ function DocumentControl(props) {
                       marginTop: '10px',
                     }}
                 >
-              {stakeholderList.split(' - ').map((stakeholder) => (
+              {stakeholderList
+                .split(' - ')
+                .filter((stakeholder) =>
+                 stakeholder.toLowerCase().includes(searchTerm.toLowerCase())
+                )
+              .map((stakeholder) => (
             <Form.Check
             key={stakeholder}
             type="checkbox"
