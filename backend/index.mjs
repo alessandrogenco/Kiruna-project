@@ -688,13 +688,25 @@ app.put('/api/documents/:id/adjustPosition', async (req, res) => {
     }
 });
 
-
-
+/// save area
+app.post('/api/saveArea', async (req, res) => {
+    const { areaName, coordinates } = req.body;
   
+    console.log('Received request to save area:', { areaName, coordinates });
   
+    if (!areaName || !coordinates) {
+      return res.status(400).json({ error: 'Area name and coordinates are required' });
+    }
   
-  
-  
+    try {
+      const savedAreaName = await documentDao.saveArea(areaName, coordinates);
+      console.log('Area saved successfully:', { savedAreaName });
+      res.status(200).json({ message: 'Area saved successfully', areaName: savedAreaName });
+    } catch (error) {
+      console.error('Error saving area:', error);
+      res.status(500).json({ error: 'Failed to save area' });
+    }
+  });
 
 
 /* ACTIVATING THE SERVER */
