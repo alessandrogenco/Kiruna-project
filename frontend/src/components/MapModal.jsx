@@ -154,11 +154,13 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
                 .setLngLat(coordinates)
                 .addTo(map.current);
 
-              if (mode === 'area') {
-                if (item.area) {
-                  const areaGeoJson = JSON.parse(item.area);
-                  if (areaGeoJson.features && areaGeoJson.features.length > 0) {
+                if (mode === 'area') {
+
+                  if (item.area) {
+            
+                    const areaGeoJson = JSON.parse(JSON.parse(item.area));
                     const layerId = `area-layer-${item.id}`;
+                    
                     const polygonSource = {
                       type: 'geojson',
                       data: {
@@ -169,15 +171,13 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
                             type: 'Polygon',
                             coordinates: areaGeoJson.features[0].geometry.coordinates,
                           },
-                          properties: {
-                            name: item.areaName
-                          }
                         }],
                       },
                     };
-
+                    
                     pointMarker.getElement().addEventListener('mouseenter', () => {
                       map.current.addSource(layerId, polygonSource);
+        
                       map.current.addLayer({
                         id: layerId,
                         type: 'fill',
@@ -188,14 +188,14 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
                         },
                       });
                     });
-
+        
                     pointMarker.getElement().addEventListener('mouseleave', () => {
                       map.current.removeLayer(layerId);
                       map.current.removeSource(layerId);
                     });
                   }
+                  
                 }
-              }
 
               pointMarker.getElement().addEventListener('click', (event) => {
                 // Prevent other click events from being executed
@@ -212,15 +212,17 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
                       .addTo(map.current);
                   }
                 } else if (mode === 'area' && item.area) {
-                  const areaGeoJson = JSON.parse(item.area);
+                  const areaGeoJson1 = JSON.parse(item.area);
+                  const areaGeoJson = JSON.parse(areaGeoJson1);
+
                   if (areaGeoJson.features && areaGeoJson.features.length > 0) {
                     console.log('Area data loaded for the selected point:', areaGeoJson);
 
                     // Rimuovi l'area attuale se già presente
                     let features = draw.current.getAll().features;
-                    if (features.length === 1) {
+                    if (features.length > 0) {
                       draw.current.delete(features[0].id); // Rimuovi la prima area se ce ne sono più di una
-                      features.splice(0, 1); // Remove the first feature
+                      features.splice(0, 2); // Remove the first feature
                     }
 
                     if (centroidMarker) {
