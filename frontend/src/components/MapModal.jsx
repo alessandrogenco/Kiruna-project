@@ -276,6 +276,9 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
         // Add or remove the draw control based on the mode
         if (mode === 'area') {
           map.current.addControl(draw.current, 'top-right');
+          if (selectedAreaName) {
+            highlightArea(selectedAreaName);
+          }
         }
 
         if (mode === 'point' && areaSet) {
