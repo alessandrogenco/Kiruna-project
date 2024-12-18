@@ -92,7 +92,7 @@ POST http://localhost:3001/api/addDocument
 Content-Type: application/json
 
 {
-    "title": "prova1",
+    "title": "prova2",
     "stakeholders": "New Stakeholders",
     "scale": "1:1000",
     "issuanceDate": "2024-11-06",
@@ -102,9 +102,11 @@ Content-Type: application/json
     "pages": 10,
     "lat": 67.9128,
     "lon": 20.8060,
-    "area": "",
-    "description": "Updated description of the document"
+    "area": "{\"type\":\"Polygon\",\"coordinates\":[[[20.8060,67.9128],[20.8060,67.9138],[20.8070,67.9138],[20.8070,67.9128],[20.8060,67.9128]]]}",
+    "areaName": "Area 1",
+    "description": "Description added"
 }
+
 
 ########## add document - bad request
 POST http://localhost:3001/api/addDocument
@@ -149,8 +151,8 @@ POST http://localhost:3001/api/updateDocument
 Content-Type: application/json
 
 {
-    "id": 173082689802499,
-    "title": "prova1",
+    "id": 9,
+     "title": "prova2",
     "stakeholders": "New Stakeholders",
     "scale": "1:1000",
     "issuanceDate": "2024-11-06",
@@ -160,8 +162,9 @@ Content-Type: application/json
     "pages": 10,
     "lat": 67.9128,
     "lon": 20.8060,
-    "areaName": "North Kiruna",
-    "description": "Updated description of the document!!"
+    "area": "{\"type\":\"Polygon\",\"coordinates\":[[[20.8060,67.9128],[20.8060,67.9138],[20.8070,67.9138],[20.8070,67.9128],[20.8060,67.9128]]]}",
+    "areaName": "Area 1",
+    "description": "New Updated description of the document"
 }
 
 ########## delete document 

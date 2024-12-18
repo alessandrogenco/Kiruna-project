@@ -279,7 +279,7 @@ app.put('/api/addDescription', async (req, res) => {
 app.post('/api/addDocument', async (req, res) => {
     console.log("Data received by /api/addDocument:", req.body); // Log dei dati ricevuti
 
-    const { title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description } = req.body;
+    const { title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, areaName, description } = req.body;
 
     try {
         // Validazione parametri
@@ -302,7 +302,7 @@ app.post('/api/addDocument', async (req, res) => {
 
         console.log("Adding document...");
 
-        const result = await documentDao.addDocument(title, stakeholders, scale, issuanceDate || null, type, connections, language, pages, lat, lon, area, description);
+        const result = await documentDao.addDocument(title, stakeholders, scale, issuanceDate || null, type, connections, language, pages, lat, lon, area, areaName, description);
         res.status(200).json(result); // Risposta positiva con il documento aggiunto
     } catch (error) {
         console.error("Error in /api/addDocument:", error); // Log dettagliato per debug

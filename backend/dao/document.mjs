@@ -118,7 +118,7 @@ class DocumentDao{
       }
 
     //add document
-    addDocument(title, stakeholders, scale, date, type, connections, language, pages, lat, lon, area, description) {
+    addDocument(title, stakeholders, scale, date, type, connections, language, pages, lat, lon, area, areaName, description) {
         return new Promise((resolve, reject) => {
             if (!title || title.trim() === "") {
                 return reject(new Error('Title cannot be empty.'));
@@ -130,10 +130,10 @@ class DocumentDao{
                 this.checkAndAddType(type)
               ]).then(() => {
                 const addDocumentQuery = `
-                  INSERT INTO Documents (title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, description)
-                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                  INSERT INTO Documents (title, stakeholders, scale, issuanceDate, type, connections, language, pages, lat, lon, area, areaName, description)
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?)
                 `;
-                db.run(addDocumentQuery, [title, stakeholders, scale, date, type, connections, language, pages, lat, lon, area, description], function (err) {
+                db.run(addDocumentQuery, [title, stakeholders, scale, date, type, connections, language, pages, lat, lon, area, areaName, description], function (err) {
                   if (err) {
                     console.error('Database error while adding document:', err.message);
                     return reject(new Error('Database error: ' + err.message));
@@ -151,6 +151,7 @@ class DocumentDao{
                     lat,
                     lon,
                     area,
+                    areaName,
                     description,
                     message: 'Document added successfully.'
                   });

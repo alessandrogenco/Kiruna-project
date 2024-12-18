@@ -26,7 +26,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
   const [areaSet, setAreaSet] = useState(false);
   const [selectedAreaName, setSelectedAreaName] = useState('');
   const [areaNames, setAreaNames] = useState([]);
-  const [selectedAreaId, setSelectedAreaId] = useState(null);
+  //const [selectedAreaId, setSelectedAreaId] = useState(null);
 
   useEffect(() => {
     if (show) {
@@ -43,7 +43,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
 
       if (!response.ok) throw new Error('Failed to fetch document locations');
       const data = JSON.parse(text);
-      console.log(data);
+      console.log('Fetched Document Locations:', data); // Log the fetched data
 
       setExistingGeoreferencingData(data);
     } catch (error) {
@@ -56,9 +56,10 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
     try {
       const response = await fetch('http://localhost:3001/api/getAreaNames');
       const text = await response.text();
+      
       if (!response.ok) throw new Error('Failed to fetch area names');
       const data = JSON.parse(text);
-      console.log('Fetched area names:', data); // Inspect the data
+      console.log('Fetched area names:', data); 
 
       // Adjust the data structure
       if (data.areas && Array.isArray(data.areas)) {
@@ -423,11 +424,11 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
     );
   };
 
-  const highlightArea = (areaId) => {
-    console.log('Looking for areaId:', areaId);
+  const highlightArea = (areaName) => {
+    console.log('Looking for areaName:', areaName);
 
     // Find the selected area by areaName (make sure the areaId matches the name correctly)
-    const selectedArea = areaNames.find(area => area.areaName === areaId);
+    const selectedArea = areaNames.find(area => area.areaName === areaName);
     console.log('Selected Area:', selectedArea);
 
     if (selectedArea && selectedArea.coordinates) {
@@ -438,7 +439,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
 
             // Check if the coordinates are in the correct format (Polygon)
             if (!parsedCoordinates || parsedCoordinates.type !== "Polygon" || !parsedCoordinates.coordinates[0]) {
-                console.error('Invalid coordinates format for area:', areaId);
+                console.error('Invalid coordinates format for area:', areaName);
                 return;
             }
 
@@ -506,15 +507,21 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
 
 
   const handleSave = () => {
+    console.log('Saving location with area name:', selectedAreaName); 
+
     if (mode === 'point' && position) {
       onLocationSelect({ type: 'point', coordinates: position });
     } else if (mode === 'area') {
       const drawnFeatures = draw.current.getAll();
       if (drawnFeatures.features.length > 0) {
         const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: drawnFeatures.features });
+        console.log('Saving area with name:', selectedAreaName);
+
         onLocationSelect({ type: 'area', geometry: geoJsonString, name: selectedAreaName });
       } else if (geoJsonData) {
         const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: geoJsonData.features });
+        console.log('Saving area with name:', selectedAreaName); 
+
         onLocationSelect({ type: 'area', geometry: geoJsonString, name: selectedAreaName });
       } else {
         setAlertMessage('Error: Default municipality boundary is unavailable.');
@@ -629,19 +636,23 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
               <Form.Group controlId="areaSelect">
                 <Form.Label>Select Area</Form.Label>
                 <Form.Select
-                  value={selectedAreaId}
+                  value={selectedAreaName}
                   onChange={(e) => {
-                    const selectedId = e.target.value;
-                    const selectedArea = areaNames.find(area => area.id === selectedId);
-                    console.log('Selected Area:', selectedArea); 
-                    setSelectedAreaId(selectedId);
-                    setSelectedAreaName(selectedArea ? selectedArea.areaName : '');
-                    highlightArea(selectedId); 
+                    const selectedAreaName = e.target.value;
+
+                    //const selectedArea = areaNames.find(area => area.id === selectedId);
+                    console.log('Selected Area Name:', selectedAreaName); 
+
+                    //setSelectedAreaId(selectedId);
+                    //setSelectedAreaName(selectedAreaName ? selectedAreaName.areaName : '');
+
+                    setSelectedAreaName(selectedAreaName);
+                    highlightArea(selectedAreaName); 
                   }}
                 >
                   <option value="">Select an area</option>
                   {Array.isArray(areaNames) && areaNames.map(area => (
-                    <option key={area.id} value={area.id}>
+                    <option key={area.areaName} value={area.areaName}>
                       {area.areaName}
                     </option>
                   ))}
