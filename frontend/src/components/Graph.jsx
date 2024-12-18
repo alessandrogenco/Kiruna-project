@@ -117,6 +117,7 @@ function computeNodes(documents, types, setTooltip) {
               alignItems: "center",
               height: "100%",
               background: "none",
+              originalBackgroundColor: backgroundColor,
               border: "none",
               cursor: "pointer",
               padding: 0,
@@ -146,7 +147,8 @@ function computeNodes(documents, types, setTooltip) {
       targetPosition: "left",
       style: {
         width: 200,
-        backgroundColor: backgroundColor,
+        background: backgroundColor,
+        originalBackgroundColor: backgroundColor,
         border: `2px solid ${borderColor}`,
         borderRadius: "8px",
         padding: "6px",
@@ -333,7 +335,7 @@ const DocumentGraph = (props) => {
           style: {
             ...node.style,
             border: node.id === props.selectedDocument.id.toString() ? "2px solid #ffd404" : "1px solid #ddd",
-            background: node.id === props.selectedDocument.id.toString() ? "#ffd404" : node.style.backgroundColor,
+            background: node.id === props.selectedDocument.id.toString() ? "#ffd404" : node.style.originalBackgroundColor,
           },
         }))
       );
@@ -345,7 +347,7 @@ const DocumentGraph = (props) => {
           style: {
             ...node.style,
             border: "1px solid #ddd", // Stile predefinito del bordo
-            background: node.style?.originalBackgroundColor || node.style.backgroundColor, // Usa un colore di sfondo originale se disponibile
+            background: node.style.originalBackgroundColor, // Usa un colore di sfondo originale se disponibile
           },
         }))
       );
