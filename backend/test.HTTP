@@ -163,7 +163,7 @@ Content-Type: application/json
     "lat": 67.9128,
     "lon": 20.8060,
     "area": "{\"type\":\"Polygon\",\"coordinates\":[[[20.8060,67.9128],[20.8060,67.9138],[20.8070,67.9138],[20.8070,67.9128],[20.8060,67.9128]]]}",
-    "areaName": "Area 1",
+    "areaName": "Area 2",
     "description": "New Updated description of the document"
 }
 

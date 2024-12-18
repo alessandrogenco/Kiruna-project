@@ -862,6 +862,8 @@ function DocumentControl(props) {
             show={showMapModal}
             handleClose={handleCloseMapModal}
             onLocationSelect={handleLocationSelect}
+            selectedAreaName={selectedAreaName}
+            setSelectedAreaName={setSelectedAreaName}
           />
 
           <Row className="mb-4 mx-3">

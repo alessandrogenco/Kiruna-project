@@ -513,7 +513,7 @@ app.get('/api/files/:documentId', async (req, res) => {
 });
 
 app.post('/api/updateDocumentGeoreference', async (req, res) => {
-    const { id, lat, lon, area } = req.body;
+    const { id, lat, lon, area , areaName} = req.body;
   
     try {
       if (!id) {
@@ -529,15 +529,15 @@ app.post('/api/updateDocumentGeoreference', async (req, res) => {
   
       if (lat && lon) {
 
-        query = `UPDATE Documents SET lat = ?, lon = ?, area = ? WHERE id = ?`;
-        params = [lat, lon, id];
+        query = `UPDATE Documents SET lat = ?, lon = ?, area = ? , areaName = ?, WHERE id = ?`;
+        params = [lat, lon, area, areaName, id];
       } else if (area) {
         const areaGeoJson = JSON.parse(area);
         const centroid = turf.centroid(areaGeoJson);
         const [centroidLon, centroidLat] = centroid.geometry.coordinates;
         
-        query = `UPDATE Documents SET area = ?, lat = ?, lon = ? WHERE id = ?`;
-        params = [area, centroidLat, centroidLon, id];
+        query = `UPDATE Documents SET area = ?, lat = ?, lon = ?, areaName = ?, WHERE id = ?`;
+        params = [area, centroidLat, centroidLon, areaName, id];
     }
   
       await new Promise((resolve, reject) => {
@@ -561,7 +561,7 @@ app.post('/api/updateDocumentGeoreference', async (req, res) => {
     try {
       const locations = await new Promise((resolve, reject) => {
         db.all(
-          `SELECT id, title, lat, lon, area, description, type FROM Documents WHERE lat IS NOT NULL OR area IS NOT NULL`,
+          `SELECT id, title, lat, lon, area, areaName, description, type FROM Documents WHERE lat IS NOT NULL OR area IS NOT NULL`,
           (err, rows) => {
             if (err) reject(err);
             resolve(rows);

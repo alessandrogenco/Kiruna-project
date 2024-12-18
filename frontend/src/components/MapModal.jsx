@@ -7,15 +7,12 @@ import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import * as turf from '@turf/turf';
 
-const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
+const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSelectedAreaName }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const marker = useRef(null);
   const draw = useRef(null);
   const [position, setPosition] = useState(null);
-  const [pointMarker, setPointMarker] = useState(null);
-  const [markerElement, setMarkerElement] = useState(null);
-  const [el, setEl] = useState(null);
   const [mode, setMode] = useState('area');
   const [geoJsonData, setGeoJsonData] = useState(null);
   const [existingGeoreferencingData, setExistingGeoreferencingData] = useState(null);
@@ -24,9 +21,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
   const [centroidMarker, setCentroidMarker] = useState(null);
   const [currentAreaId, setCurrentAreaId] = useState(null);
   const [areaSet, setAreaSet] = useState(false);
-  const [selectedAreaName, setSelectedAreaName] = useState('');
   const [areaNames, setAreaNames] = useState([]);
-  //const [selectedAreaId, setSelectedAreaId] = useState(null);
 
   useEffect(() => {
     if (show) {
@@ -638,14 +633,11 @@ const MapModal = ({ show, handleClose, onLocationSelect, documentId }) => {
                 <Form.Select
                   value={selectedAreaName}
                   onChange={(e) => {
+                    
                     const selectedAreaName = e.target.value;
 
-                    //const selectedArea = areaNames.find(area => area.id === selectedId);
                     console.log('Selected Area Name:', selectedAreaName); 
-
-                    //setSelectedAreaId(selectedId);
-                    //setSelectedAreaName(selectedAreaName ? selectedAreaName.areaName : '');
-
+                
                     setSelectedAreaName(selectedAreaName);
                     highlightArea(selectedAreaName); 
                   }}
