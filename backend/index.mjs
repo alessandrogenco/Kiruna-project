@@ -687,6 +687,9 @@ app.put('/api/documents/:id/adjustPosition', async (req, res) => {
         return res.status(500).json({ error: 'An internal server error occurred.' });
     }
 });
+
+
+
   
   
   

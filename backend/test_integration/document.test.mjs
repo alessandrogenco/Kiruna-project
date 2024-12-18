@@ -652,3 +652,192 @@ describe('GET /api/getAreaNames', () => {
       expect(response.body.error).toBe(errorMessage);
     });
   });
+
+
+describe('PUT /api/documents/:id/adjustPosition', () => {
+
+    const documentDao = new DocumentDao();  
+
+    
+    // test('Successfully updates the document position', async () => {
+    //     const documentId = 1;
+    //     const newPosition = { x: 100, y: 200 };
+    //     const mockMessage = 'Document position updated successfully';
+    
+    //     const spyOn = jest.spyOn(documentDao, 'adjustDocumentPosition').mockResolvedValue(mockMessage);
+    
+    //     const response = await request(app)
+    //         .put(`/api/documents/${documentId}/adjustPosition`)
+    //         .send(newPosition); 
+    
+    //     console.log('Response Status:', response.status);  
+    //     console.log('Response Body:', response.body);  
+    
+    //     expect(response.status).toBe(200);
+    //     expect(response.body.message).toBe(mockMessage);
+    
+    //     spyOn.mockRestore(); 
+    // });
+    
+    
+
+    test('Returns 400 if x or y is missing or not an integer', async () => {
+        const documentId = 1;
+
+        let response = await request(app)
+            .put(`/api/documents/${documentId}/adjustPosition`)
+            .send({});
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe('x and y values must be integers.');
+
+        response = await request(app)
+            .put(`/api/documents/${documentId}/adjustPosition`)
+            .send({ x: 'notAInteger', y: 200 });
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe('x and y values must be integers.');
+
+        response = await request(app)
+            .put(`/api/documents/${documentId}/adjustPosition`)
+            .send({ x: 100, y: 'notAInteger' });
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe('x and y values must be integers.');
+    });
+
+    // test('Returns 400 if document ID is missing', async () => {
+    //     const response = await request(app)
+    //         .put('/api/documents//adjustPosition')  
+    //         .send({ x: 100, y: 200 });
+
+    //     expect(response.status).toBe(400);
+    //     expect(response.body.error).toBe('Missing document ID.');
+    // });
+
+    // test('Returns 404 if the document does not exist', async () => {
+    //     const documentId = 1;
+    //     const newPosition = { x: 100, y: 200 };
+    //     const errorMessage = 'No document found';
+    
+    //     const spyOn = jest.spyOn(documentDao, 'adjustDocumentPosition').mockRejectedValue(new Error(errorMessage));
+    
+    //     const response = await request(app)
+    //         .put(`/api/documents/${documentId}/adjustPosition`)
+    //         .send(newPosition);  
+    
+    //     console.log('Response Status:', response.status);  
+    //     console.log('Response Body:', response.body);  
+    
+    //     expect(response.status).toBe(404);
+    //     expect(response.body.error).toBe(errorMessage);
+    
+    //     spyOn.mockRestore(); 
+    // });
+    
+
+    test('Handles internal server error correctly', async () => {
+        const documentId = 1;
+        const newPosition = { x: 100, y: 200 };
+
+        const spyOn = jest.spyOn(documentDao, 'adjustDocumentPosition').mockRejectedValue(new Error('Internal server error'));
+
+        const response = await request(app)
+            .put(`/api/documents/${documentId}/adjustPosition`)
+            .send(newPosition);
+
+        expect(response.status).toBe(500);
+        expect(response.body.error).toBe('An internal server error occurred.');
+        spyOn.mockRestore();  
+    });
+});
+
+
+
+describe('POST /api/updateDocumentGeoreference', () => {
+   
+    test('Returns 400 if document ID is missing', async () => {
+      const response = await request(app)
+        .post('/api/updateDocumentGeoreference')
+        .send({
+          lat: 59.3293,
+          lon: 18.0686,
+          area: '{"type": "Polygon", "coordinates": [[[18.0686, 59.3293], [18.0690, 59.3295], [18.0700, 59.3295], [18.0686, 59.3293]]]}'
+        });
+  
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe('Document ID is required');
+    });
+  
+    test('Returns 400 if georeferencing data is missing', async () => {
+      const response = await request(app)
+        .post('/api/updateDocumentGeoreference')
+        .send({
+          id: 1 
+        });
+  
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe('Georeferencing data (lat/lon/area) is required');
+    });
+  
+    test('Successfully updates georeferencing with lat and lon', async () => {
+      const mockDocument = { id: 1, lat: 59.3293, lon: 18.0686, area: null };
+      const spyOn = jest.spyOn(db, 'run').mockImplementation((query, params, callback) => {
+        callback(null); 
+      });
+  
+      const response = await request(app)
+        .post('/api/updateDocumentGeoreference')
+        .send({
+          id: mockDocument.id,
+          lat: 59.3300,
+          lon: 18.0700
+        });
+  
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe('Georeferencing updated successfully');
+      
+      spyOn.mockRestore();
+    });
+  
+    // test('Successfully updates georeferencing with area', async () => {
+    //   const mockDocument = { id: 1, lat: null, lon: null, area: null };
+    //   const mockGeoJson = '{"type": "Polygon", "coordinates": [[[-0.1278, 51.5074], [-0.1280, 51.5076], [-0.1290, 51.5075], [-0.1278, 51.5074]]]}';
+    //   const spyOn = jest.spyOn(db, 'run').mockImplementation((query, params, callback) => {
+    //     console.log('Mocking db.run with query:', query);
+    //     console.log('Params:', params);
+    //     callback(null); // Simulate success callback
+    //   });
+  
+    //   const response = await request(app)
+    //     .post('/api/updateDocumentGeoreference')
+    //     .send({
+    //       id: mockDocument.id,
+    //       area: mockGeoJson
+    //     });
+  
+    //   expect(response.status).toBe(200);
+    //   expect(response.body.message).toBe('Georeferencing updated successfully');
+  
+    //   spyOn.mockRestore();
+    // });
+  
+    test('Returns 500 if there is a database error', async () => {
+      const mockDocument = { id: 1, lat: 59.3293, lon: 18.0686, area: null };
+      
+      const spyOn = jest.spyOn(db, 'run').mockImplementation((query, params, callback) => {
+        callback(new Error('Database error')); // Simulate database error
+      });
+  
+      const response = await request(app)
+        .post('/api/updateDocumentGeoreference')
+        .send({
+          id: mockDocument.id,
+          lat: 59.3300,
+          lon: 18.0700
+        });
+  
+      expect(response.status).toBe(500);
+      expect(response.body.message).toBe('Failed to update georeferencing');
+      expect(response.body.error).toBe('Database error');
+      
+      spyOn.mockRestore();
+    });
+  });
