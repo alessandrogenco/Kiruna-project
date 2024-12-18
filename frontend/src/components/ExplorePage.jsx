@@ -194,27 +194,21 @@ function ExplorePage(props) {
       clusters.forEach((clusterPoint) => {
         const { geometry, properties } = clusterPoint;
 
-        // If the cluster is within one of the selected document areas
-        const isClusterInsideSelectedArea = showArea 
-        ? selectedDocuments.some(doc => isClusterInsideArea(geometry.coordinates, doc))
-        : true; // If showArea is disabled, show all clusters
-
-        // If the marker is within one of the selected document areas
-        const isPointerInsideSelectedArea = showArea
-        ? selectedDocuments.some(doc => isPointerInsideArea(geometry.coordinates, doc))
-        : true; // If showArea is disabled, show all markers
-
         if (properties.cluster) {
           const clusterId = clusterPoint.id;
-          const documentList = cluster.current
+          let documentList = cluster.current
             .getLeaves(clusterId, Infinity)
             .map((leaf) => leaf.properties);
-      
+          console.log(documentList);
           // Filter documents that are in the selected documents
           const selectedDocsInCluster = documentList.filter(doc => 
           selectedDocuments.some(selectedDoc => selectedDoc.id === doc.data.id));
+
+          const isSelectedDocsInCluster = showArea
+          ? selectedDocsInCluster.length
+          : true;
           
-          if(isClusterInsideSelectedArea || selectedDocsInCluster) {
+          if(isSelectedDocsInCluster) {
             const popup = new mapboxgl.Popup({ offset: 25, closeButton: false }).setHTML(`
               <div class="cluster-popup">
                 <div class="cluster-popup-header">
@@ -356,6 +350,10 @@ function ExplorePage(props) {
             markersArray.push({marker: marker, data: properties.data});
             const markerEl = marker.getElement();
 
+            if(showArea) {
+              documentList=selectedDocsInCluster;
+            }
+
             markerEl.addEventListener('mouseenter', () => {
               mouseInsideMarker = true;
             
@@ -372,7 +370,7 @@ function ExplorePage(props) {
                 `;
             
                 globalHoverPopup.current
-                  .setLngLat(geometry.coordinates)
+                  .setLngLat(showArea && selectedDocsInCluster.length === 1 ? [selectedDocsInCluster[0].data.lon, selectedDocsInCluster[0].data.lat] : geometry.coordinates)
                   .setHTML(popupContent)
                   .addTo(map);
               }
@@ -390,101 +388,106 @@ function ExplorePage(props) {
               globalHoverPopup.current.remove();
             });
           }
-        } else if(isPointerInsideSelectedArea) {
+        } else {
           
+          // If the marker is associated with one of the selected documents
+          const isMarkerInSelectedDocs = showArea
+          ? selectedDocuments.some(doc => doc.id === properties.data.id)
+          : true; // If showArea is disabled, show all markers
 
-          const iconClass = documentTypeToIcon[properties.data.type] || documentTypeToIcon.default; 
-          const iconElement = document.createElement('i'); 
-          iconElement.className = iconClass; 
-          iconElement.style.fontSize = '20px'; 
-          iconElement.style.color = 'white'; 
+          if(isMarkerInSelectedDocs) {
+            const iconClass = documentTypeToIcon[properties.data.type] || documentTypeToIcon.default; 
+            const iconElement = document.createElement('i'); 
+            iconElement.className = iconClass; 
+            iconElement.style.fontSize = '20px'; 
+            iconElement.style.color = 'white'; 
 
-          const iconContainer = document.createElement('div'); 
-          iconContainer.style.width = '30px'; 
-          iconContainer.style.height = '30px'; 
-          iconContainer.style.display = 'flex'; 
-          iconContainer.style.justifyContent = 'center'; 
-          iconContainer.style.alignItems = 'center';
-          iconContainer.style.borderRadius = '50%';
-          iconContainer.style.backgroundColor = (selectedDocument && properties.data.id==selectedDocument.id) ? '#ffd404' : '#CB1E3B'; 
-          iconContainer.style.border = '2px solid #CB1E3B'; 
-          iconContainer.appendChild(iconElement);
+            const iconContainer = document.createElement('div'); 
+            iconContainer.style.width = '30px'; 
+            iconContainer.style.height = '30px'; 
+            iconContainer.style.display = 'flex'; 
+            iconContainer.style.justifyContent = 'center'; 
+            iconContainer.style.alignItems = 'center';
+            iconContainer.style.borderRadius = '50%';
+            iconContainer.style.backgroundColor = (selectedDocument && properties.data.id==selectedDocument.id) ? '#ffd404' : '#CB1E3B'; 
+            iconContainer.style.border = '2px solid #CB1E3B'; 
+            iconContainer.appendChild(iconElement);
 
-          const popup = new mapboxgl.Popup({
-            offset: 25,
-            closeButton: false,
-          })
-            .setHTML(`
-              <div style="padding: 5px; margin-bottom: -0.4em; display: flex; flex-direction: column;">
-                 <div style="font-size: 1.2em; font-weight: bold;">${properties.label}</div>
-                <button id="view-details-${properties.data.id}" style="margin-top: 12px; padding: 5px; background-color: #218838; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                  View Details
-                </button>
-              </div>
-            `)
-            .on('open', () => {
-              console.log(properties.data);
-              document.getElementById(`view-details-${properties.data.id}`).addEventListener('click', () => {
-                if (activePopup.current) {
-                  activePopup.current.remove(); // Close the currently active popup
-                }
-                iconContainer.style.backgroundColor = '#ffd404';
-                iconContainer.style.border = '2px solid #ffd404';
-                globalHoverPopup.current.remove();
-                setSelectedDocument(properties.data); // Pass data to DocumentViewer
-              });
-              activePopup.current = popup; // Set the current popup
+            const popup = new mapboxgl.Popup({
+              offset: 25,
+              closeButton: false,
             })
-            .on('close', () => {
-              iconContainer.style.backgroundColor = '#CB1E3B';
-              iconContainer.style.border = '2px solid #CB1E3B';
-              activePopup.current = null; // Clear the reference when popup closes
-              setSelectedDocument(null);
-            });
-
-          const marker = new mapboxgl.Marker({
-            element: iconContainer,
-          })
-            .setLngLat(geometry.coordinates);
-
-          if (!selectMode && popup) {
-            marker.setPopup(popup);
-          }
-            
-          marker.addTo(map);
-
-            markersArray.push({ marker: marker, data: properties.data });
-
-            const singleMarkerEl = marker.getElement();
-            if (properties.data.lat && properties.data.lon) {
-              singleMarkerEl.addEventListener('mouseenter', () => {
-                mouseInsideMarker = true;
-                if (!activePopup.current) {
-                  globalHoverPopup.current
-                    .setLngLat([properties.data.lon, properties.data.lat])
-                    .setHTML(`<div>${properties.label}</div>`)
-                    .addTo(map);
-                }
-              });
-  
-              singleMarkerEl.addEventListener('mouseleave', () => {
-                mouseInsideMarker = false;
-                if (!activePopup.current) {
+              .setHTML(`
+                <div style="padding: 5px; margin-bottom: -0.4em; display: flex; flex-direction: column;">
+                  <div style="font-size: 1.2em; font-weight: bold;">${properties.label}</div>
+                  <button id="view-details-${properties.data.id}" style="margin-top: 12px; padding: 5px; background-color: #218838; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    View Details
+                  </button>
+                </div>
+              `)
+              .on('open', () => {
+                console.log(properties.data);
+                document.getElementById(`view-details-${properties.data.id}`).addEventListener('click', () => {
+                  if (activePopup.current) {
+                    activePopup.current.remove(); // Close the currently active popup
+                  }
+                  iconContainer.style.backgroundColor = '#ffd404';
+                  iconContainer.style.border = '2px solid #ffd404';
                   globalHoverPopup.current.remove();
-                }
+                  setSelectedDocument(properties.data); // Pass data to DocumentViewer
+                });
+                activePopup.current = popup; // Set the current popup
+              })
+              .on('close', () => {
+                iconContainer.style.backgroundColor = '#CB1E3B';
+                iconContainer.style.border = '2px solid #CB1E3B';
+                activePopup.current = null; // Clear the reference when popup closes
+                setSelectedDocument(null);
               });
-  
-              singleMarkerEl.addEventListener('click', () => {
-                if (selectMode && !showArea) {
-                  handleMarkerClick(properties.data);
-                }
-                globalHoverPopup.current.remove();
-              });
-            }
 
-          if (properties.data.area) {
-            
-            const areaGeoJson = JSON.parse(JSON.parse(properties.data.area));
+            const marker = new mapboxgl.Marker({
+              element: iconContainer,
+            })
+              .setLngLat(geometry.coordinates);
+
+            if (!selectMode && popup) {
+              marker.setPopup(popup);
+            }
+              
+            marker.addTo(map);
+
+              markersArray.push({ marker: marker, data: properties.data });
+
+              const singleMarkerEl = marker.getElement();
+              if (properties.data.lat && properties.data.lon) {
+                singleMarkerEl.addEventListener('mouseenter', () => {
+                  mouseInsideMarker = true;
+                  if (!activePopup.current) {
+                    globalHoverPopup.current
+                      .setLngLat([properties.data.lon, properties.data.lat])
+                      .setHTML(`<div>${properties.label}</div>`)
+                      .addTo(map);
+                  }
+                });
+    
+                singleMarkerEl.addEventListener('mouseleave', () => {
+                  mouseInsideMarker = false;
+                  if (!activePopup.current) {
+                    globalHoverPopup.current.remove();
+                  }
+                });
+    
+                singleMarkerEl.addEventListener('click', () => {
+                  if (selectMode && !showArea) {
+                    handleMarkerClick(properties.data);
+                  }
+                  globalHoverPopup.current.remove();
+                });
+              }
+
+            if (properties.data.area) {
+              
+              const areaGeoJson = JSON.parse(JSON.parse(properties.data.area));
 
             const layerId = `area-layer-${properties.data.id}`;
             
@@ -554,7 +557,8 @@ function ExplorePage(props) {
             }
           }
 
-          markersArray.push({marker: marker, data: properties.data});
+            markersArray.push({marker: marker, data: properties.data});
+          }
         }
       });
 
