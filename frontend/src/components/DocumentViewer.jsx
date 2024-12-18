@@ -26,96 +26,98 @@ const DocumentViewer = ({ isLoggedIn, documentData, onClose }) => {
   };
 
   const handleEditClick = () => {
-    navigate(`/editDocument/${documentData.id}`, { state: { document: documentData, explorePage: true} });
+    navigate(`/editDocument/${documentData.id}`, { state: { document: documentData, explorePage: true } });
   };
 
   const handleLinkClick = async (link) => {
     try {
-        const linkedDocData = await getDocumentById(link.id); 
-        setSelectedLinkedDocument(linkedDocData); 
+      const linkedDocData = await getDocumentById(link.id); 
+      setSelectedLinkedDocument(linkedDocData); 
     } catch (error) {
-        console.error('Error fetching linked document:', error.message);
-        alert(error.message); 
+      console.error('Error fetching linked document:', error.message);
+      alert(error.message); 
     }
-};
+  };
 
   if (!documentData) return null;
 
   return (
-<div className="my-document-viewer-wrapper">
-  <div className="document-viewer">
-    <div className="fixed-header">
-      <h3>{documentData.title}</h3>
-      <button className="close-button" onClick={onClose}>&times;</button>
-    </div>
-    {!viewDescription ? (
-      <div className="document-details">
-        <div className="scrollable-content">
-          <p><strong>Stakeholder:</strong> {documentData.stakeholders}</p>
-          <p><strong>Issuance date:</strong> {documentData.issuanceDate}</p>
-          <p><strong>Type:</strong> {documentData.type}</p>
-          <button 
-                className='btn-as-label' 
-                onClick={handleConnectionsClick} 
-                style={{ cursor: 'pointer', color: 'blue' }}>
-                <strong>Connections:</strong>
-              </button>
-          {showLinks && (
-            <ul className="document-links custom-document-links">
-              {documentLinks && documentLinks.length > 0 ? (
-                    documentLinks.map((link, index) => (
-                      <button
-                      key={link.title + index}
-                      onClick={() => handleLinkClick(link)}
-                      style={{
-                          cursor: 'pointer',
-                          textDecoration: 'none',
-                          background: 'none',
-                          border: 'none',
-                          textAlign: 'left',
-                          color: 'inherit',
-                      }}
-                    >
-                      {link.title + " | " + link.type}
-                    </button>
-                    
-
-                    ))
-                  ) : (
-                    <p>No connections available</p>
+    <div className="my-document-viewer-wrapper">
+      {/* Main document viewer is now conditionally rendered */}
+      {!selectedLinkedDocument && (
+        <div className="document-viewer">
+          <div className="fixed-header">
+            <h3>{documentData.title}</h3>
+            <button className="close-button" onClick={onClose}>&times;</button>
+          </div>
+          {!viewDescription ? (
+            <div className="document-details">
+              <div className="scrollable-content">
+                <p><strong>Stakeholder:</strong> {documentData.stakeholders}</p>
+                <p><strong>Issuance date:</strong> {documentData.issuanceDate}</p>
+                <p><strong>Type:</strong> {documentData.type}</p>
+                <button 
+                  className='btn-as-label' 
+                  onClick={handleConnectionsClick} 
+                  style={{ cursor: 'pointer', color: 'blue' }}
+                >
+                  <strong>Connections:</strong>
+                </button>
+                {showLinks && (
+                  <ul className="document-links custom-document-links">
+                    {documentLinks && documentLinks.length > 0 ? (
+                      documentLinks.map((link, index) => (
+                        <button
+                          key={link.title + index}
+                          onClick={() => handleLinkClick(link)}
+                          style={{
+                            cursor: 'pointer',
+                            textDecoration: 'none',
+                            background: 'none',
+                            border: 'none',
+                            textAlign: 'left',
+                            color: 'inherit',
+                          }}
+                        >
+                          {link.title + " | " + link.type}
+                        </button>
+                      ))
+                    ) : (
+                      <p>No connections available</p>
+                    )}
+                  </ul>
+                )}
+                <div className="button-group">
+                  {isLoggedIn && (
+                    <button className="btn-edit-style" onClick={handleEditClick}>Edit</button>
                   )}
-            </ul>
+                  <button onClick={() => setViewDescription(true)}>View Description</button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="document-description">
+              <div className="scrollable-content">
+                <p><strong>Description:</strong> {documentData.description}</p>
+                <div className="button-group">
+                  <button onClick={() => setViewDescription(false)}>Back to Details</button>
+                </div>
+              </div>
+            </div>
           )}
-          <div className="button-group">
-            {isLoggedIn && (
-              <button className="btn-edit-style" onClick={handleEditClick}>Edit</button>
-            )}
-            <button onClick={() => setViewDescription(true)}>View Description</button>
-          </div>
         </div>
-      </div>
-    ) : (
-      <div className="document-description">
-        <div className="scrollable-content">
-          <p><strong>Description:</strong> {documentData.description}</p>
-          <div className="button-group">
-            <button onClick={() => setViewDescription(false)}>Back to Details</button>
-          </div>
-        </div>
-      </div>
-    )}
-  </div>
-  {/* Nested DocumentViewer for the linked document */}
-  {selectedLinkedDocument && (
+      )}
+
+      {/* Nested DocumentViewer for the linked document */}
+      {selectedLinkedDocument && (
         <div className="my-document-viewer-wrapper nested-popup">
           <div className="document-viewer">
             <div className="fixed-header">
               <h3>{selectedLinkedDocument.title}</h3>
-              <button className="close-button"   onClick={() => {
-              setSelectedLinkedDocument(null);
-              onClose(); 
-               }}
-              >&times;</button>
+              <button className="close-button" onClick={() => {
+                setSelectedLinkedDocument(null);
+                onClose(); 
+              }}>&times;</button>
             </div>
             <div className="document-details">
               <div className="scrollable-content">
@@ -128,10 +130,7 @@ const DocumentViewer = ({ isLoggedIn, documentData, onClose }) => {
           </div>
         </div>
       )}
-</div>
-
-
-
+    </div>
   );
 };
 
@@ -140,7 +139,5 @@ DocumentViewer.propTypes = {
   documentData: PropTypes.object,
   onClose: PropTypes.func,
 };
-
-
 
 export default DocumentViewer;
