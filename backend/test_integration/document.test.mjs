@@ -3,8 +3,7 @@ import { app, server } from "../index.mjs";
 import request from "supertest";
 import { cleanup } from "../db/cleanup.mjs";
 import DocumentDao from '../dao/document.mjs'; 
-//jest.mock('../dao/document.mjs'); // Mock the module that contains getDocumentById
-
+import db from '../db/db.mjs';
 
 
 // define baseurl
@@ -615,3 +614,41 @@ describe('GET /api/documents/:id', () => {
         spyOn.mockRestore();
     });
 });
+
+
+describe('GET /api/getAreaNames', () => {
+  
+    test('should return 200 and area names if areas are found', async () => {
+      const mockAreas = [
+        { areaName: 'Area 1', coordinates: 'POLYGON((...))' },
+        { areaName: 'Area 2', coordinates: 'POLYGON((...))' },
+      ];
+  
+      db.all = jest.fn((query, params, callback) => callback(null, mockAreas));
+  
+      const response = await request(app).get('/api/getAreaNames');
+  
+      expect(response.status).toBe(200);
+      expect(response.body.areas).toEqual(mockAreas);
+    });
+  
+    test('should return 404 if no areas are found', async () => {
+      db.all = jest.fn((query, params, callback) => callback(null, []));
+  
+      const response = await request(app).get('/api/getAreaNames');
+  
+      expect(response.status).toBe(404);
+      expect(response.body.message).toBe('No areas found');
+    });
+  
+    test('should return 500 if there is a database error', async () => {
+      const errorMessage = 'Database error';
+      db.all = jest.fn((query, params, callback) => callback(new Error(errorMessage), null));
+  
+      const response = await request(app).get('/api/getAreaNames');
+  
+      expect(response.status).toBe(500);
+      expect(response.body.message).toBe('Internal server error');
+      expect(response.body.error).toBe(errorMessage);
+    });
+  });
