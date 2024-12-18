@@ -88,6 +88,7 @@ function DocumentInList(props){
               <Col className='text-end'>
                 <button
                   className="btn btn-primary bi bi-geo-alt me-2"
+                  style={{ backgroundColor: "#DAA520", borderColor: "#DAA520" }}
                   onClick={handleShowOnMap}
                 />
                 <Link
