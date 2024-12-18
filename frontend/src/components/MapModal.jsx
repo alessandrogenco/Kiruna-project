@@ -23,6 +23,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
   const [areaSet, setAreaSet] = useState(false);
   const [areaNames, setAreaNames] = useState([]);
   const [selAreaTemp, setSelAreaTemp] = useState(selectedAreaName || '');
+  const [isSaveDisabled, setIsSaveDisabled] = useState(false);
 
   useEffect(() => {
     if (show) {
@@ -517,7 +518,13 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
       onLocationSelect({ type: 'point', coordinates: position });
     } else if (mode === 'area') {
       const drawnFeatures = draw.current.getAll();
-      if (drawnFeatures.features.length > 0) {
+      if (selAreaTemp){
+        console.log("ok");
+        const coordinates = areaNames.find(area => area.areaName === selAreaTemp).coordinates;
+        console.log("coord:" + coordinates);
+        setSelectedAreaName(selAreaTemp);
+        onLocationSelect({type: 'area', geometry: coordinates, name: selAreaTemp});
+      } else if (drawnFeatures.features.length > 0) {
         const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: drawnFeatures.features });
         if (selAreaTemp){
           setSelectedAreaName(selAreaTemp);
@@ -525,12 +532,16 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
         const areaName = areaNameInput || selectedAreaName;
 
         console.log('Saving area with name:', areaName); 
-        console.log(areaNameInput);
 
         onLocationSelect({ type: 'area', geometry: geoJsonString, name: areaName })
 
         //save area created with its name
-
+        // Check for duplicate area names
+        if (areaNames.some(area => area.areaName === areaName)) {
+          setAlertMessage('Error: No two documents can have the same area name.');
+          setIsSaveDisabled(true);
+          return;
+        }
 
         fetchAreaNames(); 
       } else if (geoJsonData) {
@@ -553,6 +564,11 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
     setSelAreaTemp('');
     handleClose();
   };
+
+  useEffect(() => {
+    const isExistingArea = areaNames.some(area => area.areaName === areaNameInput);
+    setIsSaveDisabled(isExistingArea);
+  }, [areaNameInput, areaNames]);
 
   return (
     <Modal show={show} onHide={handleClose1} size="lg" centered>
@@ -706,8 +722,8 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
         <Button variant="secondary" onClick={handleClose1}>
           Close
         </Button>
-        <Button style={{ backgroundColor: '#28a745', border: 'none' }} onClick={handleSave}>
-          Save Location
+        <Button style={{ backgroundColor: '#28a745', border: 'none' }} onClick={handleSave} disabled={isSaveDisabled}>
+          Save location
         </Button>
       </Modal.Footer>
     </Modal>
@@ -720,10 +736,9 @@ MapModal.propTypes = {
   onLocationSelect: PropTypes.func.isRequired,
   documentId: PropTypes.string,
   selectedAreaName: PropTypes.string,
-  setSelectedAreaName: PropTypes.string,
+  setSelectedAreaName: PropTypes.func,
   areaNameInput: PropTypes.string,
-  setAreaNameInput: PropTypes.string,
-
+  setAreaNameInput: PropTypes.func
 };
 
 export default MapModal;

@@ -966,7 +966,7 @@ function DocumentControl(props) {
             <Button className="me-3" variant="success" type="submit">
               {documentId ? "Save" : "Add"}
             </Button>
-            <Button variant="danger" onClick={() => explorePage ? navigate('/explore') : navigate('/documentsPage')}>
+            <Button variant="danger" onClick={() => props.explorePage ? navigate('/explore') : navigate('/documentsPage')}>
               Cancel
             </Button>
           </Col>
@@ -979,6 +979,7 @@ function DocumentControl(props) {
 DocumentControl.propTypes = {
   isLoggedIn: PropTypes.bool,
   handleLogout: PropTypes.func,
+  explorePage: PropTypes.bool
 };
 
 export default DocumentControl;
