@@ -515,15 +515,15 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
     console.log('Saving location with area name:', selectedAreaName);
 
     if (mode === 'point' && position) {
+      setSelectedAreaName('');
       onLocationSelect({ type: 'point', coordinates: position });
     } else if (mode === 'area') {
       const drawnFeatures = draw.current.getAll();
-      if (selAreaTemp){
-        console.log("ok");
+      if (selAreaTemp) {
         const coordinates = areaNames.find(area => area.areaName === selAreaTemp).coordinates;
         console.log("coord:" + coordinates);
         setSelectedAreaName(selAreaTemp);
-        onLocationSelect({type: 'area', geometry: coordinates, name: selAreaTemp});
+        onLocationSelect({type: 'area', geometry: convertPolygonToGeoJson(JSON.parse(coordinates)), name: selAreaTemp});
       } else if (drawnFeatures.features.length > 0) {
         const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: drawnFeatures.features });
         if (selAreaTemp){
@@ -559,6 +559,33 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
     }
     handleClose();
   };
+
+  function convertPolygonToGeoJson(inputPolygon) {
+    // Controlliamo che l'input sia nel formato corretto (un oggetto Polygon)
+    if (inputPolygon.type !== "Polygon") {
+        throw new Error("Invalid input format. Expected a Polygon with coordinates.");
+    }
+
+    // Generiamo l'oggetto GeoJSON nel formato desiderato
+    const geoJson = {
+        type: "FeatureCollection",
+        features: [
+            {
+                id: "013c42e282440ea1aba90d4c9b5d5617",  // Puoi generare un ID univoco se necessario
+                type: "Feature",
+                properties: {},  // Aggiungi le proprietà se necessario
+                geometry: {
+                    type: "Polygon",
+                    coordinates: inputPolygon.coordinates
+                }
+            }
+        ]
+    };
+
+    // Restituiamo la stringa JSON
+    return JSON.stringify(geoJson);
+}
+
 
   const handleClose1 = () => {
     setSelAreaTemp('');
