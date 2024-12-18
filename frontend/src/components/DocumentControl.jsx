@@ -898,28 +898,6 @@ function DocumentControl(props) {
             </Col>
           </Row>
 
-          <Row className="mb-4 mx-3">
-            <Form.Group controlId="formArea" className="me-4">
-              <Form.Label>Select Area</Form.Label>
-              <Form.Select
-                value={selectedAreaName}
-                onChange={(e) => {
-                  const selectedAreaName = e.target.value;
-                  console.log('Selected Area Name:', selectedAreaName); // Debugging log
-                  setSelectedAreaName(selectedAreaName);
-                  highlightArea(selectedAreaName);
-                }}
-              >
-                <option value="">Select an area</option>
-                {Array.isArray(areaNames) && areaNames.map(area => (
-                  <option key={area.areaName} value={area.areaName}>
-                    {area.areaName}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group>
-          </Row>
-
           <Row className="mx-3 mb-4">
             <Form.Group controlId="formDescription">
               <Form.Label className='form-label pb-2'>
