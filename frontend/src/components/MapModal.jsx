@@ -652,19 +652,6 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
               </Form.Group>
             </div>
           )}
-          {selectedAreaName && (
-            <div style={{
-              position: 'absolute',
-              top: '120px',
-              left: '10px',
-              zIndex: 2,
-              background: 'white',
-              padding: '5px',
-              borderRadius: '5px',
-              boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)'}}>
-              <strong>Selected Area:</strong> {selectedAreaName}
-            </div>
-          )}
 
         </div>
       </Modal.Body>
