@@ -527,7 +527,12 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
         console.log('Saving area with name:', areaName); 
         console.log(areaNameInput);
 
-        onLocationSelect({ type: 'area', geometry: geoJsonString, name: areaName }); 
+        onLocationSelect({ type: 'area', geometry: geoJsonString, name: areaName })
+
+        //save area created with its name
+
+
+        fetchAreaNames(); 
       } else if (geoJsonData) {
         const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: geoJsonData.features });
 
@@ -643,7 +648,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
           {mode === 'area' && (
             <div style={{
               position: 'absolute',
-              top: '60px',
+              top: '65px',
               left: '10px',
               zIndex: 2,
               background: 'white',
@@ -683,8 +688,8 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
                   ))}
                 </Form.Select>
               </Form.Group>
-              <Form.Group controlId="areaNameInput">
-                <Form.Label>Name the Area</Form.Label>
+              <Form.Group controlId="areaNameInput" style={{paddingTop: '10px'}}>
+                <Form.Label style={{marginBottom: '0px'}}>Name the Area</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Enter area name"
