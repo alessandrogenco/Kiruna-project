@@ -505,29 +505,7 @@ function ExplorePage(props) {
               },
             };
           
-            if(showArea) {
-              if (!map.getSource(layerId)) {
-                map.addSource(layerId, polygonSource);
-              }
-              
-              if (!map.getLayer(layerId)) {
-                map.addLayer({
-                  id: layerId,
-                  type: 'fill',
-                  source: layerId,
-                  paint: {
-                    'fill-color': 'rgba(255, 99, 71, 0.5)',
-                    'fill-opacity': 0.5,
-                  },
-                });
-              }
-            } else {
-              if (map.getLayer(layerId)) {
-                map.removeLayer(layerId);
-              }
-              if (map.getSource(layerId)) {
-                map.removeSource(layerId);
-              }
+            if(!showArea) {
               marker.getElement().addEventListener('mouseenter', () => {
                 if (!map.getSource(layerId)) {
                   map.addSource(layerId, polygonSource);
@@ -564,34 +542,6 @@ function ExplorePage(props) {
 
       markersLayer.current = markersArray;
     }
-  };
-
-  // Function to check if the cluster is within the area of ​​a selected document
-  const isClusterInsideArea = (coordinates, doc) => {
-    if(doc.area) {
-      const areaGeoJson = doc.area;
-      const point = turf.point(coordinates);
-      const polygon = turf.polygon(JSON.parse(JSON.parse(areaGeoJson)).features[0].geometry.coordinates);
-
-      return turf.booleanPointInPolygon(point, polygon);
-    }
-    return false;
-  };
-
-  // Function to check if the marker is within the area of ​​a selected document
-  const isPointerInsideArea = (coordinates, doc) => {
-    if(doc.area) {
-      const areaGeoJson = doc.area;
-      const point = turf.point(coordinates);
-      const polygon = turf.polygon(JSON.parse(JSON.parse(areaGeoJson)).features[0].geometry.coordinates);
-  
-      return turf.booleanPointInPolygon(point, polygon);
-    } else {
-      if(coordinates[0] === doc.lon && coordinates[1] === doc.lat)
-        return true;
-      return false;
-    }
-    
   };
 
   const createClusterIcon = (count) => {
@@ -773,9 +723,58 @@ function ExplorePage(props) {
     setShowArea(false);
   };
 
+  const createCommonArea = () => {
+    const areas = selectedDocuments
+      .filter(doc => doc.area)
+      .map(doc => turf.polygon(JSON.parse(JSON.parse(doc.area)).features[0].geometry.coordinates));
+    
+    const multiPolygon = turf.multiPolygon(areas.map(area => area.geometry.coordinates));
+
+    return multiPolygon;
+  };
+
   useEffect(() => {
-    if(!selectMode)
+    if(showArea) {
+      const commonArea = createCommonArea();
+
+      if (commonArea) {
+        const layerId = 'common-area-layer';
+
+        if (!map.getSource(layerId)) {
+          map.addSource(layerId, {
+            type: 'geojson',
+            data: commonArea,
+          });
+        }
+
+        if (!map.getLayer(layerId)) {
+          map.addLayer({
+            id: layerId,
+            type: 'fill',
+            source: layerId,
+            paint: {
+              'fill-color': 'rgba(255, 99, 71, 0.5)',
+              'fill-opacity': 0.5,
+            },
+          });
+        }
+      }
+    }
+  },[showArea]);
+
+  useEffect(() => {
+    if(!selectMode) {
       setSelectedDocuments([]);   // Reset the selected documents 
+      const layerId = 'common-area-layer';
+      if(map) {
+        if (map.getLayer(layerId)) {
+          map.removeLayer(layerId);
+        }
+        if (map.getSource(layerId)) {
+          map.removeSource(layerId);
+        }
+      }
+    }
     console.log("Select Mode: ", selectMode);
   },[selectMode]);
 
