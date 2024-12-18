@@ -138,14 +138,25 @@ class DocumentDao{
                     console.error('Database error while adding document:', err.message);
                     return reject(new Error('Database error: ' + err.message));
                   }
-        
-                  const query = 'INSERT INTO Areas (areaName, coordinates) VALUES (?, ?)';
-                  const values = [areaName, area];
-              
-                  db.run(query, values, (error, results) => {
+                  
+                  const queryCheckExistence = 'SELECT COUNT(*) AS count FROM Areas WHERE areaName = ?';
+                  db.get(queryCheckExistence, [areaName], (error, row) => {
                     if (error) {
-                      return reject(new Error(`Database error while saving area: ${error.message}`));
-                    }        
+                      return reject(new Error(`Database error while checking for area existence: ${error.message}`));
+                    }
+                  
+                    if (row.count > 0) {
+                      return reject(new Error('Area with this name already exists.'));
+                    }
+
+                    const query = 'INSERT INTO Areas (areaName, coordinates) VALUES (?, ?)';
+                    const values = [areaName, area];
+                
+                    db.run(query, values, (error, results) => {
+                        if (error) {
+                        return reject(new Error(`Database error while saving area: ${error.message}`));
+                        }        
+                    });
                   });
                   resolve({
                     id: this.lastID,
