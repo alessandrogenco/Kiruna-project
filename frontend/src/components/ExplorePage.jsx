@@ -813,13 +813,13 @@ function ExplorePage(props) {
           top: '90px',
           left: '20px',
           padding: '10px',
-          backgroundColor: selectMode ? '#ff0000' : '#28a745',
+          backgroundColor: selectMode ? '#CB1E3B' : '#28a745',
           color: '#fff',
-          border: '1px solid #fff',
           borderRadius: '8px',
           cursor: 'pointer',
           zIndex: 1000,
         }}
+        className='toggle'
         onClick={() => handleSelectToggle()}
       >
         {selectMode ? 'Exit Select Mode' : 'Select Documents'}
