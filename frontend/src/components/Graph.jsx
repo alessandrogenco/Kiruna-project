@@ -333,7 +333,7 @@ const DocumentGraph = (props) => {
           style: {
             ...node.style,
             border: node.id === props.selectedDocument.id.toString() ? "2px solid #ffd404" : "1px solid #ddd",
-            background: node.id === props.selectedDocument.id.toString() ? "#ffd404" : node.style.backgroundColor,
+            backgroundColor: node.id === props.selectedDocument.id.toString() ? "#ffd404" : node.style.backgroundColor,
           },
         }))
       );
