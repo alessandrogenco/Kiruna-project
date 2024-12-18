@@ -216,7 +216,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
                   const areaGeoJson = JSON.parse(areaGeoJson1);
 
                   if (areaGeoJson.features && areaGeoJson.features.length > 0) {
-                    console.log('Area data loaded for the selected point:', areaGeoJson);
+                    //console.log('Area data loaded for the selected point:', areaGeoJson);
 
                     // Rimuovi l'area attuale se già presente
                     let features = draw.current.getAll().features;
@@ -305,6 +305,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
               const centroid = turf.centroid(polygon);
               setAreaCentroid(centroid.geometry.coordinates);
               displayCentroidMarker(centroid.geometry.coordinates);
+              setSelectedAreaName(''); // Reset the selected area name
             }
             setAreaSet(true);
           }
