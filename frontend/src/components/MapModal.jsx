@@ -286,6 +286,15 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
 
         map.current.on('draw.create', (e) => {
           if (mode === 'area') {
+            // Remove any existing highlighted area layers and sources
+            const existingLayers = map.current.getStyle().layers;
+            existingLayers.forEach(layer => {
+                if (layer.id.startsWith('highlight-area-')) {
+                    console.log(`Removing existing layer: ${layer.id}`);
+                    map.current.removeLayer(layer.id);   // Remove the previous layer
+                    map.current.removeSource(layer.id);  // Remove the source associated with the previous layer
+                }
+            });
             console.log('draw.create event fired', e);
             let features = draw.current.getAll().features;
             if (features.length > 1) {
