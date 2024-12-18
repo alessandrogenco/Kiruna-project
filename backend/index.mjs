@@ -394,7 +394,7 @@ app.delete('/api/deleteLink', async (req, res) => {
 
     // Validazione dei parametri
     if (!idDocument1 || !idDocument2 || !linkType) {
-        return res.status(400).json({ error: 'idDocument1, idDocument2 e linkType sono obbligatori' });
+        return res.status(400).json({ error: 'idDocument1, idDocument2, and linkType are mandatory' });
     }
 
     try {
@@ -405,7 +405,7 @@ app.delete('/api/deleteLink', async (req, res) => {
         });
     } catch (error) {
         if (error.message === 'Link not found') {
-            return res.status(404).json({ error: 'Il link specificato non esiste' });
+            return res.status(404).json({ error: 'The specified link does not exist' });
         }
         console.error('Errore durante l\'eliminazione del link:', error.message);
         return res.status(500).json({ error: 'Errore interno del server' });

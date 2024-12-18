@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "node ourtest.mjs",
-    "test_unit": "set NODE_ENV=test && jest --coverage --runInBand --testPathPattern=test_unit",
-    "test_integration": "set NODE_ENV=test && jest --coverage --runInBand --testPathPattern=test_integration"
+    "test_unit": "cross-env NODE_ENV=test jest --coverage --runInBand --testPathPattern=test_unit",
+    "test_integration": "cross-env NODE_ENV=test jest --coverage --runInBand --testPathPattern=test_integration"
   },
   "author": "",
   "license": "ISC",
@@ -32,6 +32,7 @@
     "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
     "babel-jest": "^29.7.0",
+    "cross-env": "^7.0.3",
     "jest": "^29.7.0"
   }
 }

@@ -3,7 +3,6 @@ import { app, server } from "../index.mjs";
 import request from "supertest";
 import { cleanup } from "../db/cleanup.mjs";
 
-
 // define baseurl
 const baseURL = "/api/";
 
@@ -509,3 +508,62 @@ describe('GET /api/documents/types', () => {
     });
   
 });
+
+
+
+//------------------------------
+
+
+describe('DELETE /api/deleteLink', () => {
+    test('should return a 400 error if missing parameters', async () => {
+        const response = await request(app)
+            .delete('/api/deleteLink')
+            .send({
+                // Missing parameters
+            });
+
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe('idDocument1, idDocument2, and linkType are mandatory');
+    });
+
+    test('should return a 404 error if the link does not exist', async () => {
+        const response = await request(app)
+            .delete('/api/deleteLink')
+            .send({
+                idDocument1: 1,
+                idDocument2: 2,
+                linkType: 'related'
+            });
+
+        expect(response.status).toBe(404);
+        expect(response.body.error).toBe('The specified link does not exist');
+    });
+
+    // test('should successfully delete the link and return a success message', async () => {
+    //     const response = await request(app)
+    //         .delete('/api/deleteLink')
+    //         .send({
+    //             idDocument1: 1,
+    //             idDocument2: 2,
+    //             linkType: 'related'
+    //         });
+
+    //     expect(response.status).toBe(200);
+    //     expect(response.body.message).toBe('Link successfully deleted');
+    // });
+
+    // test('should return a 500 error in case of an internal server error', async () => {
+    //     const response = await request(app)
+    //         .delete('/api/deleteLink')
+    //         .send({
+    //             idDocument1: 1,
+    //             idDocument2: 2,
+    //             linkType: 'related'
+    //         });
+
+    //     expect(response.status).toBe(500);
+    //     expect(response.body.error).toBe('Internal server error');
+    // });
+});
+
+
