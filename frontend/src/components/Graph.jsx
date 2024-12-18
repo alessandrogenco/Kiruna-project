@@ -6,6 +6,7 @@ import './Graph.css';
 import axios from "axios";
 import AppNavbar from './Navbar';
 import DocumentViewer from "./DocumentViewer";
+import { useNavigate } from 'react-router-dom';
 
 // Normalizza la data in formato `YYYY-MM-DD`
 const normalizeDate = (date) => {
@@ -238,6 +239,7 @@ function computeEdges(nodes, documents, setTooltip) {
 
 const DocumentGraph = (props) => {
 
+  const navigate = useNavigate();
   const [nodesState, setNodes] = useNodesState([]);
   const [edgesState, setEdges] = useEdgesState([]);
   const [showGraph, setShowGraph] = useState(0);
@@ -254,16 +256,21 @@ const DocumentGraph = (props) => {
   };
 
   useEffect(() => {
-    getTypes()
-    .then((response) => {
-      const types = response.map((type) => {
-        return type.name;
+
+    if(props.isLoggedIn === false) {
+      navigate("/explore");
+    } else {
+      getTypes()
+      .then((response) => {
+        const types = response.map((type) => {
+          return type.name;
+        });
+        setTypes(types);
+      })
+      .catch((error) => {
+        console.error("Error fetching types:", error);
       });
-      setTypes(types);
-    })
-    .catch((error) => {
-      console.error("Error fetching types:", error);
-    });
+    }
   }, []);
 
 

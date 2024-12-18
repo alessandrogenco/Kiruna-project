@@ -97,9 +97,6 @@ function App() {
           element={<DocumentGraph isLoggedIn={loggedIn} handleLogout={handleLogout} documents={documents} setDocuments={setDocuments} graphSize={fullGraphSize}/>}
         />
         <Route
-          path="/link-documents"
-        />
-        <Route
           path="/documentsPage"
           element={<DocumentPage isLoggedIn={loggedIn} handleLogout={handleLogout} documents={documents} setDocuments={setDocuments}/>}
         />

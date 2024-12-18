@@ -7,29 +7,40 @@ import './DocumentList.css';
 import { getDocumentLinks } from '../API.mjs';
 import API from '../API.mjs';
 import axios from 'axios';
+import { use } from 'react';
+
 
 function DocumentList(props){
 
-    return(
-        <>
-            <h1 className='mx-4'>Documents</h1>
-            <ListGroup>
-                {props.documents.map((doc) => <DocumentInList
-                    key={doc.id}
-                    documentData={doc}
-                    updateDocument={props.updateDocument}
-                    deleteDocument={props.deleteDocument}
-                    />)}
-            </ListGroup>
-            <div style={{ height: '50px' }}></div>
-        </>
-    )
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (props.isLoggedIn == false){
+      navigate("/explore");
+    }
+  }, []);
+
+  return(
+      <>
+          <h1 className='mx-4'>Documents</h1>
+          <ListGroup>
+              {props.documents.map((doc) => <DocumentInList
+                  key={doc.id}
+                  documentData={doc}
+                  updateDocument={props.updateDocument}
+                  deleteDocument={props.deleteDocument}
+                  />)}
+          </ListGroup>
+          <div style={{ height: '50px' }}></div>
+      </>
+  )
 }
 
 DocumentList.propTypes = {
     documents: PropTypes.array, 
     updateDocument: PropTypes.func,
     deleteDocument: PropTypes.func,
+    isLoggedIn: PropTypes.bool
 };
 
 function DocumentInList(props){

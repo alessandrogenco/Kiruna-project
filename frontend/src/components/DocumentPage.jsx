@@ -57,11 +57,12 @@ function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) 
     
 
     useEffect(() => {
+        if (!isLoggedIn){
+            navigate('/explore');
+        }
         getDocuments();
         getDocumentTypes(); 
     }, []);
-    
-
     
     // Funzione per eliminare un documento
     const handleDelete = async (docId) => {
@@ -172,6 +173,7 @@ function DocumentPage({isLoggedIn, handleLogout, documents = [], setDocuments}) 
                 documents={filteredDocuments} 
                 updateDocument={handleUpdateDocument} 
                 deleteDocument={handleDelete}
+                isLogged={isLoggedIn}
             />
         </>
     );
