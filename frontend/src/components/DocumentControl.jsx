@@ -23,6 +23,7 @@ function DocumentControl(props) {
   const [areaNames, setAreaNames] = useState([]);
   const [selectedAreaName, setSelectedAreaName] = useState('');
   const [areaNameInput, setAreaNameInput] = useState(''); 
+  const [deletedLinks,setDeletedLinks] = useState([]);
   
 
   const existingDocument = location.state?.document;
@@ -454,6 +455,10 @@ function DocumentControl(props) {
 
       await createLinks(); // Crea i link
 
+      deletedLinks.forEach(link => {
+        handleDeleteLink(newDocumentId, link.id, link.type);
+      });
+
       setNewLinks([]);
 
       // Mostra il messaggio di successo
@@ -472,6 +477,17 @@ function DocumentControl(props) {
   const handleMapSelection = () => {
     setShowMapModal(true);
   };
+
+  const handleDeleteLink = async (idDocument1, idDocument2, linkType) => {
+    try {
+      console.log('Deleting link:', idDocument1, idDocument2, linkType);
+      const result = await API.deleteLink(idDocument1, idDocument2, linkType);
+      
+    } catch (error) {
+      console.error('Error deleting link:', error);
+    }
+  };
+  
 
   const handleLocationSelect = (locationData) => {
     if (locationData.type === 'point') {
@@ -562,6 +578,8 @@ function DocumentControl(props) {
       }));
     }
   };
+
+ 
 
   return (
     <>
@@ -924,7 +942,7 @@ function DocumentControl(props) {
         </div>
 
         <div className="link-section">
-          <LinkControl selectedId={documentId} links={links} newLinks={newLinks} setNewLinks={setNewLinks} setHasDuplicates={setHasDuplicates} hasDuplicates={hasDuplicates} />
+          <LinkControl selectedId={documentId} links={links} newLinks={newLinks} setNewLinks={setNewLinks} setHasDuplicates={setHasDuplicates} hasDuplicates={hasDuplicates} deletedLinks={deletedLinks} setDeletedLinks={setDeletedLinks} />
         </div>
 
         {/* Banner di errore */}

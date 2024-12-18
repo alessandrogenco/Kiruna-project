@@ -7,8 +7,8 @@ import '../styles/DocumentList.css';
 
 
 const LinkControl = (props) => {
-  const { selectedId, links, newLinks, setNewLinks, setHasDuplicates, hasDuplicates } = props;
-
+  const { selectedId, links, newLinks, setNewLinks, setHasDuplicates, hasDuplicates, deletedLinks, setDeletedLinks } = props;
+  
   const [documents, setDocuments] = useState([]);
   const [rows, setRows] = useState([{ targetDocument: '', linkType: '' }]);
   const [error, setError] = useState('');
@@ -90,7 +90,7 @@ const LinkControl = (props) => {
 
   return (
     <div className="mx-4 mb-4">
-      <CurrentLinkList selectedId={selectedId} links={links} className="mt-3" />
+      <CurrentLinkList selectedId={selectedId} links={links} deletedLinks={deletedLinks} setDeletedLinks={setDeletedLinks} className="mt-3" />
 
       <h5 style={{ fontWeight: 'bolder' }}>Create Connection to Another Document</h5>
 
@@ -153,16 +153,29 @@ LinkControl.propTypes = {
 };
 
 function CurrentLinkList(props) {
+
+  const [linksInList, setLinksInList] = useState(props.links);
+
+  useEffect(() => {
+    setLinksInList(props.links);
+    console.log("Links updated:", props.links);
+    console.log(linksInList);
+  }, [props.links]);
+
   return (
     <>
       <h5 style={{ fontWeight: 'bolder', marginTop: '15px' }}>Current connections</h5>
       <ListGroup className="mb-3">
-        {props.links.length > 0 ? (
-          props.links.map((link) => (
+        {linksInList.length > 0 ? (
+          linksInList.map((link) => (
             <LinkInList
               key={props.selectedId + link.id + "_" + link.type}
               linkData={link}
               selectedId={props.selectedId}
+              deletedLinks={props.deletedLinks}
+              setDeletedLinks={props.setDeletedLinks}
+              linksInList={props.linksInList}
+              setLinksInList={setLinksInList}
             />
           ))
         ) : (
@@ -180,33 +193,30 @@ CurrentLinkList.propTypes = {
   links: PropTypes.array.isRequired,
 };
 
-const handleDeleteLink = async (idDocument1, idDocument2, linkType) => {
-  try {
-    console.log('Deleting link:', idDocument1, idDocument2, linkType);
-    const result = await API.deleteLink(idDocument1, idDocument2, linkType);
-    alert("Link deleted successfully");
-  } catch (error) {
-    console.error('Error deleting link:', error);
-  }
-};
+
 
 function LinkInList(props) {
   return (
     <ListGroupItem className="document-list-item rounded custom-list-group-item mt-2">
       <Row>
-        <Col>
+        <Col xs={6} className="d-flex align-items-center">
           <label>{props.linkData.title}</label>
         </Col>
-        <Col>
+        <Col xs={4} className="d-flex align-items-center ">
           <label>{props.linkData.type}</label>
         </Col>
-        <Col>
-            <Button
-              className="btn btn-danger bi bi-trash"
-              onClick={() => handleDeleteLink(props.selectedId, props.linkData.id, props.linkData.type)}
-            >
-            </Button>
-          </Col>
+        <Col xs={2} className="d-flex justify-content-center align-items-center" >
+          <Button
+            className="btn btn-danger bi bi-trash"
+            
+            onClick={() => {
+              console.log("Deleting link:", props.linkData);
+              props.setDeletedLinks(prevLinks => [...prevLinks, props.linkData]);
+              props.setLinksInList(prevLinks => prevLinks.filter(link => !(link.id === props.linkData.id && link.type === props.linkData.type)));
+            }}
+          >
+          </Button>
+        </Col>
       </Row>
     </ListGroupItem>
   );
