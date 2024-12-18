@@ -2,6 +2,10 @@ import { describe, test, expect, jest, afterEach } from "@jest/globals";
 import { app, server } from "../index.mjs";
 import request from "supertest";
 import { cleanup } from "../db/cleanup.mjs";
+import DocumentDao from '../dao/document.mjs'; 
+//jest.mock('../dao/document.mjs'); // Mock the module that contains getDocumentById
+
+
 
 // define baseurl
 const baseURL = "/api/";
@@ -566,4 +570,48 @@ describe('DELETE /api/deleteLink', () => {
     // });
 });
 
+describe('GET /api/documents/:id', () => {
+    test('Successfully retrieves the document by ID', async () => {
+        const documentId = 1;
+        const mockDocument = { id: documentId, title: 'Sample Document', description: 'Sample description' };
 
+        const spyOn = jest.spyOn(DocumentDao.prototype, "getDocumentById").mockResolvedValue(mockDocument);
+
+        const response = await request(app)
+            .get(`/api/documents/${documentId}`);
+        
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual(mockDocument);
+
+        spyOn.mockRestore();
+    });
+
+    test('Should return 404 and an error message if the document does not exist', async () => {
+        const documentId = 999; 
+        
+        const spyOn = jest.spyOn(DocumentDao.prototype, "getDocumentById").mockResolvedValue(null);
+
+        const response = await request(app)
+            .get(`/api/documents/${documentId}`);
+        
+        expect(response.status).toBe(404);
+        expect(response.body.message).toBe(`Document with ID ${documentId} not found`);
+
+        spyOn.mockRestore();
+    });
+
+    test('Should return 500 and an error message if there is a server error', async () => {
+        const documentId = 1;
+
+        const spyOn = jest.spyOn(DocumentDao.prototype, "getDocumentById").mockRejectedValue(new Error('Database error'));
+
+        const response = await request(app)
+            .get(`/api/documents/${documentId}`);
+        
+        expect(response.status).toBe(500);
+        expect(response.body.message).toBe('Internal server error');
+        expect(response.body.error).toBe('Database error');
+
+        spyOn.mockRestore();
+    });
+});
