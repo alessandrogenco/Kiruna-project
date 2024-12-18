@@ -22,6 +22,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
   const [currentAreaId, setCurrentAreaId] = useState(null);
   const [areaSet, setAreaSet] = useState(false);
   const [areaNames, setAreaNames] = useState([]);
+  const [selAreaTemp, setSelAreaTemp] = useState(selectedAreaName || '');
 
   useEffect(() => {
     if (show) {
@@ -254,7 +255,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
 
                     // Aggiorna lo stato per indicare che un'area è stata selezionata
                     setAreaSet(true);
-                    setSelectedAreaName(item.areaName); // Set the selected area name
+                    setSelAreaTemp(item.areaName); // Set the selected area name
                     setAlertMessage('Selected an area associated with the point.');
                   }
                 }
@@ -317,7 +318,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
               const centroid = turf.centroid(polygon);
               setAreaCentroid(centroid.geometry.coordinates);
               displayCentroidMarker(centroid.geometry.coordinates);
-              setSelectedAreaName(''); // Reset the selected area name
+              setSelAreaTemp(''); // Reset the selected area name
             }
             setAreaSet(true);
           }
@@ -518,7 +519,9 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
       const drawnFeatures = draw.current.getAll();
       if (drawnFeatures.features.length > 0) {
         const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: drawnFeatures.features });
-
+        if (selAreaTemp){
+          setSelectedAreaName(selAreaTemp);
+        }
         const areaName = areaNameInput || selectedAreaName;
 
         console.log('Saving area with name:', areaName); 
@@ -541,8 +544,13 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
     handleClose();
   };
 
+  const handleClose1 = () => {
+    setSelAreaTemp('');
+    handleClose();
+  };
+
   return (
-    <Modal show={show} onHide={handleClose} size="lg" centered>
+    <Modal show={show} onHide={handleClose1} size="lg" centered>
       <Modal.Header closeButton>
         <Modal.Title>Select Location</Modal.Title>
       </Modal.Header>
@@ -645,11 +653,11 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
               <Form.Group controlId="areaSelect">
                 <Form.Label>Select Area</Form.Label>
                 <Form.Select
-                  value={selectedAreaName}
+                  value={selAreaTemp}
                   onChange={(e) => {
                     const selectedAreaName = e.target.value;
                     console.log('Selected Area Name:', selectedAreaName);
-                    setSelectedAreaName(selectedAreaName);
+                    setSelAreaTemp(selectedAreaName);
                     highlightArea(selectedAreaName);
 
                     // removes previsous area if there is one
@@ -690,7 +698,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
+        <Button variant="secondary" onClick={handleClose1}>
           Close
         </Button>
         <Button style={{ backgroundColor: '#28a745', border: 'none' }} onClick={handleSave}>
