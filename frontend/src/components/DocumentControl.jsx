@@ -609,6 +609,13 @@ function DocumentControl(props) {
                     Add
                   </Button>
                 </div>
+                <div
+                    style={{
+                      maxHeight: '150px', 
+                      overflowY: 'auto',  
+                      marginTop: '10px',
+                    }}
+                >
               {stakeholderList.split(' - ').map((stakeholder) => (
             <Form.Check
             key={stakeholder}
@@ -621,9 +628,8 @@ function DocumentControl(props) {
             className="mb-2 mt-2"
             />
              ))}
+            </div>
                 
-
-
             </Form.Control>
 
             {errors.stakeholders && <div className="text-danger">{errors.stakeholders}</div>}
