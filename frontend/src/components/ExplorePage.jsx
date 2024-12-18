@@ -199,16 +199,20 @@ function ExplorePage(props) {
           let documentList = cluster.current
             .getLeaves(clusterId, Infinity)
             .map((leaf) => leaf.properties);
-          console.log(documentList);
+
           // Filter documents that are in the selected documents
           const selectedDocsInCluster = documentList.filter(doc => 
           selectedDocuments.some(selectedDoc => selectedDoc.id === doc.data.id));
 
-          const isSelectedDocsInCluster = showArea
+          const isAnySelectedDocInCluster = showArea
           ? selectedDocsInCluster.length
           : true;
           
-          if(isSelectedDocsInCluster) {
+          if(isAnySelectedDocInCluster) {
+            if(showArea) {
+              documentList=selectedDocsInCluster;
+            }
+
             const popup = new mapboxgl.Popup({ offset: 25, closeButton: false }).setHTML(`
               <div class="cluster-popup">
                 <div class="cluster-popup-header">
@@ -307,11 +311,9 @@ function ExplorePage(props) {
               color: 'green',
               element: markerElement,
             })
-              .setLngLat(showArea && selectedDocsInCluster.length === 1 ? [selectedDocsInCluster[0].data.lon, selectedDocsInCluster[0].data.lat] : geometry.coordinates);
-              if(!showArea) {
-                marker.setPopup(popup);
-              }
-              marker.addTo(map);
+              .setLngLat(showArea && selectedDocsInCluster.length === 1 ? [selectedDocsInCluster[0].data.lon, selectedDocsInCluster[0].data.lat] : geometry.coordinates)
+              .setPopup(popup)
+              .addTo(map);
         
             popup
               .on('open', () => {
@@ -336,7 +338,7 @@ function ExplorePage(props) {
 
                     popup.remove();
                     
-                    if(!selectMode) {
+                    if(showArea || !selectMode) {
                       setSelectedDocument(docData);
                     }
                   });
@@ -349,10 +351,6 @@ function ExplorePage(props) {
 
             markersArray.push({marker: marker, data: properties.data});
             const markerEl = marker.getElement();
-
-            if(showArea) {
-              documentList=selectedDocsInCluster;
-            }
 
             markerEl.addEventListener('mouseenter', () => {
               mouseInsideMarker = true;
@@ -450,7 +448,7 @@ function ExplorePage(props) {
             })
               .setLngLat(geometry.coordinates);
 
-            if (!selectMode && popup) {
+            if ((showArea || !selectMode) && popup) {
               marker.setPopup(popup);
             }
               
