@@ -255,3 +255,25 @@ Content-Type: application/json
     "x": 1,
     "y": 2
 }
+
+
+### Save Area
+POST http://localhost:3001/api/saveArea
+Content-Type: application/json
+
+{
+  "areaName": "Test Area",
+  "coordinates": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [19.5, 67.6],
+        [21.0, 67.6],
+        [21.0, 68.1],
+        [19.5, 68.1],
+        [19.5, 67.6]
+      ]
+    ]
+  }
+}
+
