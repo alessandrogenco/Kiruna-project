@@ -26,7 +26,7 @@ const DocumentViewer = ({ isLoggedIn, documentData, onClose }) => {
   };
 
   const handleEditClick = () => {
-    navigate(`/editDocument/${documentData.id}`, { state: { document: documentData, explorePage: true } });
+    navigate(`/editDocument/${documentData.id}`, { state: { document: documentData } });
   };
 
   const handleLinkClick = async (link) => {

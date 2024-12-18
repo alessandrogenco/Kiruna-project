@@ -27,7 +27,6 @@ function DocumentControl(props) {
   
 
   const existingDocument = location.state?.document;
-  const explorePage = location.state?.explorePage;
 
   // Stati per i valori dei campi del modulo
   const [formData, setFormData] = useState({
@@ -469,7 +468,7 @@ function DocumentControl(props) {
       setError('');
 
       // Naviga alla pagina precedente
-      explorePage ? navigate('/explore') : navigate('/documentsPage');
+      navigate('/documentsPage');
     } catch (error) {
       console.error('Error during submission:', error);
       setError(`Error: ${error.message}`);
