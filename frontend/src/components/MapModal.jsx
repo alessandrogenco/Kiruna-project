@@ -222,7 +222,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
                     let features = draw.current.getAll().features;
                     if (features.length > 0) {
                       draw.current.delete(features[0].id); // Rimuovi la prima area se ce ne sono più di una
-                      features.splice(0, 2); // Remove the first feature
+                      features.splice(0, 1); // Remove the first feature
                     }
 
                     if (centroidMarker) {
@@ -360,6 +360,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
           })
             .setLngLat(coordinates)
             .addTo(map.current);
+          setCentroidMarker(centroidMarker);
 
           console.log('Centroid marker added at', coordinates);
         };
@@ -413,13 +414,6 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
       return turf.booleanPointInPolygon(point, polygon);
     });
     return isInside;
-  };
-
-  const validateCoordinates = (coordinates) => {
-    return coordinates.every(coord =>
-      coord[0] >= 17.8998 && coord[0] <= 23.2867 &&
-      coord[1] >= 67.3562 && coord[1] <= 69.0599
-    );
   };
 
   const highlightArea = (areaName) => {
@@ -645,6 +639,20 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
                     console.log('Selected Area Name:', selectedAreaName);
                     setSelectedAreaName(selectedAreaName);
                     highlightArea(selectedAreaName);
+
+                    // removes previsous area if there is one
+                    let features = draw.current.getAll().features;
+                    if (features.length > 0) {
+                      draw.current.delete(features[0].id); // Rimuovi la prima area se ce ne sono più di una
+                      features.splice(0, 1); // Remove the first feature
+                    }
+                    
+                    if (centroidMarker) {
+                      console.log('Removing existing centroid marker on update');
+                      centroidMarker.remove();
+                      setCentroidMarker(null);
+                    }
+
                   }}
                 >
                   <option value="">Select an area</option>
