@@ -138,6 +138,15 @@ class DocumentDao{
                     console.error('Database error while adding document:', err.message);
                     return reject(new Error('Database error: ' + err.message));
                   }
+        
+                  const query = 'INSERT INTO Areas (areaName, coordinates) VALUES (?, ?)';
+                  const values = [areaName, area];
+              
+                  db.run(query, values, (error, results) => {
+                    if (error) {
+                      return reject(new Error(`Database error while saving area: ${error.message}`));
+                    }        
+                  });
                   resolve({
                     id: this.lastID,
                     title,
@@ -518,28 +527,6 @@ updateDocument(id, title, stakeholders, scale, issuanceDate, type, connections, 
             });
         });
     }
-
-     saveArea(areaName, coordinates){
-        return new Promise((resolve, reject) => {
-          if (!areaName || !coordinates) {
-            return reject(new Error('Area name and coordinates are required.'));
-          }
-          console.log('Executing query:', query, 'with values:', values);
-
-          const query = 'INSERT INTO Areas (areaName, coordinates) VALUES (?, ?)';
-          const values = [areaName, JSON.stringify(coordinates)];
-      
-          pool.query(query, values, (error, results) => {
-            if (error) {
-              return reject(new Error(`Database error while saving area: ${error.message}`));
-            }
-            console.log('Query results:', results);
-
-            resolve(areaName);
-          });
-        });
-    };
-    
 
 }
 
