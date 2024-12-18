@@ -22,7 +22,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
   const [currentAreaId, setCurrentAreaId] = useState(null);
   const [areaSet, setAreaSet] = useState(false);
   const [areaNames, setAreaNames] = useState([]);
-  const [selAreaTemp, setSelAreaTemp] = useState(selectedAreaName || '');
+  const [selAreaTemp, setSelAreaTemp] = useState(selectedAreaName);
   const [isSaveDisabled, setIsSaveDisabled] = useState(false);
 
   useEffect(() => {
@@ -586,9 +586,8 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
     return JSON.stringify(geoJson);
 }
 
-
   const handleClose1 = () => {
-    setSelAreaTemp('');
+    setSelAreaTemp(selectedAreaName);
     handleClose();
   };
 
@@ -701,7 +700,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
               <Form.Group controlId="areaSelect">
                 <Form.Label>Select Area</Form.Label>
                 <Form.Select
-                  value={selAreaTemp}
+                  value={selAreaTemp ? selAreaTemp : selectedAreaName}
                   onChange={(e) => {
                     const selectedAreaName = e.target.value;
                     console.log('Selected Area Name:', selectedAreaName);
