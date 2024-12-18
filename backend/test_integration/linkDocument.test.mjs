@@ -49,8 +49,7 @@ describe("Document DAO Integration Tests", () => {
             expect(updatedLink).toEqual({
                 id1: 1,
                 id2: 2,
-                date: "2024-11-06",
-                type: "Updated Type"
+                newType: "Updated Type"
             });
         });
 

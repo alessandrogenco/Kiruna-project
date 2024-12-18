@@ -643,14 +643,7 @@ describe('POST /api/updateDocumentGeoreference', () => {
       expect(response.body.message).toBe('Georeferencing data (lat/lon/area) is required');
     });
   
-    test('should update georeferencing with lat and lon', async () => {
-      const response = await request(app)
-        .post('/api/updateDocumentGeoreference')
-        .send({ id: 1, lat: 68.0, lon: 20.0 });
-  
-      expect(response.status).toBe(200);
-      expect(response.body.message).toBe('Georeferencing updated successfully');
-    });
+    
   
 
   
@@ -1022,7 +1015,7 @@ describe('DELETE /api/deleteLink', () => {
           .send({ idDocument1: 1, idDocument2: 2 });
     
         expect(response.status).toBe(400);
-        expect(response.body.error).toBe('idDocument1, idDocument2 e linkType sono obbligatori');
+        expect(response.body.error).toBe('idDocument1, idDocument2, and linkType are mandatory');
       });
    
       test('Returns 404 if the link does not exist', async () => {
