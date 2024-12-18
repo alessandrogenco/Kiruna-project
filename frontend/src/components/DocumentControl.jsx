@@ -22,6 +22,8 @@ function DocumentControl(props) {
   const [searchTerm, setSearchTerm] = useState('');
   const [areaNames, setAreaNames] = useState([]);
   const [selectedAreaName, setSelectedAreaName] = useState('');
+  const [areaNameInput, setAreaNameInput] = useState(''); 
+  
 
   const existingDocument = location.state?.document;
   const explorePage = location.state?.explorePage;
@@ -40,7 +42,7 @@ function DocumentControl(props) {
     lat: existingDocument?.lat || '',
     lon: existingDocument?.lon || '',
     area: existingDocument?.area || '',
-    areaName: existingDocument?.areaName || '',
+    areaName: existingDocument?.areaName  || '',
     description: existingDocument?.description || '',
     newStakeholder: '',
   });
@@ -363,7 +365,7 @@ function DocumentControl(props) {
     const updatedFormData = {
       ...formData,
       stakeholders: formData.stakeholders,
-      areaName: selectedAreaName, 
+      areaName: selectedAreaName || areaNameInput
     };
 
     if (!documentId) {
@@ -864,6 +866,8 @@ function DocumentControl(props) {
             onLocationSelect={handleLocationSelect}
             selectedAreaName={selectedAreaName}
             setSelectedAreaName={setSelectedAreaName}
+            areaNameInput = {areaNameInput}
+            setAreaNameInput={setAreaNameInput}
           />
 
           <Row className="mb-4 mx-3">

@@ -7,7 +7,7 @@ import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import * as turf from '@turf/turf';
 
-const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSelectedAreaName }) => {
+const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSelectedAreaName, areaNameInput, setAreaNameInput }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const marker = useRef(null);
@@ -51,10 +51,10 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
     try {
       const response = await fetch('http://localhost:3001/api/getAreaNames');
       const text = await response.text();
-      
+
       if (!response.ok) throw new Error('Failed to fetch area names');
       const data = JSON.parse(text);
-      console.log('Fetched area names:', data); 
+      console.log('Fetched area names:', data);
 
       // Adjust the data structure
       if (data.areas && Array.isArray(data.areas)) {
@@ -413,9 +413,9 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
   };
 
   const validateCoordinates = (coordinates) => {
-    return coordinates.every(coord => 
-      coord[0] >= 17.8998 && coord[0] <= 23.2867 && 
-      coord[1] >= 67.3562 && coord[1] <= 69.0599    
+    return coordinates.every(coord =>
+      coord[0] >= 17.8998 && coord[0] <= 23.2867 &&
+      coord[1] >= 67.3562 && coord[1] <= 69.0599
     );
   };
 
@@ -482,13 +482,13 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
                 type: 'fill',
                 source: layerId,
                 paint: {
-                    'fill-color': 'rgba(255, 99, 71, 0.5)', 
-                    'fill-opacity': 0.5, 
+                    'fill-color': 'rgba(255, 99, 71, 0.5)',
+                    'fill-opacity': 0.5,
                 },
             });
 
             // Fit the map bounds to the selected area
-            const bounds = turf.bbox(areaGeoJson); 
+            const bounds = turf.bbox(areaGeoJson);
             map.current.fitBounds(bounds, { padding: 20 });
 
             console.log(`Successfully highlighted area: ${selectedArea.areaName}`);
@@ -500,9 +500,8 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
     }
 };
 
-
   const handleSave = () => {
-    console.log('Saving location with area name:', selectedAreaName); 
+    console.log('Saving location with area name:', selectedAreaName);
 
     if (mode === 'point' && position) {
       onLocationSelect({ type: 'point', coordinates: position });
@@ -510,14 +509,21 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
       const drawnFeatures = draw.current.getAll();
       if (drawnFeatures.features.length > 0) {
         const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: drawnFeatures.features });
-        console.log('Saving area with name:', selectedAreaName);
 
-        onLocationSelect({ type: 'area', geometry: geoJsonString, name: selectedAreaName });
+        const areaName = areaNameInput || selectedAreaName;
+
+        console.log('Saving area with name:', areaName); 
+        console.log(areaNameInput);
+
+        onLocationSelect({ type: 'area', geometry: geoJsonString, name: areaName }); 
       } else if (geoJsonData) {
         const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: geoJsonData.features });
-        console.log('Saving area with name:', selectedAreaName); 
 
-        onLocationSelect({ type: 'area', geometry: geoJsonString, name: selectedAreaName });
+        const areaName = areaNameInput || selectedAreaName;
+
+        console.log('Saving area with name:', areaName); 
+
+        onLocationSelect({ type: 'area', geometry: geoJsonString, name: areaName });
       } else {
         setAlertMessage('Error: Default municipality boundary is unavailable.');
         return;
@@ -562,14 +568,14 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
               name="mode"
               value={mode}
               onChange={(value) => {
-                console.log('ToggleButtonGroup onChange:', value); 
+                console.log('ToggleButtonGroup onChange:', value);
                 setMode(value);
                 if (draw.current) {
                   try {
                     if (value === 'point') {
                       draw.current.set({
                         type: 'FeatureCollection',
-                        features: [] 
+                        features: []
                       });
                       if (typeof draw.current.changeMode === 'function') {
                         draw.current.changeMode('simple_select', {
@@ -617,7 +623,6 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
             </ToggleButtonGroup>
           </div>
 
-          
           {mode === 'area' && (
             <div style={{
               position: 'absolute',
@@ -633,13 +638,10 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
                 <Form.Select
                   value={selectedAreaName}
                   onChange={(e) => {
-                    
                     const selectedAreaName = e.target.value;
-
-                    console.log('Selected Area Name:', selectedAreaName); 
-                
+                    console.log('Selected Area Name:', selectedAreaName);
                     setSelectedAreaName(selectedAreaName);
-                    highlightArea(selectedAreaName); 
+                    highlightArea(selectedAreaName);
                   }}
                 >
                   <option value="">Select an area</option>
@@ -649,6 +651,15 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
                     </option>
                   ))}
                 </Form.Select>
+              </Form.Group>
+              <Form.Group controlId="areaNameInput">
+                <Form.Label>Name the Area</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter area name"
+                  value={areaNameInput}
+                  onChange={(e) => setAreaNameInput(e.target.value)}
+                />
               </Form.Group>
             </div>
           )}
@@ -672,6 +683,11 @@ MapModal.propTypes = {
   handleClose: PropTypes.func.isRequired,
   onLocationSelect: PropTypes.func.isRequired,
   documentId: PropTypes.string,
+  selectedAreaName: PropTypes.string,
+  setSelectedAreaName: PropTypes.string,
+  areaNameInput: PropTypes.string,
+  setAreaNameInput: PropTypes.string,
+
 };
 
 export default MapModal;
