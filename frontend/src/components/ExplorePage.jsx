@@ -212,11 +212,62 @@ function ExplorePage(props) {
             if(showArea) {
               documentList=selectedDocsInCluster;
             }
+            let markerElement = null;
+            let popup;
+            if(showArea && selectedDocsInCluster.length === 1) {
+              const iconClass = documentTypeToIcon[selectedDocsInCluster[0].data.type] || documentTypeToIcon.default; 
+              const iconElement = document.createElement('i'); 
+              iconElement.className = iconClass; 
+              iconElement.style.fontSize = '20px'; 
+              iconElement.style.color = 'white'; 
 
-            const popup = new mapboxgl.Popup({ offset: 25, closeButton: false }).setHTML(`
+              const iconContainer = document.createElement('div'); 
+              iconContainer.style.width = '30px'; 
+              iconContainer.style.height = '30px'; 
+              iconContainer.style.display = 'flex'; 
+              iconContainer.style.justifyContent = 'center'; 
+              iconContainer.style.alignItems = 'center';
+              iconContainer.style.borderRadius = '50%';
+              iconContainer.style.backgroundColor = (selectedDocument && selectedDocsInCluster[0].data.id==selectedDocument.id) ? '#ffd404' : '#CB1E3B'; 
+              iconContainer.style.border = '2px solid #CB1E3B'; 
+              iconContainer.appendChild(iconElement);
+              markerElement = iconContainer;
+              
+              popup = new mapboxgl.Popup({
+                offset: 25,
+                closeButton: false,
+              })
+                .setHTML(`
+                  <div style="padding: 5px; margin-bottom: -0.4em; display: flex; flex-direction: column;">
+                    <div style="font-size: 1.2em; font-weight: bold;">${selectedDocsInCluster[0].data.title}</div>
+                    <button id="view-details-${selectedDocsInCluster[0].data.id}" style="margin-top: 12px; padding: 5px; background-color: #218838; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                      View Details
+                    </button>
+                  </div>
+                `)
+                .on('open', () => {
+                  document.getElementById(`view-details-${selectedDocsInCluster[0].data.id}`).addEventListener('click', () => {
+                    if (activePopup.current) {
+                      activePopup.current.remove(); // Close the currently active popup
+                    }
+                    iconContainer.style.backgroundColor = '#ffd404';
+                    iconContainer.style.border = '2px solid #ffd404';
+                    globalHoverPopup.current.remove();
+                    setSelectedDocument(selectedDocsInCluster[0].data); // Pass data to DocumentViewer
+                  });
+                  activePopup.current = popup; // Set the current popup
+                })
+                .on('close', () => {
+                  iconContainer.style.backgroundColor = '#CB1E3B';
+                  iconContainer.style.border = '2px solid #CB1E3B';
+                  activePopup.current = null; // Clear the reference when popup closes
+                  setSelectedDocument(null);
+                });
+            } else {
+            popup = new mapboxgl.Popup({ offset: 25, closeButton: false }).setHTML(`
               <div class="cluster-popup">
                 <div class="cluster-popup-header">
-                  ${properties.point_count_abbreviated} Documents
+                  ${showArea ? selectedDocsInCluster.length : properties.point_count_abbreviated} Documents
                 </div>
               <input
                 type="text"
@@ -277,30 +328,7 @@ function ExplorePage(props) {
                 filterListItems(event, listItems);
               });
             });
-            
-            let markerElement = null;
-
-            if(showArea && selectedDocsInCluster.length === 1) {
-              const iconClass = documentTypeToIcon[selectedDocsInCluster[0].data.type] || documentTypeToIcon.default; 
-              const iconElement = document.createElement('i'); 
-              iconElement.className = iconClass; 
-              iconElement.style.fontSize = '20px'; 
-              iconElement.style.color = 'white'; 
-
-              const iconContainer = document.createElement('div'); 
-              iconContainer.style.width = '30px'; 
-              iconContainer.style.height = '30px'; 
-              iconContainer.style.display = 'flex'; 
-              iconContainer.style.justifyContent = 'center'; 
-              iconContainer.style.alignItems = 'center';
-              iconContainer.style.borderRadius = '50%';
-              iconContainer.style.backgroundColor = (selectedDocument && selectedDocsInCluster[0].data.id==selectedDocument.id) ? '#ffd404' : '#CB1E3B'; 
-              iconContainer.style.border = '2px solid #CB1E3B'; 
-              iconContainer.appendChild(iconElement);
-              markerElement = iconContainer;
-              console.log(selectedDocsInCluster);
             }
-
 
             if (!markerElement){
               const clusterIconCount = showArea ? selectedDocsInCluster.length : properties.point_count_abbreviated;
@@ -314,40 +342,40 @@ function ExplorePage(props) {
               .setLngLat(showArea && selectedDocsInCluster.length === 1 ? [selectedDocsInCluster[0].data.lon, selectedDocsInCluster[0].data.lat] : geometry.coordinates)
               .setPopup(popup)
               .addTo(map);
-        
-            popup
-              .on('open', () => {
-                if (activePopup.current) {
-                  activePopup.current.remove(); 
-                }
-                activePopup.current = popup; 
-        
-                
-                const listItems = popup.getElement().querySelectorAll('li.document-item');
-                listItems.forEach((item) => {
-                  item.addEventListener('click', () => {
-                    globalHoverPopup.current.remove();
-                    const docId = item.getAttribute('data-id');
-                    const docData = markers.find(
-                      (marker) => marker.data.id === parseInt(docId, 10)
-                    ).data;
-        
-                    if (selectMode && !showArea) {
-                      handleMarkerClick(docData);
-                    }
+            
+            if (selectedDocsInCluster.length !== 1) {
+              popup
+                .on('open', () => {
+                  if (activePopup.current) {
+                    activePopup.current.remove(); 
+                  }
+                  activePopup.current = popup; 
+                  
+                  const listItems = popup.getElement().querySelectorAll('li.document-item');
+                  listItems.forEach((item) => {
+                    item.addEventListener('click', () => {
+                      globalHoverPopup.current.remove();
+                      const docId = item.getAttribute('data-id');
+                      const docData = markers.find(
+                        (marker) => marker.data.id === parseInt(docId, 10)
+                      ).data;
+          
+                      if (selectMode && !showArea) {
+                        handleMarkerClick(docData);
+                      }
 
-                    popup.remove();
-                    
-                    if(showArea || !selectMode) {
-                      setSelectedDocument(docData);
-                    }
+                      popup.remove();
+                      
+                      if(showArea || !selectMode) {
+                        setSelectedDocument(docData);
+                      }
+                    });
                   });
+                })
+                .on('close', () => {
+                  activePopup.current = null; 
                 });
-              })
-              .on('close', () => {
-                activePopup.current = null; 
-              });
-        
+            }
 
             markersArray.push({marker: marker, data: properties.data});
             const markerEl = marker.getElement();
