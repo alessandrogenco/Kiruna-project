@@ -331,6 +331,10 @@ function DocumentControl(props) {
       valid = false;
     }
 
+    if (!formData.issuanceDate){
+      valid = false;
+    }
+
     if (!formData.lon) {
       newErrors.lon = "Longitude is required";
       valid = false;
@@ -368,7 +372,8 @@ function DocumentControl(props) {
     const updatedFormData = {
       ...formData,
       stakeholders: formData.stakeholders,
-      areaName: selectedAreaName || areaNameInput
+      areaName: selectedAreaName || areaNameInput,
+      area: formData.area ? JSON.stringify(formData.area) : null,
     };
 
     if (!documentId) {
@@ -501,7 +506,7 @@ function DocumentControl(props) {
         area: null,
       }));
     } else if (locationData.type === 'area') {
-      const areaGeoJson = JSON.parse(locationData.geometry);
+      const areaGeoJson = locationData.geometry;
       const centroid = turf.centroid(areaGeoJson);
       const [centroidLon, centroidLat] = centroid.geometry.coordinates;
 
@@ -720,7 +725,7 @@ function DocumentControl(props) {
             <Form.Group as={Col} controlId="formDate">
               <Row className="d-flex justify-content-end mx-3">
                 <Form.Label className='form-label text-center pb-2'>
-                  Date
+                  Date <span className="required-asterisk" style={{ color: 'red' }}>*</span>
                 </Form.Label>
                 <Col as={Col} className="d-flex">
                   <Form.Control

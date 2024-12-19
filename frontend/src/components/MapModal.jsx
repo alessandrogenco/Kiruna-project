@@ -24,6 +24,9 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
   const [areaNames, setAreaNames] = useState([]);
   const [selAreaTemp, setSelAreaTemp] = useState(selectedAreaName);
   const [isSaveDisabled, setIsSaveDisabled] = useState(false);
+  const [changes, setChanges] = useState(false);
+
+  console.log("Start: "+ drawnArea);
 
   useEffect(() => {
     if (show) {
@@ -158,7 +161,12 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
 
                 if (mode === 'area') {
                   if (item.area) {
-                    const areaGeoJson = JSON.parse(JSON.parse(item.area));
+                    let areaGeoJson = JSON.parse(item.area);
+                    //let areaGeoJson = JSON.parse(areaGeoJson1);
+                    if (areaGeoJson[1] == `"`){
+                      areaGeoJson = JSON.parse(areaGeoJson);
+                    }
+
                     const layerId = `area-layer-${item.id}`;
                     const polygonSource = {
                       type: 'geojson',
@@ -211,8 +219,8 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
                       .addTo(map.current);
                   }
                 } else if (mode === 'area' && item.area) {
-                  const areaGeoJson1 = JSON.parse(item.area);
-                  const areaGeoJson = JSON.parse(areaGeoJson1);
+                  const areaGeoJson = JSON.parse(JSON.parse(item.area));
+                  //const areaGeoJson = JSON.parse(areaGeoJson1);
 
                   if (areaGeoJson.features && areaGeoJson.features.length > 0) {
                     if (!areaNameInput) {
@@ -258,6 +266,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
                     setAreaSet(true);
                     setSelAreaTemp(item.areaName); // Set the selected area name
                     setAlertMessage('Selected an area associated with the point.');
+                    setChanges(true);
                   }
                 }
               }, true); // Add event listener in the capture phase for higher priority
@@ -281,8 +290,14 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
           if (selectedAreaName) {
             highlightArea(selectedAreaName);
           } else if (drawnArea) {
-            //setAreaNameInput(selectedAreaName);
-            let parsedCoordinates = JSON.parse(JSON.parse(drawnArea));
+            let parsedCoordinates = JSON.parse(drawnArea);
+           /* console.log(parsedCoordinates[0]);
+            console.log(parsedCoordinates[1]);
+            console.log(parsedCoordinates[2]);*/
+            if (parsedCoordinates[1] == `"`){
+              parsedCoordinates = JSON.parse(parsedCoordinates);
+            }
+            console.log("ok : " + parsedCoordinates);
 
             parsedCoordinates = parsedCoordinates.features[0].geometry;
 
@@ -341,11 +356,11 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
             // Remove any existing highlighted area layers and sources
             const existingLayers = map.current.getStyle().layers;
             existingLayers.forEach(layer => {
-                if (layer.id.startsWith('highlight-area-')) {
-                    console.log(`Removing existing layer: ${layer.id}`);
-                    map.current.removeLayer(layer.id);   // Remove the previous layer
-                    map.current.removeSource(layer.id);  // Remove the source associated with the previous layer
-                }
+              if (layer.id.startsWith('highlight-area-')) {
+                  console.log(`Removing existing layer: ${layer.id}`);
+                  map.current.removeLayer(layer.id);   // Remove the previous layer
+                  map.current.removeSource(layer.id);  // Remove the source associated with the previous layer
+              }
             });
             console.log('draw.create event fired', e);
             let features = draw.current.getAll().features;
@@ -369,6 +384,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
               setSelAreaTemp(''); // Reset the selected area name
             }
             setAreaSet(true);
+            setChanges(true);
           }
         });
 
@@ -389,6 +405,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
                 const centroid = turf.centroid(polygon);
                 setAreaCentroid(centroid.geometry.coordinates);
                 displayCentroidMarker(centroid.geometry.coordinates);
+                setChanges(true);
               } catch (error) {
                 console.error('Error calculating centroid:', error.message);
               }
@@ -487,7 +504,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
     if (selectedArea && selectedArea.coordinates) {
         try {
             // Parse the coordinates string into a valid object
-            const parsedCoordinates = JSON.parse(selectedArea.coordinates);
+            const parsedCoordinates = JSON.parse(JSON.parse(selectedArea.coordinates)).features[0].geometry;
             console.log('Parsed Coordinates:', parsedCoordinates);
 
             // Check if the coordinates are in the correct format (Polygon)
@@ -564,19 +581,22 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
     if (mode === 'point' && position) {
       setSelectedAreaName('');
       onLocationSelect({ type: 'point', coordinates: position });
+      setChanges(false);
     } else if (mode === 'area') {
       const drawnFeatures = draw.current.getAll();
       if (selAreaTemp) {
         const coordinates = areaNames.find(area => area.areaName === selAreaTemp).coordinates;
         console.log("coord:" + coordinates);
         setSelectedAreaName(selAreaTemp);
-        onLocationSelect({type: 'area', geometry: convertPolygonToGeoJson(JSON.parse(coordinates)), name: selAreaTemp});
+        onLocationSelect({type: 'area', geometry: JSON.parse(JSON.parse(coordinates)), name: selAreaTemp});
+        setChanges(false);
       } else if (drawnFeatures.features.length > 0) {
         console.log("Ok1");
-        const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: drawnFeatures.features });
-        /*if (selAreaTemp){
-          setSelectedAreaName(selAreaTemp);
-        }*/
+        const geoJsonString = { type: 'FeatureCollection', features: drawnFeatures.features };
+        //const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: drawnFeatures.features });
+
+        console.log("geoJsonString:" + geoJsonString);  
+
         setSelectedAreaName('');
         const areaName = areaNameInput || selectedAreaName;
 
@@ -592,15 +612,17 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
         }
 
         fetchAreaNames(); 
+        setChanges(false);
       } else if (geoJsonData) {
         console.log("Ok2");
-        const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: geoJsonData.features });
+        /*const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: geoJsonData.features });
 
         const areaName = areaNameInput || selectedAreaName;
 
         console.log('Saving area with name:', areaName); 
 
-        onLocationSelect({ type: 'area', geometry: geoJsonString, name: areaName });
+        onLocationSelect({ type: 'area', geometry: geoJsonString, name: areaName });*/
+        setChanges(false);
       } else {
         setAlertMessage('Error: Default municipality boundary is unavailable.');
         return;
@@ -609,41 +631,22 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
     handleClose();
   };
 
-  function convertPolygonToGeoJson(inputPolygon) {
-    // Controlliamo che l'input sia nel formato corretto (un oggetto Polygon)
-    if (inputPolygon.type !== "Polygon") {
-        throw new Error("Invalid input format. Expected a Polygon with coordinates.");
-    }
-
-    // Generiamo l'oggetto GeoJSON nel formato desiderato
-    const geoJson = {
-        type: "FeatureCollection",
-        features: [
-            {
-                id: "013c42e282440ea1aba90d4c9b5d5617",  // Puoi generare un ID univoco se necessario
-                type: "Feature",
-                properties: {},  // Aggiungi le proprietà se necessario
-                geometry: {
-                    type: "Polygon",
-                    coordinates: inputPolygon.coordinates
-                }
-            }
-        ]
-    };
-
-    // Restituiamo la stringa JSON
-    return JSON.stringify(geoJson);
-}
-
   const handleClose1 = () => {
     setSelAreaTemp(selectedAreaName);
+    setChanges(false);
     handleClose();
   };
 
   useEffect(() => {
     const isExistingArea = areaNames.some(area => area.areaName === areaNameInput);
-    setIsSaveDisabled(isExistingArea);
-  }, [areaNameInput, areaNames]);
+    if (selAreaTemp) {
+      setIsSaveDisabled(false);
+    } else if(areaNameInput == '' || isExistingArea) {
+      setIsSaveDisabled(true);
+    } else {
+      setIsSaveDisabled(false);
+    }
+  }, [areaNameInput, areaNames, selAreaTemp]);
 
   return (
     <Modal show={show} onHide={handleClose1} size="lg" centered>
@@ -769,6 +772,8 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
                       setCentroidMarker(null);
                     }
 
+                    setChanges(true);
+                    setAreaNameInput('');
                   }}
                 >
                   <option value="">Select an area</option>
@@ -797,7 +802,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
         <Button variant="secondary" onClick={handleClose1}>
           Close
         </Button>
-        <Button style={{ backgroundColor: '#28a745', border: 'none' }} onClick={handleSave} disabled={mode == 'area' ? isSaveDisabled : false}>
+        <Button style={{ backgroundColor: '#28a745', border: 'none' }} onClick={handleSave} disabled={mode == 'area' ? isSaveDisabled || !changes : false}>
           Save location
         </Button>
       </Modal.Footer>

@@ -279,7 +279,7 @@ const DocumentGraph = (props) => {
   // Funzione per normalizzare e ordinare le date parziali
   function parseDate(dateStr) {
     const parts = dateStr.split("-");
-    const year = parseInt(parts[0], 10);
+    const year = parts[0] ? parseInt(parts[0], 10) : 1900;
     const month = parts[1] ? parseInt(parts[1], 10) - 1 : 0; // Default: gennaio
     const day = parts[2] ? parseInt(parts[2], 10) : 1; // Default: primo giorno del mese
     return new Date(year, month, day);

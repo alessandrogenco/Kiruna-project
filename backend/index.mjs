@@ -628,7 +628,7 @@ app.get('/api/documents/:id', async (req, res) => {
 
 // Fetch all area names
 app.get('/api/getAreaNames', (req, res) => {
-    db.all('SELECT DISTINCT areaName, coordinates FROM Areas', [], (err, rows) => {
+    db.all('SELECT areaName, coordinates FROM Areas', [], (err, rows) => {
         if (err) {
         console.error('Error fetching area names:', err.message);
         return res.status(500).json({ message: 'Internal server error', error: err.message });
