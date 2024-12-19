@@ -28,12 +28,12 @@ sections:
   committed:
   - story 11: 8 points
   - story 17: 5 points
-  - story 18: 5 points
+  - story 12: 5 points 
 
   done:
   - story 11: 8 points
   - story 17: 5 points
-  - story 18: 5 points
+  - story 12: 5 points
 
 ### Detailed statistics
 
@@ -44,7 +44,6 @@ sections:
 | 17     |   5     |   5    |    8h30m   |      8h25m   |
 | 12     |   6     |   5    |     8h     |      8h      |
 
-   
 
 > place technical tasks corresponding to story `#0` and leave out story points (not applicable in this case)
 
@@ -52,13 +51,8 @@ sections:
 
 |            | Mean | StDev |
 |------------|------|-------|
-| Estimation | 1h50m|   1h48m  | 
-| Actual     | 1h49m|   1h48m  |
-
-- Hours per task average including Sprint Planning
-    - Estimated: **1h 51m/task**
-    - Actual: **1h 49m/task**
-
+| Estimation | 1h50m|       | 
+| Actual     | 1h49m|       |
 
 - Total estimation error ratio: sum of total hours spent / sum of total hours effort - 1
 
@@ -67,9 +61,9 @@ sections:
     
 - Absolute relative task estimation error: sum( abs( spent-task-i / estimation-task-i - 1))/n
 
-    $$\frac{1}{n}\sum_i^n \left| \frac{spent_{task_i}}{estimation_task_i}-1 \right|=0,0055 $$
+    $$\frac{1}{n}\sum_i^n \left| \frac{spent_{task_i}}{estimation_task_i}-1 \right| $$
 
-
+  
 ## QUALITY MEASURES 
 
 - Unit Testing:
