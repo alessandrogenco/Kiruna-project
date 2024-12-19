@@ -55,6 +55,19 @@ sections:
 | Estimation | 1h50m|   1h48m  | 
 | Actual     | 1h49m|   1h48m  |
 
+- Hours per task average including Sprint Planning
+    - Estimated: **1h 51m/task**
+    - Actual: **1h 49m/task**
+- Standard deviation including Sprint Planning
+    - Estimate = 
+    - Actual = 
+- Hours per task average without Sprint Planning
+    - Estimated: 
+    - Actual: 
+- Standard deviation without Sprint Planning
+    - Estimate = 
+    - Actual = 
+
 - Total estimation error ratio: sum of total hours spent / sum of total hours effort - 1
 
     $$\frac{\sum_i spent_{task_i}}{\sum_i estimation_{task_i}} - 1$$
@@ -64,7 +77,7 @@ sections:
 
     $$\frac{1}{n}\sum_i^n \left| \frac{spent_{task_i}}{estimation_task_i}-1 \right| $$
 
-  
+
 ## QUALITY MEASURES 
 
 - Unit Testing:
