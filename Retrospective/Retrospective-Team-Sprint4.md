@@ -58,6 +58,7 @@ sections:
 - Total estimation error ratio: sum of total hours spent / sum of total hours effort - 1
 
     $$\frac{\sum_i spent_{task_i}}{\sum_i estimation_{task_i}} - 1$$
+     $$\frac{5770}{5880} - 1 = −0,018707483$$ 
     
 - Absolute relative task estimation error: sum( abs( spent-task-i / estimation-task-i - 1))/n
 
@@ -67,21 +68,21 @@ sections:
 ## QUALITY MEASURES 
 
 - Unit Testing:
-  - Total hours estimated
-  - Total hours spent
-  - Nr of automated unit test cases 
-  - Coverage
+  - Total hours estimated 2h
+  - Total hours spent 2h
+  - Nr of automated unit test cases 68
+  - Coverage 91.61
 - E2E testing:
-  - Total hours estimated
-  - Total hours spent
-  - Nr of test cases
+  - Total hours estimated 6h
+  - Total hours spent 6h
+  - Nr of test cases -
 - Code review 
-  - Total hours estimated 
-  - Total hours spent
+  - Total hours estimated 6h30m
+  - Total hours spent 6h30m
 - Technical Debt management:
-  - Strategy adopted
-  - Total hours estimated estimated
-  - Total hours spent
+  - The strategy is written in TD_strategy.md
+  - Total hours estimated estimated 4h
+  - Total hours spent 4h
   
 
 
@@ -89,9 +90,15 @@ sections:
 
 - What caused your errors in estimation (if any)?
 
+We overstimated the time of some tasks to avoid to leave them uncompleted.
+
 - What lessons did you learn (both positive and negative) in this sprint?
 
+We have learned to help each other in tasks we cannot do in the best way.
+
 - Which improvement goals set in the previous retrospective were you able to achieve? 
+
+
   
 - Which ones you were not able to achieve? Why?
 
