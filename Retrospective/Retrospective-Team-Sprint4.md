@@ -57,7 +57,7 @@ sections:
 - Total estimation error ratio: sum of total hours spent / sum of total hours effort - 1
 
     $$\frac{\sum_i spent_{task_i}}{\sum_i estimation_{task_i}} - 1$$
-     $$\frac{5770}{5880} - 1 = −0,018707483$$ 
+     $$\frac{5770}{5880} - 1 = −0,000868056$$ 
     
 - Absolute relative task estimation error: sum( abs( spent-task-i / estimation-task-i - 1))/n
 
@@ -74,7 +74,6 @@ sections:
 - E2E testing:
   - Total hours estimated 6h
   - Total hours spent 6h
-  - Nr of test cases -
 - Code review 
   - Total hours estimated 6h30m
   - Total hours spent 6h30m
@@ -89,25 +88,25 @@ sections:
 
 - What caused your errors in estimation (if any)?
 
-We overstimated the time of some tasks to avoid to leave them uncompleted.
+We overstimated the time of some tasks to avoid to leave them uncompleted, since this was the last sprint and we wanted to complete all the work.
 
 - What lessons did you learn (both positive and negative) in this sprint?
 
-We have learned to help each other in tasks we cannot do in the best way.
+We have learned to help each other in tasks we cannot do in the best way and it helped to achieve better results.
 
 - Which improvement goals set in the previous retrospective were you able to achieve? 
 
-We kept the techincal debt always under control and increased the quality of the code.
+We kept the techincal debt always under control and increased the quality of the code, and we used some practices to standardize the code more than before.
   
 - Which ones you were not able to achieve? Why?
 
-We did not finish some critical tasks one day in advance because we needed some more time to complete them.
+We did not finish some critical tasks one day in advance because we needed some more time to complete them, since we faced unexpected difficulties.
 
 - Improvement goals for the next sprint and how to achieve them (technical tasks, team coordination, etc.)
 
 This is the last sprint. but if we had to set goals for a new one we would like to
- - Learn to trust the others and the fact that they will work well
- - Learn to ask for help in difficult situation, when we cannot find out how to do something
+ - Learn to trust the others and the fact that they will work well but still checking their work
+ - Learn to ask for help in difficult situations, when we cannot find out how to do something
 
 > Propose one or two
 
