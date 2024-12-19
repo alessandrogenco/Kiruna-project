@@ -49,10 +49,10 @@ sections:
 
 - Hours per task average, standard deviation (estimate and actual)
 
-|            | Mean | StDev |
-|------------|------|-------|
-| Estimation | 1h49m| 88.80 | 
-| Actual     | 1h48m| 88.84 |
+|            | Mean |     StDev       | StDev with Sprint Planning
+|------------|------|-----------------|------------------------------
+| Estimation | 1h49m| 26.71346977567  | 120.55427546683
+| Actual     | 1h48m| 26.801062804591 | 120.59071712301
 
 - Total estimation error ratio: sum of total hours spent / sum of total hours effort - 1
 
