@@ -58,15 +58,7 @@ sections:
 - Hours per task average including Sprint Planning
     - Estimated: **1h 51m/task**
     - Actual: **1h 49m/task**
-- Standard deviation including Sprint Planning
-    - Estimate = 
-    - Actual = 
-- Hours per task average without Sprint Planning
-    - Estimated: 
-    - Actual: 
-- Standard deviation without Sprint Planning
-    - Estimate = 
-    - Actual = 
+
 
 - Total estimation error ratio: sum of total hours spent / sum of total hours effort - 1
 
