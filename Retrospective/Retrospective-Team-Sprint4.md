@@ -51,9 +51,8 @@ sections:
 
 |            | Mean |     StDev       | StDev with Sprint Planning
 |------------|------|-----------------|------------------------------
-| Estimation | 1h49m| 26.71346977567  | 120.55427546683
-| Actual     | 1h48m| 26.801062804591 | 120.59071712301
-
+| Estimation | 1h49m| 26.71346977567  | 88.808416562061
+| Actual     | 1h48m| 26.801062804591 | 88.84679074109
 - Total estimation error ratio: sum of total hours spent / sum of total hours effort - 1
 
     $$\frac{\sum_i spent_{task_i}}{\sum_i estimation_{task_i}} - 1$$
