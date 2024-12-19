@@ -98,12 +98,20 @@ We have learned to help each other in tasks we cannot do in the best way.
 
 - Which improvement goals set in the previous retrospective were you able to achieve? 
 
-
+We kept the techincal debt always under control and increased the quality of the code.
   
 - Which ones you were not able to achieve? Why?
 
+We did not finish some critical tasks one day in advance because we needed some more time to complete them.
+
 - Improvement goals for the next sprint and how to achieve them (technical tasks, team coordination, etc.)
+
+This is the last sprint. but if we had to set goals for a new one we would like to
+ - Learn to trust the others and the fact that they will work well
+ - Learn to ask for help in difficult situation, when we cannot find out how to do something
 
 > Propose one or two
 
 - One thing you are proud of as a Team!!
+
+We grew up a lot together as individuals and as a team and we have learned to be patient and precise.
