@@ -39,10 +39,10 @@ sections:
 
 | Story  | # Tasks | Points | Hours est. | Hours actual |
 |--------|---------|--------|------------|--------------|
-| 0      |   36    |    -   |     71h5m  |      69h45m  |
-| 11     |   6     |   8    |     10h    |      10h     |
-| 17     |   5     |   5    |    8h30m   |      8h25m   |
-| 12     |   6     |   5    |     8h     |      8h      |
+| 0      |   36    |    -   |    69h30m  |      69h30m  |
+| 11     |   6     |   8    |    10h     |      10h     |
+| 17     |   5     |   5    |    8h      |      8h      |
+| 12     |   6     |   5    |    8h30m   |      8h25m   |
 
 
 > place technical tasks corresponding to story `#0` and leave out story points (not applicable in this case)
@@ -51,8 +51,8 @@ sections:
 
 |            | Mean | StDev |
 |------------|------|-------|
-| Estimation | 1h50m|       | 
-| Actual     | 1h49m|       |
+| Estimation | 1h49m| 88.80 | 
+| Actual     | 1h48m| 88.84 |
 
 - Total estimation error ratio: sum of total hours spent / sum of total hours effort - 1
 
@@ -61,7 +61,7 @@ sections:
     
 - Absolute relative task estimation error: sum( abs( spent-task-i / estimation-task-i - 1))/n
 
-    $$\frac{1}{n}\sum_i^n \left| \frac{spent_{task_i}}{estimation_task_i}-1 \right| $$
+    $$\frac{1}{n}\sum_i^n \left| \frac{spent_{task_i}}{estimation_task_i}-1 \right| = 0,000471698$$
 
   
 ## QUALITY MEASURES 
