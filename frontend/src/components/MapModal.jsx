@@ -750,7 +750,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
               borderRadius: '5px',
               boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)'}}>
               <Form.Group controlId="areaSelect">
-                <Form.Label style={{marginBottom: '2px'}}>Select Area</Form.Label>
+                <Form.Label>Select Area</Form.Label>
                 <Form.Select
                   value={selAreaTemp ? selAreaTemp : centroidMarker ? '' : selectedAreaName}
                   onChange={(e) => {
@@ -785,7 +785,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
                 </Form.Select>
               </Form.Group>
               <Form.Group controlId="areaNameInput" style={{paddingTop: '10px'}}>
-                <Form.Label style={{marginBottom: '2px'}}>Name the Area</Form.Label>
+                <Form.Label style={{marginBottom: '0px'}}>Name the Area</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Enter area name"
