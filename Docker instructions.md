@@ -14,3 +14,9 @@
     - On Windows: docker-compose up;
     - On MacOS: docker compose up;
 - Search localhost:5173 on your browser to access the website.
+
+# Credentials
+
+- Credentials for login as Urban Planner:
+    - Username: urban_planner
+    - Password: 1234
