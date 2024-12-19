@@ -888,6 +888,7 @@ function DocumentControl(props) {
             setSelectedAreaName={setSelectedAreaName}
             areaNameInput = {areaNameInput}
             setAreaNameInput={setAreaNameInput}
+            drawnArea={formData.area}
           />
 
           <Row className="mb-4 mx-3">

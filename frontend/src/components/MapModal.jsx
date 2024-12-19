@@ -7,7 +7,7 @@ import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import * as turf from '@turf/turf';
 
-const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSelectedAreaName, areaNameInput, setAreaNameInput }) => {
+const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSelectedAreaName, areaNameInput, setAreaNameInput, drawnArea }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const marker = useRef(null);
@@ -157,12 +157,9 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
                 .addTo(map.current);
 
                 if (mode === 'area') {
-
                   if (item.area) {
-            
                     const areaGeoJson = JSON.parse(JSON.parse(item.area));
                     const layerId = `area-layer-${item.id}`;
-                    
                     const polygonSource = {
                       type: 'geojson',
                       data: {
@@ -218,6 +215,9 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
                   const areaGeoJson = JSON.parse(areaGeoJson1);
 
                   if (areaGeoJson.features && areaGeoJson.features.length > 0) {
+                    if (!areaNameInput) {
+                      setAreaNameInput('');
+                    }
                     //console.log('Area data loaded for the selected point:', areaGeoJson);
 
                     // Rimuovi l'area attuale se già presente
@@ -280,6 +280,53 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
           map.current.addControl(draw.current, 'top-right');
           if (selectedAreaName) {
             highlightArea(selectedAreaName);
+          } else if (drawnArea) {
+            //setAreaNameInput(selectedAreaName);
+            let parsedCoordinates = JSON.parse(JSON.parse(drawnArea));
+
+            parsedCoordinates = parsedCoordinates.features[0].geometry;
+
+            // Create GeoJSON object for the selected area
+            const areaGeoJson = {
+              type: 'FeatureCollection',
+              features: [
+                  {
+                      type: 'Feature',
+                      geometry: {
+                          type: 'Polygon',
+                          coordinates: parsedCoordinates.coordinates,
+                      },
+                      properties: {
+                          name: selectedAreaName,
+                      },
+                  },
+              ],
+          };
+
+          console.log('Valid Area GeoJSON:', areaGeoJson);
+
+          // Create a unique layer ID based on the areaName to avoid conflicts
+          const layerId = `highlight-area-${selectedAreaName}`;
+            // Add the new GeoJSON source for the selected area
+            map.current.addSource(layerId, {
+                type: 'geojson',
+                data: areaGeoJson,
+            });
+
+            // Add the new layer to the map
+            map.current.addLayer({
+                id: layerId,
+                type: 'fill',
+                source: layerId,
+                paint: {
+                    'fill-color': 'rgba(255, 99, 71, 0.5)',
+                    'fill-opacity': 0.5,
+                },
+            });
+
+            // Fit the map bounds to the selected area
+            const bounds = turf.bbox(areaGeoJson);
+            map.current.fitBounds(bounds, { padding: 40 });
           }
         }
 
@@ -525,17 +572,18 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
         setSelectedAreaName(selAreaTemp);
         onLocationSelect({type: 'area', geometry: convertPolygonToGeoJson(JSON.parse(coordinates)), name: selAreaTemp});
       } else if (drawnFeatures.features.length > 0) {
+        console.log("Ok1");
         const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: drawnFeatures.features });
-        if (selAreaTemp){
+        /*if (selAreaTemp){
           setSelectedAreaName(selAreaTemp);
-        }
+        }*/
+        setSelectedAreaName('');
         const areaName = areaNameInput || selectedAreaName;
 
         console.log('Saving area with name:', areaName); 
 
         onLocationSelect({ type: 'area', geometry: geoJsonString, name: areaName })
 
-        //save area created with its name
         // Check for duplicate area names
         if (areaNames.some(area => area.areaName === areaName)) {
           setAlertMessage('Error: No two documents can have the same area name.');
@@ -545,6 +593,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
 
         fetchAreaNames(); 
       } else if (geoJsonData) {
+        console.log("Ok2");
         const geoJsonString = JSON.stringify({ type: 'FeatureCollection', features: geoJsonData.features });
 
         const areaName = areaNameInput || selectedAreaName;
@@ -700,7 +749,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
               <Form.Group controlId="areaSelect">
                 <Form.Label>Select Area</Form.Label>
                 <Form.Select
-                  value={selAreaTemp ? selAreaTemp : selectedAreaName}
+                  value={selAreaTemp ? selAreaTemp : centroidMarker ? '' : selectedAreaName}
                   onChange={(e) => {
                     const selectedAreaName = e.target.value;
                     console.log('Selected Area Name:', selectedAreaName);
@@ -748,7 +797,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
         <Button variant="secondary" onClick={handleClose1}>
           Close
         </Button>
-        <Button style={{ backgroundColor: '#28a745', border: 'none' }} onClick={handleSave} disabled={isSaveDisabled}>
+        <Button style={{ backgroundColor: '#28a745', border: 'none' }} onClick={handleSave} disabled={mode == 'area' ? isSaveDisabled : false}>
           Save location
         </Button>
       </Modal.Footer>
@@ -759,6 +808,7 @@ const MapModal = ({ show, handleClose, onLocationSelect, selectedAreaName, setSe
 MapModal.propTypes = {
   show: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
+  drawnArea: PropTypes.object,
   onLocationSelect: PropTypes.func.isRequired,
   documentId: PropTypes.string,
   selectedAreaName: PropTypes.string,
