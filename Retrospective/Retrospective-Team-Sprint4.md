@@ -75,11 +75,11 @@ sections:
   - Nr of automated unit test cases 68
   - Coverage 91.61
 - E2E testing:
-  - Total hours estimated 6h
-  - Total hours spent 6h
+  - Total hours estimated 8h
+  - Total hours spent 8h
 - Code review 
-  - Total hours estimated 6h30m
-  - Total hours spent 6h30m
+  - Total hours estimated 8h30m
+  - Total hours spent 8h30m
 - Technical Debt management:
   - The strategy is written in TD_strategy.md
   - Total hours estimated estimated 4h
