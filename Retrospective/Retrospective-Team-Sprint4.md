@@ -58,9 +58,13 @@ sections:
     $$\frac{\sum_i spent_{task_i}}{\sum_i estimation_{task_i}} - 1$$
      $$\frac{5770}{5880} - 1 = −0,000868056$$ 
     
-- Absolute relative task estimation error: sum( abs( spent-task-i / estimation-task-i - 1))/n
+- Absolute relative task estimation error with sprint planning: sum( abs( spent-task-i / estimation-task-i - 1))/n
 
-    $$\frac{1}{n}\sum_i^n \left| \frac{spent_{task_i}}{estimation_task_i}-1 \right| = 0,000471698$$
+    $$\frac{1}{n}\sum_i^n \left| \frac{spent_{task_i}}{estimation_task_i}-1 \right| = 0,005503145$$
+
+- Absolute relative task estimation error without sprint planning: sum( abs( spent-task-i / estimation-task-i - 1))/n
+
+    $$\frac{1}{n}\sum_i^n \left| \frac{spent_{task_i}}{estimation_task_i}-1 \right| = 0,005608974$$
 
   
 ## QUALITY MEASURES 
