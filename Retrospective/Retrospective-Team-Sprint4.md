@@ -73,7 +73,7 @@ sections:
   - Total hours estimated 2h
   - Total hours spent 2h
   - Nr of automated unit test cases 22
-  - Coverage 90.36% DAO, 80,98% API
+  - Coverage 91.96% DAO, 80,98% API
 - E2E testing:
   - Total hours estimated 8h
   - Total hours spent 8h
