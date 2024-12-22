@@ -35,6 +35,8 @@ sections:
   - story 17: 5 points
   - story 12: 5 points
 
+Nr of hours planned vs spent (as a team): 96h 00min / 95h 55min
+
 ### Detailed statistics
 
 | Story  | # Tasks | Points | Hours est. | Hours actual |
