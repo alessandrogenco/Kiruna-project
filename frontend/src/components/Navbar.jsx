@@ -23,7 +23,7 @@ function AppNavbar({ isLoggedIn, handleLogout }) {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            {isLoggedIn && (
+            {isLoggedIn ? (
               <>
                 <Nav.Link onClick={() => navigate('/explore')} style={{color: 'lightgray'}}>
                   Explore 
@@ -35,7 +35,14 @@ function AppNavbar({ isLoggedIn, handleLogout }) {
                   Graph
                 </Nav.Link>
               </>
-            )}
+            ) : <>
+            <Nav.Link onClick={() => navigate('/explore')} style={{color: 'lightgray'}}>
+              Explore 
+            </Nav.Link>
+            <Nav.Link onClick={() => navigate('/graph')} style={{color: 'lightgray'}}>
+              Graph
+            </Nav.Link>
+          </>}
           </Nav>
           <span className="navbar-text ms-auto">
             {isMobile ? (
