@@ -259,9 +259,7 @@ const DocumentGraph = (props) => {
 
   useEffect(() => {
 
-    if(props.isLoggedIn === false) {
-      navigate("/explore");
-    } else {
+ 
       getTypes()
       .then((response) => {
         const types = response.map((type) => {
@@ -272,7 +270,7 @@ const DocumentGraph = (props) => {
       .catch((error) => {
         console.error("Error fetching types:", error);
       });
-    }
+    
   }, []);
 
 

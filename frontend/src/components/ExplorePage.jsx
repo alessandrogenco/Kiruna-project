@@ -904,7 +904,7 @@ function ExplorePage(props) {
           borderRadius: '8px',
           cursor: 'pointer',
           zIndex: 1000, // Priorità sopra gli altri elementi
-          visibility: props.isLoggedIn ? 'visible' : 'hidden'
+          
         }}
         onClick={() => setShowGraph(!showGraph)}>
         {showGraph ? 'Hide Graph' : 'Show Graph'}
